@@ -349,4 +349,257 @@
         'C01': '<i class="mc-icon ri-stack-line"></i>',
 
         // C02: 梭哈 -> 修正：使用 "寶劍" (代表攻擊性)
-        'C02': '<i class="mc-icon ri-sword-line"></i>
+        'C02': '<i class="mc-icon ri-sword-line"></i>',
+
+        // C03: 股息 -> 手捧金幣/種子 (代表收穫)
+        'C03': '<i class="mc-icon ri-hand-coin-line"></i>',
+
+        // C04: 正2/封閉 -> 改為 "火箭" (代表槓桿加速)
+        'C04': '<i class="mc-icon ri-rocket-2-line"></i>',
+
+        // C05: 全世界 -> 地球儀
+        'C05': '<i class="mc-icon ri-global-line"></i>',
+
+        // C06: 美國爸爸 -> 改為 "星形盾牌" (代表美國隊長/美股強權)
+        'C06': '<i class="mc-icon ri-shield-star-line"></i>',
+
+        // C07: 進場/埋伏 -> 準心 (代表精準打擊)
+        'C07': '<i class="mc-icon ri-crosshair-2-line"></i>'
+    };
+
+    // 1. 初始化空變數，準備接收 Google Sheet 資料
+    let cardsData = {}; 
+    let portfolios = [];
+
+    // 2. Google Sheet 連線邏輯
+    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv';
+
+    fetch(sheetUrl)
+        .then(response => response.text())
+        .then(text => {
+            parseSheetData(text);
+            renderAll(); // 資料抓完後，一次執行所有渲染
+        })
+        .catch(err => {
+            document.getElementById('cardContainer').innerHTML = `<p style="color:red">連線失敗: ${err.message}</p>`;
+        });
+
+    function parseSheetData(tsvText) {
+        const rows = tsvText.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+        let isStrategySection = false;
+
+        // 重置資料
+        cardsData = {};
+        portfolios = [];
+
+        for (let i = 1; i < rows.length; i++) { // 跳過第0行標題
+            const row = rows[i];
+            const cols = row.split('\t');
+
+            // 判斷是否進入下半部 (策略表)
+            if (cols[0] === '代號' && cols[1] === '名稱') {
+                isStrategySection = true;
+                continue; // 跳過這行標題
+            }
+
+            if (!isStrategySection) {
+                // 解析上半部 (Cards C01~C07)
+                const code = cols[0];
+                if (!code || !code.startsWith('C')) continue;
+
+                cardsData[code] = {
+                    code: code,
+                    type: cols[1],
+                    rpg: cols[2],
+                    target: cols[3],
+                    skill: cols[4],
+                    cost: parseFloat(cols[5] || 0),
+                    current: parseFloat(cols[6] || 0),
+                    strategy: cols[7],
+                    sop: cols[8],
+                    svg: cardAssets[code] || cardAssets['C01'] // 這裡雖叫 svg 但實際裝的是 <i class...>
+                };
+            } else {
+                // 解析下半部 (Strategies P01~P11)
+                const code = cols[0];
+                if (!code || !code.startsWith('P')) continue;
+
+                let group = 'mix';
+                if(['P01','P02','P03','P07'].includes(code)) group = 'tw';
+                else if(['P04','P05','P06'].includes(code)) group = 'us';
+
+                const deckArr = cols[2] ? cols[2].split('+').map(s => s.trim()) : [];
+
+                portfolios.push({
+                    code: code,
+                    name: cols[1],
+                    deck: deckArr,
+                    group: group,
+                    highlight: cols[3]
+                });
+            }
+        }
+    }
+
+    // --- 以下為渲染邏輯 ---
+
+    // Helper: Calculate Stats
+    function calculateStats(cost, current) {
+        if(cost === 0) return { roi: 0, arrow: '-', colorClass: '', roiSign: '' }; // 防呆
+        const roi = ((current - cost) / cost * 100).toFixed(1);
+        let colorClass = '';
+        
+        if (current >= cost * 1.5) { colorClass = 'color-gold'; }
+        else if (current > cost) { colorClass = 'color-profit'; }
+        else if (current <= cost * 0.5) { colorClass = 'color-dead'; }
+        else { colorClass = 'color-loss'; }
+
+        const arrow = roi >= 0 ? '▲' : '▼';
+        return { roi, arrow, colorClass, roiSign: roi >= 0 ? '+' : '' };
+    }
+
+    function renderAll() {
+        renderDashboard();
+        renderCards();
+        renderArena();
+    }
+
+    // Render 1: Dashboard
+    function renderDashboard() {
+        let globalCost = 0;
+        let globalCurrent = 0;
+
+        Object.keys(cardsData).forEach(key => {
+            globalCost += cardsData[key].cost;
+            globalCurrent += cardsData[key].current;
+        });
+
+        const stats = calculateStats(globalCost, globalCurrent);
+
+        document.getElementById('totalCost').innerText = '$' + globalCost.toLocaleString() + ' 萬';
+        const totalCurrentEl = document.getElementById('totalCurrent');
+        totalCurrentEl.innerText = '$' + globalCurrent.toLocaleString() + ' 萬';
+        totalCurrentEl.className = 'dash-value ' + stats.colorClass;
+
+        document.getElementById('totalROI').innerHTML = `<span class="${stats.colorClass}">${stats.arrow} ${stats.roiSign}${stats.roi}%</span>`;
+    }
+
+    // Render 2: Cards
+    function renderCards() {
+        const cardContainer = document.getElementById('cardContainer');
+        cardContainer.innerHTML = ''; // Clear loading text
+
+        Object.keys(cardsData).forEach(key => {
+            const card = cardsData[key];
+            const html = `
+                <div class="micro-card ${card.type}" onclick="openModal('${key}')">
+                    <div class="mc-header">
+                        <span class="mc-code">${card.code}</span>
+                        <span class="mc-target">${card.target}</span>
+                    </div>
+                    <div class="mc-image-container">${card.svg}</div>
+                    <div class="mc-footer">
+                        <div class="mc-name">${card.skill}</div>
+                        <div class="mc-rpg-name">${card.rpg}</div>
+                        <span class="mc-cost-badge">$${card.cost} 萬</span>
+                    </div>
+                </div>
+            `;
+            cardContainer.innerHTML += html;
+        });
+    }
+
+    // Render 3: Arena (Updated with Mini Icons)
+    function renderArena() {
+        const arenaContainer = document.getElementById('arenaContainer');
+        const groups = { tw: [], us: [], mix: [] };
+        
+        portfolios.forEach(p => {
+            let totalCost = 0, totalCurrent = 0;
+            
+            // Generate Icon HTML for each card in the deck
+            const iconsHtml = p.deck.map(cCode => {
+                const c = cardsData[cCode];
+                if(!c) return '';
+                
+                // Determine icon color based on type
+                let iconClass = '';
+                if(c.type === 'type-tw') iconClass = 'g-icon-tw';
+                if(c.type === 'type-us') iconClass = 'g-icon-us';
+                if(c.type === 'type-yield') iconClass = 'g-icon-yield';
+                if(c.type === 'type-ber') iconClass = 'g-icon-ber';
+                if(c.type === 'type-trap') iconClass = 'g-icon-trap';
+
+                // Replace 'mc-icon' with 'g-mini-icon' for size control
+                return `<span class="${iconClass}" title="${c.skill}">${c.svg.replace('mc-icon', 'g-mini-icon')}</span>`;
+            }).join('');
+
+            p.deck.forEach(cCode => {
+                if(cardsData[cCode]) {
+                    totalCost += cardsData[cCode].cost;
+                    totalCurrent += cardsData[cCode].current;
+                }
+            });
+            const stats = calculateStats(totalCost, totalCurrent);
+
+            const html = `
+                <div class="g-bar-container">
+                    <div class="g-bar" onclick="toggleDetail(this)">
+                        <div class="g-code">${p.code}</div>
+                        <div class="g-info">
+                            <span class="g-name">${p.name}</span>
+                            <div class="g-deck-icons">${iconsHtml}</div>
+                        </div>
+                        <div class="g-stats">
+                            <span class="g-roi ${stats.colorClass}">${stats.arrow} ${stats.roiSign}${stats.roi}%</span>
+                            <span class="g-val">$${totalCurrent}萬</span>
+                        </div>
+                    </div>
+                    <div class="g-details"><div class="highlight-content">★ 競技亮點：${p.highlight}</div></div>
+                </div>
+            `;
+            if(groups[p.group]) groups[p.group].push(html);
+        });
+
+        arenaContainer.innerHTML = `
+            <div class="arena-group group-tw"><div class="group-header">🇹🇼 TAIWAN LEAGUE</div>${groups.tw.join('')}</div>
+            <div class="arena-group group-us"><div class="group-header">🇺🇸 US LEAGUE</div>${groups.us.join('')}</div>
+            <div class="arena-group group-mix"><div class="group-header">🌐 SPECIAL LEAGUE</div>${groups.mix.join('')}</div>
+        `;
+    }
+
+    // Interaction Functions
+    function toggleDetail(element) { element.classList.toggle('active'); }
+
+    function openModal(key) {
+        const card = cardsData[key];
+        
+        document.getElementById('mCode').innerText = card.code;
+        document.getElementById('mSkill').innerText = card.skill;
+        document.getElementById('mCost').innerText = `$${card.cost} 萬`;
+        document.getElementById('mStrategy').innerText = card.strategy;
+        document.getElementById('mSop').innerText = card.sop;
+
+        // Set colors based on type class
+        const computedStyle = getComputedStyle(document.documentElement);
+        let colorVar = '--color-tw'; 
+        if (card.type === 'type-us') colorVar = '--color-us';
+        if (card.type === 'type-yield') colorVar = '--color-yield';
+        if (card.type === 'type-ber') colorVar = '--color-ber';
+        if (card.type === 'type-trap') colorVar = '--color-trap';
+        
+        const colorHex = computedStyle.getPropertyValue(colorVar).trim();
+
+        document.querySelector('.modal-content').style.borderColor = colorHex;
+        document.getElementById('mCost').style.color = colorHex;
+        document.getElementById('cardModal').style.display = 'flex';
+        document.getElementById('cardModal').classList.add('modal-active');
+    }
+
+    function closeModal() { document.getElementById('cardModal').style.display = 'none'; }
+    document.addEventListener('keydown', function(event) { if (event.key === "Escape") closeModal(); });
+
+</script>
+
+</body>
+</html>

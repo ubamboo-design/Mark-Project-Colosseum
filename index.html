@@ -1,496 +1,238 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROJECT CAGE: Master Plan (Live Data)</title>
-   
-    <style>
-        :root {
-            --bg-color: #0b0b0e;
-            --card-bg: #141418;
-            --bar-bg: #1c1c22;
-            --text-main: #e0e0e0;
-            --text-muted: #888;
-            --border-metal: #333;
-           
-            /* Faction Colors */
-            --color-tw: #ff3b3b;
-            --color-us: #00d2ff;
-            --color-yield: #00ff6a;
-            --color-ber: #ff9100;
-            --color-trap: #bd00ff;
-            --color-gold: #ffd700;
-           
-            /* Status Colors */
-            --status-green: #00ff6a;
-            --status-red: #ff2a2a;
-            --status-gold: #ffd700;
-            --status-purple: #bd00ff;
-            --status-purple-glow: #a600ff;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.3;
-            overflow-x: hidden;
-            padding-bottom: 20px;
-        }
-        header {
-            padding: 20px;
-            background: #08080a;
-            border-bottom: 1px solid var(--border-metal);
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .header-content {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            max-width: 1000px;
-        }
-        .header-text {
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        h1 {
-            font-size: 2.2rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-            font-weight: 900;
-            margin: 0 0 5px 0;
-            line-height: 1;
-        }
-        .meta-info {
-            display: flex;
-            gap: 15px;
-            font-size: 0.85rem;
-            color: #ccc;
-            font-family: 'Courier New', monospace;
-            opacity: 0.8;
-        }
-        @media (max-width: 768px) {
-            .header-content { flex-direction: column; text-align: center; gap: 15px; }
-            .header-text { text-align: center; align-items: center; }
-            h1 { font-size: 1.8rem; }
-        }
-        .container { max-width: 1600px; margin: 0 auto; padding: 0 20px 10px 20px; }
-        .dashboard-panel {
-            background: linear-gradient(180deg, #1a1a20 0%, #0f0f12 100%);
-            border: 1px solid #444;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.4);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .dashboard-panel::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
-            background: linear-gradient(90deg, var(--color-tw), var(--color-gold), var(--color-us));
-        }
-        .dash-title { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: block; }
-        .dash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; align-items: center; }
-        .dash-item { display: flex; flex-direction: column; align-items: center; padding: 5px 10px; border-right: 1px solid #333; }
-        .dash-item:last-child { border-right: none; }
-        .dash-label { font-size: 0.8rem; color: #666; text-transform: uppercase; margin-bottom: 3px; font-weight: bold; }
-        .dash-value { font-family: 'Courier New', monospace; font-size: 2rem; font-weight: 900; color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.1); }
-        .dash-roi { font-family: 'Courier New', monospace; font-size: 1.8rem; font-weight: bold; }
-        .color-profit { color: var(--status-green) !important; text-shadow: 0 0 12px rgba(0,255,106,0.3) !important; }
-        .color-loss { color: var(--status-red) !important; text-shadow: 0 0 12px rgba(255,42,42,0.3) !important; }
-        .color-gold { color: var(--status-gold) !important; text-shadow: 0 0 12px rgba(255,215,0,0.5) !important; }
-        .color-dead { color: var(--status-purple-glow) !important; text-shadow: 0 0 12px rgba(189,0,255,0.5) !important; animation: pulse-text 2s infinite; }
-        @keyframes pulse-text { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
-        @media (max-width: 768px) {
-            .dash-grid { grid-template-columns: 1fr; gap: 20px; }
-            .dash-item { border-right: none; border-bottom: 1px solid #333; padding-bottom: 15px; }
-        }
-        .section-title { font-size: 1.1rem; border-left: 3px solid var(--color-gold); padding-left: 10px; margin: 25px 0 15px 0; text-transform: uppercase; color: #fff; font-weight: bold; display: flex; align-items: center; }
-        .section-title::after { content: ''; flex-grow: 1; height: 1px; background: #333; margin-left: 15px; }
-        .deck-wrapper { overflow-x: auto; padding-bottom: 10px; }
-        .deck-grid { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 10px; align-items: stretch; min-width: 1050px; }
-        .micro-card { background: var(--card-bg); border: 1px solid var(--border-metal); border-radius: 8px; padding: 10px; position: relative; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; text-align: center; min-height: 180px; cursor: pointer; overflow: hidden; box-shadow: 0 3px 8px rgba(0,0,0,0.3); }
-        .micro-card:hover { transform: translateY(-3px) scale(1.01); z-index: 5; background: #1a1a20; }
-        .type-tw { border-top: 3px solid var(--color-gold); } .type-tw:hover { border-color: var(--color-gold); box-shadow: 0 5px 20px rgba(255, 215, 0, 0.15); }
-        .type-us { border-top: 3px solid var(--color-us); } .type-us:hover { border-color: var(--color-us); box-shadow: 0 5px 20px rgba(0, 210, 255, 0.15); }
-        .type-yield { border-top: 3px solid var(--color-yield); } .type-yield:hover { border-color: var(--color-yield); box-shadow: 0 5px 20px rgba(0, 255, 106, 0.15); }
-        .type-ber { border-top: 3px solid var(--color-ber); } .type-ber:hover { border-color: var(--color-ber); box-shadow: 0 5px 20px rgba(255, 145, 0, 0.15); }
-        .type-trap { border-top: 3px solid var(--color-trap); } .type-trap:hover { border-color: var(--color-trap); box-shadow: 0 5px 20px rgba(189, 0, 255, 0.15); }
-        .mc-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
-        .mc-code { font-size: 0.85rem; font-weight: 900; color: #fff; }
-        .mc-target { font-size: 0.75rem; font-family: 'Courier New', monospace; font-weight: bold; color: #aaa; background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 4px;}
-        .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; margin: 8px 0; }
-        .mc-image {
-            width: 56px; height: 56px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 4;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            transition: all 0.3s ease;
-        }
-        .type-tw .mc-image { stroke: var(--color-gold); filter: drop-shadow(0 0 6px var(--color-gold)); }
-        .type-us .mc-image { stroke: var(--color-us); filter: drop-shadow(0 0 6px var(--color-us)); }
-        .type-yield .mc-image { stroke: var(--color-yield); filter: drop-shadow(0 0 6px var(--color-yield)); }
-        .type-ber .mc-image { stroke: var(--color-ber); filter: drop-shadow(0 0 6px var(--color-ber)); }
-        .type-trap .mc-image { stroke: var(--color-trap); filter: drop-shadow(0 0 6px var(--color-trap)); }
-        .micro-card:hover .mc-image { transform: scale(1.2); filter: drop-shadow(0 0 12px currentColor); }
-        .mc-footer { width: 100%; text-align: center; margin-top: auto; }
-        .mc-name { font-size: 0.9rem; color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
-        .mc-rpg-name { font-size: 0.75rem; color: #888; font-weight: normal; }
-        .mc-cost-badge { margin-top: 5px; display: inline-block; font-size: 0.75rem; color: #ccc; border: 1px solid #444; padding: 2px 8px; border-radius: 10px; background: rgba(0,0,0,0.3); }
-        .arena-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: start; }
-        @media (max-width: 1000px) { .arena-container { grid-template-columns: 1fr; } }
-        .arena-group { background: rgba(255,255,255,0.02); border: 1px solid #222; border-radius: 6px; padding: 10px; height: 100%; }
-        .group-header { font-size: 0.9rem; font-weight: bold; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #333; color: #ddd; text-align: center; letter-spacing: 1px; }
-        .g-bar-container { margin-bottom: 6px; }
-        .g-bar { display: flex; align-items: center; background: var(--bar-bg); padding: 15px 15px; border-radius: 4px; border-left: 3px solid #555; cursor: pointer; transition: all 0.2s; position: relative; }
-        .g-bar:hover { background: #25252e; transform: translateX(2px); }
-        .g-bar::after { content: 'Down Arrow'; position: absolute; right: 10px; color: #555; font-size: 0.6rem; transition: transform 0.3s; }
-        .g-bar.active::after { transform: rotate(180deg); color: var(--color-gold); }
-        .g-bar.active { background: #2a2a35; }
-        .group-tw .g-bar { border-left-color: var(--color-gold); }
-        .group-us .g-bar { border-left-color: var(--color-us); }
-        .group-mix .g-bar { border-left-color: var(--color-trap); }
-        .g-code { font-family: 'Courier New', monospace; font-weight: 900; font-size: 0.9rem; width: 40px; color: #fff; }
-        .g-info { flex-grow: 1; padding: 0 10px; display: flex; align-items: center; gap: 15px; }
-        .g-name { font-size: 1.1rem; font-weight: 800; color: #fff; white-space: nowrap; text-transform: uppercase; letter-spacing: 1px; }
-        .g-deck-icons { display: flex; align-items: center; gap: 8px; }
-        .g-mini-icon { display: inline-block; width: 38px; height: 38px; transition: transform 0.2s; }
-        .g-mini-icon svg { width: 100% !important; height: 100% !important; stroke: currentColor !important; }
-        .g-mini-icon:hover { transform: scale(1.2); }
-        .g-stats { text-align: right; min-width: 85px; }
-        .g-roi { font-family: 'Courier New', monospace; font-weight: bold; font-size: 0.85rem; display: block; }
-        .g-val { font-size: 0.7rem; color: #666; display: block; }
-        .g-details { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0, 1, 0, 1); background: rgba(0,0,0,0.2); border-radius: 0 0 4px 4px; margin-top: -1px; }
-        .g-bar.active + .g-details { max-height: 100px; border: 1px solid #333; border-top: none; }
-        .highlight-content { padding: 10px; font-size: 0.8rem; color: #ccc; line-height: 1.3; border-left: 2px solid var(--color-gold); margin: 6px; background: rgba(255, 215, 0, 0.05); }
-        .highlight-content b { color: var(--color-gold); }
-        .footer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 30px; border-top: 2px solid #222; padding-top: 20px; }
-        @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; } }
-        .info-box { background: #111; padding: 15px; border-radius: 8px; font-size: 0.85rem; color: #888; border: 1px solid #222; position: relative; overflow: hidden; height: 100%; display: flex; flex-direction: column; justify-content: center; }
-        .info-box:hover { border-color: var(--color-gold); background: #16161a; }
-        .info-title { color: #fff; font-weight: bold; margin-bottom: 8px; display: block; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        .loading { grid-column: 1 / -1; text-align: center; color: #555; font-style: italic; padding: 30px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px); z-index: 1000; display: none; justify-content: center; align-items: center; }
-        .modal-active { display: flex; animation: fadeIn 0.2s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal-content { background: #1a1a20; width: 90%; max-width: 450px; border: 2px solid #444; border-radius: 12px; padding: 20px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
-        .m-code { font-size: 1.8rem; font-weight: 900; color: #fff; }
-        .m-skill { font-size: 1.1rem; color: #aaa; font-weight: bold; }
-        .close-btn { font-size: 1.8rem; color: #666; cursor: pointer; line-height: 1; }
-        .close-btn:hover { color: #fff; }
-        .m-row { margin-bottom: 12px; }
-        .m-label { display: block; font-size: 0.7rem; color: #555; text-transform: uppercase; margin-bottom: 3px; font-weight: bold; letter-spacing: 1px; }
-        .m-value { font-size: 0.95rem; color: #ccc; line-height: 1.4; }
-        .m-value.highlight { color: var(--color-gold); font-family: 'Courier New', monospace; font-size: 1.3rem; font-weight: bold; }
-        .sop-box { background: rgba(0,0,0,0.3); border-left: 3px solid #666; padding: 10px; border-radius: 4px; }
-
-        /* 手機優化 */
-        @media (max-width: 768px) {
-            .micro-card:hover { transform: none; }
-            .micro-card:active { transform: scale(0.98); opacity: 0.9; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROJECT CAGE : 終極霓虹版</title>
+<style>
+:root{
+--bg:#0b0b0e;--card:#141418;--bar:#1c1c22;--text:#e0e0e0;--mute:#888;--gold:#ffd700;
+--tw:#ff3b3b;--us:#00d2ff;--yield:#00ff6a;--ber:#ff9100;--trap:#bd00ff;
+--green:#00ff6a;--red:#ff2a2a;--purple:#a600ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif;line-height:1.4;overflow-x:hidden;padding-bottom:30px}
+header{padding:25px;background:#08080a;border-bottom:1px solid #333;text-align:center}
+h1{font-size:2.4rem;letter-spacing:4px;text-transform:uppercase;color:#fff;text-shadow:0 0 30px #ffd700;font-weight:900}
+.meta-info{font-family:'Courier New';color:#aaa;margin-top:8px;font-size:0.9rem}
+.container{max-width:1600px;margin:0 auto;padding:0 20px}
+.dashboard-panel{background:linear-gradient(180deg,#1a1a20,#0f0f12);border:1px solid #444;border-radius:12px;padding:20px;margin-bottom:30px;box-shadow:0 0 30px rgba(0,0,0,0.6);position:relative;overflow:hidden}
+.dashboard-panel::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--tw),var(--gold),var(--us))}
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;text-align:center}
+.dash-value{font-family:'Courier New';font-size:2.2rem;font-weight:900;color:#fff}
+.dash-roi{font-size:2rem;font-weight:900}
+.color-profit{color:var(--green)!important;text-shadow:0 0 15px #00ff6a88}
+.color-loss{color:var(--red)!important;text-shadow:0 0 15px #ff2a2a88}
+.color-gold{color:var(--gold)!important;text-shadow:0 0 20px #ffd700aa}
+.color-dead{color:var(--purple)!important;text-shadow:0 0 20px #bd00ffaa;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
+@media(max-width:768px){.dash-grid{grid-template-columns:1fr}}
+.section-title{font-size:1.2rem;border-left:4px solid var(--gold);padding-left:12px;margin:35px 0 15px;text-transform:uppercase;font-weight:900;color:#fff;display:flex;align-items:center}
+.section-title::after{content:'';flex-grow:1;height:1px;background:#444;margin-left:15px}
+.deck-wrapper{overflow-x:auto;padding-bottom:10px}
+.deck-grid{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:12px;min-width:1100px}
+.micro-card{background:var(--card);border:1px solid #333;border-radius:12px;padding:14px;transition:all .3s;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.5);display:flex;flex-direction:column;height:100%}
+.micro-card:hover{transform:translateY(-8px) scale(1.03);box-shadow:0 15px 40px rgba(0,0,0,0.7);z-index:10}
+.type-tw{border-top:4px solid var(--gold)}
+.type-us{border-top:4px solid var(--us)}
+.type-yield{border-top:4px solid var(--yield)}
+.type-ber{border-top:4px solid var(--ber)}
+.type-trap{border-top:4px solid var(--trap)}
+.mc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.mc-code{font-size:0.9rem;font-weight:900;color:#fff}
+.mc-target{font-size:0.7rem;background:rgba(0,0,0,0.5);padding:2px 6px;border-radius:4px;color:#ccc}
+.mc-image-container{flex-grow:1;display:flex;align-items:center;justify-content:center;margin:10px 0}
+.mc-image{width:68px;height:68px;transition:all .4s}
+.micro-card:hover .mc-image{transform:scale(1.25);filter:drop-shadow(0 0 20px currentColor)}
+.mc-name{font-size:0.95rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:3px}
+.mc-rpg-name{font-size:0.75rem;color:#888}
+.mc-cost-badge{margin-top:8px;padding:4px 10px;border:1px solid #555;border-radius:12px;font-size:0.8rem;background:rgba(0,0,0,0.4)}
+.arena-container{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:20px}
+@media(max-width:1000px){.arena-container{grid-template-columns:1fr}}
+.arena-group{background:rgba(255,255,255,0.02);border:1px solid #222;border-radius:10px;padding:12px}
+.group-header{text-align:center;padding-bottom:8px;border-bottom:1px solid #444;font-weight:900;font-size:0.95rem;color:#fff}
+.g-bar{display:flex;align-items:center;background:var(--bar);padding:16px 14px;border-radius:8px;border-left:4px solid #555;cursor:pointer;transition:.3s;position:relative}
+.g-bar:hover{background:#25252e;transform:translateX(4px)}
+.g-bar::after{content:'Down Arrow';position:absolute;right:12px;color:#666;font-size:0.7rem;transition:.3s}
+.g-bar.active::after{transform:rotate(180deg);color:var(--gold)}
+.group-tw .g-bar{border-left-color:var(--gold)}
+.group-us .g-bar{border-left-color:var(--us)}
+.group-mix .g-bar{border-left-color:var(--trap)}
+.g-code{font-family:'Courier New';font-weight:900;color:#fff;width:42px}
+.g-info{flex-grow:1;display:flex;align-items:center;gap:14px}
+.g-name{font-size:1.15rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1px}
+.g-deck-icons{display:flex;gap:7px}
+.g-mini-icon{width:40px;height:40px;transition:.2s}
+.g-mini-icon:hover{transform:scale(1.3)}
+.g-mini-icon svg{width:100%!important;height:100%!important;stroke:currentColor!important}
+.g-stats{text-align:right;min-width:90px}
+.g-roi{font-family:'Courier New';font-weight:900;font-size:0.9rem}
+.g-val{font-size:0.75rem;color:#666}
+.g-details{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(0,1,0,1);background:rgba(0,0,0,0.3);border-radius:0 0 8px 8px}
+.g-bar.active + .g-details{max-height:120px;border:1px solid #333;border-top:none}
+.highlight-content{padding:12px;background:rgba(255,215,0,0.07);border-left:3px solid var(--gold);margin:8px;font-size:0.85rem;color:#ddd}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:9999}
+.modal-content{background:#1a1a20;border:3px solid #444;border-radius:16px;padding:25px;max-width:460px;width:90%;box-shadow:0 0 60px rgba(0,0,0,0.9)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #444;padding-bottom:12px;margin-bottom:15px}
+.m-code{font-size:2rem;font-weight:900;color:#fff}
+.close-btn{font-size:2rem;cursor:pointer;color:#888}
+.close-btn:hover{color:#fff}
+.m-value.highlight{font-size:1.5rem;font-weight:900;color:var(--gold);font-family:'Courier New'}
+</style>
 </head>
 <body>
 <header>
-    <div class="header-content">
-        <div class="header-text">
-            <h1>PROJECT CAGE</h1>
-            <div class="meta-info">
-                <span>v12.22 LIVE</span>
-                <span>•</span>
-                <span>NT$ 1,000 萬</span>
-                <span>•</span>
-                <span>2025-2031</span>
-            </div>
-        </div>
-    </div>
+  <h1>PROJECT CAGE</h1>
+  <div class="meta-info">v12.22 LIVE • NT$ 1,000 萬 • 2025-2031</div>
 </header>
+
 <div class="container">
-    <div class="dashboard-panel">
-        <span class="dash-title">MARK'S ASSET VARIATION (馬克資產變化)</span>
-        <div class="dash-grid">
-            <div class="dash-item">
-                <span class="dash-label">TOTAL COST (總成本)</span>
-                <span class="dash-value" id="totalCost">...</span>
-            </div>
-            <div class="dash-item">
-                <span class="dash-label">TOTAL ASSET (總資產)</span>
-                <span class="dash-value" id="totalCurrent">...</span>
-            </div>
-            <div class="dash-item">
-                <span class="dash-label">CHANGE (漲跌幅)</span>
-                <span class="dash-roi" id="totalROI">...</span>
-            </div>
-        </div>
+  <div class="dashboard-panel">
+    <div class="dash-grid">
+      <div><span class="dash-label">TOTAL COST</span><div class="dash-value" id="totalCost">...</div></div>
+      <div><span class="dash-label">TOTAL ASSET</span><div class="dash-value" id="totalCurrent">...</div></div>
+      <div><span class="dash-label">CHANGE</span><div class="dash-roi" id="totalROI">...</div></div>
     </div>
-    <div class="section-title">I. 七大技能卡牌 (THE 7 SKILL CARDS)</div>
-    <div class="deck-wrapper">
-        <div class="deck-grid" id="cardContainer">
-            <div class="loading">CONNECTING TO DATABASE...</div>
-        </div>
-    </div>
-    <div class="section-title">II. 投資競技場</div>
-    <div class="arena-container" id="arenaContainer">
-        <div class="loading">LOADING STRATEGIES...</div>
-    </div>
-    <div class="section-title">III. THE IRON LAWS (核心鐵律)</div>
-    <div class="footer-grid">
-        <div class="info-box">
-            <span class="info-title">Lock 資金封閉鐵律 <span class="info-icon">1</span></span>
-            1,000 萬只進不出。僅能在定存、活存、證券戶間流動，嚴禁消費。
-        </div>
-        <div class="info-box">
-            <span class="info-title">Balance 歸一化競技鐵律 <span class="info-icon">2</span></span>
-            績效起點皆為 100%。不比金額大小，只比策略報酬率 (%)。
-        </div>
-        <div class="info-box">
-            <span class="info-title">Cycle 配息再投入鐵律 <span class="info-icon">3</span></span>
-            股息 100% 留倉再投入，視為淨值一部分，維持複利效應。
-        </div>
-        <div class="info-box">
-            <span class="info-title">Trophy 年度 MVP 鐵律 <span class="info-icon">4</span></span>
-            每年底頒發金獅(報酬)、鐵盾(穩健)、智冠(CP值)三大獎項。
-        </div>
-    </div>
+  </div>
+
+  <div class="section-title">I. 七大技能卡牌</div>
+  <div class="deck-wrapper"><div class="deck-grid" id="cardContainer"><div class="loading">CONNECTING...</div></div></div>
+
+  <div class="section-title">II. 投資競技場</div>
+  <div class="arena-container" id="arenaContainer"><div class="loading">LOADING...</div></div>
 </div>
 
 <div id="cardModal" class="modal-overlay" onclick="closeModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-header">
-            <div>
-                <div class="m-code" id="mCode">CODE</div>
-                <div class="m-skill" id="mSkill">SKILL</div>
-            </div>
-            <span class="close-btn" onclick="closeModal()">X</span>
-        </div>
-        <div class="m-row">
-            <span class="m-label">Money 初始資金 (CAPITAL)</span>
-            <div class="m-value highlight" id="mCost">...</div>
-        </div>
-        <div class="m-row">
-            <span class="m-label">Target 戰略定位 (STRATEGY)</span>
-            <div class="m-value" id="mStrategy">...</div>
-        </div>
-        <div class="m-row">
-            <span class="m-label">Scroll 嚴格執行 SOP (PROTOCOL)</span>
-            <div class="sop-box">
-                <div class="m-value" id="mSop" style="font-size: 0.95rem;">...</div>
-            </div>
-        </div>
-    </div>
+  <div class="modal-content" onclick="e=>e.stopPropagation()">
+    <div class="modal-header"><div><div class="m-code" id="mCode"></div></div><span class="close-btn" onclick="closeModal()">X</span></div>
+    <div><span class="m-label">初始資金</span><div class="m-value highlight" id="mCost"></div></div>
+    <div><span class="m-label">戰略定位</span><div class="m-value" id="mStrategy"></div></div>
+    <div><span class="m-label">執行 SOP</span><div class="m-value" id="mSop" style="padding:10px;background:rgba(0,0,0,0.3);border-left:3px solid #666;border-radius:6px"></div></div>
+  </div>
 </div>
 
 <script>
-    // 終極霓虹賽博版 SVG 圖示（已修好所有顏色、尺寸、發光問題）
-    const cardAssets = {
-        'C01': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <ellipse cx="32" cy="50" rx="22" ry="9" fill="#ffd700" stroke="#b39700" stroke-width="4"/>
-                  <ellipse cx="32" cy="38" rx="22" ry="9" fill="#ffd700" stroke="#b39700" stroke-width="4"/>
-                  <ellipse cx="32" cy="26" rx="22" ry="9" fill="#ffd700" stroke="#b39700" stroke-width="4"/>
-                  <text x="32" y="35" font-size="20" text-anchor="middle" fill="#b39700" font-weight="bold">$</text>
-                  <circle cx="32" cy="26" r="8" fill="#fff" opacity="0.15"/>
-                </svg>`,
+// 終極核彈霓虹版 SVG 七連殺
+const cardAssets = {
+  // C01 定期定額 → 金幣聖山
+  'C01':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="32" cy="52" rx="26" ry="10" fill="#ffd700" stroke="#b39700" stroke-width="5"/>
+    <ellipse cx="32" cy="38" rx="26" ry="10" fill="#ffd700" stroke="#b39700" stroke-width="5"/>
+    <ellipse cx="32" cy="24" rx="26" ry="10" fill="#ffd700" stroke="#b39700" stroke-width="5"/>
+    <text x="32" y="38" font-size="28" text-anchor="middle" fill="#b39700" font-weight="900">$</text>
+    <circle cx="32" cy="24" r="12" fill="#fff" opacity="0.3"/>
+  </svg>`,
 
-        'C02': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
-                  <path d="M18 50 L50 12"/>
-                  <path d="M10 56 l8-8 M6 60 l4-4"/>
-                  <path d="M46 16 l10-10"/>
-                  <circle cx="50" cy="12" r="6" fill="currentColor" opacity="0.3"/>
-                </svg>`,
+  // C02 獎金梭哈 → 死亡光劍終極版
+  'C02':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="28" y="42" width="8" height="18" rx="4" fill="#333" stroke="#888" stroke-width="3"/>
+    <rect x="25" y="45" width="14" height="6" rx="3" fill="#111"/>
+    <rect x="25" y="52" width="14" height="6" rx="3" fill="#111"/>
+    <rect x="22" y="6" width="20" height="42" rx="10" fill="#ff3366"/>
+    <rect x="25" y="6" width="14" height="42" rx="7" fill="#ff6699"/>
+    <rect x="28" y="6" width="8" height="42" rx="4" fill="#ffffff" opacity="0.9"/>
+    <circle cx="32" cy="6" r="8" fill="#ffffff"/>
+    <circle cx="32" cy="6" r="5" fill="#ff6699"/>
+    <rect x="20" y="4" width="24" height="46" rx="12" fill="none" stroke="#ff3366" stroke-width="4" opacity="0.7"/>
+    <rect x="18" y="2" width="28" height="50" rx="14" fill="none" stroke="#ff6699" stroke-width="5" opacity="0.5"/>
+  </svg>`,
 
-        'C03': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round">
-                  <path d="M10 28 Q32 10 54 28"/>
-                  <path d="M10 28 c0 20 44 20 44 0"/>
-                  <path d="M32 28 v20 M24 48 h16"/>
-                  <circle cx="20" cy="18" r="3" fill="currentColor"/>
-                  <circle cx="32" cy="14" r="3" fill="currentColor"/>
-                  <circle cx="44" cy="18" r="3" fill="currentColor"/>
-                </svg>`,
+  // C03 股息cover每一天 → 黃金雨傘
+  'C03':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 28 Q32 8 56 28" stroke="#00ff6a" stroke-width="6" fill="none"/>
+    <path d="M8 28 Q32 54 56 28" stroke="#00ff6a" stroke-width="6" fill="none"/>
+    <path d="M32 28 v24 M22 52 h20" stroke="#00ff6a" stroke-width="5"/>
+    <circle cx="18" cy="18" r="4" fill="#00ff6a"/>
+    <circle cx="32" cy="12" r="5" fill="#00ff6a"/>
+    <circle cx="46" cy="18" r="4" fill="#00ff6a"/>
+    <path d="M32 28 L32 12" stroke="#ffffff" stroke-width="3" opacity="0.6"/>
+  </svg>`,
 
-        'C04': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5">
-                  <path d="M32 8 L40 28 L56 32 L40 36 L32 56 L24 36 L8 32 L24 28 Z" fill="none"/>
-                  <text x="32" y="42" font-size="16" text-anchor="middle" fill="currentColor" font-weight="bold">2X</text>
-                  <path d="M32 56 v6 M26 62 h12" stroke="currentColor" stroke-width="4"/>
-                </svg>`,
+  // C04 問就是正2 → 核彈2X火箭
+  'C04':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M32 4 L44 28 L64 32 L44 36 L32 60 L20 36 L0 32 L20 28 Z" fill="#ff9100" opacity="0.9"/>
+    <path d="M32 4 L44 28 L64 32 L44 36 L32 60 L20 36 L0 32 L20 28 Z" stroke="#ff9100" stroke-width="5"/>
+    <text x="32" y="44" font-size="18" text-anchor="middle" fill="#fff" font-weight="900">2X</text>
+    <path d="M32 60 v8 M24 68 h16" stroke="#ff9100" stroke-width="6"/>
+  </svg>`,
 
-        'C05': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4">
-                  <circle cx="32" cy="32" r="20"/>
-                  <ellipse cx="32" cy="32" rx="20" ry="7"/>
-                  <path d="M32 12 v40 M12 32 h40"/>
-                  <circle cx="32" cy="32" r="8" stroke="currentColor" stroke-width="3" fill="none"/>
-                </svg>`,
+  // C05 1檔就是全世界 → 霓虹地球儀
+  'C05':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="32" cy="32" r="24" stroke="#00d2ff" stroke-width="6"/>
+    <circle cx="32" cy="32" r="18" stroke="#00d2ff" stroke-width="4" opacity="0.7"/>
+    <ellipse cx="32" cy="32" rx="24" ry="9" stroke="#00d2ff" stroke-width="3"/>
+    <path d="M32 8 v48 M8 32 h48" stroke="#00d2ff" stroke-width="3"/>
+    <circle cx="32" cy="32" r="10" fill="#00d2ff" opacity="0.2"/>
+  </svg>`,
 
-        'C06': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5">
-                  <path d="M32 10 L50 18 v18 c0 12-18 24-18 24 s-18-12-18-24 v-18 Z"/>
-                  <circle cx="32" cy="28" r="10" fill="currentColor" opacity="0.2"/>
-                  <circle cx="32" cy="28" r="5" fill="currentColor" opacity="0.4"/>
-                  <path d="M32 22 v12 M26 28 h12" stroke="#fff" stroke-width="3"/>
-                </svg>`,
+  // C06 美國就是我爸爸 → 美國隊長五角星盾
+  'C06':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M32 8 L48 16 v20 c0 14-16 28-16 28 s-16-14-16-28 v-20 Z" fill="#00d2ff" opacity="0.9"/>
+    <path d="M32 8 L48 16 v20 c0 14-16 28-16 28 s-16-14-16-28 v-20 Z" stroke="#00d2ff" stroke-width="5"/>
+    <circle cx="32" cy="28" r="12" fill="#ffffff" opacity="0.3"/>
+    <path d="M32 10 L38 28 L56 34 L40 40 L44 58 L32 48 L20 58 L24 40 L8 34 L26 28 Z" fill="#00d2ff" opacity="0.6" transform="translate(0,6) scale(0.5) translate(32,28)"/>
+  </svg>`,
 
-        'C07': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5">
-                  <circle cx="32" cy="32" r="24"/>
-                  <circle cx="32" cy="32" r="14"/>
-                  <circle cx="32" cy="32" r="4" fill="currentColor"/>
-                  <path d="M32 8 v16 M32 40 v16 M8 32 h16 M40 32 h16"/>
-                </svg>`
-    };
+  // C07 可以進場了嗎？→ 狙擊準心終極版
+  'C07':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="32" cy="32" r="28" stroke="#bd00ff" stroke-width="6"/>
+    <circle cx="32" cy="32" r="18" stroke="#bd00ff" stroke-width="5"/>
+    <circle cx="32" cy="32" r="8" fill="#bd00ff"/>
+    <path d="M32 4 v20 M32 40 v20 M4 32 h20 M40 32 h20" stroke="#bd00ff" stroke-width="7"/>
+    <circle cx="32" cy="32" r="32" fill="none" stroke="#bd00ff" stroke-width="3" opacity="0.4"/>
+  </svg>`
+};
 
-    let cardsData = {};
-    let portfolios = [];
+let cardsData = {}, portfolios = [];
 
-    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv';
-    fetch(sheetUrl)
-        .then(r => r.text())
-        .then(text => {
-            parseSheetData(text);
-            renderAll();
-        })
-        .catch(err => {
-            document.getElementById('cardContainer').innerHTML = `<p style="color:red">連線失敗: ${err.message}</p>`;
-        });
+fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv')
+.then(r=>r.text()).then(t=>{parseSheetData(t);renderAll()})
+.catch(e=>document.getElementById('cardContainer').innerHTML=`<p style="color:red">連線失敗</p>`);
 
-    function parseSheetData(tsvText) {
-        const rows = tsvText.split('\n').map(r => r.trim()).filter(r => r);
-        let isStrategySection = false;
-        cardsData = {}; portfolios = [];
-        for (let i = 1; i < rows.length; i++) {
-            const cols = rows[i].split('\t');
-            if (cols[0] === '代號' && cols[1] === '名稱') { isStrategySection = true; continue; }
-            if (!isStrategySection) {
-                const code = cols[0];
-                if (!code?.startsWith('C')) continue;
-                cardsData[code] = {
-                    code, type: cols[1], rpg: cols[2], target: cols[3], skill: cols[4],
-                    cost: parseFloat(cols[5] || 0), current: parseFloat(cols[6] || 0),
-                    strategy: cols[7], sop: cols[8],
-                    svg: cardAssets[code] || cardAssets['C01']
-                };
-            } else {
-                const code = cols[0];
-                if (!code?.startsWith('P')) continue;
-                let group = 'mix';
-                if(['P01','P02','P03','P07'].includes(code)) group = 'tw';
-                else if(['P04','P05','P06'].includes(code)) group = 'us';
-                const deckArr = cols[2] ? cols[2].split('+').map(s => s.trim()) : [];
-                portfolios.push({ code, name: cols[1], deck: deckArr, group, highlight: cols[3] });
-            }
-        }
+function parseSheetData(text){
+  const rows = text.split('\n').map(r=>r.trim()).filter(r=>r);
+  let isStrategy = false;
+  for(let i=1;i<rows.length;i++){
+    const c = rows[i].split('\t');
+    if(c[0]==='代號'&&c[1]==='名稱'){isStrategy=true;continue;}
+    if(!isStrategy && c[0]?.startsWith('C')){
+      cardsData[c[0]] = {code:c[0],type:c[1],target:c[3],skill:c[4],cost:+c[5]||0,current:+c[6]||0,strategy:c[7],sop:c[8],svg:cardAssets[c[0]]||cardAssets.C01};
+    }else if(isStrategy && c[0]?.startsWith('P')){
+      let g='mix'; if(['P01','P02','P03','P07'].includes(c[0]))g='tw'; else if(['P04','P05','P06'].includes(c[0]))g='us';
+      portfolios.push({code:c[0],name:c[1],deck:c[2]?c[2].split('+').map(s=>s.trim()):[],group:g,highlight:c[3]});
     }
+  }
+}
 
-    function calculateStats(cost, current) {
-        if(cost === 0) return { roi: 0, arrow: '-', colorClass: '', roiSign: '' };
-        const roi = ((current - cost) / cost * 100).toFixed(1);
-        let colorClass = '';
-        if (current >= cost * 1.5) colorClass = 'color-gold';
-        else if (current > cost) colorClass = 'color-profit';
-        else if (current <= cost * 0.5) colorClass = 'color-dead';
-        else colorClass = 'color-loss';
-        const arrow = roi >= 0 ? 'Up Arrow' : 'Down Arrow';
-        return { roi, arrow, colorClass, roiSign: roi >= 0 ? '+' : '' };
-    }
+function calc(cost,cur){
+  if(cost===0)return{roi:0,arrow:'',cls:''};
+  const roi = ((cur-cost)/cost*100).toFixed(1);
+  let cls = cur>=cost*1.5?'color-gold':cur>cost?'color-profit':cur<=cost*0.5?'color-dead':'color-loss';
+  return {roi,arrow:roi>=0?'Up Arrow':'Down Arrow',sign:roi>=0?'+':'',cls};
+}
 
-    function renderAll() { renderDashboard(); renderCards(); renderArena(); }
-
-    function renderDashboard() {
-        let totalCost = 0, totalCurrent = 0;
-        Object.values(cardsData).forEach(c => { totalCost += c.cost; totalCurrent += c.current; });
-        const stats = calculateStats(totalCost, totalCurrent);
-        document.getElementById('totalCost').innerText = '$' + totalCost.toLocaleString() + ' 萬';
-        const el = document.getElementById('totalCurrent');
-        el.innerText = '$' + totalCurrent.toLocaleString() + ' 萬';
-        el.className = 'dash-value ' + stats.colorClass;
-        document.getElementById('totalROI').innerHTML = `<span class="${stats.colorClass}">${stats.arrow} ${stats.roiSign}${stats.roi}%</span>`;
-    }
-
-    function renderCards() {
-        const container = document.getElementById('cardContainer');
-        container.innerHTML = '';
-        Object.values(cardsData).forEach(card => {
-            container.innerHTML += `
-                <div class="micro-card ${card.type}" onclick="openModal('${card.code}')">
-                    <div class="mc-header">
-                        <span class="mc-code">${card.code}</span>
-                        <span class="mc-target">${card.target}</span>
-                    </div>
-                    <div class="mc-image-container">${card.svg}</div>
-                    <div class="mc-footer">
-                        <div class="mc-name">${card.skill}</div>
-                        <div class="mc-rpg-name">${card.rpg}</div>
-                        <span class="mc-cost-badge">$${card.cost} 萬</span>
-                    </div>
-                </div>`;
-        });
-    }
-
-    function renderArena() {
-        const container = document.getElementById('arenaContainer');
-        const groups = { tw: [], us: [], mix: [] };
-        portfolios.forEach(p => {
-            let totalCost = 0, totalCurrent = 0;
-            const iconsHtml = p.deck.map(code => {
-                const c = cardsData[code];
-                if (!c) return '';
-                return `<span class="g-mini-icon ${c.type}" title="${c.skill}">${c.svg}</span>`;
-            }).join('');
-            p.deck.forEach(code => {
-                if (cardsData[code]) { totalCost += cardsData[code].cost; totalCurrent += cardsData[code].current; }
-            });
-            const stats = calculateStats(totalCost, totalCurrent);
-            const html = `
-                <div class="g-bar-container">
-                    <div class="g-bar" onclick="toggleDetail(this)">
-                        <div class="g-code">${p.code}</div>
-                        <div class="g-info">
-                            <span class="g-name">${p.name}</span>
-                            <div class="g-deck-icons">${iconsHtml}</div>
-                        </div>
-                        <div class="g-stats">
-                            <span class="g-roi ${stats.colorClass}">${stats.arrow} ${stats.roiSign}${stats.roi}%</span>
-                            <span class="g-val">$${totalCurrent}萬</span>
-                        </div>
-                    </div>
-                    <div class="g-details"><div class="highlight-content">Star 競技亮點：${p.highlight}</div></div>
-                </div>`;
-            groups[p.group].push(html);
-        });
-        container.innerHTML = `
-            <div class="arena-group group-tw"><div class="group-header">Taiwan TAIWAN LEAGUE</div>${groups.tw.join('')}</div>
-            <div class="arena-group group-us"><div class="group-header">USA US LEAGUE</div>${groups.us.join('')}</div>
-            <div class="arena-group group-mix"><div class="group-header">Globe SPECIAL LEAGUE</div>${groups.mix.join('')}</div>`;
-    }
-
-    function toggleDetail(el) { el.classList.toggle('active'); }
-
-    function openModal(key) {
-        const c = cardsData[key];
-        document.getElementById('mCode').innerText = c.code;
-        document.getElementById('mSkill').innerText = c.skill;
-        document.getElementById('mCost').innerText = `$${c.cost} 萬`;
-        document.getElementById('mStrategy').innerText = c.strategy;
-        document.getElementById('mSop').innerText = c.sop;
-        const colorMap = { 'type-tw': '--color-gold', 'type-us': '--color-us', 'type-yield': '--color-yield', 'type-ber': '--color-ber', 'type-trap': '--color-trap' };
-        const colorVar = colorMap[c.type] || '--color-gold';
-        const colorHex = getComputedStyle(document.documentElement).getPropertyValue(colorVar).trim();
-        document.querySelector('.modal-content').style.borderColor = colorHex;
-        document.getElementById('mCost').style.color = colorHex;
-        document.getElementById('cardModal').style.display = 'flex';
-    }
-
-    function closeModal() { document.getElementById('cardModal').style.display = 'none'; }
-    document.addEventListener('keydown', e => { if (e.key === "Escape") closeModal(); });
-</script>
-</body>
-</html>
+function renderAll(){renderDashboard();renderCards();renderArena();}
+function renderDashboard(){
+  let tc=0,ta=0;
+  Object.values(cardsData).forEach(c=>{tc+=c.cost;ta+=c.current});
+  const s=calc(tc,ta);
+  document.getElementById('totalCost').textContent = '$'+tc.toLocaleString()+' 萬';
+  const cur=document.getElementById('totalCurrent'); cur.textContent='$'+ta.toLocaleString()+' 萬'; cur.className='dash-value '+s.cls;
+  document.getElementById('totalROI').innerHTML = `<span class="${s.cls}">${s.arrow} ${s.sign}${s.roi}%</span>`;
+}
+function renderCards(){
+  const con=document.getElementById('cardContainer'); con.innerHTML='';
+  Object.values(cardsData).forEach(c=>{
+    con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')">
+      <div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div>
+      <div class="mc-image-container">${c.svg}</div>
+      <div class="mc-footer"><div class="mc-name">${c.skill}</div><div class="mc-cost-badge">$${c.cost}萬</div></div>
+    </div>`;
+  });
+}
+function renderArena(){
+  const con=document.getElementById('arenaContainer');
+  const g={tw:[],us:[],mix:[]};
+  portfolios.forEach(p=>{
+    let tc=0,ta=0;
+    const icons=p.deck.map(code=>{const c=cardsData[code];return c?`<span class="g-mini-icon ${c.type}">${c.svg}</

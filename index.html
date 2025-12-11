@@ -58,15 +58,6 @@
             max-width: 1000px;
         }
 
-        /* --- Logo Style --- */
-        .site-logo {
-            width: 180px;
-            height: auto;
-            mix-blend-mode: screen; 
-            filter: contrast(1.5) brightness(1.2); 
-            display: block;
-        }
-
         .header-text {
             text-align: left;
             display: flex;
@@ -152,19 +143,31 @@
         .micro-card { background: var(--card-bg); border: 1px solid var(--border-metal); border-radius: 8px; padding: 15px; position: relative; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; text-align: center; min-height: 220px; cursor: pointer; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .micro-card:hover { transform: translateY(-5px) scale(1.02); z-index: 5; background: #1a1a20; }
 
-        /* Types */
-        .type-tw { border-top: 3px solid var(--color-tw); } .type-tw:hover { border-color: var(--color-tw); box-shadow: 0 5px 20px rgba(255, 59, 59, 0.15); } .type-tw .mc-image { stroke: var(--color-tw); filter: drop-shadow(0 0 5px var(--color-tw)); }
-        .type-us { border-top: 3px solid var(--color-us); } .type-us:hover { border-color: var(--color-us); box-shadow: 0 5px 20px rgba(0, 210, 255, 0.15); } .type-us .mc-image { stroke: var(--color-us); filter: drop-shadow(0 0 5px var(--color-us)); }
-        .type-yield { border-top: 3px solid var(--color-yield); } .type-yield:hover { border-color: var(--color-yield); box-shadow: 0 5px 20px rgba(0, 255, 106, 0.15); } .type-yield .mc-image { stroke: var(--color-yield); filter: drop-shadow(0 0 5px var(--color-yield)); }
-        .type-ber { border-top: 3px solid var(--color-ber); } .type-ber:hover { border-color: var(--color-ber); box-shadow: 0 5px 20px rgba(255, 145, 0, 0.15); } .type-ber .mc-image { stroke: var(--color-ber); filter: drop-shadow(0 0 5px var(--color-ber)); }
-        .type-trap { border-top: 3px solid var(--color-trap); } .type-trap:hover { border-color: var(--color-trap); box-shadow: 0 5px 20px rgba(189, 0, 255, 0.15); } .type-trap .mc-image { stroke: var(--color-trap); filter: drop-shadow(0 0 5px var(--color-trap)); }
+        /* Types - Updated Shadows for Sharpness (2px instead of 5px) */
+        .type-tw { border-top: 3px solid var(--color-tw); } .type-tw:hover { border-color: var(--color-tw); box-shadow: 0 5px 20px rgba(255, 59, 59, 0.15); } 
+        .type-tw .mc-image { stroke: var(--color-tw); filter: drop-shadow(0 0 2px var(--color-tw)); }
+
+        .type-us { border-top: 3px solid var(--color-us); } .type-us:hover { border-color: var(--color-us); box-shadow: 0 5px 20px rgba(0, 210, 255, 0.15); } 
+        .type-us .mc-image { stroke: var(--color-us); filter: drop-shadow(0 0 2px var(--color-us)); }
+
+        .type-yield { border-top: 3px solid var(--color-yield); } .type-yield:hover { border-color: var(--color-yield); box-shadow: 0 5px 20px rgba(0, 255, 106, 0.15); } 
+        .type-yield .mc-image { stroke: var(--color-yield); filter: drop-shadow(0 0 2px var(--color-yield)); }
+
+        .type-ber { border-top: 3px solid var(--color-ber); } .type-ber:hover { border-color: var(--color-ber); box-shadow: 0 5px 20px rgba(255, 145, 0, 0.15); } 
+        .type-ber .mc-image { stroke: var(--color-ber); filter: drop-shadow(0 0 2px var(--color-ber)); }
+
+        .type-trap { border-top: 3px solid var(--color-trap); } .type-trap:hover { border-color: var(--color-trap); box-shadow: 0 5px 20px rgba(189, 0, 255, 0.15); } 
+        .type-trap .mc-image { stroke: var(--color-trap); filter: drop-shadow(0 0 2px var(--color-trap)); }
 
         .mc-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         .mc-code { font-size: 0.9rem; font-weight: 900; color: #fff; }
         .mc-target { font-size: 0.8rem; font-family: 'Courier New', monospace; font-weight: bold; color: #aaa; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px;}
         .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; margin: 10px 0; }
-        .mc-image { width: 70px; height: 70px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s ease; }
-        .micro-card:hover .mc-image { transform: scale(1.1); }
+        
+        /* Updated Image Class for Sharpness */
+        .mc-image { width: 70px; height: 70px; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s ease; }
+        .micro-card:hover .mc-image { transform: scale(1.1); stroke-width: 2; filter: drop-shadow(0 0 4px currentColor); }
+        
         .mc-footer { width: 100%; text-align: center; margin-top: auto; }
         .mc-name { font-size: 1rem; color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
         .mc-rpg-name { font-size: 0.8rem; color: #888; font-weight: normal; }
@@ -318,60 +321,60 @@
 </div>
 
 <script>
-// 2025 最新霓虹高解析版（直接取代原本模糊那組）
-const neonIcons = {
-  'TW DCA': `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M32 12 A12 12 0 1 1 32 36 A12 12 0 1 1 32 12" stroke="#FF3366" stroke-width="4"/>
-    <path d="M20 32h24M32 20v24" stroke="#FF3366" stroke-width="4"/>
-    <circle cx="32" cy="32" r="8" fill="#FF3366" opacity="0.2"/>
-    <circle cx="32" cy="32" r="4" fill="#FF3366"/>
-    <text x="32" y="58" font-size="9" text-anchor="middle" fill="#FF3366" font-weight="bold">TW</text>
-  </svg>`,
+    // 0. 定義 SVG 圖示資源庫 (已整合 2025 霓虹圖示並修正對應鍵值)
+    // 鍵值已從 'TW DCA' 等對應回 'C01' - 'C07'，以便 Google Sheet 資料抓取
+    const cardAssets = {
+        // TW DCA -> C01 (紅色系)
+        'C01': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 12 A12 12 0 1 1 32 36 A12 12 0 1 1 32 12" stroke="#FF3366" stroke-width="4"/>
+            <path d="M20 32h24M32 20v24" stroke="#FF3366" stroke-width="4"/>
+            <circle cx="32" cy="32" r="8" fill="#FF3366" opacity="0.2"/>
+            <circle cx="32" cy="32" r="4" fill="#FF3366"/>
+        </svg>`,
 
-  'TW LSI': `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M28 14 L36 14 L36 50 L28 50 Z" fill="#FF3366"/>
-    <path d="M24 18 L40 18 L40 46 L24 46 Z" stroke="#FF3366" stroke-width="4"/>
-    <path d="M20 22 L44 22 L44 42 L20 42 Z" stroke="#FF3366" stroke-width="3" fill="none"/>
-    <text x="32" y="58" font-size="9" text-anchor="middle" fill="#FF3366" font-weight="bold">LSI</text>
-  </svg>`,
+        // TW LSI -> C02 (紅色系)
+        'C02': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 14 L36 14 L36 50 L28 50 Z" fill="#FF3366"/>
+            <path d="M24 18 L40 18 L40 46 L24 46 Z" stroke="#FF3366" stroke-width="4"/>
+            <path d="M20 22 L44 22 L44 42 L20 42 Z" stroke="#FF3366" stroke-width="3" fill="none"/>
+        </svg>`,
 
-  'YIELD': `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M32 10 L42 28 L24 28 Z" fill="#00FF99"/>
-    <path d="M32 10 L42 28 L24 28 Z" stroke="#00FF99" stroke-width="4"/>
-    <circle cx="32" cy="36" r="6" fill="#00FF99" opacity="0.3"/>
-    <path d="M32 42v10M26 52h12" stroke="#00FF99" stroke-width="3"/>
-    <text x="32" y="58" font-size="9" text-anchor="middle" fill="#00FF99" font-weight="bold">YIELD</text>
-  </svg>`,
+        // YIELD -> C03 (綠色系)
+        'C03': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 10 L42 28 L24 28 Z" fill="#00FF99"/>
+            <path d="M32 10 L42 28 L24 28 Z" stroke="#00FF99" stroke-width="4"/>
+            <circle cx="32" cy="36" r="6" fill="#00FF99" opacity="0.3"/>
+            <path d="M32 42v10M26 52h12" stroke="#00FF99" stroke-width="3"/>
+        </svg>`,
 
-  'SEALED': `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M32 8 L40 24 L56 24 L44 36 L48 52 L32 44 L16 52 L20 36 L8 24 L24 24 Z" fill="#FFB800" opacity="0.9"/>
-    <path d="M32 8 L40 24 L56 24 L44 36 L48 52 L32 44 L16 52 L20 36 L8 24 L24 24 Z" stroke="#FFB800" stroke-width="4"/>
-    <text x="32" y="58" font-size="9" text-anchor="middle" fill="#FFB800" font-weight="bold">SEALED</text>
-  </svg>`,
+        // SEALED -> C04 (橙/黃色系，對應 Iron Shield / Sealed)
+        'C04': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 8 L40 24 L56 24 L44 36 L48 52 L32 44 L16 52 L20 36 L8 24 L24 24 Z" fill="#FFB800" opacity="0.9"/>
+            <path d="M32 8 L40 24 L56 24 L44 36 L48 52 L32 44 L16 52 L20 36 L8 24 L24 24 Z" stroke="#FFB800" stroke-width="4"/>
+        </svg>`,
 
-  'US LSI': `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="32" cy="32" r="18" stroke="#00CCFF" stroke-width="5"/>
-    <circle cx="32" cy="32" r="12" stroke="#00CCFF" stroke-width="3"/>
-    <circle cx="32" cy="32" r="6" fill="#00CCFF" opacity="0.3"/>
-    <text x="32" y="40" font-size="8" text-anchor="middle" fill="#00CCFF" font-weight="bold">US</text>
-    <text x="32" y="58" font-size="9" text-anchor="middle" fill="#00CCFF" font-weight="bold">LSI</text>
-  </svg>`,
+        // US LSI -> C05 (藍色系)
+        'C05': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="32" cy="32" r="18" stroke="#00CCFF" stroke-width="5"/>
+            <circle cx="32" cy="32" r="12" stroke="#00CCFF" stroke-width="3"/>
+            <circle cx="32" cy="32" r="6" fill="#00CCFF" opacity="0.3"/>
+        </svg>`,
 
-  'US DCA': `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M32 14 L20 28 L44 28 Z" stroke="#9966FF" stroke-width="4"/>
-    <path d="M32 14 L20 28 L44 28 Z" fill="#9966FF" opacity="0.2"/>
-    <circle cx="32" cy="38" r="8" stroke="#9966FF" stroke-width="3"/>
-    <path d="M32 46v8M26 54h12" stroke="#9966FF" stroke-width="3"/>
-    <text x="32" y="10" font-size="9" text-anchor="middle" fill="#9966FF" font-weight="bold">US</text>
-  </svg>`,
+        // US DCA -> C06 (藍/紫色系)
+        'C06': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 14 L20 28 L44 28 Z" stroke="#9966FF" stroke-width="4"/>
+            <path d="M32 14 L20 28 L44 28 Z" fill="#9966FF" opacity="0.2"/>
+            <circle cx="32" cy="38" r="8" stroke="#9966FF" stroke-width="3"/>
+            <path d="M32 46v8M26 54h12" stroke="#9966FF" stroke-width="3"/>
+        </svg>`,
 
-  'AMBUSH': `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M28 14 L36 28 L28 42" stroke="#CC33FF" stroke-width="6"/>
-    <path d="M36 14 L28 28 L36 42" stroke="#CC33FF" stroke-width="6"/>
-    <circle cx="32" cy="28" r="5" fill="#CC33FF" opacity="0.3"/>
-    <text x="32" y="58" font-size="9" text-anchor="middle" fill="#CC33FF" font-weight="bold">AMBUSH</text>
-  </svg>`
-};
+        // AMBUSH -> C07 (紫色系)
+        'C07': `<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28 14 L36 28 L28 42" stroke="#CC33FF" stroke-width="6"/>
+            <path d="M36 14 L28 28 L36 42" stroke="#CC33FF" stroke-width="6"/>
+            <circle cx="32" cy="28" r="5" fill="#CC33FF" opacity="0.3"/>
+        </svg>`
+    };
 
     // 1. 初始化空變數，準備接收 Google Sheet 資料
     let cardsData = {}; 
@@ -424,21 +427,17 @@ const neonIcons = {
                     current: parseFloat(cols[6] || 0),
                     strategy: cols[7],
                     sop: cols[8],
-                    svg: cardAssets[code] || cardAssets['C01'] // 預設圖示
+                    svg: cardAssets[code] || cardAssets['C01'] // 使用新的霓虹 SVG
                 };
             } else {
                 // 解析下半部 (Strategies P01~P11)
-                // 假設欄位順序: A(Code), B(Name), C(Deck), D(Highlight)
                 const code = cols[0];
                 if (!code || !code.startsWith('P')) continue;
 
-                // 判斷群組：Tw (P01-P03, P07), US (P04-P06), Mix (P08-P11)
-                // 這裡寫個簡單邏輯，或直接從 Sheet 讀取如果有的話。這邊暫時用代號判斷
                 let group = 'mix';
                 if(['P01','P02','P03','P07'].includes(code)) group = 'tw';
                 else if(['P04','P05','P06'].includes(code)) group = 'us';
 
-                // 處理 Deck 格式 "C01 + C02" -> ['C01', 'C02']
                 const deckArr = cols[2] ? cols[2].split('+').map(s => s.trim()) : [];
 
                 portfolios.push({
@@ -452,7 +451,7 @@ const neonIcons = {
         }
     }
 
-    // --- 以下為渲染邏輯 (與原本程式碼相同，但現在使用動態資料) ---
+    // --- 以下為渲染邏輯 ---
 
     // Helper: Calculate Stats
     function calculateStats(cost, current) {
@@ -586,7 +585,6 @@ const neonIcons = {
         document.querySelector('.modal-content').style.borderColor = colorHex;
         document.getElementById('mCost').style.color = colorHex;
         document.getElementById('cardModal').style.display = 'flex';
-        // Add animation class
         document.getElementById('cardModal').classList.add('modal-active');
     }
 
@@ -597,6 +595,3 @@ const neonIcons = {
 
 </body>
 </html>
-
-
-

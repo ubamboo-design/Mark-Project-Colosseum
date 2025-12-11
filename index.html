@@ -11,72 +11,97 @@
 --green:#00ff6a;--red:#ff2a2a;--purple:#a600ff;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif;line-height:1.4;overflow-x:hidden;padding-bottom:30px}
-header{padding:25px;background:#08080a;border-bottom:1px solid #333;text-align:center}
-h1{font-size:2.4rem;letter-spacing:4px;text-transform:uppercase;color:#fff;text-shadow:0 0 30px #ffd700;font-weight:900}
-.meta-info{font-family:'Courier New';color:#aaa;margin-top:8px;font-size:0.9rem}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif;line-height:1.3;overflow-x:hidden;padding-bottom:20px} /* 緊湊行高 */
+header{padding:20px;background:#08080a;border-bottom:1px solid #333;text-align:center}
+h1{font-size:2.2rem;letter-spacing:4px;text-transform:uppercase;color:#fff;text-shadow:0 0 30px #ffd700;font-weight:900;margin:0}
+.meta-info{font-family:'Courier New';color:#aaa;margin-top:5px;font-size:0.85rem}
 .container{max-width:1600px;margin:0 auto;padding:0 20px}
-.dashboard-panel{background:linear-gradient(180deg,#1a1a20,#0f0f12);border:1px solid #444;border-radius:12px;padding:20px;margin-bottom:30px;box-shadow:0 0 30px rgba(0,0,0,0.6);position:relative;overflow:hidden}
-.dashboard-panel::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--tw),var(--gold),var(--us))}
-.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;text-align:center}
-.dash-value{font-family:'Courier New';font-size:2.2rem;font-weight:900;color:#fff}
-.dash-roi{font-size:2rem;font-weight:900}
+
+/* DASHBOARD */
+.dashboard-panel{background:linear-gradient(180deg,#1a1a20,#0f0f12);border:1px solid #444;border-radius:12px;padding:15px;margin-bottom:25px;box-shadow:0 0 30px rgba(0,0,0,0.6);position:relative;overflow:hidden}
+.dashboard-panel::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--tw),var(--gold),var(--us))}
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:center}
+.dash-label{font-size:0.8rem;color:#666;text-transform:uppercase;margin-bottom:2px;font-weight:bold}
+.dash-value{font-family:'Courier New';font-size:2rem;font-weight:900;color:#fff}
+.dash-roi{font-size:1.8rem;font-weight:900}
+
+/* COLORS & ANIMATION */
 .color-profit{color:var(--green)!important;text-shadow:0 0 15px #00ff6a88}
 .color-loss{color:var(--red)!important;text-shadow:0 0 15px #ff2a2a88}
 .color-gold{color:var(--gold)!important;text-shadow:0 0 20px #ffd700aa}
 .color-dead{color:var(--purple)!important;text-shadow:0 0 20px #bd00ffaa;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
 @media(max-width:768px){.dash-grid{grid-template-columns:1fr}}
-.section-title{font-size:1.2rem;border-left:4px solid var(--gold);padding-left:12px;margin:35px 0 15px;text-transform:uppercase;font-weight:900;color:#fff;display:flex;align-items:center}
+
+/* SECTIONS */
+.section-title{font-size:1.1rem;border-left:3px solid var(--gold);padding-left:10px;margin:30px 0 15px;text-transform:uppercase;font-weight:900;color:#fff;display:flex;align-items:center}
 .section-title::after{content:'';flex-grow:1;height:1px;background:#444;margin-left:15px}
+
+/* DECK */
 .deck-wrapper{overflow-x:auto;padding-bottom:10px}
-.deck-grid{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:12px;min-width:1100px}
-.micro-card{background:var(--card);border:1px solid #333;border-radius:12px;padding:14px;transition:all .3s;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.5);display:flex;flex-direction:column;height:100%}
-.micro-card:hover{transform:translateY(-8px) scale(1.03);box-shadow:0 15px 40px rgba(0,0,0,0.7);z-index:10}
-.type-tw{border-top:4px solid var(--gold)}
-.type-us{border-top:4px solid var(--us)}
-.type-yield{border-top:4px solid var(--yield)}
-.type-ber{border-top:4px solid var(--ber)}
-.type-trap{border-top:4px solid var(--trap)}
-.mc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.1)}
-.mc-code{font-size:0.9rem;font-weight:900;color:#fff}
-.mc-target{font-size:0.7rem;background:rgba(0,0,0,0.5);padding:2px 6px;border-radius:4px;color:#ccc}
-.mc-image-container{flex-grow:1;display:flex;align-items:center;justify-content:center;margin:10px 0}
-.mc-image{width:72px;height:72px;transition:all .4s}
-.micro-card:hover .mc-image{transform:scale(1.3) rotate(6deg);filter:drop-shadow(0 0 25px currentColor)}
-.mc-name{font-size:0.95rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:3px}
-.mc-cost-badge{margin-top:8px;padding:4px 10px;border:1px solid #555;border-radius:12px;font-size:0.8rem;background:rgba(0,0,0,0.4)}
-.arena-container{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:20px}
+.deck-grid{display:grid;grid-template-columns:repeat(7,minmax(140px,1fr));gap:10px;min-width:1000px}
+.micro-card{background:var(--card);border:1px solid #333;border-radius:10px;padding:12px;transition:all .3s;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.5);display:flex;flex-direction:column;min-height:190px}
+.micro-card:hover{transform:translateY(-5px) scale(1.02);box-shadow:0 15px 30px rgba(0,0,0,0.7);z-index:10;background:#1a1a20}
+
+/* TYPE BORDERS */
+.type-tw{border-top:3px solid var(--gold)} /* C01 改金幣色 */
+.type-us{border-top:3px solid var(--us)}
+.type-yield{border-top:3px solid var(--yield)}
+.type-ber{border-top:3px solid var(--ber)}
+.type-trap{border-top:3px solid var(--trap)}
+
+.mc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.mc-code{font-size:0.85rem;font-weight:900;color:#fff}
+.mc-target{font-size:0.7rem;background:rgba(0,0,0,0.5);padding:1px 5px;border-radius:4px;color:#ccc}
+.mc-image-container{flex-grow:1;display:flex;align-items:center;justify-content:center;margin:8px 0}
+.mc-image{width:60px;height:60px;transition:all .4s}
+.micro-card:hover .mc-image{transform:scale(1.2);filter:drop-shadow(0 0 15px currentColor)}
+.mc-name{font-size:0.9rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#fff;margin-bottom:2px}
+.mc-cost-badge{margin-top:5px;padding:2px 8px;border:1px solid #555;border-radius:10px;font-size:0.75rem;background:rgba(0,0,0,0.4)}
+
+/* ARENA */
+.arena-container{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px}
 @media(max-width:1000px){.arena-container{grid-template-columns:1fr}}
-.arena-group{background:rgba(255,255,255,0.02);border:1px solid #222;border-radius:10px;padding:12px}
-.group-header{text-align:center;padding-bottom:8px;border-bottom:1px solid #444;font-weight:900;font-size:0.95rem;color:#fff}
-.g-bar{display:flex;align-items:center;background:var(--bar);padding:16px 14px;border-radius:8px;border-left:4px solid #555;cursor:pointer;transition:.3s;position:relative}
-.g-bar:hover{background:#25252e;transform:translateX(4px)}
-.g-bar::after{content:'Down Arrow';position:absolute;right:12px;color:#666;font-size:0.7rem;transition:.3s}
+.arena-group{background:rgba(255,255,255,0.02);border:1px solid #222;border-radius:8px;padding:10px}
+.group-header{text-align:center;padding-bottom:6px;border-bottom:1px solid #444;font-weight:900;font-size:0.9rem;color:#fff}
+
+.g-bar{display:flex;align-items:center;background:var(--bar);padding:14px 12px;border-radius:6px;border-left:4px solid #555;cursor:pointer;transition:.2s;position:relative}
+.g-bar:hover{background:#25252e;transform:translateX(3px)}
+/* 修復箭頭顯示 bug */
+.g-bar::after{content:'▼';position:absolute;right:12px;color:#666;font-size:0.7rem;transition:.3s}
 .g-bar.active::after{transform:rotate(180deg);color:var(--gold)}
+
 .group-tw .g-bar{border-left-color:var(--gold)}
 .group-us .g-bar{border-left-color:var(--us)}
 .group-mix .g-bar{border-left-color:var(--trap)}
-.g-code{font-family:'Courier New';font-weight:900;color:#fff;width:42px}
-.g-info{flex-grow:1;display:flex;align-items:center;gap:14px}
-.g-name{font-size:1.15rem;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:1px}
-.g-deck-icons{display:flex;gap:7px}
-.g-mini-icon{width:40px;height:40px;transition:.2s}
-.g-mini-icon:hover{transform:scale(1.3)}
+
+.g-code{font-family:'Courier New';font-weight:900;color:#fff;width:40px;font-size:0.9rem}
+.g-info{flex-grow:1;display:flex;align-items:center;gap:12px} /* 橫向排列 */
+.g-name{font-size:1.1rem;font-weight:900;color:#fff;text-transform:uppercase;white-space:nowrap} /* 放大文字 */
+.g-deck-icons{display:flex;gap:5px}
+.g-mini-icon{width:36px;height:36px;transition:.2s;display:inline-block} /* 放大圖示 */
+.g-mini-icon:hover{transform:scale(1.2)}
 .g-mini-icon svg{width:100%!important;height:100%!important;stroke:currentColor!important}
-.g-stats{text-align:right;min-width:90px}
-.g-roi{font-family:'Courier New';font-weight:900;font-size:0.9rem}
-.g-val{font-size:0.75rem;color:#666}
-.g-details{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(0,1,0,1);background:rgba(0,0,0,0.3);border-radius:0 0 8px 8px}
-.g-bar.active + .g-details{max-height:120px;border:1px solid #333;border-top:none}
-.highlight-content{padding:12px;background:rgba(255,215,0,0.07);border-left:3px solid var(--gold);margin:8px;font-size:0.85rem;color:#ddd}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:9999}
-.modal-content{background:#1a1a20;border:3px solid #444;border-radius:16px;padding:25px;max-width:460px;width:90%;box-shadow:0 0 60px rgba(0,0,0,0.9)}
-.modal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #444;padding-bottom:12px;margin-bottom:15px}
-.m-code{font-size:2rem;font-weight:900;color:#fff}
-.close-btn{font-size:2rem;cursor:pointer;color:#888}
+
+.g-stats{text-align:right;min-width:85px}
+.g-roi{font-family:'Courier New';font-weight:900;font-size:0.85rem}
+.g-val{font-size:0.7rem;color:#666}
+.g-details{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(0,1,0,1);background:rgba(0,0,0,0.3);border-radius:0 0 6px 6px}
+.g-bar.active + .g-details{max-height:100px;border:1px solid #333;border-top:none}
+.highlight-content{padding:10px;background:rgba(255,215,0,0.07);border-left:3px solid var(--gold);margin:6px;font-size:0.85rem;color:#ddd}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.95);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:9999}
+.modal-content{background:#1a1a20;border:2px solid #444;border-radius:12px;padding:25px;max-width:450px;width:90%;box-shadow:0 0 50px rgba(0,0,0,0.9)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #444;padding-bottom:10px;margin-bottom:15px}
+.m-code{font-size:1.8rem;font-weight:900;color:#fff}
+.m-skill{font-size:1.1rem;color:#aaa;font-weight:bold;margin-left:15px} /* 新增 Skill 樣式 */
+.close-btn{font-size:1.8rem;cursor:pointer;color:#888;line-height:1}
 .close-btn:hover{color:#fff}
-.m-value.highlight{font-size:1.5rem;font-weight:900;color:var(--gold);font-family:'Courier New'}
+.m-row{margin-bottom:12px}
+.m-label{display:block;font-size:0.7rem;color:#555;text-transform:uppercase;margin-bottom:3px;font-weight:bold;letter-spacing:1px}
+.m-value{font-size:0.95rem;color:#ccc;line-height:1.4}
+.m-value.highlight{font-size:1.4rem;font-weight:900;color:var(--gold);font-family:'Courier New'}
 </style>
 </head>
 <body>
@@ -102,93 +127,86 @@ h1{font-size:2.4rem;letter-spacing:4px;text-transform:uppercase;color:#fff;text-
 </div>
 
 <div id="cardModal" class="modal-overlay" onclick="closeModal()">
-  <div class="modal-content" onclick="e=>e.stopPropagation()">
-    <div class="modal-header"><div><div class="m-code" id="mCode"></div></div><span class="close-btn" onclick="closeModal()">X</span></div>
-    <div><span class="m-label">初始資金</span><div class="m-value highlight" id="mCost"></div></div>
-    <div><span class="m-label">戰略定位</span><div class="m-value" id="mStrategy"></div></div>
-    <div><span class="m-label">執行 SOP</span><div class="m-value" id="mSop" style="padding:10px;background:rgba(0,0,0,0.3);border-left:3px solid #666;border-radius:6px"></div></div>
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div style="display:flex;align-items:baseline">
+        <div class="m-code" id="mCode"></div>
+        <div class="m-skill" id="mSkill"></div> </div>
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+    </div>
+    <div class="m-row"><span class="m-label">初始資金</span><div class="m-value highlight" id="mCost"></div></div>
+    <div class="m-row"><span class="m-label">戰略定位</span><div class="m-value" id="mStrategy"></div></div>
+    <div class="m-row"><span class="m-label">執行 SOP</span><div class="m-value" id="mSop" style="padding:10px;background:rgba(0,0,0,0.3);border-left:3px solid #666;border-radius:6px"></div></div>
   </div>
 </div>
 
 <script>
-// 2025 終極七連殺 SVG（C04 已換成交叉雙斧核彈版）
+// 2025 終極 SVG 資源庫
 const cardAssets = {
+  // C01: 定期定額 -> 金幣堆疊
   'C01':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="32" cy="52" rx="26" ry="10" fill="#ffd700" stroke="#b39700" stroke-width="5"/>
-    <ellipse cx="32" cy="38" rx="26" ry="10" fill="#ffd700" stroke="#b39700" stroke-width="5"/>
-    <ellipse cx="32" cy="24" rx="26" ry="10" fill="#ffd700" stroke="#b39700" stroke-width="5"/>
-    <text x="32" y="38" font-size="28" text-anchor="middle" fill="#b39700" font-weight="900">$</text>
-    <circle cx="32" cy="24" r="12" fill="#fff" opacity="0.3"/>
+    <ellipse cx="32" cy="50" rx="22" ry="9" fill="#ffd700" stroke="#b39700" stroke-width="3"/>
+    <path d="M10 50v-8c0 5 10 9 22 9s22-4 22-9v8c0 5-10 9-22 9s-22-4-22-9z" fill="#ffd700" stroke="#b39700" stroke-width="3"/>
+    <ellipse cx="32" cy="38" rx="22" ry="9" fill="#ffd700" stroke="#b39700" stroke-width="3"/>
+    <path d="M10 38v-8c0 5 10 9 22 9s22-4 22-9v8c0 5-10 9-22 9s-22-4-22-9z" fill="#ffd700" stroke="#b39700" stroke-width="3"/>
+    <ellipse cx="32" cy="26" rx="22" ry="9" fill="#ffd700" stroke="#b39700" stroke-width="3"/>
+    <text x="32" y="30" font-size="20" text-anchor="middle" fill="#b39700" font-weight="900">$</text>
   </svg>`,
 
+  // C02: 梭哈 -> 寶劍/攻擊
   'C02':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="28" y="42" width="8" height="18" rx="4" fill="#333" stroke="#888" stroke-width="3"/>
-    <rect x="25" y="45" width="14" height="6" rx="3" fill="#111"/>
-    <rect x="25" y="52" width="14" height="6" rx="3" fill="#111"/>
-    <rect x="22" y="6" width="20" height="42" rx="10" fill="#ff3366"/>
-    <rect x="25" y="6" width="14" height="42" rx="7" fill="#ff6699"/>
-    <rect x="28" y="6" width="8" height="42" rx="4" fill="#ffffff" opacity="0.9"/>
-    <circle cx="32" cy="6" r="8" fill="#ffffff"/>
-    <circle cx="32" cy="6" r="5" fill="#ff6699"/>
-    <rect x="20" y="4" width="24" height="46" rx="12" fill="none" stroke="#ff3366" stroke-width="4" opacity="0.7"/>
-    <rect x="18" y="2" width="28" height="50" rx="14" fill="none" stroke="#ff6699" stroke-width="5" opacity="0.5"/>
+    <path d="M14 50L46 18M10 54l8-8M6 58l4-4" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+    <path d="M42 22l4-4 8 8-4 4-8-8z" fill="currentColor" opacity="0.4"/>
+    <path d="M46 18l12-12" stroke="currentColor" stroke-width="2"/>
   </svg>`,
 
+  // C03: 股息 -> 成長/現金流
   'C03':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8 28 Q32 8 56 28" stroke="#00ff6a" stroke-width="6" fill="none"/>
-    <path d="M8 28 Q32 54 56 28" stroke="#00ff6a" stroke-width="6" fill="none"/>
-    <path d="M32 28 v24 M22 52 h20" stroke="#00ff6a" stroke-width="5"/>
-    <circle cx="18" cy="18" r="4" fill="#00ff6a"/>
-    <circle cx="32" cy="12" r="5" fill="#00ff6a"/>
-    <circle cx="46" cy="18" r="4" fill="#00ff6a"/>
-    <path d="M32 28 L32 12" stroke="#ffffff" stroke-width="3" opacity="0.6"/>
+    <path d="M32 10 L42 28 L24 28 Z" fill="currentColor" opacity="0.3"/>
+    <path d="M32 10 L42 28 L24 28 Z" stroke="currentColor" stroke-width="4"/>
+    <path d="M32 42v10M26 52h12" stroke="currentColor" stroke-width="3"/>
   </svg>`,
 
-  // C04 問就是正2 → 交叉雙斧 SEALED 終極版
+  // C04: 正2 -> 交叉雙斧 (核彈版)
   'C04':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- 左斧 -->
-    <path d="M18 12 L26 20 L22 38 L14 46 L18 52 L26 44 L30 46 L22 54 L14 46 Z" fill="#ff9100" stroke="#ffb800" stroke-width="4"/>
-    <rect x="24" y="8" width="8" height="28" rx="4" fill="#333" stroke="#666" stroke-width="3"/>
-    <!-- 右斧 -->
-    <path d="M46 12 L38 20 L42 38 L50 46 L46 52 L38 44 L34 46 L42 54 L50 46 Z" fill="#ff9100" stroke="#ffb800" stroke-width="4"/>
-    <rect x="32" y="8" width="8" height="28" rx="4" fill="#333" stroke="#666" stroke-width="3"/>
-    <!-- 交叉核心核爆光 -->
-    <circle cx="32" cy="28" r="11" fill="#ffb800" opacity="0.8"/>
-    <circle cx="32" cy="28" r="7" fill="#ffffff"/>
-    <circle cx="32" cy="28" r="15" fill="none" stroke="#ff9100" stroke-width="4" opacity="0.8"/>
-    <circle cx="32" cy="28" r="20" fill="none" stroke="#ffb800" stroke-width="3" opacity="0.5"/>
-    <text x="32" y="58" font-size="15" text-anchor="middle" fill="#ffb800" font-weight="900">2X</text>
+    <path d="M18 12 L26 20 L22 38 L14 46 L18 52 L26 44 L30 46 L22 54 L14 46 Z" fill="#ff9100" stroke="#ffb800" stroke-width="3"/>
+    <rect x="24" y="8" width="6" height="28" rx="3" fill="#333" stroke="#666" stroke-width="2"/>
+    <path d="M46 12 L38 20 L42 38 L50 46 L46 52 L38 44 L34 46 L42 54 L50 46 Z" fill="#ff9100" stroke="#ffb800" stroke-width="3"/>
+    <rect x="34" y="8" width="6" height="28" rx="3" fill="#333" stroke="#666" stroke-width="2"/>
+    <circle cx="32" cy="28" r="8" fill="#fff" opacity="0.9"/>
+    <circle cx="32" cy="28" r="14" stroke="#ff9100" stroke-width="3" opacity="0.6"/>
   </svg>`,
 
+  // C05: 全球 -> 地球儀
   'C05':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="32" cy="32" r="24" stroke="#00d2ff" stroke-width="6"/>
-    <circle cx="32" cy="32" r="18" stroke="#00d2ff" stroke-width="4" opacity="0.7"/>
-    <ellipse cx="32" cy="32" rx="24" ry="9" stroke="#00d2ff" stroke-width="3"/>
-    <path d="M32 8 v48 M8 32 h48" stroke="#00d2ff" stroke-width="3"/>
-    <circle cx="32" cy="32" r="10" fill="#00d2ff" opacity="0.2"/>
+    <circle cx="32" cy="32" r="24" stroke="currentColor" stroke-width="4"/>
+    <ellipse cx="32" cy="32" rx="24" ry="10" stroke="currentColor" stroke-width="2"/>
+    <line x1="32" y1="8" x2="32" y2="56" stroke="currentColor" stroke-width="2"/>
   </svg>`,
 
+  // C06: 美國 -> 盾牌
   'C06':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M32 8 L48 16 v20 c0 14-16 28-16 28 s-16-14-16-28 v-20 Z" fill="#00d2ff" opacity="0.9"/>
-    <path d="M32 8 L48 16 v20 c0 14-16 28-16 28 s-16-14-16-28 v-20 Z" stroke="#00d2ff" stroke-width="5"/>
-    <circle cx="32" cy="28" r="12" fill="#ffffff" opacity="0.3"/>
-    <path d="M32 10 L38 28 L56 34 L40 40 L44 58 L32 48 L20 58 L24 40 L8 34 L26 28 Z" fill="#00d2ff" opacity="0.6" transform="translate(0,6) scale(0.5) translate(32,28)"/>
+    <path d="M32 8l18 6v14c0 12-18 24-18 24S14 40 14 28V14l18-6z" stroke="currentColor" stroke-width="4" fill="none"/>
+    <circle cx="32" cy="26" r="8" fill="currentColor" opacity="0.3"/>
   </svg>`,
 
+  // C07: 埋伏 -> 準心
   'C07':`<svg class="mc-image" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="32" cy="32" r="28" stroke="#bd00ff" stroke-width="6"/>
-    <circle cx="32" cy="32" r="18" stroke="#bd00ff" stroke-width="5"/>
-    <circle cx="32" cy="32" r="8" fill="#bd00ff"/>
-    <path d="M32 4 v20 M32 40 v20 M4 32 h20 M40 32 h20" stroke="#bd00ff" stroke-width="7"/>
-    <circle cx="32" cy="32" r="32" fill="none" stroke="#bd00ff" stroke-width="3" opacity="0.4"/>
+    <circle cx="32" cy="32" r="22" stroke="currentColor" stroke-width="4"/>
+    <line x1="32" y1="6" x2="32" y2="20" stroke="currentColor" stroke-width="4"/>
+    <line x1="32" y1="44" x2="32" y2="58" stroke="currentColor" stroke-width="4"/>
+    <line x1="6" y1="32" x2="20" y2="32" stroke="currentColor" stroke-width="4"/>
+    <line x1="44" y1="32" x2="58" y2="32" stroke="currentColor" stroke-width="4"/>
+    <circle cx="32" cy="32" r="4" fill="currentColor"/>
   </svg>`
 };
 
 let cardsData = {}, portfolios = [];
 
+// 連線到 Google Sheet
 fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv')
 .then(r=>r.text()).then(t=>{parseSheetData(t);renderAll()})
-.catch(e=>document.getElementById('cardContainer').innerHTML=`<p style="color:red">連線失敗</p>`);
+.catch(e=>document.getElementById('cardContainer').innerHTML=`<p style="color:red">連線失敗，請檢查網路</p>`);
 
 function parseSheetData(text){
   const rows = text.split('\n').map(r=>r.trim()).filter(r=>r);
@@ -196,6 +214,7 @@ function parseSheetData(text){
   for(let i=1;i<rows.length;i++){
     const c = rows[i].split('\t');
     if(c[0]==='代號'&&c[1]==='名稱'){isStrategy=true;continue;}
+    
     if(!isStrategy && c[0]?.startsWith('C')){
       cardsData[c[0]] = {code:c[0],type:c[1],target:c[3],skill:c[4],cost:+c[5]||0,current:+c[6]||0,strategy:c[7],sop:c[8],svg:cardAssets[c[0]]||cardAssets.C01};
     }else if(isStrategy && c[0]?.startsWith('P')){
@@ -205,14 +224,17 @@ function parseSheetData(text){
   }
 }
 
+// 計算 ROI 與 狀態
 function calc(cost,cur){
-  if(cost===0)return{roi:0,arrow:'',cls:''};
+  if(cost===0)return{roi:0,arrow:'-',cls:''};
   const roi = ((cur-cost)/cost*100).toFixed(1);
   let cls = cur>=cost*1.5?'color-gold':cur>cost?'color-profit':cur<=cost*0.5?'color-dead':'color-loss';
-  return {roi,arrow:roi>=0?'Up Arrow':'Down Arrow',sign:roi>=0?'+':'',cls};
+  // 修復箭頭顯示
+  return {roi,arrow:roi>=0?'▲':'▼',sign:roi>=0?'+':'',cls};
 }
 
 function renderAll(){renderDashboard();renderCards();renderArena();}
+
 function renderDashboard(){
   let tc=0,ta=0;
   Object.values(cardsData).forEach(c=>{tc+=c.cost;ta+=c.current});
@@ -221,6 +243,7 @@ function renderDashboard(){
   const cur=document.getElementById('totalCurrent'); cur.textContent='$'+ta.toLocaleString()+' 萬'; cur.className='dash-value '+s.cls;
   document.getElementById('totalROI').innerHTML = `<span class="${s.cls}">${s.arrow} ${s.sign}${s.roi}%</span>`;
 }
+
 function renderCards(){
   const con=document.getElementById('cardContainer'); con.innerHTML='';
   Object.values(cardsData).forEach(c=>{
@@ -231,39 +254,63 @@ function renderCards(){
     </div>`;
   });
 }
+
 function renderArena(){
   const con=document.getElementById('arenaContainer');
   const g={tw:[],us:[],mix:[]};
+  
   portfolios.forEach(p=>{
     let tc=0,ta=0;
-    const icons=p.deck.map(code=>{const c=cardsData[code];return c?`<span class="g-mini-icon ${c.type}">${c.svg}</span>`:''}).join('');
+    // 產生小圖示 (套用顏色與SVG)
+    const icons=p.deck.map(code=>{
+      const c=cardsData[code];
+      // 確保顏色正確繼承
+      let typeClass = c ? c.type : '';
+      return c ? `<span class="g-mini-icon ${typeClass}">${c.svg}</span>` : '';
+    }).join('');
+    
     p.deck.forEach(d=>cardsData[d]&&(tc+=cardsData[d].cost,ta+=cardsData[d].current));
     const s=calc(tc,ta);
+    
     const html=`
-      <div class="g-bar" onclick="this.classList.toggle('active')">
-        <div class="g-code">${p.code}</div>
-        <div class="g-info"><span class="g-name">${p.name}</span><div class="g-deck-icons">${icons}</div></div>
-        <div class="g-stats"><span class="g-roi ${s.cls}">${s.arrow} ${s.sign}${s.roi}%</span><span class="g-val">$${ta}萬</span></div>
-      </div>
-      <div class="g-details"><div class="highlight-content">亮點：${p.highlight||'無'}</div></div>`;
+      <div class="g-bar-container">
+        <div class="g-bar" onclick="this.classList.toggle('active')">
+          <div class="g-code">${p.code}</div>
+          <div class="g-info">
+            <span class="g-name">${p.name}</span>
+            <div class="g-deck-icons">${icons}</div>
+          </div>
+          <div class="g-stats">
+            <span class="g-roi ${s.cls}">${s.arrow} ${s.sign}${s.roi}%</span>
+            <span class="g-val">$${ta}萬</span>
+          </div>
+        </div>
+        <div class="g-details"><div class="highlight-content">亮點：${p.highlight||'無'}</div></div>
+      </div>`;
     g[p.group].push(html);
   });
+  
   con.innerHTML=`
     <div class="arena-group group-tw"><div class="group-header">TAIWAN LEAGUE</div>${g.tw.join('')}</div>
     <div class="arena-group group-us"><div class="group-header">US LEAGUE</div>${g.us.join('')}</div>
     <div class="arena-group group-mix"><div class="group-header">SPECIAL LEAGUE</div>${g.mix.join('')}</div>`;
 }
+
 function openModal(k){
   const c=cardsData[k];
   document.getElementById('mCode').textContent=c.code;
+  document.getElementById('mSkill').textContent=c.skill; // 補回技能名稱
   document.getElementById('mCost').textContent=`$${c.cost} 萬`;
   document.getElementById('mStrategy').textContent=c.strategy;
   document.getElementById('mSop').textContent=c.sop;
+  
   const map={'type-tw':'--gold','type-us':'--us','type-yield':'--yield','type-ber':'--ber','type-trap':'--trap'};
   const color=getComputedStyle(document.documentElement).getPropertyValue(map[c.type]||'--gold').trim();
   document.querySelector('.modal-content').style.borderColor=color;
+  
   document.getElementById('cardModal').style.display='flex';
 }
+
 function closeModal(){document.getElementById('cardModal').style.display='none'}
 document.addEventListener('keydown',e=>e.key==='Escape'&&closeModal());
 </script>

@@ -3,137 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>投資組合戰情室 (Debug Mode)</title>
+    <title>投資組合戰情室</title>
     <style>
-        body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; background-color: #f4f7f6; padding: 20px; color: #333; max-width: 1400px; margin: 0 auto; padding-bottom: 250px; /* 預留空間給 Log */ }
-        
-        /* 標題區 */
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 5px; }
-        .subtitle { text-align: center; font-size: 0.9em; color: #7f8c8d; margin-bottom: 30px; }
-        
-        /* 分區標題 */
-        h2 { border-left: 6px solid #3498db; padding-left: 12px; margin-top: 40px; color: #2c3e50; background: #fff; padding: 12px 20px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-
-        /* 表格容器 */
-        .table-wrap { overflow-x: auto; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; min-height: 100px; }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; font-size: 15px; }
-        th { background-color: #34495e; color: #fff; padding: 15px; text-align: left; font-weight: 500; white-space: nowrap; }
-        td { padding: 12px 15px; border-bottom: 1px solid #ecf0f1; vertical-align: top; }
-        tr:nth-child(even) { background-color: #f9fbfd; }
-
-        /* 標籤美化 */
-        .tag-code { display: inline-block; background: #e3f2fd; color: #1565c0; padding: 4px 10px; border-radius: 6px; font-weight: bold; border: 1px solid #bbdefb; font-family: Consolas, monospace; }
-        .tag-deck { font-weight: bold; color: #d35400; background: #fff3e0; padding: 2px 6px; border-radius: 4px; border: 1px solid #ffe0b2; }
-
-        /* === Debug Log 視窗樣式 === */
-        #debug-console {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 200px;
-            background-color: #1e1e1e;
-            color: #00ff00;
-            font-family: "Consolas", "Courier New", monospace;
-            font-size: 13px;
-            padding: 10px;
-            overflow-y: auto;
-            border-top: 4px solid #444;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
-            z-index: 9999;
+        /* === 全局設定 === */
+        body { 
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif; 
+            background-color: #f0f2f5; 
+            color: #333; 
+            margin: 0; 
+            padding: 40px 20px;
         }
-        .log-entry { margin-bottom: 4px; border-bottom: 1px solid #333; padding-bottom: 2px; }
-        .log-time { color: #888; margin-right: 10px; }
-        .log-error { color: #ff5555; font-weight: bold; background: rgba(255,0,0,0.1); }
-        .log-success { color: #55ff55; }
-        .log-info { color: #aaaaff; }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* === 標題區塊 === */
+        header { text-align: center; margin-bottom: 50px; }
+        h1 { 
+            color: #1a202c; 
+            font-size: 2.5rem; 
+            margin: 0 0 10px 0; 
+            font-weight: 800; 
+            letter-spacing: -1px;
+        }
+        .subtitle { 
+            color: #718096; 
+            font-size: 1rem; 
+            background: #e2e8f0; 
+            display: inline-block; 
+            padding: 5px 15px; 
+            border-radius: 20px; 
+            font-weight: 600;
+        }
+
+        /* === 分區標題 === */
+        h2 { 
+            font-size: 1.5rem; 
+            color: #2d3748; 
+            margin-top: 40px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            align-items: center; 
+            border-left: 8px solid #3182ce; 
+            padding-left: 15px;
+            background: linear-gradient(to right, #fff, #f0f2f5);
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* === 表格卡片容器 === */
+        .table-card { 
+            background: #ffffff; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
+            overflow: hidden; /* 圓角遮罩 */
+            border: 1px solid #e2e8f0;
+            margin-bottom: 40px;
+        }
+        
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+
+        /* === 表格樣式 === */
+        thead { background-color: #2c3e50; }
+        th { 
+            color: #ffffff; 
+            padding: 18px 20px; 
+            text-align: left; 
+            font-weight: 600; 
+            letter-spacing: 0.5px;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+        
+        td { 
+            padding: 16px 20px; 
+            border-bottom: 1px solid #edf2f7; 
+            color: #4a5568; 
+            vertical-align: middle;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background-color: #f7fafc; }
+        tr:hover { background-color: #ebf8ff; transition: background 0.2s ease; }
+
+        /* === 標籤系統 (Visual Tags) === */
+        /* 代號標籤 (C01, P01) */
+        .tag-code { 
+            display: inline-block; 
+            background: #ebf8ff; 
+            color: #2b6cb0; 
+            padding: 4px 10px; 
+            border-radius: 6px; 
+            font-weight: 700; 
+            font-family: Consolas, monospace;
+            border: 1px solid #bee3f8;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        /* 組合標籤 (C01+C02) */
+        .tag-deck { 
+            display: inline-block;
+            background: #fffaf0; 
+            color: #c05621; 
+            font-weight: 700; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            border: 1px solid #feebc8;
+            margin: 0 2px;
+            font-size: 0.9em;
+        }
+
+        /* 狀態文字 */
+        .loading { text-align: center; padding: 60px; color: #a0aec0; font-style: italic; font-size: 1.1rem; }
+        .error-msg { background: #fff5f5; color: #c53030; padding: 20px; text-align: center; border-radius: 8px; margin: 20px; border: 1px solid #feb2b2; }
+        
+        /* Footer */
+        .footer { text-align: center; margin-top: 60px; color: #cbd5e0; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
-    <h1>投資組合戰情室</h1>
-    <div class="subtitle">Live Data Sync from Google Sheets</div>
+    <div class="container">
+        <header>
+            <h1>投資組合戰情室</h1>
+            <div class="subtitle">Live Sync • Google Sheets</div>
+        </header>
 
-    <h2>參數卡片 (Card Parameters)</h2>
-    <div id="cards-section" class="table-wrap"></div>
+        <h2>
+            <span>📊 參數卡片 (Parameters)</span>
+        </h2>
+        <div class="table-card">
+            <div id="cards-section" class="table-wrap">
+                <p class="loading">正在連線至雲端資料庫...</p>
+            </div>
+        </div>
 
-    <h2>策略列表 (Strategy List)</h2>
-    <div id="strategy-section" class="table-wrap"></div>
+        <h2>
+            <span>🚀 策略列表 (Strategies)</span>
+        </h2>
+        <div class="table-card">
+            <div id="strategy-section" class="table-wrap">
+                <p class="loading">正在解析策略數據...</p>
+            </div>
+        </div>
 
-    <div id="debug-console">
-        <div class="log-entry">--- 系統日誌已啟動 (System Log Started) ---</div>
+        <div class="footer">
+            Designed for Investment Tracking • Data Updated Automatically
+        </div>
     </div>
 
     <script>
-        // === 1. Log 工具函式 ===
-        function log(msg, type = 'normal') {
-            const consoleBox = document.getElementById('debug-console');
-            const now = new Date();
-            const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-            
-            const div = document.createElement('div');
-            div.className = 'log-entry';
-            
-            let colorClass = '';
-            if (type === 'error') colorClass = 'log-error';
-            if (type === 'success') colorClass = 'log-success';
-            if (type === 'info') colorClass = 'log-info';
-
-            div.innerHTML = `<span class="log-time">[${timeStr}]</span> <span class="${colorClass}">${msg}</span>`;
-            consoleBox.appendChild(div);
-            
-            // 自動捲動到底部
-            consoleBox.scrollTop = consoleBox.scrollHeight;
-        }
-
-        // === 2. 主程式開始 ===
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv';
-
-        log(`準備連線至 Google Sheet...`, 'info');
-        log(`目標網址: ...${sheetUrl.slice(-20)}`, 'info');
 
         fetch(sheetUrl)
             .then(response => {
-                log(`收到伺服器回應。狀態碼 (Status): ${response.status}`, response.ok ? 'success' : 'error');
-                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                if (!response.ok) throw new Error("網路連線異常");
                 return response.text();
             })
             .then(text => {
-                log(`資料下載完成！長度: ${text.length} 字元`, 'success');
                 parseAndRender(text);
             })
             .catch(err => {
-                log(`連線發生致命錯誤 (Fatal Error):`, 'error');
-                log(`${err.message}`, 'error');
-                
-                if(err.message.includes('Failed to fetch')) {
-                    log(`偵測到 CORS 錯誤！請勿直接開啟 html 檔，請使用 Web Server。`, 'error');
-                }
-                
-                document.getElementById('cards-section').innerHTML = `<p style="color:red;padding:20px">讀取失敗，請查看下方日誌。</p>`;
-                document.getElementById('strategy-section').innerHTML = `<p style="color:red;padding:20px">讀取失敗，請查看下方日誌。</p>`;
+                const errorHtml = `<div class="error-msg">⚠️ 無法讀取資料<br><small>${err.message}</small></div>`;
+                document.getElementById('cards-section').innerHTML = errorHtml;
+                document.getElementById('strategy-section').innerHTML = errorHtml;
             });
 
         function parseAndRender(tsvText) {
-            log(`開始解析資料結構...`);
-            
+            // 清洗資料：移除空行
             const allRows = tsvText.split('\n').map(r => r.trim()).filter(r => r.length > 0);
-            log(`有效資料行數: ${allRows.length} 行`);
 
             let cardData = [];
             let strategyData = [];
             let isStrategySection = false;
-            let splitIndex = 0;
 
+            // 智慧切割：尋找第二部分的標題列
             for (let i = 0; i < allRows.length; i++) {
                 const row = allRows[i];
                 const cols = row.split('\t');
 
-                // 偵測分隔點
-                if (cols[0] === '代號' && cols[1] === '名稱') {
+                // 判斷邏輯：如果遇到「代號」且「名稱」，視為下半部的開始
+                if (cols[0] === '代號' && cols.length > 1 && cols[1] === '名稱') {
                     isStrategySection = true;
-                    splitIndex = i;
-                    log(`在第 ${i+1} 行偵測到「策略列表」標題，開始切割資料...`, 'info');
                 }
 
                 if (isStrategySection) {
@@ -143,64 +196,61 @@
                 }
             }
 
-            log(`解析完成。上半部 (參數): ${cardData.length} 行 / 下半部 (策略): ${strategyData.length} 行`, 'success');
-
             renderTable(cardData, 'cards-section');
             renderTable(strategyData, 'strategy-section');
         }
 
         function renderTable(rows, containerId) {
             if (rows.length < 1) {
-                log(`注意: ${containerId} 沒有資料可以渲染。`, 'error');
-                document.getElementById(containerId).innerHTML = '<p style="padding:20px;text-align:center">無資料</p>';
+                document.getElementById(containerId).innerHTML = '<p style="padding:40px;text-align:center;color:#999">無資料顯示</p>';
                 return;
             }
 
-            try {
-                const table = document.createElement('table');
-                const thead = document.createElement('thead');
-                const tbody = document.createElement('tbody');
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
 
-                const headers = rows[0].split('\t');
-                const headerRow = document.createElement('tr');
-                headers.forEach(h => {
-                    const th = document.createElement('th');
-                    th.textContent = h;
-                    headerRow.appendChild(th);
+            // 標題列
+            const headers = rows[0].split('\t');
+            const headerRow = document.createElement('tr');
+            headers.forEach(h => {
+                const th = document.createElement('th');
+                th.textContent = h;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+
+            // 資料列
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].split('\t');
+                const tr = document.createElement('tr');
+                
+                cells.forEach(cell => {
+                    const td = document.createElement('td');
+                    let content = cell.trim();
+
+                    // 美化標籤：C01~C99, P01~P99
+                    if (/^[CP]\d{2}$/.test(content)) {
+                        td.innerHTML = `<span class="tag-code">${content}</span>`;
+                    } 
+                    // 美化牌組：顯示橘色標籤 (例如 C01 + C02)
+                    else if (content.includes('C0') && content.includes('+')) {
+                         td.innerHTML = content.replace(/(C\d{2})/g, '<span class="tag-deck">$1</span>');
+                    } 
+                    else {
+                        td.textContent = content;
+                    }
+                    tr.appendChild(td);
                 });
-                thead.appendChild(headerRow);
-
-                for (let i = 1; i < rows.length; i++) {
-                    const cells = rows[i].split('\t');
-                    const tr = document.createElement('tr');
-                    
-                    cells.forEach(cell => {
-                        const td = document.createElement('td');
-                        let content = cell.trim();
-
-                        if (/^[CP]\d{2}$/.test(content)) {
-                            td.innerHTML = `<span class="tag-code">${content}</span>`;
-                        } else if (content.includes('C0') && content.includes('+')) {
-                             td.innerHTML = content.replace(/(C\d{2})/g, '<span class="tag-deck">$1</span>');
-                        } else {
-                            td.textContent = content;
-                        }
-                        tr.appendChild(td);
-                    });
-                    tbody.appendChild(tr);
-                }
-
-                table.appendChild(thead);
-                table.appendChild(tbody);
-
-                const container = document.getElementById(containerId);
-                container.innerHTML = '';
-                container.appendChild(table);
-                log(`表格 ${containerId} 渲染成功！`, 'success');
-
-            } catch (e) {
-                log(`渲染表格時發生錯誤: ${e.message}`, 'error');
+                tbody.appendChild(tr);
             }
+
+            table.appendChild(thead);
+            table.appendChild(tbody);
+
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            container.appendChild(table);
         }
     </script>
 </body>

@@ -13,12 +13,12 @@
         --text: #e0e0e0; 
         --mute: #888;
 
-        /* 陣營霓虹色 (對應生成圖風格) */
-        --tw: #ff2a2a;    /* TW: 鮮紅 */
-        --us: #00d2ff;    /* US: 冰藍 */
-        --yield: #00ff6a; /* YIELD: 螢光綠 */
-        --ber: #ff9100;   /* SEALED: 琥珀橘 */
-        --trap: #bd00ff;  /* AMBUSH: 毒紫 */
+        /* 陣營霓虹色 */
+        --tw: #ff2a2a;    /* TW */
+        --us: #00d2ff;    /* US */
+        --yield: #00ff6a; /* YIELD */
+        --ber: #ff9100;   /* SEALED */
+        --trap: #bd00ff;  /* AMBUSH */
         --gold: #ffd700;  /* 通用金 */
 
         /* 狀態色 */
@@ -135,7 +135,7 @@
     .micro-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.8)); z-index: 1; }
     .micro-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.6); z-index: 10; border-color: #555; }
 
-    /* CARD COLORS (Top Border + Glow) */
+    /* CARD COLORS */
     .type-tw { border-top: 3px solid var(--tw); } .type-tw:hover { box-shadow: 0 0 20px rgba(255,42,42,0.2); }
     .type-us { border-top: 3px solid var(--us); } .type-us:hover { box-shadow: 0 0 20px rgba(0,210,255,0.2); }
     .type-yield { border-top: 3px solid var(--yield); } .type-yield:hover { box-shadow: 0 0 20px rgba(0,255,106,0.2); }
@@ -147,8 +147,6 @@
     .mc-target { font-size: 0.65rem; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; color: #aaa; font-family: 'Courier New'; }
 
     .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; margin: 10px 0; position: relative; z-index: 2; }
-    
-    /* SVG ICON STYLE */
     .mc-image { width: 64px; height: 64px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: all .4s ease; }
     .micro-card:hover .mc-image { transform: scale(1.15); filter: drop-shadow(0 0 8px currentColor); }
 
@@ -182,32 +180,27 @@
     .group-mix .g-bar { border-left-color: var(--trap); }
 
     .g-code { font-family: 'Courier New'; font-weight: 900; color: #fff; width: 40px; font-size: 0.9rem; opacity: 0.6; }
-    
-    /* ALIGNMENT FIX */
     .g-info { flex-grow: 1; padding: 0 10px; display: flex; align-items: center; gap: 15px; }
-    .g-name { 
-        width: 150px; /* 固定寬度，強制對齊 */
-        flex: 0 0 150px; 
-        font-size: 1rem; font-weight: 700; color: #eee; 
-        text-transform: uppercase; white-space: nowrap; 
-        overflow: hidden; text-overflow: ellipsis; 
-    }
-    
+    .g-name { width: 150px; flex: 0 0 150px; font-size: 1rem; font-weight: 700; color: #eee; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .g-deck-icons { display: flex; align-items: center; gap: 6px; }
     .g-mini-icon { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; transition: .2s; }
     .g-mini-icon svg { width: 100%!important; height: 100%!important; stroke-width: 2.5!important; } 
-    
-    /* Mini Icon Colors */
-    .g-mini-icon.type-tw { color: var(--tw); } .g-mini-icon.type-us { color: var(--us); } 
-    .g-mini-icon.type-yield { color: var(--yield); } .g-mini-icon.type-ber { color: var(--ber); } .g-mini-icon.type-trap { color: var(--trap); }
+    .g-mini-icon.type-tw { color: var(--tw); } .g-mini-icon.type-us { color: var(--us); } .g-mini-icon.type-yield { color: var(--yield); } .g-mini-icon.type-ber { color: var(--ber); } .g-mini-icon.type-trap { color: var(--trap); }
     .g-mini-icon:hover { transform: scale(1.3); filter: drop-shadow(0 0 5px currentColor); }
 
     .g-stats { text-align: right; min-width: 90px; }
     .g-roi { font-family: 'Courier New'; font-weight: 900; font-size: 0.9rem; display: block; }
     .g-val { font-size: 0.7rem; color: #666; display: block; margin-top: 2px; }
-    .g-details { max-height: 0; overflow: hidden; transition: max-height .3s ease; background: rgba(0,0,0,0.2); border-radius: 0 0 6px 6px; }
-    .g-bar.active + .g-details { max-height: 100px; border: 1px solid #333; border-top: none; }
-    .highlight-content { padding: 12px; background: rgba(255,215,0,0.05); border-left: 2px solid var(--gold); margin: 5px; font-size: 0.85rem; color: #ccc; line-height: 1.4; }
+    
+    /* Expanded Details Style */
+    .g-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(0,0,0,0.2); border-radius: 0 0 6px 6px; }
+    .g-bar.active + .g-details { max-height: 400px; border: 1px solid #333; border-top: none; }
+    .highlight-content { padding: 15px; margin: 5px; font-size: 0.9rem; color: #ccc; line-height: 1.6; display: flex; flex-direction: column; gap: 10px; }
+    .d-row { border-bottom: 1px dashed #333; padding-bottom: 8px; }
+    .d-row:last-child { border-bottom: none; }
+    .d-label { color: var(--gold); font-weight: bold; margin-right: 5px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+    .d-text { color: #bbb; }
+    .d-text.warn { color: #ff6b6b; } /* Conflict text color */
 
     /* FOOTER */
     .footer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 40px; border-top: 1px solid #222; padding-top: 20px; }
@@ -272,95 +265,18 @@
 </div>
 
 <script>
-// 2025 終極擬真版 SVG (加入填色與細節，模仿 AI 圖質感)
 const cardAssets = {
-    // C01 TW DCA: 紅色上升箭頭 + 金幣堆 (實心)
-    'C01': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 52c0 3.3 8 6 18 6s18-2.7 18-6v-8c0 3.3-8 6-18 6s-18-2.7-18-6v8z" fill="#ffd700" opacity="0.8"/>
-        <path d="M12 42c0 3.3 8 6 18 6s18-2.7 18-6v-8c0 3.3-8 6-18 6s-18-2.7-18-6v8z" fill="#ffd700" opacity="0.8"/>
-        <ellipse cx="30" cy="34" rx="18" ry="6" fill="#ffd700" stroke="#b39700" stroke-width="2"/>
-        <ellipse cx="30" cy="44" rx="18" ry="6" fill="none" stroke="#b39700" stroke-width="2"/>
-        <ellipse cx="30" cy="54" rx="18" ry="6" fill="none" stroke="#b39700" stroke-width="2"/>
-        <circle cx="48" cy="48" r="10" fill="#0000aa" stroke="#fff" stroke-width="2"/>
-        <path d="M48 40 L50 46 H56 L51 50 L53 56 L48 52 L43 56 L45 50 L40 46 H46 Z" fill="#fff"/>
-        <path d="M40 20 L58 8 L58 24 M58 8 L42 8" stroke="#ff2a2a" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M10 30 L25 18 L35 28 L50 16" stroke="#ff2a2a" stroke-width="3" fill="none" stroke-linecap="round"/>
-    </svg>`,
-
-    // C02 TW LSI: 燃燒的巨劍 (實心厚重感)
-    'C02': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-        <path d="M45 5 Q55 -5 60 8 Q65 0 50 0" fill="#ff2a2a" opacity="0.6"/>
-        <path d="M50 10 L18 42 L22 46 L54 14 Z" fill="#444" stroke="currentColor" stroke-width="2"/>
-        <line x1="26" y1="34" x2="46" y2="14" stroke="currentColor" stroke-width="1"/>
-        <path d="M18 42 L14 46 L18 50 L22 46" fill="currentColor"/>
-        <path d="M14 46 L8 52" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-        <circle cx="6" cy="54" r="3" fill="currentColor"/>
-        <path d="M10 50 Q20 40 30 50 T50 50" stroke="#ffd700" stroke-width="2" fill="none" stroke-dasharray="2 2"/>
-        <circle cx="20" cy="55" r="2" fill="#ffd700"/><circle cx="35" cy="58" r="3" fill="#ffd700"/>
-    </svg>`,
-
-    // C03 YIELD: 發光搖錢樹 (實心葉片)
-    'C03': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22 52 L24 60 H40 L42 52 H22 Z" fill="none" stroke="currentColor" stroke-width="2"/>
-        <rect x="20" y="48" width="24" height="4" rx="2" fill="currentColor"/>
-        <path d="M32 48 L32 20" stroke="currentColor" stroke-width="3"/>
-        <circle cx="32" cy="14" r="8" fill="#000" stroke="currentColor" stroke-width="2"/>
-        <text x="32" y="17" font-size="10" text-anchor="middle" fill="currentColor" font-weight="bold">$</text>
-        <path d="M32 36 Q12 30 12 18" stroke="currentColor" stroke-width="2" fill="none"/>
-        <circle cx="12" cy="18" r="6" fill="#000" stroke="currentColor" stroke-width="2"/>
-        <text x="12" y="21" font-size="8" text-anchor="middle" fill="currentColor">$</text>
-        <path d="M32 28 Q52 22 52 10" stroke="currentColor" stroke-width="2" fill="none"/>
-        <circle cx="52" cy="10" r="6" fill="#000" stroke="currentColor" stroke-width="2"/>
-        <text x="52" y="13" font-size="8" text-anchor="middle" fill="currentColor">$</text>
-    </svg>`,
-
-    // C04 SEALED: 交叉雙斧徽章
-    'C04': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-        <line x1="14" y1="50" x2="50" y2="14" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-        <line x1="50" y1="50" x2="14" y2="14" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-        <path d="M14 14 L8 8 Q4 18 14 24 Z" fill="currentColor"/> 
-        <path d="M14 14 L20 8 Q10 4 4 14 Z" fill="currentColor"/>
-        <path d="M50 14 L56 8 Q60 18 50 24 Z" fill="currentColor"/>
-        <path d="M50 14 L44 8 Q54 4 60 14 Z" fill="currentColor"/>
-        <path d="M32 22 L42 28 V38 L32 44 L22 38 V28 Z" fill="#000" stroke="currentColor" stroke-width="2"/>
-        <path d="M32 26 L34 31 H39 L35 34 L36 39 L32 36 L28 39 L29 34 L25 31 H30 Z" fill="currentColor"/>
-    </svg>`,
-
-    // C05 US LSI: 薩諾斯無限手套
-    'C05': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-        <rect x="22" y="24" width="20" height="26" rx="4" fill="#000" stroke="currentColor" stroke-width="2"/>
-        <rect x="22" y="12" width="5" height="12" rx="2" fill="currentColor"/>
-        <rect x="29" y="8" width="6" height="16" rx="2" fill="currentColor"/>
-        <rect x="37" y="10" width="5" height="14" rx="2" fill="currentColor"/>
-        <circle cx="32" cy="36" r="6" fill="#000" stroke="currentColor" stroke-width="2"/>
-        <circle cx="32" cy="36" r="3" fill="currentColor"/>
-        <rect x="42" y="44" width="16" height="10" rx="2" fill="#000" stroke="#fff" stroke-width="1"/>
-        <path d="M42 44 H58 V49 H42 Z" fill="#002868"/>
-        <path d="M42 49 H58 V54 H42 Z" fill="#bf0a30"/>
-    </svg>`,
-
-    // C06 US DCA: 盾牌 + U型反轉
-    'C06': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-        <path d="M32 4 L56 14 V28 C56 46 32 60 32 60 C32 60 8 46 8 28 V14 L32 4 Z" fill="none" stroke="currentColor" stroke-width="4"/>
-        <path d="M32 8 L52 16 V28 C52 42 32 54 32 54 C32 54 12 42 12 28 V16 L32 8 Z" stroke="currentColor" stroke-width="1" opacity="0.5" fill="none"/>
-        <path d="M24 24 V36 C24 42 40 42 40 36 V24" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/>
-        <path d="M40 24 L35 29 M40 24 L45 29" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/>
-    </svg>`,
-
-    // C07 AMBUSH: 刺客帽兜 + 準心
-    'C07': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-        <path d="M32 6 C18 6 10 20 10 36 L16 54 H48 L54 36 C54 20 46 6 32 6 Z" stroke="currentColor" stroke-width="3" fill="none"/>
-        <path d="M22 36 C22 28 26 22 32 22 C38 22 42 28 42 36 L32 46 L22 36 Z" fill="currentColor" opacity="0.8"/>
-        <path d="M26 34 L30 36 M38 34 L34 36" stroke="#000" stroke-width="2"/>
-        <circle cx="48" cy="48" r="10" stroke="#fff" stroke-width="2" fill="#000"/>
-        <line x1="48" y1="42" x2="48" y2="54" stroke="#fff" stroke-width="2"/>
-        <line x1="42" y1="48" x2="54" y2="48" stroke="#fff" stroke-width="2"/>
-    </svg>`
+    'C01': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M12 52c0 3.3 8 6 18 6s18-2.7 18-6v-8c0 3.3-8 6-18 6s-18-2.7-18-6v8z" fill="#ffd700" opacity="0.8"/><path d="M12 42c0 3.3 8 6 18 6s18-2.7 18-6v-8c0 3.3-8 6-18 6s-18-2.7-18-6v8z" fill="#ffd700" opacity="0.8"/><ellipse cx="30" cy="34" rx="18" ry="6" fill="#ffd700" stroke="#b39700" stroke-width="2"/><ellipse cx="30" cy="44" rx="18" ry="6" fill="none" stroke="#b39700" stroke-width="2"/><ellipse cx="30" cy="54" rx="18" ry="6" fill="none" stroke="#b39700" stroke-width="2"/><circle cx="48" cy="48" r="10" fill="#0000aa" stroke="#fff" stroke-width="2"/><path d="M48 40 L50 46 H56 L51 50 L53 56 L48 52 L43 56 L45 50 L40 46 H46 Z" fill="#fff"/><path d="M40 20 L58 8 L58 24 M58 8 L42 8" stroke="#ff2a2a" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 30 L25 18 L35 28 L50 16" stroke="#ff2a2a" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`,
+    'C02': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M45 5 Q55 -5 60 8 Q65 0 50 0" fill="#ff2a2a" opacity="0.6"/><path d="M50 10 L18 42 L22 46 L54 14 Z" fill="#444" stroke="currentColor" stroke-width="2"/><line x1="26" y1="34" x2="46" y2="14" stroke="currentColor" stroke-width="1"/><path d="M18 42 L14 46 L18 50 L22 46" fill="currentColor"/><path d="M14 46 L8 52" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="6" cy="54" r="3" fill="currentColor"/><path d="M10 50 Q20 40 30 50 T50 50" stroke="#ffd700" stroke-width="2" fill="none" stroke-dasharray="2 2"/><circle cx="20" cy="55" r="2" fill="#ffd700"/><circle cx="35" cy="58" r="3" fill="#ffd700"/></svg>`,
+    'C03': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M22 52 L24 60 H40 L42 52 H22 Z" fill="none" stroke="currentColor" stroke-width="2"/><rect x="20" y="48" width="24" height="4" rx="2" fill="currentColor"/><path d="M32 48 L32 20" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="14" r="8" fill="#000" stroke="currentColor" stroke-width="2"/><text x="32" y="17" font-size="10" text-anchor="middle" fill="currentColor" font-weight="bold">$</text><path d="M32 36 Q12 30 12 18" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="18" r="6" fill="#000" stroke="currentColor" stroke-width="2"/><text x="12" y="21" font-size="8" text-anchor="middle" fill="currentColor">$</text><path d="M32 28 Q52 22 52 10" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="52" cy="10" r="6" fill="#000" stroke="currentColor" stroke-width="2"/><text x="52" y="13" font-size="8" text-anchor="middle" fill="currentColor">$</text></svg>`,
+    'C04': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><line x1="14" y1="50" x2="50" y2="14" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><line x1="50" y1="50" x2="14" y2="14" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M14 14 L8 8 Q4 18 14 24 Z" fill="currentColor"/><path d="M14 14 L20 8 Q10 4 4 14 Z" fill="currentColor"/><path d="M50 14 L56 8 Q60 18 50 24 Z" fill="currentColor"/><path d="M50 14 L44 8 Q54 4 60 14 Z" fill="currentColor"/><path d="M32 22 L42 28 V38 L32 44 L22 38 V28 Z" fill="#000" stroke="currentColor" stroke-width="2"/><path d="M32 26 L34 31 H39 L35 34 L36 39 L32 36 L28 39 L29 34 L25 31 H30 Z" fill="currentColor"/></svg>`,
+    'C05': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect x="22" y="24" width="20" height="26" rx="4" fill="#000" stroke="currentColor" stroke-width="2"/><rect x="22" y="12" width="5" height="12" rx="2" fill="currentColor"/><rect x="29" y="8" width="6" height="16" rx="2" fill="currentColor"/><rect x="37" y="10" width="5" height="14" rx="2" fill="currentColor"/><circle cx="32" cy="36" r="6" fill="#000" stroke="currentColor" stroke-width="2"/><circle cx="32" cy="36" r="3" fill="currentColor"/><rect x="42" y="44" width="16" height="10" rx="2" fill="#000" stroke="#fff" stroke-width="1"/><path d="M42 44 H58 V49 H42 Z" fill="#002868"/><path d="M42 49 H58 V54 H42 Z" fill="#bf0a30"/></svg>`,
+    'C06': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M32 4 L56 14 V28 C56 46 32 60 32 60 C32 60 8 46 8 28 V14 L32 4 Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M32 8 L52 16 V28 C52 42 32 54 32 54 C32 54 12 42 12 28 V16 L32 8 Z" stroke="currentColor" stroke-width="1" opacity="0.5" fill="none"/><path d="M24 24 V36 C24 42 40 42 40 36 V24" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M40 24 L35 29 M40 24 L45 29" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/></svg>`,
+    'C07': `<svg class="mc-image" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M32 6 C18 6 10 20 10 36 L16 54 H48 L54 36 C54 20 46 6 32 6 Z" stroke="currentColor" stroke-width="3" fill="none"/><path d="M22 36 C22 28 26 22 32 22 C38 22 42 28 42 36 L32 46 L22 36 Z" fill="currentColor" opacity="0.8"/><path d="M26 34 L30 36 M38 34 L34 36" stroke="#000" stroke-width="2"/><circle cx="48" cy="48" r="10" stroke="#fff" stroke-width="2" fill="#000"/><line x1="48" y1="42" x2="48" y2="54" stroke="#fff" stroke-width="2"/><line x1="42" y1="48" x2="54" y2="48" stroke="#fff" stroke-width="2"/></svg>`
 };
 
 let cardsData = {}, portfolios = [];
 
-// 連線到 Google Sheet
 fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv')
 .then(r=>r.text()).then(t=>{parseSheetData(t);renderAll()})
 .catch(e=>document.getElementById('cardContainer').innerHTML=`<p style="color:red">連線失敗: ${e}</p>`);
@@ -375,7 +291,15 @@ function parseSheetData(text){
       cardsData[c[0]] = {code:c[0],type:c[1],target:c[3],skill:c[4],cost:+c[5]||0,current:+c[6]||0,strategy:c[7],sop:c[8],svg:cardAssets[c[0]]||cardAssets.C01};
     }else if(isStrategy && c[0]?.startsWith('P')){
       let g='mix'; if(['P01','P02','P03','P07'].includes(c[0]))g='tw'; else if(['P04','P05','P06'].includes(c[0]))g='us';
-      portfolios.push({code:c[0],name:c[1],deck:c[2]?c[2].split('+').map(s=>s.trim()):[],group:g,highlight:c[3]});
+      portfolios.push({
+          code:c[0],
+          name:c[1],
+          deck:c[2]?c[2].split('+').map(s=>s.trim()):[],
+          group:g,
+          highlight:c[3],
+          persona:c[4], // 新增：人格側寫 (假設在E欄)
+          conflict:c[5] // 新增：心理衝突 (假設在F欄)
+      });
     }
   }
 }
@@ -416,7 +340,6 @@ function renderArena(){
     let tc=0,ta=0;
     const icons=p.deck.map(code=>{
       const c=cardsData[code];
-      // 這裡確保了 mini-icon 繼承卡片類型顏色，以支援 currentColor
       return c ? `<span class="g-mini-icon ${c.type}">${c.svg}</span>` : '';
     }).join('');
     
@@ -436,7 +359,13 @@ function renderArena(){
             <span class="g-val">$${ta}萬</span>
           </div>
         </div>
-        <div class="g-details"><div class="highlight-content">亮點：${p.highlight||'無'}</div></div>
+        <div class="g-details">
+            <div class="highlight-content">
+                <div class="d-row"><span class="d-label">★ 競技亮點</span><span class="d-text">${p.highlight||'-'}</span></div>
+                <div class="d-row"><span class="d-label">👤 投資人格</span><span class="d-text">${p.persona||'-'}</span></div>
+                <div class="d-row"><span class="d-label">⚡ 預期衝突</span><span class="d-text warn">${p.conflict||'-'}</span></div>
+            </div>
+        </div>
       </div>`;
     g[p.group].push(html);
   });

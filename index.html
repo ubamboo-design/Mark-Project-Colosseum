@@ -153,7 +153,7 @@
         .mc-target { font-size: 0.75rem; font-family: 'Courier New', monospace; font-weight: bold; color: #aaa; background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 4px;}
         .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%; margin: 5px 0; }
         
-        /* SVG Icons Style (Smaller on Cards) */
+        /* SVG Icons Style */
         .mc-image { 
             width: 50px; height: 50px; 
             fill: none; 
@@ -183,7 +183,9 @@
         .group-header { font-size: 0.9rem; font-weight: bold; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #333; color: #ddd; text-align: center; letter-spacing: 1px; }
         
         .g-bar-container { margin-bottom: 6px; }
-        .g-bar { display: flex; align-items: center; background: var(--bar-bg); padding: 8px 12px; border-radius: 4px; border-left: 3px solid #555; cursor: pointer; transition: all 0.2s; position: relative; }
+        
+        /* 增加上下 padding 讓行高變大，容納大圖示 */
+        .g-bar { display: flex; align-items: center; background: var(--bar-bg); padding: 15px 15px; border-radius: 4px; border-left: 3px solid #555; cursor: pointer; transition: all 0.2s; position: relative; }
         .g-bar:hover { background: #25252e; transform: translateX(2px); }
         .g-bar::after { content: '▼'; position: absolute; right: 10px; color: #555; font-size: 0.6rem; transition: transform 0.3s; }
         .g-bar.active::after { transform: rotate(180deg); color: var(--color-gold); }
@@ -192,31 +194,39 @@
         
         .g-code { font-family: 'Courier New', monospace; font-weight: 900; font-size: 0.9rem; width: 40px; color: #fff; }
         
-        /* --- 修改處開始 --- */
+        /* 修改：文字與圖示並排 */
         .g-info { 
             flex-grow: 1; 
             padding: 0 10px; 
-            display: flex;         /* 改為 Flex 佈局 */
-            align-items: center;   /* 垂直居中 */
-            gap: 10px;             /* 設定名稱與圖案的間距 */
-        }
-        .g-name { 
-            font-size: 0.85rem; 
-            font-weight: bold; 
-            color: #ddd; 
-            white-space: nowrap; /* 避免名稱換行 */
+            display: flex;         
+            align-items: center;   
+            gap: 15px;             /* 增加間距 */
         }
         
-        /* Arena Mini Icons (Smaller SVG) */
+        /* 修改：放大策略名稱 */
+        .g-name { 
+            font-size: 1.1rem;     /* 放大字體 */
+            font-weight: 800; 
+            color: #fff;           /* 更亮 */
+            white-space: nowrap; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
         .g-deck-icons { 
             display: flex; 
             align-items: center; 
-            gap: 5px; 
-            margin-top: 0;         /* 移除上方邊距 */
+            gap: 8px; 
+            margin-top: 0;         
         }
-        /* --- 修改處結束 --- */
 
-        .g-mini-icon { display: inline-block; width: 18px; height: 18px; transition: transform 0.2s; }
+        /* 修改：放大競技場內的小圖示 */
+        .g-mini-icon { 
+            display: inline-block; 
+            width: 38px;           /* 放大 */
+            height: 38px;          /* 放大 */
+            transition: transform 0.2s; 
+        }
         .g-mini-icon svg { width: 100% !important; height: 100% !important; }
         .g-mini-icon:hover { transform: scale(1.2); }
 

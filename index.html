@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : 戰區指揮版</title>
+<title>PROJECT CAGE : 戰區指揮版 (修正版)</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -12,55 +12,12 @@
         --dark-purple: #9400d3; --cyan: #00f7ff; --emergency: #ff0000;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
-        background: var(--bg); 
-        background-image: radial-gradient(circle at 50% 0%, #1a1a20 0%, #050505 70%); 
-        color: var(--text); 
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-        line-height: 1.3; 
-        overflow-x: hidden; 
-        padding-bottom: 30px; 
-        overscroll-behavior-y: contain; /* 防止下拉時瀏覽器預設的彈跳 */
-    }
+    body { background: var(--bg); background-image: radial-gradient(circle at 50% 0%, #1a1a20 0%, #050505 70%); color: var(--text); font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.3; overflow-x: hidden; padding-bottom: 30px; overscroll-behavior-y: contain; }
     
-    /* PULL TO REFRESH INDICATOR */
-    #refresh-indicator {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 0;
-        background: rgba(0, 247, 255, 0.1);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        transition: height 0.2s;
-        z-index: 9999;
-        pointer-events: none;
-        backdrop-filter: blur(5px);
-        border-bottom: 1px solid var(--cyan);
-    }
-    .refresh-text {
-        font-family: 'Courier New';
-        font-weight: 900;
-        color: var(--cyan);
-        font-size: 1.2rem;
-        letter-spacing: 3px;
-        text-shadow: 0 0 10px var(--cyan);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .spinner {
-        width: 20px;
-        height: 20px;
-        border: 3px solid rgba(0,247,255,0.3);
-        border-radius: 50%;
-        border-top-color: var(--cyan);
-        animation: spin 1s ease-in-out infinite;
-        display: none; /* 預設隱藏，刷新時顯示 */
-    }
+    /* PULL TO REFRESH */
+    #refresh-indicator { position: fixed; top: 0; left: 0; width: 100%; height: 0; background: rgba(0, 247, 255, 0.1); display: flex; justify-content: center; align-items: center; overflow: hidden; transition: height 0.2s; z-index: 9999; pointer-events: none; backdrop-filter: blur(5px); border-bottom: 1px solid var(--cyan); }
+    .refresh-text { font-family: 'Courier New'; font-weight: 900; color: var(--cyan); font-size: 1.2rem; letter-spacing: 3px; text-shadow: 0 0 10px var(--cyan); display: flex; align-items: center; gap: 10px; }
+    .spinner { width: 20px; height: 20px; border: 3px solid rgba(0,247,255,0.3); border-radius: 50%; border-top-color: var(--cyan); animation: spin 1s ease-in-out infinite; display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* HEADER */
@@ -76,12 +33,7 @@
     .dashboard-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--tw), var(--gold), var(--us)); box-shadow: 0 0 15px var(--gold); }
     .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 25px; }
     
-    /* Glow Effects */
-    .dash-group { 
-        display: flex; flex-direction: column; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 25px; 
-        border: 1px solid #333; position: relative; height: 100%; justify-content: space-between;
-        transition: box-shadow 0.3s;
-    }
+    .dash-group { display: flex; flex-direction: column; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 25px; border: 1px solid #333; position: relative; height: 100%; justify-content: space-between; transition: box-shadow 0.3s; }
     .dash-group.tw-style { border-color: var(--tw); box-shadow: 0 0 20px rgba(255, 42, 42, 0.1), inset 0 0 20px rgba(255, 42, 42, 0.05); }
     .dash-group.tw-style .dash-title { text-shadow: 0 0 10px var(--tw), 0 0 20px var(--tw); }
     .dash-group.us-style { border-color: var(--us); box-shadow: 0 0 20px rgba(0, 210, 255, 0.1), inset 0 0 20px rgba(0, 210, 255, 0.05); }
@@ -91,35 +43,25 @@
 
     .dash-header { display: flex; align-items: center; justify-content: flex-start; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
     .dash-title { font-size: 1.4rem; font-weight: 900; letter-spacing: 2px; color: #fff; text-transform: uppercase; }
-
     .data-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
     .data-label { font-size: 0.85rem; color: #888; font-weight: bold; letter-spacing: 1px; }
     .data-val { font-family: 'Courier New', monospace; font-size: 1.2rem; font-weight: bold; color: #eee; }
     .data-val .unit-tag { font-size: 0.7rem; color: #666; margin-left: 5px; font-weight: normal; }
     .data-val.asset { color: #fff; font-size: 1.4rem; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
-
     .profit-block { margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.4); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.08); }
     .profit-main { font-family: 'Courier New'; font-size: 1.5rem; font-weight: 900; }
     .profit-sub { font-size: 1rem; font-weight: bold; }
-
     .total-big-val { font-family: 'Courier New'; font-size: 3rem; font-weight: 900; color: #fff; text-align: right; margin: 5px 0; text-shadow: 0 0 25px rgba(255,215,0,0.4); line-height: 1.1; }
     .total-roi-display { font-family: 'Courier New'; font-size: 1.5rem; font-weight: 900; text-align: right; margin-bottom: 15px; opacity: 1; }
     .rate-display { font-family: 'Courier New'; font-size: 0.75rem; color: var(--gold); opacity: 0.7; text-align: right; margin-top: 5px; letter-spacing: 1px; }
     
-    /* COLORS */
     .c-tw { color: var(--tw); } .c-us { color: var(--us); } .c-gold { color: var(--gold); }
     .color-profit { color: var(--green)!important; text-shadow: 0 0 15px rgba(0,255,106,0.4); }
     .color-loss { color: var(--red)!important; text-shadow: 0 0 15px rgba(255,42,42,0.4); }
     .color-gold { color: var(--gold)!important; text-shadow: 0 0 25px rgba(255,215,0,0.7); } 
     .color-dead { color: var(--dark-purple)!important; text-shadow: 0 0 25px rgba(148,0,211,0.7); }
     
-    @media(max-width: 900px) { 
-        .dash-grid { grid-template-columns: 1fr; gap: 15px; } 
-        .total-big-val { font-size: 2.2rem; } 
-        header { flex-direction: column; gap: 15px; } 
-        .header-text { text-align: center; }
-        .dash-header { justify-content: center; }
-    }
+    @media(max-width: 900px) { .dash-grid { grid-template-columns: 1fr; gap: 15px; } .total-big-val { font-size: 2.2rem; } header { flex-direction: column; gap: 15px; } .header-text { text-align: center; } .dash-header { justify-content: center; } }
 
     /* SECTIONS */
     .section-title { font-size: 1.3rem; border-left: 5px solid var(--gold); padding-left: 15px; margin: 50px 0 25px; text-transform: uppercase; font-weight: 900; color: #fff; display: flex; align-items: center; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
@@ -141,20 +83,13 @@
     .mc-chn-name { font-size: 1rem; font-weight: 900; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 1px; }
     .mc-eng-name { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
     .mc-cost-badge { display: inline-block; margin-top: 2px; padding: 3px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.7rem; color: #aaa; background: rgba(0,0,0,0.8); }
-    
-    /* Icons Glow */
     svg.mc-media { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     img.mc-media { filter: drop-shadow(0 0 3px rgba(255,255,255,0.5)); }
-    .type-tw { border-color: var(--tw); } .type-tw:hover { box-shadow: 0 0 25px rgba(255,42,42,0.4); } 
-    .type-tw img.mc-media { filter: drop-shadow(0 0 8px var(--tw)); }
-    .type-us { border-color: var(--us); } .type-us:hover { box-shadow: 0 0 25px rgba(0,210,255,0.4); } 
-    .type-us img.mc-media { filter: drop-shadow(0 0 8px var(--us)); }
-    .type-yield { border-color: var(--yield); } .type-yield:hover { box-shadow: 0 0 25px rgba(0,255,106,0.4); } 
-    .type-yield img.mc-media { filter: drop-shadow(0 0 8px var(--yield)); }
-    .type-ber { border-color: var(--ber); } .type-ber:hover { box-shadow: 0 0 25px rgba(255,145,0,0.4); } 
-    .type-ber img.mc-media { filter: drop-shadow(0 0 8px var(--ber)); }
-    .type-trap { border-color: var(--trap); } .type-trap:hover { box-shadow: 0 0 25px rgba(189,0,255,0.4); } 
-    .type-trap img.mc-media { filter: drop-shadow(0 0 8px var(--trap)); }
+    .type-tw { border-color: var(--tw); } .type-tw:hover { box-shadow: 0 0 25px rgba(255,42,42,0.4); } .type-tw img.mc-media { filter: drop-shadow(0 0 8px var(--tw)); }
+    .type-us { border-color: var(--us); } .type-us:hover { box-shadow: 0 0 25px rgba(0,210,255,0.4); } .type-us img.mc-media { filter: drop-shadow(0 0 8px var(--us)); }
+    .type-yield { border-color: var(--yield); } .type-yield:hover { box-shadow: 0 0 25px rgba(0,255,106,0.4); } .type-yield img.mc-media { filter: drop-shadow(0 0 8px var(--yield)); }
+    .type-ber { border-color: var(--ber); } .type-ber:hover { box-shadow: 0 0 25px rgba(255,145,0,0.4); } .type-ber img.mc-media { filter: drop-shadow(0 0 8px var(--ber)); }
+    .type-trap { border-color: var(--trap); } .type-trap:hover { box-shadow: 0 0 25px rgba(189,0,255,0.4); } .type-trap img.mc-media { filter: drop-shadow(0 0 8px var(--trap)); }
 
     /* EVENTS LOG */
     .event-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; padding-bottom: 10px; }
@@ -169,59 +104,31 @@
     .event-card.emergency .event-status { color: var(--emergency); background: rgba(255, 0, 0, 0.15); }
     @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
-    /* ================================================================= */
-    /* ARENA: 2x2 QUADRANT LAYOUT WITH GRID BARS                         */
-    /* ================================================================= */
+    /* ARENA */
     .arena-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
     .arena-group { background: rgba(255,255,255,0.02); border: 1px solid #222; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; }
-    
     .group-header { display: flex; align-items: center; text-align: center; font-weight: 900; font-size: 1.1rem; color: var(--gold); margin-bottom: 10px; letter-spacing: 2px; }
     .group-header::before, .group-header::after { content: ''; flex: 1; border-bottom: 1px solid #333; }
     .group-header::before { margin-right: 15px; } .group-header::after { margin-left: 15px; }
 
     .g-bar-container { margin-bottom: 5px; width: 100%; }
-    
-    /* THE BAR - GRID FOR PERFECT ALIGNMENT */
-    /* Grid: Pxx(50px) | Name(Auto) | Icons(120px) | ROI(90px) */
-    .g-bar { 
-        display: grid; 
-        grid-template-columns: 50px 1fr 120px 90px;
-        align-items: center; 
-        background: var(--bar); 
-        padding: 12px 15px; 
-        border-radius: 8px; 
-        border-left: 4px solid #444; 
-        cursor: pointer; 
-        transition: .2s; 
-        position: relative; 
-        border: 1px solid transparent; 
-        gap: 10px;
-    }
-    
+    .g-bar { display: grid; grid-template-columns: 50px 1fr 120px 90px; align-items: center; background: var(--bar); padding: 12px 15px; border-radius: 8px; border-left: 4px solid #444; cursor: pointer; transition: .2s; position: relative; border: 1px solid transparent; gap: 10px; }
     .g-bar:hover { background: #222; transform: translateX(5px); border-color: rgba(255,255,255,0.1); }
     .g-bar.active { background: #25252a; border-color: rgba(255,215,0,0.2); border-left-color: var(--gold) !important; }
-    
     .g-code { font-family: 'Courier New'; font-weight: 900; color: #fff; font-size: 1rem; opacity: 0.6; }
-    
-    /* Name Group */
     .g-name-group { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
     .g-name-bar { font-size: 1rem; font-weight: 900; color: #fff; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
     .g-deck-str { font-size: 0.75rem; color: #666; font-family: 'Courier New'; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
-
     .g-deck-icons { display: flex; align-items: center; gap: 5px; justify-content: center; }
     .g-roi { font-family: 'Courier New'; font-weight: 900; font-size: 1.1rem; text-align: right; }
     .g-roi.color-profit { color: var(--green); } .g-roi.color-loss { color: var(--red); }
     .g-roi.color-gold { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
     .g-roi.color-dead { color: var(--dark-purple); text-shadow: 0 0 10px var(--dark-purple); }
 
-    /* Icons */
     .g-mini-icon { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; }
-    .g-mini-icon svg { width: 100%!important; stroke-width: 3!important; } 
-    .g-mini-icon img { width: 100%!important; object-fit: contain; }
-    .g-mini-icon.type-tw img { filter: drop-shadow(0 0 5px var(--tw)); } 
-    .g-mini-icon.type-us img { filter: drop-shadow(0 0 5px var(--us)); }
-    .g-mini-icon.type-tw svg { filter: drop-shadow(0 0 3px var(--tw)); }
-    .g-mini-icon.type-us svg { filter: drop-shadow(0 0 3px var(--us)); }
+    .g-mini-icon svg { width: 100%!important; stroke-width: 3!important; } .g-mini-icon img { width: 100%!important; object-fit: contain; }
+    .g-mini-icon.type-tw img { filter: drop-shadow(0 0 5px var(--tw)); } .g-mini-icon.type-us img { filter: drop-shadow(0 0 5px var(--us)); }
+    .g-mini-icon.type-tw svg { filter: drop-shadow(0 0 3px var(--tw)); } .g-mini-icon.type-us svg { filter: drop-shadow(0 0 3px var(--us)); }
 
     .g-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(0,0,0,0.3); border-radius: 0 0 8px 8px; width: 100%; }
     .g-bar.active + .g-details { max-height: 500px; border: 1px solid #333; border-top: none; }
@@ -236,7 +143,6 @@
     .d-label { width: 85px; flex-shrink: 0; color: var(--gold); font-weight: bold; font-size: 0.85rem; text-align-last: justify; }
     .d-text { color: #ccc; line-height: 1.4; font-size: 0.9rem; }
     .d-text.warn { color: #ff6b6b; }
-
     @media(max-width: 900px) { 
         .arena-container { grid-template-columns: 1fr; } 
         .g-bar { grid-template-columns: 50px 1fr auto; grid-template-rows: auto auto; }
@@ -251,13 +157,7 @@
     .info-box { background: #111; padding: 20px; border-radius: 12px; font-size: 0.9rem; color: #777; border: 1px solid #222; transition: .3s; }
     .info-box:hover { border-color: var(--gold); background: #151515; }
     .info-title { color: #fff; font-weight: bold; margin-bottom: 8px; display: block; font-size: 1rem; letter-spacing: 1px; }
-    
-    /* REFRESH BTN IN FOOTER */
-    .refresh-btn { 
-        grid-column: span 2; background: rgba(0, 247, 255, 0.1); color: var(--cyan); 
-        text-align: center; cursor: pointer; border-color: var(--cyan); 
-        font-family: 'Courier New'; font-weight: 900; letter-spacing: 2px;
-    }
+    .refresh-btn { grid-column: span 2; background: rgba(0, 247, 255, 0.1); color: var(--cyan); text-align: center; cursor: pointer; border-color: var(--cyan); font-family: 'Courier New'; font-weight: 900; letter-spacing: 2px; }
     .refresh-btn:hover { background: var(--cyan); color: #000; }
 
     /* MODAL */
@@ -282,7 +182,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v12.48 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v12.49 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 
@@ -350,43 +250,30 @@ let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, eventsData = [];
 let logoUrl = ''; 
 
-// ================= PULL TO REFRESH LOGIC =================
+// ================= PULL TO REFRESH =================
 let touchStart = 0;
 let touchEnd = 0;
 const refreshIndicator = document.getElementById('refresh-indicator');
 const spinner = document.querySelector('.spinner');
 
-document.addEventListener('touchstart', e => {
-    if(window.scrollY === 0) touchStart = e.changedTouches[0].screenY;
-});
-
+document.addEventListener('touchstart', e => { if(window.scrollY === 0) touchStart = e.changedTouches[0].screenY; });
 document.addEventListener('touchmove', e => {
     if(window.scrollY === 0) {
         touchEnd = e.changedTouches[0].screenY;
-        if(touchEnd > touchStart && (touchEnd - touchStart) < 200) {
-            refreshIndicator.style.height = (touchEnd - touchStart) + 'px';
-        }
+        if(touchEnd > touchStart && (touchEnd - touchStart) < 200) refreshIndicator.style.height = (touchEnd - touchStart) + 'px';
     }
 });
-
 document.addEventListener('touchend', async e => {
-    if(window.scrollY === 0 && (touchEnd - touchStart) > 100) {
-        triggerRefresh(true); // Trigger with keepOpen=true
-    } else {
-        refreshIndicator.style.height = '0px';
-    }
+    if(window.scrollY === 0 && (touchEnd - touchStart) > 100) triggerRefresh(true);
+    else refreshIndicator.style.height = '0px';
 });
-
 async function triggerRefresh(keepOpen = false) {
     if(!keepOpen) refreshIndicator.style.height = '60px';
     spinner.style.display = 'block';
     await init();
-    setTimeout(() => {
-        refreshIndicator.style.height = '0px';
-        spinner.style.display = 'none';
-    }, 800);
+    setTimeout(() => { refreshIndicator.style.height = '0px'; spinner.style.display = 'none'; }, 800);
 }
-// ========================================================
+// ===================================================
 
 const twdCodes = ['C01', 'C02', 'C02-1', 'C02-2', 'C03', 'C04', 'C07'];
 const usdCodes = ['C05', 'C06'];
@@ -404,6 +291,11 @@ const cardAssets = {
 init();
 
 async function init() {
+    // RESET DATA TO FIX DUPLICATION ON REFRESH
+    cardsData = {};
+    portfolios = {};
+    eventsData = [];
+    
     try {
         const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
         const rateData = await rateRes.json();
@@ -568,113 +460,3 @@ function renderCards(){
     con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')">
       <div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div>
       <div class="mc-image-container">${c.media}</div>
-      <div class="mc-footer">
-        <div class="mc-chn-name">${c.rpg || ''}</div>
-        <div class="mc-eng-name">${c.skill}</div>
-        <div class="mc-cost-badge">$${costDisplay}萬</div>
-      </div>
-    </div>`;
-  });
-}
-
-function renderEvents(){
-    const con = document.getElementById('eventContainer');
-    const validEvents = eventsData.slice(0, 2); 
-    
-    if(validEvents.length === 0) {
-        con.innerHTML = '<div style="padding:15px;color:#666">NO EVENTS LOGGED.</div>';
-        return;
-    }
-    con.innerHTML = '';
-    validEvents.forEach(e => {
-        const urgentClass = e.isUrgent ? ' emergency' : '';
-        con.innerHTML += `
-        <div class="event-card${urgentClass}">
-            <div class="event-header">
-                <span class="event-date">${e.date}</span>
-                <span class="event-status">${e.status}</span>
-            </div>
-            <div class="event-content">${e.content}</div>
-        </div>`;
-    });
-}
-
-function toggleStrategy(element) {
-    const isActive = element.classList.contains('active');
-    document.querySelectorAll('.g-bar.active').forEach(bar => {
-        bar.classList.remove('active');
-    });
-    if (!isActive) {
-        element.classList.add('active');
-    }
-}
-
-function renderArena(){
-  const con=document.getElementById('arenaContainer'); con.innerHTML = ''; 
-  Object.keys(portfolios).forEach(groupName => {
-      let groupHtml = `<div class="arena-group"><div class="group-header">${groupName}</div>`;
-      
-      portfolios[groupName].forEach(p => {
-        let tc=0, ta=0;
-        const icons=p.deck.map(code=>{
-          const c=cardsData[code];
-          if(c && c.media.includes('<img')) {
-             const srcMatch = c.media.match(/src="([^"]*)"/);
-             const src = srcMatch ? srcMatch[1] : '';
-             return `<span class="g-mini-icon ${c.type}"><img src="${src}"></span>`;
-          } else if(c) {
-             return `<span class="g-mini-icon ${c.type}">${c.media.replace('mc-media', '')}</span>`;
-          }
-          return '';
-        }).join('');
-        p.deck.forEach(d=>{ if(cardsData[d]) { tc+=cardsData[d].cost; ta+=cardsData[d].current; } });
-        const s=calc(tc, ta);
-        
-        groupHtml += `
-          <div class="g-bar-container">
-            <div class="g-bar" onclick="toggleStrategy(this)">
-                <span class="g-code">${p.code}</span>
-                <div class="g-name-group">
-                    <span class="g-name-bar">${p.name}</span>
-                    <span class="g-deck-str">${p.deckStr}</span>
-                </div>
-                <div class="g-deck-icons">${icons}</div>
-                <div class="g-roi ${s.cls}">${s.sign}${s.roi}%</div>
-            </div>
-            
-            <div class="g-details">
-                <div class="highlight-content">
-                    <div class="ab-grid">
-                        <div class="ab-box"><span class="ab-label">ALPHA</span><span class="ab-val alpha">${p.alpha}</span></div>
-                        <div class="ab-box"><span class="ab-label">BETA</span><span class="ab-val beta">${p.beta}</span></div>
-                    </div>
-                    <div class="d-row"><span class="d-label">★ 亮點</span><span class="d-text">${p.highlight||'-'}</span></div>
-                    <div class="d-row"><span class="d-label">👤 人格</span><span class="d-text">${p.persona||'-'}</span></div>
-                    <div class="d-row"><span class="d-label">⚡ 衝突</span><span class="d-text warn">${p.conflict||'-'}</span></div>
-                </div>
-            </div>
-          </div>`;
-      });
-      groupHtml += `</div>`;
-      con.innerHTML += groupHtml;
-  });
-}
-
-function openModal(k){
-  const c=cardsData[k];
-  document.getElementById('mCode').textContent=c.code;
-  document.getElementById('mSkill').textContent=c.skill;
-  document.getElementById('mCost').textContent=`${c.type==='type-tw'?'NT$':'US$'} ${c.cost.toLocaleString()}`;
-  document.getElementById('mStrategy').textContent=c.strategy;
-  document.getElementById('mSop').textContent=c.sop;
-  const map={'type-tw':'--tw','type-us':'--us','type-yield':'--yield','type-ber':'--ber','type-trap':'--trap'};
-  const color=getComputedStyle(document.documentElement).getPropertyValue(map[c.type]||'--gold').trim();
-  document.querySelector('.modal-content').style.borderColor=color;
-  document.getElementById('cardModal').style.display='flex';
-  document.getElementById('cardModal').classList.add('modal-active');
-}
-function closeModal(){document.getElementById('cardModal').style.display='none'}
-document.addEventListener('keydown',e=>e.key==='Escape'&&closeModal());
-</script>
-</body>
-</html>

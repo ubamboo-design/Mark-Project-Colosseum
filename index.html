@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : 戰區指揮版 (修正版)</title>
+<title>PROJECT CAGE : 絕對對齊版</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -14,7 +14,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--bg); background-image: radial-gradient(circle at 50% 0%, #1a1a20 0%, #050505 70%); color: var(--text); font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.3; overflow-x: hidden; padding-bottom: 30px; overscroll-behavior-y: contain; }
     
-    /* PULL TO REFRESH */
+    /* REFRESH */
     #refresh-indicator { position: fixed; top: 0; left: 0; width: 100%; height: 0; background: rgba(0, 247, 255, 0.1); display: flex; justify-content: center; align-items: center; overflow: hidden; transition: height 0.2s; z-index: 9999; pointer-events: none; backdrop-filter: blur(5px); border-bottom: 1px solid var(--cyan); }
     .refresh-text { font-family: 'Courier New'; font-weight: 900; color: var(--cyan); font-size: 1.2rem; letter-spacing: 3px; text-shadow: 0 0 10px var(--cyan); display: flex; align-items: center; gap: 10px; }
     .spinner { width: 20px; height: 20px; border: 3px solid rgba(0,247,255,0.3); border-radius: 50%; border-top-color: var(--cyan); animation: spin 1s ease-in-out infinite; display: none; }
@@ -51,10 +51,14 @@
     .profit-block { margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.4); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.08); }
     .profit-main { font-family: 'Courier New'; font-size: 1.5rem; font-weight: 900; }
     .profit-sub { font-size: 1rem; font-weight: bold; }
-    .total-big-val { font-family: 'Courier New'; font-size: 3rem; font-weight: 900; color: #fff; text-align: right; margin: 5px 0; text-shadow: 0 0 25px rgba(255,215,0,0.4); line-height: 1.1; }
-    .total-roi-display { font-family: 'Courier New'; font-size: 1.5rem; font-weight: 900; text-align: right; margin-bottom: 15px; opacity: 1; }
+    
+    /* TOTAL ROI Styles */
+    .total-big-val { font-family: 'Courier New'; font-size: 3rem; font-weight: 900; color: #fff; text-align: right; margin: 5px 0 0 0; text-shadow: 0 0 25px rgba(255,215,0,0.4); line-height: 1.1; }
+    .total-roi-block { text-align: right; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .total-roi-display { font-family: 'Courier New'; font-size: 1.8rem; font-weight: 900; } /* 加大總報酬率字體 */
     .rate-display { font-family: 'Courier New'; font-size: 0.75rem; color: var(--gold); opacity: 0.7; text-align: right; margin-top: 5px; letter-spacing: 1px; }
     
+    /* COLORS */
     .c-tw { color: var(--tw); } .c-us { color: var(--us); } .c-gold { color: var(--gold); }
     .color-profit { color: var(--green)!important; text-shadow: 0 0 15px rgba(0,255,106,0.4); }
     .color-loss { color: var(--red)!important; text-shadow: 0 0 15px rgba(255,42,42,0.4); }
@@ -83,6 +87,7 @@
     .mc-chn-name { font-size: 1rem; font-weight: 900; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 1px; }
     .mc-eng-name { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
     .mc-cost-badge { display: inline-block; margin-top: 2px; padding: 3px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.7rem; color: #aaa; background: rgba(0,0,0,0.8); }
+    
     svg.mc-media { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     img.mc-media { filter: drop-shadow(0 0 3px rgba(255,255,255,0.5)); }
     .type-tw { border-color: var(--tw); } .type-tw:hover { box-shadow: 0 0 25px rgba(255,42,42,0.4); } .type-tw img.mc-media { filter: drop-shadow(0 0 8px var(--tw)); }
@@ -104,7 +109,9 @@
     .event-card.emergency .event-status { color: var(--emergency); background: rgba(255, 0, 0, 0.15); }
     @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
-    /* ARENA */
+    /* ================================================================= */
+    /* ARENA: 2x2 QUADRANT LAYOUT WITH GRID BARS                         */
+    /* ================================================================= */
     .arena-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
     .arena-group { background: rgba(255,255,255,0.02); border: 1px solid #222; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; }
     .group-header { display: flex; align-items: center; text-align: center; font-weight: 900; font-size: 1.1rem; color: var(--gold); margin-bottom: 10px; letter-spacing: 2px; }
@@ -112,23 +119,55 @@
     .group-header::before { margin-right: 15px; } .group-header::after { margin-left: 15px; }
 
     .g-bar-container { margin-bottom: 5px; width: 100%; }
-    .g-bar { display: grid; grid-template-columns: 50px 1fr 120px 90px; align-items: center; background: var(--bar); padding: 12px 15px; border-radius: 8px; border-left: 4px solid #444; cursor: pointer; transition: .2s; position: relative; border: 1px solid transparent; gap: 10px; }
+    
+    /* THE BAR - FIXED GRID FOR PERFECT ALIGNMENT */
+    /* Code(50px) | Name(Auto) | Icons(140px) | ROI(100px) */
+    .g-bar { 
+        display: grid; 
+        grid-template-columns: 50px 1fr 140px 100px; /* 定義嚴格的寬度 */
+        align-items: center; 
+        background: var(--bar); 
+        padding: 12px 15px; 
+        border-radius: 8px; 
+        border-left: 4px solid #444; 
+        cursor: pointer; 
+        transition: .2s; 
+        position: relative; 
+        border: 1px solid transparent; 
+        gap: 10px;
+    }
+    
     .g-bar:hover { background: #222; transform: translateX(5px); border-color: rgba(255,255,255,0.1); }
     .g-bar.active { background: #25252a; border-color: rgba(255,215,0,0.2); border-left-color: var(--gold) !important; }
+    
     .g-code { font-family: 'Courier New'; font-weight: 900; color: #fff; font-size: 1rem; opacity: 0.6; }
-    .g-name-group { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
-    .g-name-bar { font-size: 1rem; font-weight: 900; color: #fff; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
-    .g-deck-str { font-size: 0.75rem; color: #666; font-family: 'Courier New'; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    
+    /* Name Group: Ensure it fills the space but truncates */
+    .g-name-group { 
+        display: flex; flex-direction: column; justify-content: center; 
+        overflow: hidden; 
+    }
+    .g-name-bar { 
+        font-size: 1rem; font-weight: 900; color: #fff; 
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        text-align: left; 
+    }
+    .g-deck-str { 
+        font-size: 0.75rem; color: #666; font-family: 'Courier New'; 
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        margin-top: 2px; 
+    }
+
     .g-deck-icons { display: flex; align-items: center; gap: 5px; justify-content: center; }
     .g-roi { font-family: 'Courier New'; font-weight: 900; font-size: 1.1rem; text-align: right; }
     .g-roi.color-profit { color: var(--green); } .g-roi.color-loss { color: var(--red); }
     .g-roi.color-gold { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
     .g-roi.color-dead { color: var(--dark-purple); text-shadow: 0 0 10px var(--dark-purple); }
 
+    /* Icons */
     .g-mini-icon { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; }
     .g-mini-icon svg { width: 100%!important; stroke-width: 3!important; } .g-mini-icon img { width: 100%!important; object-fit: contain; }
     .g-mini-icon.type-tw img { filter: drop-shadow(0 0 5px var(--tw)); } .g-mini-icon.type-us img { filter: drop-shadow(0 0 5px var(--us)); }
-    .g-mini-icon.type-tw svg { filter: drop-shadow(0 0 3px var(--tw)); } .g-mini-icon.type-us svg { filter: drop-shadow(0 0 3px var(--us)); }
 
     .g-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(0,0,0,0.3); border-radius: 0 0 8px 8px; width: 100%; }
     .g-bar.active + .g-details { max-height: 500px; border: 1px solid #333; border-top: none; }
@@ -143,8 +182,10 @@
     .d-label { width: 85px; flex-shrink: 0; color: var(--gold); font-weight: bold; font-size: 0.85rem; text-align-last: justify; }
     .d-text { color: #ccc; line-height: 1.4; font-size: 0.9rem; }
     .d-text.warn { color: #ff6b6b; }
+
     @media(max-width: 900px) { 
         .arena-container { grid-template-columns: 1fr; } 
+        /* Mobile: Break grid into rows */
         .g-bar { grid-template-columns: 50px 1fr auto; grid-template-rows: auto auto; }
         .g-deck-icons { grid-column: 3; grid-row: 1; justify-content: flex-end; }
         .g-roi { grid-column: 3; grid-row: 2; margin-top: 5px; }
@@ -182,7 +223,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v12.49 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v12.50 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 
@@ -204,7 +245,9 @@
       <div class="dash-group total-style">
         <div class="dash-header" style="justify-content: center;"><span class="dash-title c-gold">TOTAL ASSET 總身價</span></div>
         <div class="total-big-val" id="totalAsset">...</div>
-        <div class="total-roi-display" id="totalROI">...</div>
+        <div class="total-roi-block">
+            <div class="total-roi-display" id="totalROI">...</div>
+        </div>
         <div class="data-row"><span class="data-label">總投入成本 (TWD)</span><span class="data-val" id="totalCostTWD">...</span></div>
         <div class="data-row"><span class="data-label">總帳面損益 (TWD)</span><span class="data-val" id="totalDiff">...</span></div>
         <div class="rate-display" id="rateInfo">Loading Rate...</div>
@@ -448,6 +491,7 @@ function renderDashboard(){
   elDiff.textContent = `${totalSign}$${(totalDiff/10000).toFixed(1)}萬`;
   elDiff.className = `data-val ${sTotal.cls}`;
   
+  // 顯示總報酬率
   const elTotalROI = document.getElementById('totalROI');
   elTotalROI.textContent = `${sTotal.arrow} ${sTotal.sign}${sTotal.roi}%`;
   elTotalROI.className = `total-roi-display ${sTotal.cls}`;
@@ -460,3 +504,113 @@ function renderCards(){
     con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')">
       <div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div>
       <div class="mc-image-container">${c.media}</div>
+      <div class="mc-footer">
+        <div class="mc-chn-name">${c.rpg || ''}</div>
+        <div class="mc-eng-name">${c.skill}</div>
+        <div class="mc-cost-badge">$${costDisplay}萬</div>
+      </div>
+    </div>`;
+  });
+}
+
+function renderEvents(){
+    const con = document.getElementById('eventContainer');
+    const validEvents = eventsData.slice(0, 2); 
+    
+    if(validEvents.length === 0) {
+        con.innerHTML = '<div style="padding:15px;color:#666">NO EVENTS LOGGED.</div>';
+        return;
+    }
+    con.innerHTML = '';
+    validEvents.forEach(e => {
+        const urgentClass = e.isUrgent ? ' emergency' : '';
+        con.innerHTML += `
+        <div class="event-card${urgentClass}">
+            <div class="event-header">
+                <span class="event-date">${e.date}</span>
+                <span class="event-status">${e.status}</span>
+            </div>
+            <div class="event-content">${e.content}</div>
+        </div>`;
+    });
+}
+
+function toggleStrategy(element) {
+    const isActive = element.classList.contains('active');
+    document.querySelectorAll('.g-bar.active').forEach(bar => {
+        bar.classList.remove('active');
+    });
+    if (!isActive) {
+        element.classList.add('active');
+    }
+}
+
+function renderArena(){
+  const con=document.getElementById('arenaContainer'); con.innerHTML = ''; 
+  Object.keys(portfolios).forEach(groupName => {
+      let groupHtml = `<div class="arena-group"><div class="group-header">${groupName}</div>`;
+      
+      portfolios[groupName].forEach(p => {
+        let tc=0, ta=0;
+        const icons=p.deck.map(code=>{
+          const c=cardsData[code];
+          if(c && c.media.includes('<img')) {
+             const srcMatch = c.media.match(/src="([^"]*)"/);
+             const src = srcMatch ? srcMatch[1] : '';
+             return `<span class="g-mini-icon ${c.type}"><img src="${src}"></span>`;
+          } else if(c) {
+             return `<span class="g-mini-icon ${c.type}">${c.media.replace('mc-media', '')}</span>`;
+          }
+          return '';
+        }).join('');
+        p.deck.forEach(d=>{ if(cardsData[d]) { tc+=cardsData[d].cost; ta+=cardsData[d].current; } });
+        const s=calc(tc, ta);
+        
+        groupHtml += `
+          <div class="g-bar-container">
+            <div class="g-bar" onclick="toggleStrategy(this)">
+                <span class="g-code">${p.code}</span>
+                <div class="g-name-group">
+                    <span class="g-name-bar">${p.name}</span>
+                    <span class="g-deck-str">${p.deckStr}</span>
+                </div>
+                <div class="g-deck-icons">${icons}</div>
+                <div class="g-roi ${s.cls}">${s.sign}${s.roi}%</div>
+            </div>
+            
+            <div class="g-details">
+                <div class="highlight-content">
+                    <div class="ab-grid">
+                        <div class="ab-box"><span class="ab-label">ALPHA</span><span class="ab-val alpha">${p.alpha}</span></div>
+                        <div class="ab-box"><span class="ab-label">BETA</span><span class="ab-val beta">${p.beta}</span></div>
+                    </div>
+                    <div class="d-row"><span class="d-label">★ 亮點</span><span class="d-text">${p.highlight||'-'}</span></div>
+                    <div class="d-row"><span class="d-label">👤 人格</span><span class="d-text">${p.persona||'-'}</span></div>
+                    <div class="d-row"><span class="d-label">⚡ 衝突</span><span class="d-text warn">${p.conflict||'-'}</span></div>
+                </div>
+            </div>
+          </div>`;
+      });
+      groupHtml += `</div>`;
+      con.innerHTML += groupHtml;
+  });
+}
+
+function openModal(k){
+  const c=cardsData[k];
+  document.getElementById('mCode').textContent=c.code;
+  document.getElementById('mSkill').textContent=c.skill;
+  document.getElementById('mCost').textContent=`${c.type==='type-tw'?'NT$':'US$'} ${c.cost.toLocaleString()}`;
+  document.getElementById('mStrategy').textContent=c.strategy;
+  document.getElementById('mSop').textContent=c.sop;
+  const map={'type-tw':'--tw','type-us':'--us','type-yield':'--yield','type-ber':'--ber','type-trap':'--trap'};
+  const color=getComputedStyle(document.documentElement).getPropertyValue(map[c.type]||'--gold').trim();
+  document.querySelector('.modal-content').style.borderColor=color;
+  document.getElementById('cardModal').style.display='flex';
+  document.getElementById('cardModal').classList.add('modal-active');
+}
+function closeModal(){document.getElementById('cardModal').style.display='none'}
+document.addEventListener('keydown',e=>e.key==='Escape'&&closeModal());
+</script>
+</body>
+</html>

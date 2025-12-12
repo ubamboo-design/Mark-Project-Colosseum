@@ -73,26 +73,53 @@
     .mc-cost-badge { display: inline-block; margin-top: 4px; padding: 4px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.75rem; color: #999; background: rgba(0,0,0,0.8); }
 
     /* ========================================= */
-    /* NEW SECTION: EVENTS LOG (事件簿) 樣式     */
+    /* NEW SECTION: EVENTS LOG (雙欄對稱版)      */
     /* ========================================= */
-    .event-scroll-wrapper { overflow-x: auto; padding-bottom: 10px; scrollbar-width: thin; scrollbar-color: #444 #111; }
-    .event-list { display: flex; gap: 15px; padding-bottom: 5px; min-width: 800px; }
+    .event-list { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; /* 強制雙欄 */
+        gap: 20px; 
+        width: 100%; 
+        padding-bottom: 10px;
+    }
+    
     .event-card { 
         background: rgba(255,255,255,0.03); 
         border: 1px solid #333; 
         border-left: 4px solid var(--cyan); 
         border-radius: 8px; 
-        padding: 15px; 
-        min-width: 280px; 
-        flex: 1; 
+        padding: 20px; 
         position: relative; 
         transition: .3s;
+        height: 100%; /* 確保兩欄等高 */
+        display: flex;
+        flex-direction: column;
     }
-    .event-card:hover { background: rgba(0, 247, 255, 0.05); border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 247, 255, 0.1); }
-    .event-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-family: 'Courier New'; font-size: 0.8rem; }
-    .event-date { color: #888; }
-    .event-status { color: var(--gold); font-weight: bold; background: rgba(255,215,0,0.1); padding: 2px 6px; border-radius: 4px; }
-    .event-content { font-size: 0.95rem; color: #eee; line-height: 1.5; font-weight: 500; }
+    
+    .event-card:hover { 
+        background: rgba(0, 247, 255, 0.05); 
+        border-color: var(--cyan); 
+        box-shadow: 0 0 15px rgba(0, 247, 255, 0.1); 
+    }
+    
+    .event-header { 
+        display: flex; 
+        justify-content: space-between; 
+        margin-bottom: 12px; 
+        font-family: 'Courier New'; 
+        font-size: 0.8rem; 
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 8px;
+    }
+    
+    .event-date { color: #888; letter-spacing: 1px; }
+    .event-status { color: var(--gold); font-weight: bold; background: rgba(255,215,0,0.1); padding: 2px 8px; border-radius: 4px; }
+    .event-content { font-size: 1rem; color: #eee; line-height: 1.6; font-weight: 500; }
+
+    /* 手機版強制變單欄 */
+    @media(max-width: 768px) {
+        .event-list { grid-template-columns: 1fr; }
+    }
     /* ========================================= */
 
     /* ARENA */
@@ -149,7 +176,7 @@
 <body>
 <header>
   <h1>PROJECT CAGE</h1>
-  <div class="meta-info">v12.25 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+  <div class="meta-info">v12.26 LIVE • NT$ 1,000 萬 • 2025-2031</div>
 </header>
 
 <div class="container">
@@ -177,10 +204,8 @@
   <div class="deck-wrapper"><div class="deck-grid" id="cardContainer"><div class="loading">CONNECTING TO DATABASE...</div></div></div>
 
   <div class="section-title">II. 事件簿 (EVENT LOG)</div>
-  <div class="event-scroll-wrapper">
-      <div class="event-list" id="eventContainer">
-          <div class="loading" style="padding:10px; color:#666">CHECKING LOGS...</div>
-      </div>
+  <div class="event-list" id="eventContainer">
+      <div class="loading" style="padding:10px; color:#666">CHECKING LOGS...</div>
   </div>
 
   <div class="section-title">III. 投資競技場</div>
@@ -209,7 +234,7 @@
 
 <script>
 let currentRate = 32.5;
-let cardsData = {}, portfolios = {}, eventsData = []; // 新增 eventsData 陣列
+let cardsData = {}, portfolios = {}, eventsData = [];
 
 const cardAssets = {
     'C01': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png" class="mc-media" alt="TW DCA">`,
@@ -248,53 +273,32 @@ async function init() {
 function parseSheetData(text){
   const rows = text.split('\n').map(r=>r.trim()).filter(r=>r);
   let isStrategy = false;
-  let isEvent = false; // 新增事件模式開關
+  let isEvent = false;
   let currentGroup = '未分類';
 
   for(let i=1; i<rows.length; i++){
     const c = rows[i].split('\t');
     
-    // 判斷是否為「事件簿」標題列 (根據截圖，A欄是事件簿)
-    if(c[0] === '事件簿') {
-        isEvent = true;
-        isStrategy = false;
-        continue; // 跳過標題列本身
-    }
+    if(c[0] === '事件簿') { isEvent = true; isStrategy = false; continue; }
+    if(c[0] === '代號' && c[1] === '名稱') { isStrategy = true; isEvent = false; continue; }
 
-    // 判斷是否為「策略」標題列
-    if(c[0] === '代號' && c[1] === '名稱') { 
-        isStrategy = true; 
-        isEvent = false; 
-        continue; 
-    }
-
-    // A. 解析事件簿資料
     if(isEvent && c[0]) {
-        // 欄位對應: A=日期(0), B=狀態(1), C=內容(2)
-        eventsData.push({
-            date: c[0],
-            status: c[1] || 'Info',
-            content: c[2] || ''
-        });
+        eventsData.push({ date: c[0], status: c[1] || 'Info', content: c[2] || '' });
     }
-    // B. 解析卡牌資料 (C開頭)
     else if(!isStrategy && c[0]?.startsWith('C')){
       let skillName = c[4]; if(c[0] === 'C05') skillName = 'VT DCA';
       let costRaw = c[5] ? c[5].replace(/[NT$US,]/g, '') : '0';
       let currentRaw = c[6] ? c[6].replace(/[NT$US,]/g, '') : '0';
-      
       let imgUrl = c[9] ? c[9].trim() : '';
       let displayMedia = imgUrl.startsWith('http') 
           ? `<img src="${imgUrl}" class="mc-media" alt="${skillName}">` 
           : (cardAssets[c[0]] || cardAssets['C01']);
-
       cardsData[c[0]] = {
           code: c[0], type: c[1], rpg: c[2], target: c[3], skill: skillName,
           cost: parseFloat(costRaw), current: parseFloat(currentRaw),
           strategy: c[7], sop: c[8], media: displayMedia
       };
     } 
-    // C. 解析策略與競技場 (P開頭)
     else if(isStrategy){
       if(c[0].startsWith('P')){
           if(!portfolios[currentGroup]) portfolios[currentGroup] = [];
@@ -316,12 +320,7 @@ function calc(cost,cur){
   return {roi, arrow: roi>=0 ? '▲' : '▼', sign: roi>=0 ? '+' : '', cls};
 }
 
-function renderAll(){
-    renderDashboard();
-    renderCards();
-    renderEvents(); // 新增：渲染事件簿
-    renderArena();
-}
+function renderAll(){ renderDashboard(); renderCards(); renderEvents(); renderArena(); }
 
 function renderDashboard(){
   let tcTW=0, taTW=0, tcUS=0, taUS=0;
@@ -362,7 +361,6 @@ function renderEvents(){
         return;
     }
     con.innerHTML = '';
-    // 將最新的事件顯示在最前面? 或是保留順序? 這裡保留試算表由上而下的順序
     eventsData.forEach(e => {
         con.innerHTML += `
         <div class="event-card">

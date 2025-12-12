@@ -74,8 +74,7 @@
     .mc-cost-badge { display: inline-block; margin-top: 2px; padding: 3px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.7rem; color: #aaa; background: rgba(0,0,0,0.8); }
     svg.mc-media { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     img.mc-media { filter: drop-shadow(0 0 2px rgba(255,255,255,0.5)); }
-    .type-tw { border-color: var(--tw); } .type-us { border-color: var(--us); } .type-yield { border-color: var(--yield); } .type-ber { border-color: var(--ber); } .type-trap { border-color: var(--trap); }
-    .type-tw:hover { box-shadow: 0 0 25px rgba(255,42,42,0.4); } .type-us:hover { box-shadow: 0 0 25px rgba(0,210,255,0.4); }
+    .type-tw { border-color: var(--tw); } .type-tw:hover { box-shadow: 0 0 25px rgba(255,42,42,0.4); }
     .type-tw img.mc-media { filter: drop-shadow(0 0 5px var(--tw)); } .type-us img.mc-media { filter: drop-shadow(0 0 5px var(--us)); }
 
     /* EVENTS LOG */
@@ -105,18 +104,38 @@
         background: rgba(255,255,255,0.02); 
         border: 1px solid #222; 
         border-radius: 12px; 
-        padding: 20px; 
+        padding: 15px; /* 縮小內距 */
         display: flex;
         flex-direction: column;
     }
-    .group-header { text-align: left; padding-bottom: 10px; border-bottom: 1px solid #333; font-weight: 900; font-size: 1.1rem; color: var(--gold); margin-bottom: 15px; letter-spacing: 2px; }
 
-    .g-bar-container { margin-bottom: 10px; width: 100%; }
+    /* 新增：標頭置中並在兩側添加對稱線條 */
+    .group-header { 
+        display: flex;
+        align-items: center;
+        text-align: center;
+        font-weight: 900; 
+        font-size: 1.1rem; 
+        color: var(--gold); 
+        margin-bottom: 10px; /* 縮小下邊距 */
+        letter-spacing: 2px; 
+    }
+    .group-header::before,
+    .group-header::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #333;
+    }
+    .group-header::before { margin-right: 15px; }
+    .group-header::after { margin-left: 15px; }
+
+    /* 縮小 Bar 之間的間距 */
+    .g-bar-container { margin-bottom: 5px; width: 100%; }
+    .g-bar-container:last-child { margin-bottom: 0; }
     
     /* THE BAR - USING CSS GRID FOR PERFECT ALIGNMENT */
     .g-bar { 
         display: grid; 
-        /* 定義 Grid: 代號(50px) | 名稱(自動伸展) | 圖示(100px) | ROI(100px) */
         grid-template-columns: 50px 1fr 100px 100px;
         align-items: center; 
         background: var(--bar); 
@@ -176,6 +195,8 @@
         .g-bar { grid-template-columns: 50px 1fr auto; grid-template-rows: auto auto; }
         .g-deck-icons { grid-column: 3; grid-row: 1; justify-content: flex-end; }
         .g-roi { grid-column: 3; grid-row: 2; margin-top: 5px; }
+        .group-header::before, .group-header::after { display: none; } /* 手機版隱藏線條 */
+        .group-header { text-align: left; border-bottom: 1px solid #333; padding-bottom: 10px; }
     }
     /* ================================================================= */
 
@@ -205,7 +226,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v12.43 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v12.44 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 
@@ -228,7 +249,6 @@
         <div class="dash-header" style="justify-content: center;"><span class="dash-flag">🏆</span><span class="dash-title c-gold">TOTAL ASSET 總身價</span></div>
         <div class="total-big-val" id="totalAsset">...</div>
         <div class="total-roi-display" id="totalROI">...</div>
-        
         <div class="data-row"><span class="data-label">總投入成本 (TWD)</span><span class="data-val" id="totalCostTWD">...</span></div>
         <div class="data-row"><span class="data-label">總帳面損益 (TWD)</span><span class="data-val" id="totalDiff">...</span></div>
         <div class="rate-display" id="rateInfo">Loading Rate...</div>
@@ -440,7 +460,6 @@ function renderDashboard(){
   elDiff.textContent = `${totalSign}$${(totalDiff/10000).toFixed(1)}萬`;
   elDiff.className = `data-val ${sTotal.cls}`;
   
-  // 新增：顯示總報酬率 (Total ROI)
   const elTotalROI = document.getElementById('totalROI');
   elTotalROI.textContent = `${sTotal.arrow} ${sTotal.sign}${sTotal.roi}%`;
   elTotalROI.className = `total-roi-display ${sTotal.cls}`;

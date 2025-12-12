@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : 絕對對齊版</title>
+<title>PROJECT CAGE : 深度解析版</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -51,14 +51,10 @@
     .profit-block { margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.4); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.08); }
     .profit-main { font-family: 'Courier New'; font-size: 1.5rem; font-weight: 900; }
     .profit-sub { font-size: 1rem; font-weight: bold; }
-    
-    /* TOTAL ROI Styles */
-    .total-big-val { font-family: 'Courier New'; font-size: 3rem; font-weight: 900; color: #fff; text-align: right; margin: 5px 0 0 0; text-shadow: 0 0 25px rgba(255,215,0,0.4); line-height: 1.1; }
-    .total-roi-block { text-align: right; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .total-roi-display { font-family: 'Courier New'; font-size: 1.8rem; font-weight: 900; } /* 加大總報酬率字體 */
+    .total-big-val { font-family: 'Courier New'; font-size: 3rem; font-weight: 900; color: #fff; text-align: right; margin: 5px 0; text-shadow: 0 0 25px rgba(255,215,0,0.4); line-height: 1.1; }
+    .total-roi-display { font-family: 'Courier New'; font-size: 1.5rem; font-weight: 900; text-align: right; margin-bottom: 15px; opacity: 1; }
     .rate-display { font-family: 'Courier New'; font-size: 0.75rem; color: var(--gold); opacity: 0.7; text-align: right; margin-top: 5px; letter-spacing: 1px; }
     
-    /* COLORS */
     .c-tw { color: var(--tw); } .c-us { color: var(--us); } .c-gold { color: var(--gold); }
     .color-profit { color: var(--green)!important; text-shadow: 0 0 15px rgba(0,255,106,0.4); }
     .color-loss { color: var(--red)!important; text-shadow: 0 0 15px rgba(255,42,42,0.4); }
@@ -109,9 +105,7 @@
     .event-card.emergency .event-status { color: var(--emergency); background: rgba(255, 0, 0, 0.15); }
     @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
-    /* ================================================================= */
-    /* ARENA: 2x2 QUADRANT LAYOUT WITH GRID BARS                         */
-    /* ================================================================= */
+    /* ARENA 2x2 */
     .arena-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
     .arena-group { background: rgba(255,255,255,0.02); border: 1px solid #222; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; }
     .group-header { display: flex; align-items: center; text-align: center; font-weight: 900; font-size: 1.1rem; color: var(--gold); margin-bottom: 10px; letter-spacing: 2px; }
@@ -119,73 +113,36 @@
     .group-header::before { margin-right: 15px; } .group-header::after { margin-left: 15px; }
 
     .g-bar-container { margin-bottom: 5px; width: 100%; }
-    
-    /* THE BAR - FIXED GRID FOR PERFECT ALIGNMENT */
-    /* Code(50px) | Name(Auto) | Icons(140px) | ROI(100px) */
-    .g-bar { 
-        display: grid; 
-        grid-template-columns: 50px 1fr 140px 100px; /* 定義嚴格的寬度 */
-        align-items: center; 
-        background: var(--bar); 
-        padding: 12px 15px; 
-        border-radius: 8px; 
-        border-left: 4px solid #444; 
-        cursor: pointer; 
-        transition: .2s; 
-        position: relative; 
-        border: 1px solid transparent; 
-        gap: 10px;
-    }
-    
+    .g-bar { display: grid; grid-template-columns: 50px 1fr 120px 90px; align-items: center; background: var(--bar); padding: 12px 15px; border-radius: 8px; border-left: 4px solid #444; cursor: pointer; transition: .2s; position: relative; border: 1px solid transparent; gap: 10px; }
     .g-bar:hover { background: #222; transform: translateX(5px); border-color: rgba(255,255,255,0.1); }
     .g-bar.active { background: #25252a; border-color: rgba(255,215,0,0.2); border-left-color: var(--gold) !important; }
-    
     .g-code { font-family: 'Courier New'; font-weight: 900; color: #fff; font-size: 1rem; opacity: 0.6; }
-    
-    /* Name Group: Ensure it fills the space but truncates */
-    .g-name-group { 
-        display: flex; flex-direction: column; justify-content: center; 
-        overflow: hidden; 
-    }
-    .g-name-bar { 
-        font-size: 1rem; font-weight: 900; color: #fff; 
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-        text-align: left; 
-    }
-    .g-deck-str { 
-        font-size: 0.75rem; color: #666; font-family: 'Courier New'; 
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-        margin-top: 2px; 
-    }
-
+    .g-name-group { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+    .g-name-bar { font-size: 1rem; font-weight: 900; color: #fff; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
+    .g-deck-str { font-size: 0.75rem; color: #666; font-family: 'Courier New'; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
     .g-deck-icons { display: flex; align-items: center; gap: 5px; justify-content: center; }
     .g-roi { font-family: 'Courier New'; font-weight: 900; font-size: 1.1rem; text-align: right; }
     .g-roi.color-profit { color: var(--green); } .g-roi.color-loss { color: var(--red); }
     .g-roi.color-gold { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
     .g-roi.color-dead { color: var(--dark-purple); text-shadow: 0 0 10px var(--dark-purple); }
 
-    /* Icons */
     .g-mini-icon { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; }
     .g-mini-icon svg { width: 100%!important; stroke-width: 3!important; } .g-mini-icon img { width: 100%!important; object-fit: contain; }
     .g-mini-icon.type-tw img { filter: drop-shadow(0 0 5px var(--tw)); } .g-mini-icon.type-us img { filter: drop-shadow(0 0 5px var(--us)); }
 
     .g-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(0,0,0,0.3); border-radius: 0 0 8px 8px; width: 100%; }
     .g-bar.active + .g-details { max-height: 500px; border: 1px solid #333; border-top: none; }
+    
     .highlight-content { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-    .ab-grid { display: flex; gap: 10px; margin-bottom: 5px; }
-    .ab-box { background: rgba(255,255,255,0.05); border-radius: 4px; padding: 5px 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1); min-width: 70px; }
-    .ab-label { font-size: 0.6rem; color: #888; display: block; }
-    .ab-val { font-family: 'Courier New'; font-weight: bold; font-size: 0.9rem; color: #fff; }
-    .ab-val.alpha { color: var(--cyan); } .ab-val.beta { color: var(--gold); }
+    
     .d-row { display: flex; align-items: flex-start; gap: 15px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; }
     .d-row:last-child { border: none; }
-    .d-label { width: 85px; flex-shrink: 0; color: var(--gold); font-weight: bold; font-size: 0.85rem; text-align-last: justify; }
+    .d-label { width: 90px; flex-shrink: 0; color: var(--gold); font-weight: bold; font-size: 0.85rem; text-align-last: justify; }
     .d-text { color: #ccc; line-height: 1.4; font-size: 0.9rem; }
     .d-text.warn { color: #ff6b6b; }
 
     @media(max-width: 900px) { 
         .arena-container { grid-template-columns: 1fr; } 
-        /* Mobile: Break grid into rows */
         .g-bar { grid-template-columns: 50px 1fr auto; grid-template-rows: auto auto; }
         .g-deck-icons { grid-column: 3; grid-row: 1; justify-content: flex-end; }
         .g-roi { grid-column: 3; grid-row: 2; margin-top: 5px; }
@@ -223,7 +180,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v12.50 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v12.51 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 
@@ -406,9 +363,11 @@ function parseSheetData(text){
           portfolios[currentGroup].push({
               code: c[0], name: c[1], deck: c[2] ? c[2].split('+').map(s=>s.trim()) : [],
               deckStr: c[2] || '',
-              highlight: c[3], persona: c[4], conflict: c[5],
-              alpha: c[6] ? c[6] : '-', 
-              beta: c[7] ? c[7] : '-'
+              // NEW MAPPING: D=Mindset, E=Persona, F=Conflict, G=Theory
+              mindset: c[3] || '-', 
+              persona: c[4] || '-',
+              conflict: c[5] || '-',
+              theory: c[6] || '-'
           });
       } else if (c[0] && c[0].trim() !== '') {
           currentGroup = c[0].trim();
@@ -491,7 +450,6 @@ function renderDashboard(){
   elDiff.textContent = `${totalSign}$${(totalDiff/10000).toFixed(1)}萬`;
   elDiff.className = `data-val ${sTotal.cls}`;
   
-  // 顯示總報酬率
   const elTotalROI = document.getElementById('totalROI');
   elTotalROI.textContent = `${sTotal.arrow} ${sTotal.sign}${sTotal.roi}%`;
   elTotalROI.className = `total-roi-display ${sTotal.cls}`;
@@ -580,13 +538,10 @@ function renderArena(){
             
             <div class="g-details">
                 <div class="highlight-content">
-                    <div class="ab-grid">
-                        <div class="ab-box"><span class="ab-label">ALPHA</span><span class="ab-val alpha">${p.alpha}</span></div>
-                        <div class="ab-box"><span class="ab-label">BETA</span><span class="ab-val beta">${p.beta}</span></div>
-                    </div>
-                    <div class="d-row"><span class="d-label">★ 亮點</span><span class="d-text">${p.highlight||'-'}</span></div>
-                    <div class="d-row"><span class="d-label">👤 人格</span><span class="d-text">${p.persona||'-'}</span></div>
-                    <div class="d-row"><span class="d-label">⚡ 衝突</span><span class="d-text warn">${p.conflict||'-'}</span></div>
+                    <div class="d-row"><span class="d-label">💭 散戶想法</span><span class="d-text">${p.mindset}</span></div>
+                    <div class="d-row"><span class="d-label">👤 人格側寫</span><span class="d-text">${p.persona}</span></div>
+                    <div class="d-row"><span class="d-label">⚡ 心理矛盾</span><span class="d-text warn">${p.conflict}</span></div>
+                    <div class="d-row"><span class="d-label">📚 學理分析</span><span class="d-text" style="color:#00f7ff">${p.theory}</span></div>
                 </div>
             </div>
           </div>`;

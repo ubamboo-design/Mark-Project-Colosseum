@@ -8,7 +8,12 @@
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
         --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; 
-        --gold: #ffd700; --green: #00ff6a; --red: #ff2a2a; --purple: #9d00ff; --cyan: #00f7ff;
+        --gold: #ffd700; 
+        --green: #00ff6a; 
+        --red: #ff2a2a; 
+        --purple: #a600ff; 
+        --dark-purple: #9400d3; /* < -50% */
+        --cyan: #00f7ff;
         --emergency: #ff0000;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -17,12 +22,16 @@
     /* HEADER */
     header { 
         padding: 35px 20px; background: transparent; position: relative; display: flex; 
-        align-items: center; justify-content: center; gap: 25px; 
+        align-items: center; justify-content: center; gap: 20px; 
     }
-    #pageLogo { height: 64px; width: auto; object-fit: contain; display: none; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.2)); }
-    .header-text { text-align: left; }
+    #pageLogo { 
+        height: 60px; /* 放大 Logo 與標題齊平 */
+        width: auto; object-fit: contain; display: none; 
+        filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3)); 
+    }
+    .header-text { text-align: left; display: flex; flex-direction: column; justify-content: center; }
     h1 { font-size: 2.8rem; letter-spacing: 6px; text-transform: uppercase; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.15); font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; line-height: 1; }
-    .meta-info { font-family: 'Courier New', monospace; color: var(--gold); margin-top: 8px; font-size: 0.9rem; opacity: 0.8; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+    .meta-info { font-family: 'Courier New', monospace; color: var(--gold); margin-top: 5px; font-size: 0.9rem; opacity: 0.8; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
     .container { max-width: 1600px; margin: 0 auto; padding: 0 20px; }
     
     /* DASHBOARD */
@@ -48,7 +57,7 @@
     .color-profit { color: var(--green)!important; text-shadow: 0 0 15px rgba(0,255,106,0.2); }
     .color-loss { color: var(--red)!important; text-shadow: 0 0 15px rgba(255,42,42,0.2); }
     .color-gold { color: var(--gold)!important; text-shadow: 0 0 20px rgba(255,215,0,0.6); } 
-    .color-dead { color: var(--purple)!important; text-shadow: 0 0 20px rgba(157,0,255,0.6); }
+    .color-dead { color: var(--dark-purple)!important; text-shadow: 0 0 20px rgba(148,0,211,0.6); }
     @media(max-width: 900px) { .dash-grid { grid-template-columns: 1fr; gap: 15px; } .total-big-val { font-size: 2rem; } header { flex-direction: column; gap: 15px; } .header-text { text-align: center; } }
 
     /* SECTIONS */
@@ -87,22 +96,24 @@
     .event-date { color: #888; letter-spacing: 1px; }
     .event-status { color: var(--gold); font-weight: bold; background: rgba(255,215,0,0.1); padding: 2px 8px; border-radius: 4px; }
     .event-content { font-size: 1rem; color: #eee; line-height: 1.6; font-weight: 500; }
+    
+    /* 閃爍特效 */
     @keyframes red-flash { 0% { box-shadow: 0 0 5px rgba(255,0,0,0.2); border-color: rgba(255,0,0,0.3); } 50% { box-shadow: 0 0 25px rgba(255,0,0,0.8); border-color: rgba(255,0,0,1); } 100% { box-shadow: 0 0 5px rgba(255,0,0,0.2); border-color: rgba(255,0,0,0.3); } }
     .event-card.emergency { animation: red-flash 1.5s infinite ease-in-out; border-left-color: var(--emergency) !important; }
     .event-card.emergency .event-status { color: var(--emergency); background: rgba(255, 0, 0, 0.15); }
     @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
     /* ================================================================= */
-    /* ARENA: 2x2 BATTLE GRID LAYOUT (NEW)                               */
+    /* ARENA: 2x2 BATTLE GRID (FIXED)                                    */
     /* ================================================================= */
     .arena-container { 
         display: grid; 
-        grid-template-columns: 1fr 1fr; /* 2 Columns */
+        grid-template-columns: 1fr 1fr; /* 強制 2x2 */
         gap: 20px; 
         margin-top: 20px; width: 100%; 
     }
     
-    /* The individual strategy card */
+    /* Card Styles */
     .strat-card {
         background: var(--bar);
         border: 1px solid #333;
@@ -114,56 +125,53 @@
         cursor: pointer;
         position: relative;
     }
-    
     .strat-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .strat-card.active { border-color: var(--gold); background: #1a1a20; box-shadow: 0 0 20px rgba(255, 215, 0, 0.15); }
 
-    /* 1. Collapsed View: Header + Icons */
-    .strat-visible { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+    /* Collapsed Content (Visible) */
+    .strat-visible { padding: 25px; display: flex; flex-direction: column; gap: 15px; height: 100%; justify-content: center; }
     
-    .strat-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
-    .strat-code { font-family: 'Courier New'; font-weight: 900; color: #fff; font-size: 1.2rem; opacity: 0.8; letter-spacing: 1px; }
-    .strat-roi { font-family: 'Courier New'; font-weight: 900; font-size: 1.4rem; }
+    .strat-header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 5px; }
+    .strat-code { font-family: 'Courier New'; font-weight: 900; color: #666; font-size: 1.1rem; }
+    .strat-roi { font-family: 'Courier New'; font-weight: 900; font-size: 1.6rem; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
     
-    /* ROI Colors */
+    /* ROI Colors in Arena */
     .strat-roi.color-profit { color: var(--green); }
     .strat-roi.color-loss { color: var(--red); }
-    .strat-roi.color-gold { color: var(--gold); }
-    .strat-roi.color-dead { color: var(--purple); }
+    .strat-roi.color-gold { color: var(--gold); text-shadow: 0 0 15px var(--gold); }
+    .strat-roi.color-dead { color: var(--dark-purple); text-shadow: 0 0 15px var(--dark-purple); }
 
-    .strat-icons { display: flex; gap: 10px; justify-content: center; padding: 5px 0; }
-    
-    /* 2. Expanded View: Details */
+    .strat-name-main { font-size: 1.3rem; font-weight: 900; color: #fff; text-align: left; letter-spacing: 1px; }
+    .strat-icons { display: flex; gap: 8px; margin-top: 5px; }
+
+    /* Expanded Content (Hidden) */
     .strat-details { 
         max-height: 0; 
         overflow: hidden; 
         transition: max-height 0.5s ease-in-out; 
         background: rgba(0,0,0,0.4); 
     }
-    
     .strat-card.active .strat-details { 
-        max-height: 500px; /* Open up */
+        max-height: 600px; 
         border-top: 1px solid rgba(255,215,0,0.2);
     }
 
-    .strat-content { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+    .strat-content { padding: 25px; display: flex; flex-direction: column; gap: 20px; }
     
-    /* Name */
-    .strat-name { font-size: 1.1rem; font-weight: 900; color: var(--gold); text-align: center; margin-bottom: 10px; letter-spacing: 2px; }
-
     /* Alpha/Beta Grid */
-    .ab-grid { display: flex; gap: 15px; justify-content: center; margin-bottom: 10px; }
-    .ab-box { background: rgba(255,255,255,0.05); border-radius: 6px; padding: 8px 15px; text-align: center; min-width: 80px; border: 1px solid rgba(255,255,255,0.1); }
-    .ab-label { display: block; font-size: 0.6rem; color: #888; margin-bottom: 2px; }
-    .ab-val { font-family: 'Courier New'; font-weight: bold; font-size: 1rem; color: #fff; }
-    .ab-val.alpha { color: var(--cyan); }
-    .ab-val.beta { color: var(--gold); }
+    .ab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 5px; }
+    .ab-box { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+    .ab-label { display: block; font-size: 0.7rem; color: #888; margin-bottom: 4px; letter-spacing: 1px; font-weight: bold; }
+    .ab-val { font-family: 'Courier New'; font-weight: 900; font-size: 1.3rem; color: #fff; }
+    .ab-val.alpha { color: var(--cyan); text-shadow: 0 0 8px rgba(0,247,255,0.3); }
+    .ab-val.beta { color: var(--gold); text-shadow: 0 0 8px rgba(255,215,0,0.3); }
 
-    /* Info Rows */
-    .d-row { display: flex; align-items: flex-start; gap: 15px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; }
+    /* Detailed Info Rows (Alignment Fixed) */
+    .d-row { display: flex; align-items: flex-start; gap: 15px; font-size: 0.95rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 10px; }
     .d-row:last-child { border: none; }
-    .d-label { width: 80px; flex-shrink: 0; color: #aaa; font-weight: bold; font-size: 0.8rem; }
-    .d-text { color: #ccc; line-height: 1.4; }
+    /* 修正對齊：Label 固定寬度 */
+    .d-label { min-width: 85px; flex-shrink: 0; color: var(--gold); font-weight: bold; font-size: 0.9rem; text-align-last: justify; /* 讓文字左右對齊 */ }
+    .d-text { color: #ccc; line-height: 1.5; }
     .d-text.warn { color: #ff6b6b; }
 
     @media(max-width: 900px) { .arena-container { grid-template-columns: 1fr; } }
@@ -195,7 +203,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v12.40 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v12.41 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 
@@ -315,7 +323,8 @@ function parseSheetData(text){
     if(c[0] === '事件簿') { isEvent = true; isStrategy = false; continue; }
     if(c[0] === '代號' && c[1] === '名稱') { isStrategy = true; isEvent = false; continue; }
 
-    if(isEvent && c[0] && c[0].match(/^\d{4}/)) {
+    // 過濾非數字開頭的事件列 (防止網址混入)
+    if(isEvent && c[0] && c[0].match(/^\d/)) {
         eventsData.push({ 
             date: c[0], 
             status: c[1] || 'Info', 
@@ -360,12 +369,12 @@ function calc(cost, cur){
   const roiRaw = ((diff)/cost);
   const roi = (roiRaw*100).toFixed(1);
   
-  // COLOR LOGIC UPDATED
+  // 更新顏色邏輯：>50% 金色, < -50% 暗紫色
   let cls = 'color-loss'; 
-  if (roiRaw >= 0.5) cls = 'color-gold'; // > +50%
-  else if (roiRaw >= 0) cls = 'color-profit'; // 0 ~ 50%
-  else if (roiRaw <= -0.5) cls = 'color-dead'; // < -50% (Dark Purple)
-  else cls = 'color-loss'; // 0 ~ -50%
+  if (roiRaw >= 0.5) cls = 'color-gold'; 
+  else if (roiRaw >= 0) cls = 'color-profit'; 
+  else if (roiRaw <= -0.5) cls = 'color-dead'; 
+  else cls = 'color-loss'; 
   
   return {roi, arrow: roi>=0 ? '▲' : '▼', sign: roi>=0 ? '+' : '', cls, diff};
 }
@@ -470,11 +479,9 @@ function renderEvents(){
 
 function toggleStrategy(element) {
     const isActive = element.classList.contains('active');
-    // Close all other active cards
     document.querySelectorAll('.strat-card.active').forEach(card => {
         card.classList.remove('active');
     });
-    // Toggle current
     if (!isActive) {
         element.classList.add('active');
     }
@@ -483,48 +490,39 @@ function toggleStrategy(element) {
 function renderArena(){
   const con=document.getElementById('arenaContainer'); con.innerHTML = ''; 
   Object.keys(portfolios).forEach(groupName => {
-      // Create a grid wrapper for the 2x2 layout
       let groupHtml = `<div class="arena-group"><div class="group-header">${groupName}</div><div class="arena-container">`;
-      
       portfolios[groupName].forEach(p => {
         let tc=0, ta=0;
         const icons=p.deck.map(code=>{
           const c=cardsData[code];
-          // Determine icon type (image or svg)
           if(c && c.media.includes('<img')) {
-             // Extract src from img tag simply
              const srcMatch = c.media.match(/src="([^"]*)"/);
              const src = srcMatch ? srcMatch[1] : '';
              return `<span class="g-mini-icon ${c.type}"><img src="${src}"></span>`;
           } else if(c) {
-             // It's SVG, strip class and use mini wrapper
              return `<span class="g-mini-icon ${c.type}">${c.media.replace('mc-media', '')}</span>`;
           }
           return '';
         }).join('');
-        
         p.deck.forEach(d=>{ if(cardsData[d]) { tc+=cardsData[d].cost; ta+=cardsData[d].current; } });
         const s=calc(tc, ta);
         
         groupHtml += `
           <div class="strat-card" onclick="toggleStrategy(this)">
             <div class="strat-visible">
-                <div class="strat-header">
+                <div class="strat-header-row">
                     <span class="strat-code">${p.code}</span>
                     <span class="strat-roi ${s.cls}">${s.sign}${s.roi}%</span>
                 </div>
+                <div class="strat-name-main">${p.name}</div>
                 <div class="strat-icons">${icons}</div>
             </div>
-
             <div class="strat-details">
                 <div class="strat-content">
-                    <div class="strat-name">${p.name}</div>
-                    
                     <div class="ab-grid">
-                        <div class="ab-box"><span class="ab-label">ALPHA</span><span class="ab-val alpha">${p.alpha}</span></div>
-                        <div class="ab-box"><span class="ab-label">BETA</span><span class="ab-val beta">${p.beta}</span></div>
+                        <div class="ab-box"><span class="ab-label">ALPHA (α)</span><span class="ab-val alpha">${p.alpha}</span></div>
+                        <div class="ab-box"><span class="ab-label">BETA (β)</span><span class="ab-val beta">${p.beta}</span></div>
                     </div>
-
                     <div class="d-row"><span class="d-label">★ 亮點</span><span class="d-text">${p.highlight||'-'}</span></div>
                     <div class="d-row"><span class="d-label">👤 人格</span><span class="d-text">${p.persona||'-'}</span></div>
                     <div class="d-row"><span class="d-label">⚡ 衝突</span><span class="d-text warn">${p.conflict||'-'}</span></div>
@@ -532,8 +530,7 @@ function renderArena(){
             </div>
           </div>`;
       });
-      
-      groupHtml += `</div></div>`; // Close grid container & group
+      groupHtml += `</div></div>`;
       con.innerHTML += groupHtml;
   });
 }

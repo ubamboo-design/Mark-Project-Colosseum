@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : 事件觀測版</title>
+<title>PROJECT CAGE : 全局戰情版</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -23,13 +23,20 @@
     .dashboard-panel { background: linear-gradient(180deg, rgba(20,20,25,0.9), rgba(5,5,5,0.95)); border: 1px solid #333; border-radius: 20px; padding: 25px; margin: 30px 0; box-shadow: 0 0 50px rgba(0,0,0,0.7); position: relative; overflow: hidden; backdrop-filter: blur(10px); }
     .dashboard-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--tw), var(--gold), var(--us)); box-shadow: 0 0 15px var(--gold); }
     
-    .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 20px; text-align: center; }
+    /* Grid 調整：右側稍微加寬以容納更多資訊 */
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 20px; text-align: center; }
     .dash-group { display: flex; flex-direction: column; justify-content: center; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 15px; border: 1px solid #222; }
     .dash-label { font-size: 0.75rem; color: #666; text-transform: uppercase; margin-bottom: 8px; font-weight: 700; letter-spacing: 1.5px; }
     .dash-value-sub { font-family: 'Courier New', monospace; font-size: 1.8rem; font-weight: 900; color: #eee; margin-bottom: 5px; }
     .dash-roi-sub { font-size: 1.2rem; font-weight: 900; display: block; }
-    .dash-value-main { font-family: 'Courier New', monospace; font-size: 2.8rem; font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(255,215,0,0.2); margin-top: 5px; }
-    .dash-rate-info { font-family: 'Courier New'; font-size: 0.85rem; color: var(--gold); margin-top: 5px; opacity: 0.8; letter-spacing: 1px; border-top: 1px solid #333; padding-top: 5px; width: fit-content; margin-left: auto; margin-right: auto; }
+    .dash-value-main { font-family: 'Courier New', monospace; font-size: 2.8rem; font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(255,215,0,0.2); margin-top: 5px; line-height: 1; }
+    
+    /* 新增：總成本顯示區塊 */
+    .dash-cost-row { margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .dash-cost-val { font-family: 'Courier New'; font-size: 1.4rem; font-weight: bold; color: #ccc; }
+    .dash-cost-breakdown { font-size: 0.8rem; color: #777; margin-top: 4px; font-family: 'Courier New'; letter-spacing: 0.5px; }
+    
+    .dash-rate-info { font-family: 'Courier New'; font-size: 0.75rem; color: var(--gold); margin-top: 8px; opacity: 0.6; letter-spacing: 1px; }
 
     .color-profit { color: var(--green)!important; text-shadow: 0 0 20px rgba(0,255,106,0.3); }
     .color-loss { color: var(--red)!important; text-shadow: 0 0 20px rgba(255,42,42,0.3); }
@@ -62,7 +69,6 @@
     .type-yield { border-color: var(--yield); } .type-yield:hover { box-shadow: 0 0 25px rgba(0,255,106,0.4); }
     .type-ber { border-color: var(--ber); } .type-ber:hover { box-shadow: 0 0 25px rgba(255,145,0,0.4); }
     .type-trap { border-color: var(--trap); } .type-trap:hover { box-shadow: 0 0 25px rgba(189,0,255,0.4); }
-    /* Image Glows */
     .type-tw img.mc-media { filter: drop-shadow(0 0 5px var(--tw)); } .type-tw:hover img.mc-media { filter: drop-shadow(0 0 20px var(--tw)); }
     .type-us img.mc-media { filter: drop-shadow(0 0 5px var(--us)); } .type-us:hover img.mc-media { filter: drop-shadow(0 0 20px var(--us)); }
     .type-yield img.mc-media { filter: drop-shadow(0 0 5px var(--yield)); } .type-yield:hover img.mc-media { filter: drop-shadow(0 0 20px var(--yield)); }
@@ -72,55 +78,15 @@
     .mc-name { font-size: 0.9rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #fff; margin-bottom: 6px; text-shadow: 0 2px 10px rgba(0,0,0,1); } 
     .mc-cost-badge { display: inline-block; margin-top: 4px; padding: 4px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.75rem; color: #999; background: rgba(0,0,0,0.8); }
 
-    /* ========================================= */
-    /* NEW SECTION: EVENTS LOG (雙欄對稱版)      */
-    /* ========================================= */
-    .event-list { 
-        display: grid; 
-        grid-template-columns: 1fr 1fr; /* 強制雙欄 */
-        gap: 20px; 
-        width: 100%; 
-        padding-bottom: 10px;
-    }
-    
-    .event-card { 
-        background: rgba(255,255,255,0.03); 
-        border: 1px solid #333; 
-        border-left: 4px solid var(--cyan); 
-        border-radius: 8px; 
-        padding: 20px; 
-        position: relative; 
-        transition: .3s;
-        height: 100%; /* 確保兩欄等高 */
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .event-card:hover { 
-        background: rgba(0, 247, 255, 0.05); 
-        border-color: var(--cyan); 
-        box-shadow: 0 0 15px rgba(0, 247, 255, 0.1); 
-    }
-    
-    .event-header { 
-        display: flex; 
-        justify-content: space-between; 
-        margin-bottom: 12px; 
-        font-family: 'Courier New'; 
-        font-size: 0.8rem; 
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        padding-bottom: 8px;
-    }
-    
+    /* EVENTS LOG */
+    .event-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; padding-bottom: 10px; }
+    .event-card { background: rgba(255,255,255,0.03); border: 1px solid #333; border-left: 4px solid var(--cyan); border-radius: 8px; padding: 20px; position: relative; transition: .3s; height: 100%; display: flex; flex-direction: column; }
+    .event-card:hover { background: rgba(0, 247, 255, 0.05); border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 247, 255, 0.1); }
+    .event-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-family: 'Courier New'; font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
     .event-date { color: #888; letter-spacing: 1px; }
     .event-status { color: var(--gold); font-weight: bold; background: rgba(255,215,0,0.1); padding: 2px 8px; border-radius: 4px; }
     .event-content { font-size: 1rem; color: #eee; line-height: 1.6; font-weight: 500; }
-
-    /* 手機版強制變單欄 */
-    @media(max-width: 768px) {
-        .event-list { grid-template-columns: 1fr; }
-    }
-    /* ========================================= */
+    @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
     /* ARENA */
     .arena-container { display: flex; flex-direction: column; gap: 30px; margin-top: 20px; width: 100%; }
@@ -176,7 +142,7 @@
 <body>
 <header>
   <h1>PROJECT CAGE</h1>
-  <div class="meta-info">v12.26 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+  <div class="meta-info">v12.27 LIVE • NT$ 1,000 萬 • 2025-2031</div>
 </header>
 
 <div class="container">
@@ -195,6 +161,13 @@
       <div class="dash-group" style="border-color: rgba(255,215,0,0.3); justify-content:center;">
         <span class="dash-label" style="color:var(--gold)">TOTAL ASSET (TWD 總值)</span>
         <div class="dash-value-main" id="totalAsset">...</div>
+        
+        <div class="dash-cost-row">
+            <span class="dash-label" style="color:#888;">TOTAL COST (估算)</span>
+            <div class="dash-cost-val" id="totalCostTWD">...</div>
+            <div class="dash-cost-breakdown" id="costBreakdown">...</div>
+        </div>
+
         <div class="dash-rate-info" id="rateInfo">Loading Rate...</div>
       </div>
     </div>
@@ -334,12 +307,18 @@ function renderDashboard(){
   const sUS = calc(tcUS, taUS);
   document.getElementById('costUS').textContent = '$' + (tcUS/10000).toFixed(0) + '萬';
   document.getElementById('roiUS').innerHTML = `<span class="${sUS.cls}">${sUS.arrow} ${sUS.sign}${sUS.roi}%</span>`;
+  
   const totalAssetTWD = taTW + (taUS * currentRate);
-  const totalCostTWD = tcTW + (tcUS * currentRate); 
+  const totalCostTWD = tcTW + (tcUS * currentRate); // 總成本 (台幣)
+  
   const cur = document.getElementById('totalAsset'); 
   cur.textContent = 'NT$ ' + totalAssetTWD.toLocaleString(undefined, {maximumFractionDigits: 0});
   const sTotal = calc(totalCostTWD, totalAssetTWD);
   cur.className = 'dash-value-main ' + sTotal.cls;
+
+  // 渲染新增的總成本與細項
+  document.getElementById('totalCostTWD').textContent = 'NT$ ' + totalCostTWD.toLocaleString(undefined, {maximumFractionDigits: 0});
+  document.getElementById('costBreakdown').textContent = `(TW: $${(tcTW/10000).toFixed(0)}萬 + US: $${(tcUS/10000).toFixed(0)}萬)`;
 }
 
 function renderCards(){

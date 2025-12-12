@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : 戰情室最終版</title>
+<title>PROJECT CAGE : 品牌戰情版</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -13,10 +13,31 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--bg); background-image: radial-gradient(circle at 50% 0%, #1a1a20 0%, #050505 70%); color: var(--text); font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.3; overflow-x: hidden; padding-bottom: 30px; }
     
-    /* HEADER */
-    header { padding: 30px 20px; background: transparent; text-align: center; position: relative; }
+    /* HEADER (NEW FLEX LAYOUT) */
+    header { 
+        padding: 30px 20px; 
+        background: transparent; 
+        text-align: center; 
+        position: relative; 
+        display: flex; /* 啟用 Flexbox */
+        align-items: center; /* 垂直置中 */
+        justify-content: center; /* 水平置中 */
+        gap: 20px; /* Logo 與標題的間距 */
+    }
+    
+    /* LOGO STYLE */
+    #pageLogo {
+        height: 50px; /* 設定高度與標題文字差不多 */
+        width: auto;
+        object-fit: contain;
+        display: none; /* 預設隱藏，載入成功後顯示 */
+        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3)); /* 加一點金色光暈 */
+    }
+
     h1 { font-size: 2.8rem; letter-spacing: 6px; text-transform: uppercase; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.15); font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; }
-    .meta-info { font-family: 'Courier New', monospace; color: var(--gold); margin-top: 10px; font-size: 0.9rem; opacity: 0.8; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+    
+    .meta-info { font-family: 'Courier New', monospace; color: var(--gold); margin-top: 10px; font-size: 0.9rem; opacity: 0.8; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); text-align: center; width: 100%; position: absolute; bottom: 5px; left: 0; }
+    
     .container { max-width: 1600px; margin: 0 auto; padding: 0 20px; }
     
     /* DASHBOARD */
@@ -52,13 +73,16 @@
     .color-profit { color: var(--green)!important; text-shadow: 0 0 15px rgba(0,255,106,0.2); }
     .color-loss { color: var(--red)!important; text-shadow: 0 0 15px rgba(255,42,42,0.2); }
     
-    @media(max-width: 900px) { .dash-grid { grid-template-columns: 1fr; gap: 15px; } .total-big-val { font-size: 2rem; } }
+    @media(max-width: 900px) { 
+        .dash-grid { grid-template-columns: 1fr; gap: 15px; } 
+        .total-big-val { font-size: 2rem; }
+        header { flex-direction: column; gap: 10px; } /* 手機版改為上下排列 */
+    }
 
-    /* SECTIONS */
+    /* SECTIONS & CARDS */
     .section-title { font-size: 1.3rem; border-left: 5px solid var(--gold); padding-left: 15px; margin: 50px 0 25px; text-transform: uppercase; font-weight: 900; color: #fff; display: flex; align-items: center; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
     .section-title::after { content: ''; flex-grow: 1; height: 1px; background: #333; margin-left: 20px; }
 
-    /* DECK */
     .deck-wrapper { overflow-x: auto; padding-bottom: 25px; padding-top: 10px; }
     .deck-grid { display: grid; grid-template-columns: repeat(8, minmax(110px, 1fr)); gap: 10px; min-width: 1000px; }
     .micro-card { background: var(--card); border: 2px solid #333; border-radius: 16px; padding: 10px; transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; min-height: 220px; position: relative; overflow: hidden; }
@@ -73,13 +97,11 @@
     .micro-card:hover .mc-media { transform: scale(1.15); }
     svg.mc-media { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     img.mc-media { filter: drop-shadow(0 0 2px rgba(255,255,255,0.5)); }
-    .type-tw { border-color: var(--tw); } .type-tw:hover { box-shadow: 0 0 25px rgba(255,42,42,0.4); }
-    .type-us { border-color: var(--us); } .type-us:hover { box-shadow: 0 0 25px rgba(0,210,255,0.4); }
-    .type-yield { border-color: var(--yield); } .type-yield:hover { box-shadow: 0 0 25px rgba(0,255,106,0.4); }
-    .type-ber { border-color: var(--ber); } .type-ber:hover { box-shadow: 0 0 25px rgba(255,145,0,0.4); }
-    .type-trap { border-color: var(--trap); } .type-trap:hover { box-shadow: 0 0 25px rgba(189,0,255,0.4); }
+    .type-tw { border-color: var(--tw); } .type-us { border-color: var(--us); } .type-yield { border-color: var(--yield); } .type-ber { border-color: var(--ber); } .type-trap { border-color: var(--trap); }
+    .type-tw:hover { box-shadow: 0 0 25px rgba(255,42,42,0.4); } .type-us:hover { box-shadow: 0 0 25px rgba(0,210,255,0.4); } .type-yield:hover { box-shadow: 0 0 25px rgba(0,255,106,0.4); } .type-ber:hover { box-shadow: 0 0 25px rgba(255,145,0,0.4); } .type-trap:hover { box-shadow: 0 0 25px rgba(189,0,255,0.4); }
     .type-tw img.mc-media { filter: drop-shadow(0 0 5px var(--tw)); } .type-tw:hover img.mc-media { filter: drop-shadow(0 0 20px var(--tw)); }
     .type-us img.mc-media { filter: drop-shadow(0 0 5px var(--us)); } .type-us:hover img.mc-media { filter: drop-shadow(0 0 20px var(--us)); }
+    
     .mc-footer { text-align: center; margin-top: auto; position: relative; z-index: 2; padding: 0 2px; }
     .mc-chn-name { font-size: 1rem; font-weight: 900; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 1px; }
     .mc-eng-name { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
@@ -111,15 +133,12 @@
     .g-info { flex-grow: 1; padding: 0 20px; display: flex; align-items: center; gap: 20px; }
     .g-name { width: 180px; flex: 0 0 180px; font-size: 1.2rem; font-weight: 700; color: #eee; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .g-deck-icons { display: flex; align-items: center; gap: 10px; }
-    
-    /* New Data Group in Bar */
     .g-data-group { display: flex; align-items: center; gap: 25px; margin-right: 20px; }
     .g-data-item { text-align: center; min-width: 60px; }
     .g-label-mini { font-size: 0.6rem; color: #666; display: block; margin-bottom: 2px; font-weight: bold; letter-spacing: 1px; }
     .g-val-mini { font-family: 'Courier New'; font-size: 1.1rem; font-weight: bold; color: #ccc; }
     .g-val-mini.alpha { color: var(--cyan); text-shadow: 0 0 5px rgba(0,247,255,0.3); }
     .g-val-mini.beta { color: var(--gold); text-shadow: 0 0 5px rgba(255,215,0,0.3); }
-    
     .g-roi { font-family: 'Courier New'; font-weight: 900; font-size: 1.4rem; display: block; }
     .g-mini-icon { width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center; transition: .2s; }
     .g-mini-icon svg { width: 100%!important; height: 100%!important; stroke-width: 2.5!important; } 
@@ -159,8 +178,11 @@
 </head>
 <body>
 <header>
-  <h1>PROJECT CAGE</h1>
-  <div class="meta-info">v12.35 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+  <img id="pageLogo" src="" alt="Logo">
+  <div>
+      <h1>PROJECT CAGE</h1>
+      <div class="meta-info">v12.36 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+  </div>
 </header>
 
 <div class="container">
@@ -223,6 +245,8 @@
 <script>
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, eventsData = [];
+let logoUrl = ''; // 存放Logo連結
+
 const twdCodes = ['C01', 'C02', 'C02-1', 'C02-2', 'C03', 'C04', 'C07'];
 const usdCodes = ['C05', 'C06'];
 
@@ -261,22 +285,37 @@ async function init() {
 }
 
 function parseSheetData(text){
-  const rows = text.split('\n').map(r=>r.trim()).filter(r=>r);
+  // 這裡不預先 filter，以確保索引位置相對準確，但 TSV 匯出有時會省略空行，
+  // 所以最好的方式是檢查內容。
+  const rows = text.split('\n').map(r=>r.trim()); 
+  
   let isStrategy = false;
   let isEvent = false;
   let currentGroup = '未分類';
 
-  for(let i=1; i<rows.length; i++){
+  for(let i=0; i<rows.length; i++){
+    if(!rows[i]) continue; // 跳過空行
     const c = rows[i].split('\t');
     
+    // 檢查是否為 A34 (索引 33) 且包含 Logo 網址
+    // 為了安全起見，這裡檢查 A 欄是否為 "A34" (不太可能) 或是直接取第34行的資料
+    // 但因為有空行過濾問題，我們採用更聰明的「標籤檢測法」
+    // 如果 A 欄位包含 http 且不是卡牌/策略，那很可能就是 Logo
+    // 或者我們直接讀取第34行 (如果資料完整)
+    if(i === 33 && c[0].startsWith('http')) {
+        logoUrl = c[0];
+    } else if (i === 33 && c[0].toLowerCase() === 'logo' && c[1]) {
+        logoUrl = c[1];
+    }
+    // 備用：如果使用者把連結放在 A34，我們嘗試直接抓取該行
+    if (i === 33 && !logoUrl) logoUrl = c[0];
+
     if(c[0] === '事件簿') { isEvent = true; isStrategy = false; continue; }
     if(c[0] === '代號' && c[1] === '名稱') { isStrategy = true; isEvent = false; continue; }
 
-    // A. 解析事件簿 (嚴格檢查日期格式，防止網址混入)
     if(isEvent && c[0] && c[0].match(/^\d{4}/)) {
         eventsData.push({ date: c[0], status: c[1] || 'Info', content: c[2] || '' });
     }
-    // B. 解析卡牌資料
     else if(!isStrategy && c[0]?.startsWith('C')){
       let skillName = c[4]; if(c[0] === 'C05') skillName = 'VT DCA';
       let costRaw = c[5] ? c[5].replace(/[NT$US,]/g, '') : '0';
@@ -292,14 +331,12 @@ function parseSheetData(text){
           strategy: c[7], sop: c[8], media: displayMedia
       };
     } 
-    // C. 解析策略與競技場 (抓取 Alpha/Beta)
     else if(isStrategy){
       if(c[0].startsWith('P')){
           if(!portfolios[currentGroup]) portfolios[currentGroup] = [];
           portfolios[currentGroup].push({
               code: c[0], name: c[1], deck: c[2] ? c[2].split('+').map(s=>s.trim()) : [],
               highlight: c[3], persona: c[4], conflict: c[5],
-              // 假設 G欄(index 6)是 Alpha, H欄(index 7)是 Beta
               alpha: c[6] ? c[6] : '-', 
               beta: c[7] ? c[7] : '-'
           });
@@ -318,7 +355,21 @@ function calc(cost, cur){
   return {roi, arrow: roi>=0 ? '▲' : '▼', sign: roi>=0 ? '+' : '', cls, diff};
 }
 
-function renderAll(){ renderDashboard(); renderCards(); renderEvents(); renderArena(); }
+function renderAll(){ 
+    renderHeader(); // 新增渲染 Header Logo
+    renderDashboard(); 
+    renderCards(); 
+    renderEvents(); 
+    renderArena(); 
+}
+
+function renderHeader() {
+    const logoImg = document.getElementById('pageLogo');
+    if (logoUrl && logoUrl.startsWith('http')) {
+        logoImg.src = logoUrl;
+        logoImg.style.display = 'block';
+    }
+}
 
 function renderDashboard(){
   let tcTW=0, taTW=0, tcUS=0, taUS=0;
@@ -382,7 +433,6 @@ function renderCards(){
 
 function renderEvents(){
     const con = document.getElementById('eventContainer');
-    // 只取最新的 2 筆有效資料
     const validEvents = eventsData.slice(0, 2); 
     
     if(validEvents.length === 0) {

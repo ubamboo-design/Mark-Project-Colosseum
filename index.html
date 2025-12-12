@@ -3,40 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : 品牌戰情版</title>
+<title>PROJECT CAGE : 戰情室旗艦版</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
-        --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; --gold: #ffd700;
-        --green: #00ff6a; --red: #ff2a2a; --purple: #a600ff; --cyan: #00f7ff;
+        --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; 
+        --gold: #ffd700; /* >50% 金色 */
+        --green: #00ff6a; 
+        --red: #ff2a2a; 
+        --purple: #9d00ff; /* < -50% 暗紫色 */
+        --cyan: #00f7ff;
+        --emergency: #ff0000; /* 緊急事件紅 */
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--bg); background-image: radial-gradient(circle at 50% 0%, #1a1a20 0%, #050505 70%); color: var(--text); font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.3; overflow-x: hidden; padding-bottom: 30px; }
     
-    /* HEADER (NEW FLEX LAYOUT) */
+    /* HEADER (FLEX LAYOUT UPDATED) */
     header { 
-        padding: 30px 20px; 
+        padding: 35px 20px; 
         background: transparent; 
-        text-align: center; 
         position: relative; 
-        display: flex; /* 啟用 Flexbox */
+        display: flex; 
         align-items: center; /* 垂直置中 */
         justify-content: center; /* 水平置中 */
-        gap: 20px; /* Logo 與標題的間距 */
+        gap: 25px; /* Logo 與文字的間距 */
     }
     
-    /* LOGO STYLE */
+    /* LOGO STYLE (UPDATED SIZE) */
     #pageLogo {
-        height: 50px; /* 設定高度與標題文字差不多 */
+        height: 64px; /* 加大尺寸，對應文字視覺重量 */
         width: auto;
         object-fit: contain;
-        display: none; /* 預設隱藏，載入成功後顯示 */
-        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3)); /* 加一點金色光暈 */
+        display: none; 
+        filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.2));
     }
 
-    h1 { font-size: 2.8rem; letter-spacing: 6px; text-transform: uppercase; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.15); font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; }
-    
-    .meta-info { font-family: 'Courier New', monospace; color: var(--gold); margin-top: 10px; font-size: 0.9rem; opacity: 0.8; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); text-align: center; width: 100%; position: absolute; bottom: 5px; left: 0; }
+    .header-text { text-align: left; } /* 讓文字靠左對齊 Logo */
+    h1 { font-size: 2.8rem; letter-spacing: 6px; text-transform: uppercase; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.15); font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; line-height: 1; }
+    .meta-info { font-family: 'Courier New', monospace; color: var(--gold); margin-top: 8px; font-size: 0.9rem; opacity: 0.8; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
     
     .container { max-width: 1600px; margin: 0 auto; padding: 0 20px; }
     
@@ -44,7 +48,7 @@
     .dashboard-panel { background: linear-gradient(180deg, rgba(20,20,25,0.9), rgba(5,5,5,0.95)); border: 1px solid #333; border-radius: 20px; padding: 25px; margin: 30px 0; box-shadow: 0 0 50px rgba(0,0,0,0.7); position: relative; overflow: hidden; backdrop-filter: blur(10px); }
     .dashboard-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--tw), var(--gold), var(--us)); box-shadow: 0 0 15px var(--gold); }
     
-    .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 20px; }
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 20px; }
     
     .dash-group { 
         display: flex; flex-direction: column; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px; border: 1px solid #222; 
@@ -70,13 +74,18 @@
     .c-tw { color: var(--tw); text-shadow: 0 0 10px rgba(255,42,42,0.3); }
     .c-us { color: var(--us); text-shadow: 0 0 10px rgba(0,210,255,0.3); }
     .c-gold { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.3); }
+    
+    /* 顏色定義更新 */
     .color-profit { color: var(--green)!important; text-shadow: 0 0 15px rgba(0,255,106,0.2); }
     .color-loss { color: var(--red)!important; text-shadow: 0 0 15px rgba(255,42,42,0.2); }
+    .color-gold { color: var(--gold)!important; text-shadow: 0 0 20px rgba(255,215,0,0.6); } /* > 50% */
+    .color-dead { color: var(--purple)!important; text-shadow: 0 0 20px rgba(157,0,255,0.6); } /* < -50% */
     
     @media(max-width: 900px) { 
         .dash-grid { grid-template-columns: 1fr; gap: 15px; } 
         .total-big-val { font-size: 2rem; }
-        header { flex-direction: column; gap: 10px; } /* 手機版改為上下排列 */
+        header { flex-direction: column; gap: 15px; }
+        .header-text { text-align: center; }
     }
 
     /* SECTIONS & CARDS */
@@ -115,6 +124,22 @@
     .event-date { color: #888; letter-spacing: 1px; }
     .event-status { color: var(--gold); font-weight: bold; background: rgba(255,215,0,0.1); padding: 2px 8px; border-radius: 4px; }
     .event-content { font-size: 1rem; color: #eee; line-height: 1.6; font-weight: 500; }
+    
+    /* 緊急事件特效 (EMERGENCY ANIMATION) */
+    @keyframes red-flash {
+        0% { box-shadow: 0 0 5px rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+        50% { box-shadow: 0 0 25px rgba(255, 0, 0, 0.8); border-color: rgba(255, 0, 0, 1); }
+        100% { box-shadow: 0 0 5px rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+    }
+    .event-card.emergency {
+        animation: red-flash 1.5s infinite ease-in-out; /* 呼吸燈頻率 */
+        border-left-color: var(--emergency) !important;
+    }
+    .event-card.emergency .event-status {
+        color: var(--emergency);
+        background: rgba(255, 0, 0, 0.15);
+    }
+
     @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
     /* ARENA */
@@ -140,6 +165,13 @@
     .g-val-mini.alpha { color: var(--cyan); text-shadow: 0 0 5px rgba(0,247,255,0.3); }
     .g-val-mini.beta { color: var(--gold); text-shadow: 0 0 5px rgba(255,215,0,0.3); }
     .g-roi { font-family: 'Courier New'; font-weight: 900; font-size: 1.4rem; display: block; }
+    
+    /* Arena ROI Colors Update */
+    .g-roi.color-profit { color: var(--green); }
+    .g-roi.color-loss { color: var(--red); }
+    .g-roi.color-gold { color: var(--gold); }
+    .g-roi.color-dead { color: var(--purple); }
+
     .g-mini-icon { width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center; transition: .2s; }
     .g-mini-icon svg { width: 100%!important; height: 100%!important; stroke-width: 2.5!important; } 
     .g-mini-icon img { width: 100%!important; height: 100%!important; object-fit: contain; }
@@ -179,9 +211,9 @@
 <body>
 <header>
   <img id="pageLogo" src="" alt="Logo">
-  <div>
+  <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v12.36 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v12.37 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 
@@ -245,7 +277,7 @@
 <script>
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, eventsData = [];
-let logoUrl = ''; // 存放Logo連結
+let logoUrl = ''; 
 
 const twdCodes = ['C01', 'C02', 'C02-1', 'C02-2', 'C03', 'C04', 'C07'];
 const usdCodes = ['C05', 'C06'];
@@ -285,36 +317,29 @@ async function init() {
 }
 
 function parseSheetData(text){
-  // 這裡不預先 filter，以確保索引位置相對準確，但 TSV 匯出有時會省略空行，
-  // 所以最好的方式是檢查內容。
   const rows = text.split('\n').map(r=>r.trim()); 
-  
   let isStrategy = false;
   let isEvent = false;
   let currentGroup = '未分類';
 
   for(let i=0; i<rows.length; i++){
-    if(!rows[i]) continue; // 跳過空行
+    if(!rows[i]) continue;
     const c = rows[i].split('\t');
     
-    // 檢查是否為 A34 (索引 33) 且包含 Logo 網址
-    // 為了安全起見，這裡檢查 A 欄是否為 "A34" (不太可能) 或是直接取第34行的資料
-    // 但因為有空行過濾問題，我們採用更聰明的「標籤檢測法」
-    // 如果 A 欄位包含 http 且不是卡牌/策略，那很可能就是 Logo
-    // 或者我們直接讀取第34行 (如果資料完整)
-    if(i === 33 && c[0].startsWith('http')) {
-        logoUrl = c[0];
-    } else if (i === 33 && c[0].toLowerCase() === 'logo' && c[1]) {
-        logoUrl = c[1];
-    }
-    // 備用：如果使用者把連結放在 A34，我們嘗試直接抓取該行
+    if(i === 33 && c[0].startsWith('http')) { logoUrl = c[0]; } 
+    else if (i === 33 && c[0].toLowerCase() === 'logo' && c[1]) { logoUrl = c[1]; }
     if (i === 33 && !logoUrl) logoUrl = c[0];
 
     if(c[0] === '事件簿') { isEvent = true; isStrategy = false; continue; }
     if(c[0] === '代號' && c[1] === '名稱') { isStrategy = true; isEvent = false; continue; }
 
     if(isEvent && c[0] && c[0].match(/^\d{4}/)) {
-        eventsData.push({ date: c[0], status: c[1] || 'Info', content: c[2] || '' });
+        eventsData.push({ 
+            date: c[0], 
+            status: c[1] || 'Info', 
+            content: c[2] || '',
+            isUrgent: (c[1] || '').includes('緊急') // 偵測緊急
+        });
     }
     else if(!isStrategy && c[0]?.startsWith('C')){
       let skillName = c[4]; if(c[0] === 'C05') skillName = 'VT DCA';
@@ -350,13 +375,20 @@ function parseSheetData(text){
 function calc(cost, cur){
   if(cost===0) return {roi:0, arrow:'-', cls:'', diff: 0, sign: ''};
   const diff = cur - cost;
-  const roi = ((diff)/cost*100).toFixed(1);
-  let cls = cur >= cost*1.5 ? 'color-gold' : cur > cost ? 'color-profit' : cur <= cost*0.5 ? 'color-dead' : 'color-loss';
+  const roiRaw = ((diff)/cost);
+  const roi = (roiRaw*100).toFixed(1);
+  
+  // 更新顏色邏輯
+  let cls = 'color-loss'; // 預設紅色 (0 ~ -50%)
+  if (roiRaw > 0.5) cls = 'color-gold'; // > 50%
+  else if (roiRaw > 0) cls = 'color-profit'; // 0 ~ 50%
+  else if (roiRaw < -0.5) cls = 'color-dead'; // < -50%
+  
   return {roi, arrow: roi>=0 ? '▲' : '▼', sign: roi>=0 ? '+' : '', cls, diff};
 }
 
 function renderAll(){ 
-    renderHeader(); // 新增渲染 Header Logo
+    renderHeader();
     renderDashboard(); 
     renderCards(); 
     renderEvents(); 
@@ -441,8 +473,10 @@ function renderEvents(){
     }
     con.innerHTML = '';
     validEvents.forEach(e => {
+        // 如果是緊急事件，加入 extra class
+        const urgentClass = e.isUrgent ? ' emergency' : '';
         con.innerHTML += `
-        <div class="event-card">
+        <div class="event-card${urgentClass}">
             <div class="event-header">
                 <span class="event-date">${e.date}</span>
                 <span class="event-status">${e.status}</span>
@@ -499,7 +533,7 @@ function renderArena(){
             </div>
             <div class="g-details">
                 <div class="highlight-content">
-                    <div class="d-row"><span class="d-label">★ 競技亮點</span><span class="d-text">${p.highlight||'-'}</span></div>
+                    <div class="d-row"><span class="d-label">★  競技亮點</span><span class="d-text">${p.highlight||'-'}</span></div>
                     <div class="d-row"><span class="d-label">👤 投資人格</span><span class="d-text">${p.persona||'-'}</span></div>
                     <div class="d-row"><span class="d-label">⚡ 預期衝突</span><span class="d-text warn">${p.conflict||'-'}</span></div>
                 </div>

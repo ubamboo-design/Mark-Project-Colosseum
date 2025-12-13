@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : 戰區指揮版 (Full Live Sync - C01/C02)</title>
+<title>PROJECT CAGE : 戰區指揮版 (v13.6 Final)</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -261,7 +261,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v13.6 LIVE • REAL PRICE • 2025-2031</div>
+      <div class="meta-info">v13.6 LIVE • GAS SYNC • 2025-2031</div>
   </div>
   <div class="player-btn-container">
     <button class="cmd-btn" onclick="openPlayerModal()">
@@ -306,6 +306,9 @@
 
   <div class="section-title">III. 參賽者名單 (PLAYER ROSTER)</div>
   <div id="playerRoster" class="roster-grid">
+    </div>
+    <div id="runtimeError" style="margin-top: 20px; padding: 15px; background: rgba(255, 0, 0, 0.1); border: 1px solid var(--emergency); color: var(--text); font-family: 'Courier New', monospace; display: none;">
+        <strong>RUNTIME ERROR LOG:</strong> <span id="errorDetails"></span>
     </div>
 
 </div>
@@ -421,7 +424,7 @@
 
 <script type="module">
 // -----------------------------------------------------
-// 1. FIREBASE CONFIGURATION (已填入您的金鑰)
+// 1. FIREBASE CONFIGURATION
 // -----------------------------------------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { 
@@ -448,7 +451,7 @@ try {
 }
 
 // -----------------------------------------------------
-// 2. GLOBAL VARIABLES
+// 2. GLOBAL VARIABLES & CONSTANTS
 // -----------------------------------------------------
 window.currentRate = 31.29; 
 window.cardsData = {};
@@ -457,11 +460,36 @@ window.logoUrl = '';
 window.currentCardCode = null; 
 window.setupDates = []; 
 
+// ⚠️ GAS PRICE API URL (Added per request)
+const GAS_PRICE_API_URL = "https://script.google.com/macros/s/AKfycbxcvmF1iy5L5l2hf2A2YtdlpNOaVnjaik_HWBupNVaceJ2VSN3nmGgswdCVeZ1KAXM/exec";
+
 // Define categories
 window.usdCodes = ['C05', 'C06'];
-window.twdCodes = ['C01', 'C02', 'C03', 'C04', 'C07']; // C02 已經單獨定義
+window.twdCodes = ['C01', 'C02', 'C03', 'C04', 'C07'];
 
-// Assets
+// [CRITICAL FIX] Define ASSET_CONFIGS and STRATEGY_TARGETS here to avoid ReferenceError
+const ASSET_CONFIGS = {
+    '006208': { name: '富邦台50', currency: 'TWD', type: 'TW', basePrice: 110.00, priceSource: 'GAS_API' },
+    '00878': { name: '國泰永續高股息', currency: 'TWD', type: 'TW', basePrice: 22.00, priceSource: 'SIM' },
+    '0050': { name: '元大台灣50', currency: 'TWD', type: 'TW', basePrice: 140.00, priceSource: 'SIM' },
+    '0056': { name: '元大高股息', currency: 'TWD', type: 'TW', basePrice: 38.00, priceSource: 'SIM' },
+    '00631L': { name: '元大台灣50正2', currency: 'TWD', type: 'TW', basePrice: 80.00, priceSource: 'SIM' },
+    'VOO': { name: 'S&P 500 ETF', currency: 'USD', type: 'US', basePrice: 400.00, priceSource: 'SIM' },
+    'VTI': { name: 'Vanguard Total Stock Market', currency: 'USD', type: 'US', basePrice: 250.00, priceSource: 'SIM' },
+    'VT': { name: 'Vanguard Total World Stock', currency: 'USD', type: 'US', basePrice: 105.00, priceSource: 'SIM' },
+};
+
+const STRATEGY_TARGETS = {
+    'C01': '006208', 
+    'C02': '006208', 
+    'C03': '00878',  
+    'C04': '00631L', 
+    'C05': 'VT',     
+    'C06': 'VOO',    
+    'C07': '0050',   
+};
+
+// [CRITICAL FIX] Assets must be defined BEFORE being used in loadManualData
 const cardAssets = {
     'C01': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png" class="mc-media" alt="TW DCA">`,
     'C02': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C02.png" class="mc-media" alt="TW LSI">`,
@@ -473,13 +501,22 @@ const cardAssets = {
 };
 
 // -----------------------------------------------------
-// NEW: GAS API URL
-// -----------------------------------------------------
-const GAS_PRICE_API_URL = "https://script.google.com/macros/s/AKfycbxcvmF1iy5L5l2hf2A2YtdlpNOaVnjaik_HWBupNVaceJ2VSN3nmGgswdCVeZ1KAXM/exec";
-
-// -----------------------------------------------------
 // 3. INITIALIZATION
 // -----------------------------------------------------
+
+// Error Logging for blank screen debugging
+window.onerror = function (message, source, lineno, colno, error) {
+    const errorDisplay = document.getElementById('runtimeError');
+    if (errorDisplay) {
+        document.getElementById('errorDetails').innerHTML = `
+            <strong>${message}</strong> (Line: ${lineno})<br>
+            Source: ${source}
+        `;
+        errorDisplay.style.display = 'block';
+    }
+    return false; 
+};
+
 init();
 
 async function init() {
@@ -495,8 +532,14 @@ async function init() {
         document.getElementById('rateInfo').textContent = `USD/TWD: ${window.currentRate} (Offline)`;
     }
 
-    loadManualData();
-    renderAll();
+    // Try/Catch block to ensure render errors are caught
+    try {
+        loadManualData();
+        renderAll();
+    } catch (e) {
+        console.error("Render Error:", e);
+        window.onerror(e.message, "init() -> renderAll()", 0, 0, e);
+    }
     
     // FETCH REAL DATA FROM DB
     fetchRealLogs();
@@ -506,15 +549,19 @@ async function init() {
     document.getElementById('confirmC02SetupBtn').addEventListener('click', saveC02StrategyToDB);
 }
 
-// 根據您的最新要求，移除 C02-1, C02-2，改為 C02
 function loadManualData() {
-    window.cardsData['C01'] = { code:'C01', type:'type-tw', rpg:'平庸的定期定額', skill:'TW DCA', cost:2520000, current:2595945, strategy:'006208', sop:'每月5號扣款，不看盤', media: cardAssets['C01'] };
-    window.cardsData['C02'] = { code:'C02', type:'type-tw', rpg:'獎金給我她奶奶的all in', skill:'TW LSI', cost:1750000, current:1750000, strategy:'006208', sop:'跌幅觸發加碼', media: cardAssets['C02'] }; 
-    window.cardsData['C03'] = { code:'C03', type:'type-yield', rpg:'股息cover每一天', skill:'YIELD', cost:840000, current:840636, strategy:'00878', sop:'股息再投入', media: cardAssets['C03'] };
-    window.cardsData['C04'] = { code:'C04', type:'type-ber', rpg:'問就是正2', skill:'SEALED', cost:500000, current:50000, strategy:'00631L', sop:'波段操作', media: cardAssets['C04'] };
-    window.cardsData['C05'] = { code:'C05', type:'type-us', rpg:'要買就買全世界', skill:'GLOBAL DCA', cost:50000, current:50000, strategy:'VT', sop:'分散全球', media: cardAssets['C05'] };
-    window.cardsData['C06'] = { code:'C06', type:'type-us', rpg:'美國就是我爸爸', skill:'US DCA', cost:50000, current:50000, strategy:'VOO', sop:'相信美國國運', media: cardAssets['C06'] };
-    window.cardsData['C07'] = { code:'C07', type:'type-trap', rpg:'可以進場了嗎?', skill:'AMBUSH', cost:900000, current:900000, strategy:'CASH/006208', sop:'等待崩盤', media: cardAssets['C07'] };
+    // Ensuring variables are defined
+    if (typeof STRATEGY_TARGETS === 'undefined' || typeof cardAssets === 'undefined') {
+        throw new Error("Critical Configuration Missing: STRATEGY_TARGETS or cardAssets not defined.");
+    }
+
+    window.cardsData['C01'] = { code:'C01', type:'type-tw', rpg:'平庸的定期定額', skill:'TW DCA', cost:2520000, current:2595945, strategy: STRATEGY_TARGETS['C01'], sop:'每月5號扣款，不看盤', media: cardAssets['C01'] };
+    window.cardsData['C02'] = { code:'C02', type:'type-tw', rpg:'獎金給我她奶奶的all in', skill:'TW LSI', cost:1750000, current:1750000, strategy: STRATEGY_TARGETS['C02'], sop:'跌幅觸發加碼', media: cardAssets['C02'] }; 
+    window.cardsData['C03'] = { code:'C03', type:'type-yield', rpg:'股息cover每一天', skill:'YIELD', cost:840000, current:840636, strategy: STRATEGY_TARGETS['C03'], sop:'股息再投入', media: cardAssets['C03'] };
+    window.cardsData['C04'] = { code:'C04', type:'type-ber', rpg:'問就是正2', skill:'SEALED', cost:500000, current:50000, strategy: STRATEGY_TARGETS['C04'], sop:'波段操作', media: cardAssets['C04'] };
+    window.cardsData['C05'] = { code:'C05', type:'type-us', rpg:'要買就買全世界', skill:'GLOBAL DCA', cost:50000, current:50000, strategy: STRATEGY_TARGETS['C05'], sop:'分散全球', media: cardAssets['C05'] };
+    window.cardsData['C06'] = { code:'C06', type:'type-us', rpg:'美國就是我爸爸', skill:'US DCA', cost:50000, current:50000, strategy: STRATEGY_TARGETS['C06'], sop:'相信美國國運', media: cardAssets['C06'] };
+    window.cardsData['C07'] = { code:'C07', type:'type-trap', rpg:'可以進場了嗎?', skill:'AMBUSH', cost:900000, current:900000, strategy: STRATEGY_TARGETS['C07'], sop:'等待崩盤', media: cardAssets['C07'] };
 }
 
 // -----------------------------------------------------
@@ -639,7 +686,7 @@ window.openModal = function(k){
   const btn = document.getElementById('configBtn');
   
   // 根據卡牌代碼導向不同設定視窗
-  if(k === 'C01') {
+  if(k === 'C01' || k === 'C03') { 
       btn.style.display = 'block';
       btn.onclick = window.openSetupModalFromCard;
       btn.textContent = 'INITIATE CONFIG C01 // 定額配置';
@@ -762,10 +809,12 @@ async function saveStrategyToDB() {
     btn.disabled = true;
 
     try {
+        const targetCard = window.cardsData[window.currentCardCode]; 
+        
         const payload = {
             user_id: "commander_001", 
-            strategy_code: "C01",
-            target_symbol: "006208",
+            strategy_code: window.currentCardCode, 
+            target_symbol: targetCard.strategy,
             amount: amt,
             status: "active",
             trigger_config: {
@@ -776,12 +825,12 @@ async function saveStrategyToDB() {
         };
         const docRef = await addDoc(collection(db, "strategies"), payload);
         console.log("Written ID: ", docRef.id);
-        alert(`C01 策略部署成功！\n\nID: ${docRef.id}\n每月扣款日: ${window.setupDates.join(', ')} 號`);
+        alert(`${window.currentCardCode} 策略部署成功！\n\nID: ${docRef.id}\n每月扣款日: ${window.setupDates.join(', ')} 號`);
         window.closeSetupModal();
 
     } catch(e) {
-        console.error("C01 Write Error: ", e);
-        alert("C01 寫入失敗: " + e.message + "\n(請確認 Firestore 規則已開啟 Test Mode)");
+        console.error("C01/C03 Write Error: ", e);
+        alert(`C01/C03 寫入失敗: ${e.message} (請確認 Firestore 規則已開啟 Test Mode)`);
     } finally {
         btn.textContent = "CONFIRM & DEPLOY";
         btn.disabled = false;
@@ -837,21 +886,18 @@ async function saveC02StrategyToDB() {
 // -----------------------------------------------------
 async function getStockPrice(symbol) {
     if (symbol === '006208') {
+        // [FIX] Try to fetch from GAS API first
         try {
             const response = await fetch(GAS_PRICE_API_URL);
             const result = await response.json();
             
             if (result.status === 'success' && result.price) {
-                // Fetch real closing price
                 return result.price.toFixed(2);
-            } else {
-                console.warn(`GAS API error: ${result.message || 'Unknown error'}`);
             }
         } catch (e) {
-            console.error("Failed to connect to GAS API:", e);
+            console.warn("GAS API Unreachable, using simulation fallback.");
         }
-        
-        // Fallback simulation if GAS fails or for testing consistency when offline
+
         const base = 110; 
         const fluctuation = (Math.random() * 7) - 2; 
         return (base + fluctuation).toFixed(2); 

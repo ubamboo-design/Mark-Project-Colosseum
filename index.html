@@ -261,7 +261,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v13.2 LIVE • DB SYNCED • 2025-2031</div>
+      <div class="meta-info">v13.2.1 LIVE • PRICE SIMULATOR • 2025-2031</div>
   </div>
   <div class="player-btn-container">
     <button class="cmd-btn" onclick="openPlayerModal()">
@@ -397,6 +397,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
+  // 您提供的金鑰
   apiKey: "AIzaSyBTGxO2JnZiKaXpJnzhJNQNF2sUNwfjGPk",
   authDomain: "project-cage-980ed.firebaseapp.com",
   projectId: "project-cage-980ed",
@@ -421,8 +422,8 @@ window.currentRate = 31.29;
 window.cardsData = {};
 window.eventsData = [];
 window.logoUrl = ''; 
-window.currentCardCode = null; // Currently viewing card
-window.setupDates = []; // For C01 Setup
+window.currentCardCode = null; 
+window.setupDates = []; 
 
 // Define categories
 window.usdCodes = ['C05', 'C06'];
@@ -498,7 +499,6 @@ function renderAll(){
     renderHeader();
     renderDashboard(); 
     renderCards(); 
-    // renderEvents(); // Deprecated, using live fetch
     renderPlayerRoster();
 }
 
@@ -721,13 +721,29 @@ async function saveStrategyToDB() {
 }
 
 // -----------------------------------------------------
-// 7. ADMIN / SIMULATION ENGINE
+// 7. ADMIN / SIMULATION ENGINE (UPGRADED)
 // -----------------------------------------------------
+
+// 新增：取得股價的函式 (模擬真實波動)
+async function getStockPrice(symbol) {
+    // 模擬網路延遲
+    await new Promise(r => setTimeout(r, 500)); 
+
+    if (symbol === '006208') {
+        const base = 110; 
+        // 隨機生成 -2 ~ +5 的波動
+        const fluctuation = (Math.random() * 7) - 2; 
+        return (base + fluctuation).toFixed(2); 
+    }
+    
+    return 100.00;
+}
+
+
 window.runDailyCheck = async function(simulationDate = new Date()) {
     console.log("⚡ 系統啟動：開始執行每日檢查...");
     const day = simulationDate.getDate(); 
     
-    // 1. 從資料庫撈出所有「活躍中 (active)」的 C01 策略
     const q = query(
         collection(db, "strategies"), 
         where("strategy_code", "==", "C01"),
@@ -745,15 +761,18 @@ window.runDailyCheck = async function(simulationDate = new Date()) {
         let executedCount = 0;
         const batch = writeBatch(db); 
 
-        querySnapshot.forEach((docSnapshot) => {
+        // 使用 for...of 迴圈以支援 async/await
+        for (const docSnapshot of querySnapshot.docs) {
             const strategy = docSnapshot.data();
-            // 2. 核心邏輯：檢查「今天」是否在使用者設定的「扣款日」清單中
+            
             if (strategy.trigger_config && strategy.trigger_config.dates.includes(day)) {
                 console.log(`✅ 觸發策略 ID: ${docSnapshot.id}`);
                 
+                // 修正價格：從模擬器取得價格
+                const currentPrice = await getStockPrice(strategy.target_symbol); 
+
                 const logRef = doc(collection(db, "execution_logs"));
-                const mockPrice = 92.5; // 模擬股價
-                const shares = (strategy.amount / mockPrice).toFixed(2);
+                const shares = (strategy.amount / currentPrice).toFixed(2);
 
                 batch.set(logRef, {
                     strategy_id: docSnapshot.id,
@@ -762,21 +781,25 @@ window.runDailyCheck = async function(simulationDate = new Date()) {
                     symbol: strategy.target_symbol,
                     action: "BUY",
                     execution_date: simulationDate.toISOString().split('T')[0], 
-                    price: mockPrice,
+                    price: Number(currentPrice), // 存入新的隨機價格
                     amount: strategy.amount,
                     shares: parseFloat(shares),
                     note: `系統自動扣款 (設定日: ${day}號)`
                 });
                 executedCount++;
             }
-        });
+        }
 
         if (executedCount > 0) {
             await batch.commit();
-            alert(`🎉 執行報告\n\n模擬日期：${day} 號\n成功觸發：${executedCount} 筆交易`);
             
-            // REFRESH UI
+            // 重新抓取 Log 顯示
             await fetchRealLogs();
+            
+            // 提醒使用者最新的模擬成交價
+            const latestPrice = await getStockPrice('006208');
+            alert(`🎉 執行報告\n\n模擬日期：${day} 號\n成功觸發：${executedCount} 筆交易\n\n本次成交價 (模擬)：${latestPrice}`);
+            
         } else {
             alert(`📅 模擬日期：${day} 號\n檢查完畢，今日(${day}號)沒有策略需要執行。`);
         }
@@ -798,6 +821,7 @@ async function fetchRealLogs() {
         const q = query(
             collection(db, "execution_logs"),
             orderBy("execution_date", "desc"),
+            orderBy("created_at", "desc"), // 增加一個時間戳排序，確保新 log 在前面
             limit(5)
         );
 
@@ -821,7 +845,7 @@ async function fetchRealLogs() {
                 </div>
                 <div class="event-content">
                     <span style="color:#fff;font-weight:bold">${data.symbol}</span> 
-                    成交價 ${data.price} | 股數 ${data.shares}<br>
+                    成交價 ${data.price.toFixed(2)} | 股數 ${data.shares}<br>
                     <span style="font-size:0.8rem;color:#666">${data.note}</span>
                 </div>
             </div>`;
@@ -831,6 +855,7 @@ async function fetchRealLogs() {
 
     } catch (e) {
         console.error("Error fetching logs:", e);
+        // 如果 Firebase 報錯通常是索引問題
         logContainer.innerHTML = `<div style="padding:15px;color:var(--tw)">讀取失敗: 資料庫索引建立中或權限不足。<br><small>${e.message}</small></div>`;
     }
 }

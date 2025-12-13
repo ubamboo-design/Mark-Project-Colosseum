@@ -69,7 +69,7 @@
 
     /* DECK */
     .deck-wrapper { overflow-x: auto; padding-bottom: 25px; padding-top: 10px; }
-    .deck-grid { display: grid; grid-template-columns: repeat(8, minmax(110px, 1fr)); gap: 10px; min-width: 1000px; }
+    .deck-grid { display: grid; grid-template-columns: repeat(7, minmax(180px, 1fr)); gap: 10px; min-width: 1000px; }
     .micro-card { background: var(--card); border: 2px solid #333; border-radius: 16px; padding: 10px; transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; min-height: 220px; position: relative; overflow: hidden; }
     .micro-card::after { content: ''; position: absolute; top: 6px; left: 6px; right: 6px; bottom: 6px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; pointer-events: none; transition: all 0.3s; }
     .micro-card:hover { transform: translateY(-10px); z-index: 10; }
@@ -259,7 +259,6 @@ C04	type-ber	問就是正2	00631L	SEALED	NT$500,000	500,000		股票50:現金50 �
 C05	type-us	要買就買全世界	VT	GLOBAL DCA	$50,000.00	50,000	資產配置我好棒	每月 5 號買600美金，若1股超過則買1股(美金的換匯成本約1:30)	https://ubamboo-design.github.io/Mark-investment-dashboard/C05.png
 C06	type-us	美國就是我爸爸	VOO	US DCA	$50,000.00	50,000	我就舔	每月 5 號買600美金，若1股超過則買1股(美金的換匯成本約1:30)	https://ubamboo-design.github.io/Mark-investment-dashboard/C06.png
 C07	type-trap	可以進場了嗎?	CASH/006208	AMBUSH	NT$900,000	900,000	再等一等好了~然後就沒有然後了~	股市修正20%後進場9萬，每下跌10%加碼18/27/36	https://ubamboo-design.github.io/Mark-investment-dashboard/C07.png
-C02-1	type-tw	履歷才是最強Asset	006208	TW LSI	NT$500,000	500,000	等待大崩盤的那一天我就贏了?	2025/1/6 開盤抽(PK正2的50:50)，若比原策略強就加碼。(一種自我行銷是非對錯)	https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png
 	
 代號	名稱	牌組	競技亮點	投資人格側寫	預期心理衝突	
 P01	台股定期定額	C01	單純驗證「大師們推薦的平庸策略」到底有多平庸。	佛系躺平族：相信大師，放棄思考。	最無心理負擔，但也最容易在多頭市場感到無聊而手癢亂動。	
@@ -316,7 +315,7 @@ async function triggerRefresh(keepOpen = false) {
 }
 // ===================================================
 
-const twdCodes = ['C01', 'C02', 'C02-1', 'C02-2', 'C03', 'C04', 'C07'];
+const twdCodes = ['C01', 'C02', 'C03', 'C04', 'C07'];
 const usdCodes = ['C05', 'C06'];
 
 // 預設圖示 (當抓不到圖片時使用)
@@ -384,7 +383,7 @@ function parseSheetData(text){
     if(c[0] === '事件簿') { mode = 'EVENTS'; continue; }
 
     // 1. 卡片模式 (修正：圖片在J欄=index 9, 策略=index 7, SOP=index 8)
-    if(c[0].startsWith('C')) {
+    if(c[0].startsWith('C') && c[0] !== 'C02-1') {
         let skillName = c[4]; 
         let costRaw = c[5] ? c[5].replace(/[NT$US,\s]/g, '') : '0';
         let currentRaw = c[6] ? c[6].replace(/[NT$US,\s]/g, '') : '0';

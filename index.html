@@ -307,6 +307,9 @@
   <div class="section-title">III. 參賽者名單 (PLAYER ROSTER)</div>
   <div id="playerRoster" class="roster-grid">
     </div>
+    <div id="runtimeError" style="margin-top: 20px; padding: 15px; background: rgba(255, 0, 0, 0.1); border: 1px solid var(--emergency); color: var(--text); font-family: 'Courier New', monospace; display: none;">
+        <strong>RUNTIME ERROR LOG:</strong> <span id="errorDetails"></span>
+    </div>
 
 </div>
 
@@ -457,7 +460,7 @@ window.logoUrl = ''; 
 window.currentCardCode = null; 
 window.setupDates = []; 
 
-// ⚠️ GAS PRICE API URL: 使用您成功部署的網址 (已更新為最新 URL)
+// ⚠️ GAS PRICE API URL: 使用您成功部署的網址 (已確認)
 const GAS_PRICE_API_URL = "https://script.google.com/macros/s/AKfycbxcvmF1iy5L5l2hf2A2YtdlpNOaVnjaik_HWBupNVaceJ2VSN3nmGgswdCVeZ1KAXM/exec"; 
 
 // 核心：標的物配置表 (未來新增標的物，只需在這裡新增一筆即可)
@@ -501,24 +504,44 @@ const CARD_IMAGE_URLS = {
 // -----------------------------------------------------
 // 3. INITIALIZATION
 // -----------------------------------------------------
+
+// 錯誤捕捉機制
+window.onerror = function (message, source, lineno, colno, error) {
+    const errorDisplay = document.getElementById('runtimeError');
+    if (errorDisplay) {
+        document.getElementById('errorDetails').innerHTML = `
+            <strong>${message}</strong> (Line: ${lineno}, Col: ${colno})<br>
+            Source: ${source}
+        `;
+        errorDisplay.style.display = 'block';
+    }
+    return true; // 阻止默認的瀏覽器錯誤處理
+};
+
+
 init();
 
 async function init() {
-    try {
-        const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-        const rateData = await rateRes.json();
-        if(rateData && rateData.rates && rateData.rates.TWD) {
-            window.currentRate = rateData.rates.TWD; 
-            document.getElementById('rateInfo').textContent = `USD/TWD: ${window.currentRate}`;
-        }
-    } catch (e) {
-        console.warn('Rate Fetch Error');
-        document.getElementById('rateInfo').textContent = `USD/TWD: ${window.currentRate} (Offline)`;
-    }
+    try {
+        const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const rateData = await rateRes.json();
+        if(rateData && rateData.rates && rateData.rates.TWD) {
+            window.currentRate = rateData.rates.TWD; 
+            document.getElementById('rateInfo').textContent = `USD/TWD: ${window.currentRate}`;
+        }
+    } catch (e) {
+        console.warn('Rate Fetch Error');
+        document.getElementById('rateInfo').textContent = `USD/TWD: ${window.currentRate} (Offline)`;
+    }
 
-    loadManualData();
-    renderAll();
-    
+    // 將核心渲染邏輯放入 try/catch，並在失敗時顯示錯誤
+    try {
+        loadManualData();
+        renderAll();
+    } catch (e) {
+        window.onerror(`Initialization Error: ${e.message}`, 'loadManualData/renderAll', 'N/A', 'N/A', e);
+    }
+    
     // FETCH REAL DATA FROM DB
     fetchRealLogs();
 

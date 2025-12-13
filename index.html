@@ -72,7 +72,6 @@
     .mc-chn-name { font-size: 0.85rem; font-weight: 900; color: #fff; margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 1px; min-height: 35px; display:flex; align-items:center; justify-content:center; }
     .mc-eng-name { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: none; }
     .mc-cost-badge { display: inline-block; margin-top: 2px; padding: 3px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.7rem; color: #aaa; background: rgba(0,0,0,0.8); }
-    svg.mc-media { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     img.mc-media { filter: drop-shadow(0 0 2px rgba(255,255,255,0.5)); }
     
     .type-tw { border-color: var(--tw); } .type-tw:hover { box-shadow: 0 0 25px rgba(255,42,42,0.4); }
@@ -80,8 +79,11 @@
     .type-us { border-color: var(--us); } .type-us:hover { box-shadow: 0 0 25px rgba(0,210,255,0.4); }
     .type-us img.mc-media { filter: drop-shadow(0 0 5px var(--us)); }
     .type-yield { border-color: var(--yield); } .type-yield:hover { box-shadow: 0 0 25px rgba(0,255,106,0.4); }
+    .type-yield img.mc-media { filter: drop-shadow(0 0 5px var(--yield)); } 
     .type-ber { border-color: var(--ber); } .type-ber:hover { box-shadow: 0 0 25px rgba(255,145,0,0.4); }
+    .type-ber img.mc-media { filter: drop-shadow(0 0 5px var(--ber)); } 
     .type-trap { border-color: var(--trap); } .type-trap:hover { box-shadow: 0 0 25px rgba(189,0,255,0.4); }
+    .type-trap img.mc-media { filter: drop-shadow(0 0 5px var(--trap)); } 
 
     /* EVENTS LOG */
     .event-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; padding-bottom: 10px; }
@@ -116,7 +118,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v12.45 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v12.49 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 
@@ -169,36 +171,34 @@
 </div>
 
 <script>
-let currentRate = 32.5;
+// 設定匯率與使用者圖片中一致
+let currentRate = 31.29; 
 let cardsData = {}, eventsData = [];
 let logoUrl = ''; 
 
 // 定義分類歸屬
-const twdCodes = ['C01', 'C02', 'C03'];
-const usdCodes = ['C05', 'C06', 'C07'];
-// C04(Yield) 與 C08(Trap) 預設歸入 TWD 計算，或視需求調整
-const otherTwdCodes = ['C04', 'C08'];
+const usdCodes = ['C05', 'C06'];
+const twdCodes = ['C01', 'C02-1', 'C02-2', 'C03', 'C04', 'C07'];
 
+// C01~C07 全部使用 PNG 圖片連結 (依照表單 J 欄位)
 const cardAssets = {
     'C01': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png" class="mc-media" alt="TW DCA">`,
-    'C02': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M45 5 Q55 -5 60 8 Q65 0 50 0" fill="#ff2a2a" opacity="0.6"/><path d="M50 10 L18 42 L22 46 L54 14 Z" fill="#444" stroke="currentColor" stroke-width="2"/><line x1="26" y1="34" x2="46" y2="14" stroke="currentColor" stroke-width="1"/><path d="M18 42 L14 46 L18 50 L22 46" fill="currentColor"/><path d="M14 46 L8 52" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="6" cy="54" r="3" fill="currentColor"/><path d="M10 50 Q20 40 30 50 T50 50" stroke="#ffd700" stroke-width="2" fill="none" stroke-dasharray="2 2"/><circle cx="20" cy="55" r="2" fill="#ffd700"/><circle cx="35" cy="58" r="3" fill="#ffd700"/></svg>`,
-    'C03': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M22 52 L24 60 H40 L42 52 H22 Z" fill="none" stroke="currentColor" stroke-width="2"/><rect x="20" y="48" width="24" height="4" rx="2" fill="currentColor"/><path d="M32 48 L32 20" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="14" r="8" fill="#000" stroke="currentColor" stroke-width="2"/><text x="32" y="17" font-size="10" text-anchor="middle" fill="currentColor" font-weight="bold">$</text><path d="M32 36 Q12 30 12 18" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="18" r="6" fill="#000" stroke="currentColor" stroke-width="2"/><text x="12" y="21" font-size="8" text-anchor="middle" fill="currentColor">$</text><path d="M32 28 Q52 22 52 10" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="52" cy="10" r="6" fill="#000" stroke="currentColor" stroke-width="2"/><text x="52" y="13" font-size="8" text-anchor="middle" fill="currentColor">$</text></svg>`,
-    'C04': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><line x1="14" y1="50" x2="50" y2="14" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><line x1="50" y1="50" x2="14" y2="14" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M14 14 L8 8 Q4 18 14 24 Z" fill="currentColor"/><path d="M14 14 L20 8 Q10 4 4 14 Z" fill="currentColor"/><path d="M50 14 L56 8 Q60 18 50 24 Z" fill="currentColor"/><path d="M50 14 L44 8 Q54 4 60 14 Z" fill="currentColor"/><path d="M32 22 L42 28 V38 L32 44 L22 38 V28 Z" fill="#000" stroke="currentColor" stroke-width="2"/><path d="M32 26 L34 31 H39 L35 34 L36 39 L32 36 L28 39 L29 34 L25 31 H30 Z" fill="currentColor"/></svg>`,
-    'C05': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M10 50 L25 20 L40 40 L54 10" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="54" cy="10" r="4" fill="currentColor"/><path d="M4 54 H60" stroke="#444" stroke-width="2"/></svg>`, 
-    'C06': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M32 4 L56 14 V28 C56 46 32 60 32 60 C32 60 8 46 8 28 V14 L32 4 Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M32 8 L52 16 V28 C52 42 32 54 32 54 C32 54 12 42 12 28 V16 L32 8 Z" stroke="currentColor" stroke-width="1" opacity="0.5" fill="none"/><path d="M24 24 V36 C24 42 40 42 40 36 V24" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M40 24 L35 29 M40 24 L45 29" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/></svg>`,
-    'C07': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M32 6 C18 6 10 20 10 36 L16 54 H48 L54 36 C54 20 46 6 32 6 Z" stroke="currentColor" stroke-width="3" fill="none"/><path d="M22 36 C22 28 26 22 32 22 C38 22 42 28 42 36 L32 46 L22 36 Z" fill="currentColor" opacity="0.8"/><path d="M26 34 L30 36 M38 34 L34 36" stroke="#000" stroke-width="2"/><circle cx="48" cy="48" r="10" stroke="#fff" stroke-width="2" fill="#000"/><line x1="48" y1="42" x2="48" y2="54" stroke="#fff" stroke-width="2"/><line x1="42" y1="48" x2="54" y2="48" stroke="#fff" stroke-width="2"/></svg>`,
-    'C08': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="12" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 12 L24 24 M52 12 L40 24 M12 52 L24 40 M52 52 L40 40" stroke="currentColor" stroke-width="2"/><circle cx="32" cy="32" r="6" fill="currentColor"/></svg>`
+    'C02': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C02.png" class="mc-media" alt="TW LSI">`,
+    'C03': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C03.png" class="mc-media" alt="YIELD">`,
+    'C04': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C04.png" class="mc-media" alt="SEALED">`,
+    'C05': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C05.png" class="mc-media" alt="GLOBAL DCA">`,
+    'C06': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C06.png" class="mc-media" alt="US DCA">`,
+    'C07': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C07.png" class="mc-media" alt="AMBUSH">`
 };
 
 init();
 
 async function init() {
-    // 1. 取得匯率
     try {
         const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
         const rateData = await rateRes.json();
         if(rateData && rateData.rates && rateData.rates.TWD) {
-            currentRate = rateData.rates.TWD;
+            // currentRate = rateData.rates.TWD; // 暫時註解，確保與圖片一致性
             document.getElementById('rateInfo').textContent = `USD/TWD: ${currentRate}`;
         }
     } catch (e) {
@@ -206,39 +206,42 @@ async function init() {
         document.getElementById('rateInfo').textContent = `USD/TWD: ${currentRate} (Offline)`;
     }
 
-    // 2. 模擬數據載入 (Hardcoded Data for User Request)
-    // 移除了 Google Sheet Fetch，直接使用使用者指定的新策略名稱與模擬數值
     loadManualData();
     renderAll();
 }
 
 function loadManualData() {
-    // === 自定義更新區域 ===
-    // 這裡的名稱對應你提供的 C01-C08 新命名
-    // 數值為模擬，總資產約 NT$ 1000 萬左右
+    // 依據截圖表格填入確切數字
     
-    // TWD 類
-    cardsData['C01'] = { code:'C01', type:'type-tw', rpg:'平庸的定期定額', skill:'Regular DCA', cost:2500000, current:2800000, strategy:'大盤指數型ETF定期定額', sop:'每月5號扣款，不看盤', media: cardAssets['C01'] };
-    cardsData['C02'] = { code:'C02', type:'type-tw', rpg:'她奶奶的all in', skill:'Aggressive Buy', cost:1500000, current:1850000, strategy:'有閒錢就投入', sop:'帳戶餘額>5000即轉入證券戶', media: cardAssets['C02'] };
-    cardsData['C03'] = { code:'C03', type:'type-tw', rpg:'獎金梭哈', skill:'Bonus Shot', cost:500000, current:480000, strategy:'年終/三節獎金單筆投入', sop:'收到獎金當日掛市價單', media: cardAssets['C03'] };
+    // C01: TW DCA (006208)
+    cardsData['C01'] = { code:'C01', type:'type-tw', rpg:'平庸的定期定額', skill:'TW DCA', cost:2520000, current:2595945, strategy:'006208', sop:'每月5號扣款，不看盤', media: cardAssets['C01'] };
     
-    // Yield 類 (歸入 TW 計算)
-    cardsData['C04'] = { code:'C04', type:'type-yield', rpg:'股息cover每一天', skill:'Dividend Flow', cost:2000000, current:2100000, strategy:'高股息ETF組合', sop:'股息再投入，或支付日常開銷', media: cardAssets['C04'] };
+    // C02-1: TW LSI (006208)
+    // 注意：共用 C02 圖片
+    cardsData['C02-1'] = { code:'C02-1', type:'type-tw', rpg:'原型才是最強的', skill:'TW LSI', cost:500000, current:500000, strategy:'006208', sop:'有閒錢就投入', media: cardAssets['C02'] };
     
-    // Ber 類 (槓桿/反向)
-    cardsData['C05'] = { code:'C05', type:'type-ber', rpg:'問就是正2', skill:'Leveraged 2X', cost:10000, current:12000, strategy:'2倍槓桿ETF', sop:'嚴格停損停利，波段操作', media: cardAssets['C05'] };
+    // C02-2: TW LSI (006208)
+    cardsData['C02-2'] = { code:'C02-2', type:'type-tw', rpg:'獎金給我她奶奶的all in', skill:'TW LSI', cost:1750000, current:1750000, strategy:'006208', sop:'收到獎金當日掛市價單', media: cardAssets['C02'] };
+    
+    // C03: YIELD (00878) - type-yield (修正為使用 C03 圖片)
+    cardsData['C03'] = { code:'C03', type:'type-yield', rpg:'股息cover每一天', skill:'YIELD', cost:840000, current:840636, strategy:'00878', sop:'股息再投入', media: cardAssets['C03'] };
+    
+    // C04: SEALED (00631L) - type-ber (修正為使用 C04 圖片，原先 C05 移過來)
+    cardsData['C04'] = { code:'C04', type:'type-ber', rpg:'問就是正2', skill:'SEALED', cost:500000, current:500000, strategy:'00631L', sop:'波段操作', media: cardAssets['C04'] };
+    
+    // C05: GLOBAL DCA (VT) - type-us (USD) (修正為使用 C05 圖片，原先 C06 移過來)
+    cardsData['C05'] = { code:'C05', type:'type-us', rpg:'要買就買全世界', skill:'GLOBAL DCA', cost:50000, current:50000, strategy:'VT', sop:'分散全球', media: cardAssets['C05'] };
+    
+    // C06: US DCA (VOO) - type-us (USD) (修正為使用 C06 圖片，原先 C07 移過來)
+    cardsData['C06'] = { code:'C06', type:'type-us', rpg:'美國就是我爸爸', skill:'US DCA', cost:50000, current:50000, strategy:'VOO', sop:'相信美國國運', media: cardAssets['C06'] };
 
-    // US 類
-    cardsData['C06'] = { code:'C06', type:'type-us', rpg:'買爆全世界', skill:'Global Market', cost:30000, current:35000, strategy:'VT/VWRA', sop:'每季匯款一次，分散全球', media: cardAssets['C06'] };
-    cardsData['C07'] = { code:'C07', type:'type-us', rpg:'美國就是我爸爸', skill:'US Total Mkt', cost:50000, current:62000, strategy:'VTI/VOO', sop:'相信美國國運，長期持有', media: cardAssets['C07'] };
-
-    // Trap 類 (新增)
-    cardsData['C08'] = { code:'C08', type:'type-trap', rpg:'現在可以進場了嗎', skill:'Market Timing', cost:200000, current:180000, strategy:'擇時進出', sop:'看技術線圖，低買高賣', media: cardAssets['C08'] };
+    // C07: AMBUSH (CASH) - type-trap (修正為使用 C07 圖片)
+    cardsData['C07'] = { code:'C07', type:'type-trap', rpg:'可以進場了嗎?', skill:'AMBUSH', cost:900000, current:900000, strategy:'CASH/006208', sop:'等待崩盤', media: cardAssets['C07'] };
 
     // 模擬事件
     eventsData = [
-        { date:'2025.12.12', status:'System', content:'策略名稱已更新 (Re-branded)', isUrgent: false },
-        { date:'2025.12.13', status:'Alert', content:'C08 策略監測中，波動加大', isUrgent: true }
+        { date:'2025.12.13', status:'System', content:'數據來源已鎖定 (Synced with Spreadsheet)', isUrgent: false },
+        { date:'2025.12.13', status:'Update', content:'所有卡牌圖示已改為遠端連結', isUrgent: false }
     ];
 }
 
@@ -276,11 +279,10 @@ function renderDashboard(){
   let tcTW=0, taTW=0, tcUS=0, taUS=0;
   
   Object.values(cardsData).forEach(c => { 
-      // 邏輯判斷：如果是 US 類別則計算 USD，其餘都算在 TWD 面板
+      // 邏輯判斷：根據 usdCodes 列表判定是否為美金
       if (usdCodes.includes(c.code)) { 
           tcUS += c.cost; taUS += c.current; 
       } else {
-          // 預設其他所有 (TW, Yield, Trap, Ber) 都顯示在 TWD 區塊
           tcTW += c.cost; taTW += c.current; 
       }
   });
@@ -295,7 +297,7 @@ function renderDashboard(){
   document.getElementById('plTW_pct').className = `profit-sub ${sTW.cls}`;
 
   const sUS = calc(tcUS, taUS);
-  document.getElementById('costUS').textContent = '$' + (tcUS).toLocaleString(); // USD 不除以萬
+  document.getElementById('costUS').textContent = '$' + (tcUS).toLocaleString(); 
   document.getElementById('assetUS').textContent = '$' + (taUS).toLocaleString();
   const plUS_val = (sUS.diff).toLocaleString();
   document.getElementById('plUS_val').textContent = `${sUS.sign}$${plUS_val}`;
@@ -327,7 +329,7 @@ function renderCards(){
   Object.values(cardsData).forEach(c=>{
     // 顯示金額格式化
     let costDisplay = '';
-    if(c.type === 'type-us') {
+    if(usdCodes.includes(c.code)) {
         costDisplay = (c.cost).toLocaleString(); // USD 原幣顯示
     } else {
         costDisplay = (c.cost / 10000).toFixed(0) + '萬'; // TWD 萬單位
@@ -373,10 +375,10 @@ function openModal(k){
   document.getElementById('mSkill').textContent=c.skill;
   
   let moneyPrefix = 'NT$ ';
-  if(c.type === 'type-us') moneyPrefix = 'US$ ';
+  if(usdCodes.includes(c.code)) moneyPrefix = 'US$ ';
   document.getElementById('mCost').textContent=`${moneyPrefix}${c.cost.toLocaleString()}`;
   
-  document.getElementById('mStrategy').textContent=c.rpg; // 將策略名稱顯示在這裡
+  document.getElementById('mStrategy').textContent=c.rpg; 
   document.getElementById('mSop').textContent=c.sop || c.strategy;
   
   const map={'type-tw':'--tw','type-us':'--us','type-yield':'--yield','type-ber':'--ber','type-trap':'--trap'};

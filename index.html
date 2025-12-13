@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : RELOADED</title>
+<title>PROJECT CAGE : RELOADED v13.2</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -26,7 +26,7 @@
     .header-text { text-align: left; display: flex; flex-direction: column; justify-content: center; }
     h1 { font-size: 2.8rem; letter-spacing: 6px; text-transform: uppercase; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.15); font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; line-height: 1; }
     .meta-info { font-family: 'Courier New', monospace; color: var(--gold); margin-top: 5px; font-size: 0.9rem; opacity: 0.8; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
-    .container { max-width: 1600px; margin: 0 auto; padding: 0 20px; }
+    .container { max-width: 1800px; margin: 0 auto; padding: 0 20px; }
     
     /* DASHBOARD */
     .dashboard-panel { background: linear-gradient(180deg, rgba(20,20,25,0.9), rgba(5,5,5,0.95)); border: 1px solid #333; border-radius: 20px; padding: 25px; margin: 30px 0; box-shadow: 0 0 50px rgba(0,0,0,0.7); position: relative; overflow: hidden; backdrop-filter: blur(10px); }
@@ -67,9 +67,9 @@
     .section-title { font-size: 1.3rem; border-left: 5px solid var(--gold); padding-left: 15px; margin: 50px 0 25px; text-transform: uppercase; font-weight: 900; color: #fff; display: flex; align-items: center; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
     .section-title::after { content: ''; flex-grow: 1; height: 1px; background: #333; margin-left: 20px; }
 
-    /* DECK */
+    /* DECK - 7 Cards Full Width */
     .deck-wrapper { overflow-x: auto; padding-bottom: 25px; padding-top: 10px; }
-    .deck-grid { display: grid; grid-template-columns: repeat(7, minmax(180px, 1fr)); gap: 10px; min-width: 1000px; }
+    .deck-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; min-width: 0; } 
     .micro-card { background: var(--card); border: 2px solid #333; border-radius: 16px; padding: 10px; transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; min-height: 220px; position: relative; overflow: hidden; }
     .micro-card::after { content: ''; position: absolute; top: 6px; left: 6px; right: 6px; bottom: 6px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; pointer-events: none; transition: all 0.3s; }
     .micro-card:hover { transform: translateY(-10px); z-index: 10; }
@@ -80,7 +80,7 @@
     .mc-media { width: 64px; height: 64px; object-fit: contain; transition: all .4s; }
     .micro-card:hover .mc-media { transform: scale(1.15); }
     .mc-footer { text-align: center; margin-top: auto; position: relative; z-index: 2; padding: 0 2px; }
-    .mc-chn-name { font-size: 1rem; font-weight: 900; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 1px; }
+    .mc-chn-name { font-size: 0.9rem; font-weight: 900; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 1px; }
     .mc-eng-name { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
     .mc-cost-badge { display: inline-block; margin-top: 2px; padding: 3px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.7rem; color: #aaa; background: rgba(0,0,0,0.8); }
     svg.mc-media { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -90,6 +90,9 @@
     .type-yield { border-color: var(--yield); } .type-yield:hover { box-shadow: 0 0 25px rgba(0,255,106,0.4); } .type-yield img.mc-media { filter: drop-shadow(0 0 8px var(--yield)); }
     .type-ber { border-color: var(--ber); } .type-ber:hover { box-shadow: 0 0 25px rgba(255,145,0,0.4); } .type-ber img.mc-media { filter: drop-shadow(0 0 8px var(--ber)); }
     .type-trap { border-color: var(--trap); } .type-trap:hover { box-shadow: 0 0 25px rgba(189,0,255,0.4); } .type-trap img.mc-media { filter: drop-shadow(0 0 8px var(--trap)); }
+    
+    @media(max-width: 1200px) { .deck-grid { grid-template-columns: repeat(4, 1fr); min-width: 800px; } }
+    @media(max-width: 768px) { .deck-grid { grid-template-columns: repeat(2, 1fr); min-width: 100%; } }
 
     /* EVENTS LOG */
     .event-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; padding-bottom: 10px; }
@@ -104,9 +107,7 @@
     .event-card.emergency .event-status { color: var(--emergency); background: rgba(255, 0, 0, 0.15); }
     @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
-    /* ================================================================= */
-    /* ARENA: 2x2 QUADRANT LAYOUT WITH GRID BARS                         */
-    /* ================================================================= */
+    /* ARENA */
     .arena-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
     .arena-group { background: rgba(255,255,255,0.02); border: 1px solid #222; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; }
     .group-header { display: flex; align-items: center; text-align: center; font-weight: 900; font-size: 1.1rem; color: var(--gold); margin-bottom: 10px; letter-spacing: 2px; }
@@ -132,7 +133,7 @@
     .g-mini-icon.type-tw img { filter: drop-shadow(0 0 5px var(--tw)); } .g-mini-icon.type-us img { filter: drop-shadow(0 0 5px var(--us)); }
 
     .g-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(0,0,0,0.3); border-radius: 0 0 8px 8px; width: 100%; }
-    .g-bar.active + .g-details { max-height: 800px; border: 1px solid #333; border-top: none; } /* 增加高度以容納多文字 */
+    .g-bar.active + .g-details { max-height: 800px; border: 1px solid #333; border-top: none; } 
     .highlight-content { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
     .d-row { display: flex; align-items: flex-start; gap: 15px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; }
     .d-row:last-child { border: none; }
@@ -178,7 +179,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v13.0 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v13.2 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 
@@ -249,7 +250,7 @@
 // =========================================================
 const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv';
 
-// === 備份資料 (FALLBACK) - 根據您最新的截圖更新 ===
+// === 備份資料 (FALLBACK) - 已移除 C02-1 和 C02-2 ===
 const FALLBACK_DATA = `
 A (code)	B (type)	C (rpg)	D (target)	E (skill)	F (cost)	G (current)	H (strategy)	I (sop)	J (image)
 C01	type-tw	平庸的定期定額	006208	TW DCA	NT$2,520,000	2,595,945	賣暢銷書賺到財富自由的大師們都推薦的平庸策略	每個月 5 ,15,25號：每次扣款 NT$10,000	https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png
@@ -262,20 +263,20 @@ C07	type-trap	可以進場了嗎?	CASH/006208	AMBUSH	NT$900,000	900,000	再等�
 	
 代號	名稱	牌組	競技亮點	投資人格側寫	預期心理衝突	
 P01	台股定期定額	C01	單純驗證「大師們推薦的平庸策略」到底有多平庸。	佛系躺平族：相信大師，放棄思考。	最無心理負擔，但也最容易在多頭市場感到無聊而手癢亂動。	
-P02	台股雙核心	C01 + C02-1+C02-2	當市場大漲時嫌 C01 慢，大跌時怪 C02 衝太快。	穩健進取型：試圖在平庸與激進間取得平衡。單筆投入的條件是不能離場，必須持續買進平滑成本並長期在場內	
+P02	台股雙核心	C01+C02	當市場大漲時嫌 C01 慢，大跌時怪 C02 衝太快。	穩健進取型：試圖在平庸與激進間取得平衡。	單筆投入的條件是不能離場，必須持續買進平滑成本並長期在場內	
 P03	最貴的安眠藥	C03	長期績效最差，但是心理最舒服，最適合焦慮睡不著的投資人	收租心態者：只在乎現金流，不在乎淨值。	熊市中最抗跌（心理上），但在牛市中會因跑輸大盤而焦慮。	
 P04	無限等待之術	C07	大機率會空手很久。驗證「擇時等待」是否會輸給「閉眼投入」。	完美主義者：試圖扮演上帝。	大機率長期空手，最終可能在受不了時高點追進。	
 	
-P05	大哥沒有輸	C02-1	是否能跑贏槓桿流。	沒人會這樣投資!!	資金效率壓滿，但是贏的路徑太單一，需承受巨大的單日損益波動，心臟強度需極高。	
+P05	大哥沒有輸	C02	是否能跑贏槓桿流。	沒人會這樣投資!!	資金效率壓滿，但是贏的路徑太單一，需承受巨大的單日損益波動，心臟強度需極高。	
 P06	槓桿投資法	C04	是封神還是風神?	數學賭徒用紀律駕馭槓桿波動。	在自動的扣寫機制下，逆價差與槓桿偏移能一直有效嗎?	
 	
-P07	全球雙核心	C05 + C06	全球基本盤加美股加速器，也是「資產配置派」與「美股至上派」的流派。	資產配置派：既要分散又要績效。	內心的矛盾：VT 的拖累會讓其不斷質疑為何不全押 VOO。	
+P07	全球雙核心	C05+C06	全球基本盤加美股加速器，也是「資產配置派」與「美股至上派」的流派。	資產配置派：既要分散又要績效。	內心的矛盾：VT 的拖累會讓其不斷質疑為何不全押 VOO。	
 P08	全球資產配置	C05	小孩子才做選擇	懷疑論者：不相信任何單一國家能長盛不衰。	極度考驗耐心，需對抗 FOMO（錯失恐懼症）。	
 P09	帝國信仰者	C06	簡單暴力的「舔狗」策略，賭的就是美國的霸權。	帝國主義者：賭美國國運。	在美元走弱或美股回調時，信仰崩塌的風險最大。	
 	
-P10	台美暴力型	C02(全) + C06	台股重壓 + 美股重壓。這是一個極度看好台美科技連動的進攻組合。	科技信徒：看好台美科技連動。	進攻性最強，波動最劇烈，是多頭市場的王者，空頭市場的亡者。	
+P10	台美暴力型	C02+C06	台股重壓 + 美股重壓。這是一個極度看好台美科技連動的進攻組合。	科技信徒：看好台美科技連動。	進攻性最強，波動最劇烈，是多頭市場的王者，空頭市場的亡者。	
 P11	選擇障礙型	C01+C05+C06	大師說什麼好我就跟	雖然我不知道什麼好，反正都給我來一點	
-P12	真的好無聊型	C01 +C03+ C05	理論上波動最小、最符合學術界建議的「好無聊」組合。	學院派：理論上最正確的組合。	「好無聊」是最大的敵人，容易因缺乏刺激而被拋棄。	
+P12	真的好無聊型	C01+C03+C05	理論上波動最小、最符合學術界建議的「好無聊」組合。	學院派：理論上最正確的組合。	「好無聊」是最大的敵人，容易因缺乏刺激而被拋棄。	
 P13	跨國槓鈴策略	C03+C06	台灣複委託投資人中相當普遍（推估約佔 20% - 25%）	心理帳戶的平衡（槓鈴結構）	投資人會陷入**「後悔」**的迴圈。看著 VOO 漲了 20%，而手中的高股息 ETF 只漲 5%（加上配息也才 10%），投資人會不斷質疑自己：「為什麼我不乾脆 All-in VOO 就好？」但若真的賣掉高股息，又會立刻焦慮沒有現金流來繳房貸或生活費
 	
 事件簿	狀態	內容	
@@ -318,7 +319,6 @@ async function triggerRefresh(keepOpen = false) {
 const twdCodes = ['C01', 'C02', 'C03', 'C04', 'C07'];
 const usdCodes = ['C05', 'C06'];
 
-// 預設圖示 (當抓不到圖片時使用)
 const defaultIcons = {
     'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>`
 };
@@ -330,7 +330,6 @@ async function init() {
     isFallback = false;
     const con = document.getElementById('cardContainer');
     
-    // 1. 抓匯率
     try {
         const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
         const rateData = await rateRes.json();
@@ -340,28 +339,23 @@ async function init() {
         }
     } catch (e) { console.warn('Rate Fetch Error'); }
 
-    // 2. 抓 Google Sheet (加入備份機制)
     try {
         const sheetRes = await fetch(GOOGLE_SHEET_URL);
         if (!sheetRes.ok) throw new Error(`HTTP ${sheetRes.status}`);
         const sheetText = await sheetRes.text();
         
-        // 檢查是否為 HTML 錯誤頁面
         if(sheetText.length < 50 || sheetText.trim().startsWith('<')) {
             throw new Error('格式錯誤，啟動備份模式');
         }
-
         parseSheetData(sheetText);
         renderAll();
 
     } catch(e) {
         console.warn('Connection failed, loading fallback data...');
         isFallback = true;
-        // 如果連線失敗，使用手動輸入的備份資料
         parseSheetData(FALLBACK_DATA);
         renderAll();
         
-        // 提示使用者目前是離線/備份模式
         const meta = document.querySelector('.meta-info');
         if(!meta.innerHTML.includes('OFFLINE')) {
              meta.innerHTML += ` <span style="color:var(--tw)">[OFFLINE MODE]</span>`;
@@ -382,15 +376,14 @@ function parseSheetData(text){
     if(c[0] === '代號' && c[1] === '名稱') { mode = 'STRATEGIES'; continue; }
     if(c[0] === '事件簿') { mode = 'EVENTS'; continue; }
 
-    // 1. 卡片模式 (修正：圖片在J欄=index 9, 策略=index 7, SOP=index 8)
+    // 1. 卡片模式 (排除 C02-1)
     if(c[0].startsWith('C') && c[0] !== 'C02-1') {
         let skillName = c[4]; 
         let costRaw = c[5] ? c[5].replace(/[NT$US,\s]/g, '') : '0';
         let currentRaw = c[6] ? c[6].replace(/[NT$US,\s]/g, '') : '0';
         
-        if (c[0] === 'Logo' && c[1]) logoUrl = c[1]; // 有時候Logo會藏在這裡
+        if (c[0] === 'Logo' && c[1]) logoUrl = c[1];
 
-        // 圖片連結在 J欄 (Index 9)
         let imgUrl = c[9] ? c[9].trim() : '';
         let displayMedia = imgUrl.startsWith('http') 
             ? `<img src="${imgUrl}" class="mc-media" alt="${skillName}">` 
@@ -402,24 +395,22 @@ function parseSheetData(text){
             strategy: c[7], sop: c[8], media: displayMedia
         };
     } 
-    // 2. 策略模式 (修正：牌組在C欄=index 2, 亮點=index 3, 人格=index 4, 衝突=index 5)
+    // 2. 策略模式 (直接讀取 C 欄牌組)
     else if(c[0].startsWith('P')){
           if(!portfolios[currentGroup]) portfolios[currentGroup] = [];
           portfolios[currentGroup].push({
               code: c[0], name: c[1], 
-              deck: c[2] ? c[2].split('+').map(s=>s.trim()) : [],
+              deck: c[2] ? c[2].split('+').map(s=>s.trim()) : [], // 直接信任 C 欄
               deckStr: c[2] || '',
-              mindset: c[3] || '-', 
-              persona: c[4] || '-',
-              conflict: c[5] || '-',
-              theory: '-' // 截圖中似乎沒有學理這一欄了
+              mindset: c[3] || '-',      
+              persona: c[4] || '-',      
+              conflict: c[5] || '-',     
+              theory: '-' 
           });
     }
-    // 抓群組標題 (例如：小朋友齊打交區)
     else if (mode === 'STRATEGIES' && c[0] && !c[0].startsWith('P') && c[0] !== '代號' && c.length < 5) {
         if(c[0].length > 0) currentGroup = c[0].trim();
     }
-    // 3. 事件模式
     else if(mode === 'EVENTS' && c[0] && c[0].match(/^\d/)) {
         eventsData.push({ 
             date: c[0], 
@@ -428,10 +419,7 @@ function parseSheetData(text){
             isUrgent: (c[1] || '').includes('緊急') 
         });
     }
-    // 抓 LOGO (最下面一行)
-    if(c[0] === 'Logo' && c[1]) {
-        logoUrl = c[1];
-    }
+    if(c[0] === 'Logo' && c[1]) logoUrl = c[1];
   }
 }
 
@@ -440,13 +428,11 @@ function calc(cost, cur){
   const diff = cur - cost;
   const roiRaw = ((diff)/cost);
   const roi = (roiRaw*100).toFixed(1);
-  
   let cls = 'color-loss'; 
   if (roiRaw >= 0.5) cls = 'color-gold'; 
   else if (roiRaw >= 0) cls = 'color-profit'; 
   else if (roiRaw <= -0.5) cls = 'color-dead'; 
   else cls = 'color-loss'; 
-  
   return {roi, arrow: roi>=0 ? '▲' : '▼', sign: roi>=0 ? '+' : '', cls, diff};
 }
 
@@ -521,6 +507,9 @@ function renderCards(){
       return;
   }
   Object.values(cardsData).forEach(c=>{
+    // C02-1 已經被源頭排除，這裡還是保留一個保險機制
+    if(c.code === 'C02-1') return;
+
     let costDisplay = (c.cost / 10000).toFixed(0); 
     con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')">
       <div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div>
@@ -537,7 +526,6 @@ function renderCards(){
 function renderEvents(){
     const con = document.getElementById('eventContainer');
     const validEvents = eventsData.slice(0, 2); 
-    
     if(validEvents.length === 0) {
         con.innerHTML = '<div style="padding:15px;color:#666">NO EVENTS LOGGED.</div>';
         return;
@@ -584,7 +572,11 @@ function renderArena(){
           }
           return '';
         }).join('');
-        p.deck.forEach(d=>{ if(cardsData[d]) { tc+=cardsData[d].cost; ta+=cardsData[d].current; } });
+        
+        p.deck.forEach(d=>{ 
+            // 由於 C02-1 已刪除，如果牌組還殘留舊代號會自動忽略，只計算有效的
+            if(cardsData[d]) { tc+=cardsData[d].cost; ta+=cardsData[d].current; } 
+        });
         const s=calc(tc, ta);
         
         groupHtml += `
@@ -601,9 +593,9 @@ function renderArena(){
             
             <div class="g-details">
                 <div class="highlight-content">
-                    <div class="d-row"><span class="d-label">💭 散戶想法</span><span class="d-text">${p.mindset}</span></div>
-                    <div class="d-row"><span class="d-label">👤 投資人格</span><span class="d-text">${p.persona}</span></div>
-                    <div class="d-row"><span class="d-label">⚡ 心理矛盾</span><span class="d-text warn">${p.conflict}</span></div>
+                    <div class="d-row"><span class="d-label">✨ 競技亮點</span><span class="d-text">${p.mindset}</span></div>
+                    <div class="d-row"><span class="d-label">👤 人格側寫</span><span class="d-text">${p.persona}</span></div>
+                    <div class="d-row"><span class="d-label">⚡ 心理衝突</span><span class="d-text warn">${p.conflict}</span></div>
                 </div>
             </div>
           </div>`;

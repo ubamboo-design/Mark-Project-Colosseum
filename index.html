@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : 戰區指揮版 (Full Live Sync - C01/C02)</title>
+<title>PROJECT CAGE : 戰區指揮版 (Final Sync - C01/C02)</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -261,7 +261,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v13.2.1 LIVE • PRICE SIMULATOR • 2025-2031</div>
+      <div class="meta-info">v13.4 LIVE • GAS SYNC • 2025-2031</div>
   </div>
   <div class="player-btn-container">
     <button class="cmd-btn" onclick="openPlayerModal()">
@@ -361,7 +361,7 @@
       <div class="form-group">
           <label class="form-label">跌幅觸發點 (TRIGGER %)</label>
           <input type="number" class="cyber-input" id="c02DropPercent" value="2.0" step="0.1" placeholder="例如：2.0 (代表下跌 2% 觸發)">
-          <div style="font-size:0.75rem; color:#888; margin-top:5px;">觸發計算基準：與前一交易日收盤價相比</div>
+          <div style="font-size:0.75rem; color:#888; margin-top:5px;">觸發計算基準：與前一交易日收盤價相比 (使用 006208 股價基準)</div>
       </div>
 
       <div class="form-group">
@@ -448,7 +448,7 @@ try {
 }
 
 // -----------------------------------------------------
-// 2. GLOBAL VARIABLES
+// 2. GLOBAL VARIABLES & ASSET CONFIGURATION
 // -----------------------------------------------------
 window.currentRate = 31.29; 
 window.cardsData = {};
@@ -457,20 +457,35 @@ window.logoUrl = '';
 window.currentCardCode = null; 
 window.setupDates = []; 
 
-// Define categories
-window.usdCodes = ['C05', 'C06'];
-window.twdCodes = ['C01', 'C02', 'C03', 'C04', 'C07']; // C02 已經單獨定義
+// ⚠️ 替換成您部署 GAS Web App 後取得的 URL
+const GAS_PRICE_API_URL = "YOUR_GAS_WEB_APP_URL_HERE"; 
 
-// Assets
-const cardAssets = {
-    'C01': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png" class="mc-media" alt="TW DCA">`,
-    'C02': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C02.png" class="mc-media" alt="TW LSI">`,
-    'C03': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C03.png" class="mc-media" alt="YIELD">`,
-    'C04': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C04.png" class="mc-media" alt="SEALED">`,
-    'C05': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C05.png" class="mc-media" alt="GLOBAL DCA">`,
-    'C06': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C06.png" class="mc-media" alt="US DCA">`,
-    'C07': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C07.png" class="mc-media" alt="AMBUSH">`
+// 核心：標的物配置表 (未來新增標的物，只需在這裡新增一筆即可)
+const ASSET_CONFIGS = {
+    '006208': { name: '富邦台50', currency: 'TWD', type: 'TW', basePrice: 110.00, priceSource: 'GAS_API' },
+    '00878': { name: '國泰永續高股息', currency: 'TWD', type: 'TW', basePrice: 22.00, priceSource: 'SIM' },
+    '0050': { name: '元大台灣50', currency: 'TWD', type: 'TW', basePrice: 140.00, priceSource: 'SIM' },
+    '0056': { name: '元大高股息', currency: 'TWD', type: 'TW', basePrice: 38.00, priceSource: 'SIM' },
+    '00631L': { name: '元大台灣50正2', currency: 'TWD', type: 'TW', basePrice: 80.00, priceSource: 'SIM' },
+    'VOO': { name: 'S&P 500 ETF', currency: 'USD', type: 'US', basePrice: 400.00, priceSource: 'SIM' },
+    'VTI': { name: 'Vanguard Total Stock Market', currency: 'USD', type: 'US', basePrice: 250.00, priceSource: 'SIM' },
+    'VT': { name: 'Vanguard Total World Stock', currency: 'USD', type: 'US', basePrice: 105.00, priceSource: 'SIM' },
 };
+
+// 策略代碼與標的物的映射
+const STRATEGY_TARGETS = {
+    'C01': '006208', 
+    'C02': '006208', 
+    'C03': '00878',  
+    'C04': '00631L', 
+    'C05': 'VT',     
+    'C06': 'VOO',    
+    'C07': '0050',   // C07 使用 0050 作為標的
+};
+
+// Define categories (TWD/USD 判斷仍然需要)
+window.usdCodes = ['C05', 'C06'];
+window.twdCodes = ['C01', 'C02', 'C03', 'C04', 'C07']; 
 
 // -----------------------------------------------------
 // 3. INITIALIZATION
@@ -501,15 +516,16 @@ async function init() {
     document.getElementById('confirmC02SetupBtn').addEventListener('click', saveC02StrategyToDB);
 }
 
-// 根據您的最新要求，移除 C02-1, C02-2，改為 C02
+// 根據策略代碼獲取所有標的物資訊
 function loadManualData() {
-    window.cardsData['C01'] = { code:'C01', type:'type-tw', rpg:'平庸的定期定額', skill:'TW DCA', cost:2520000, current:2595945, strategy:'006208', sop:'每月5號扣款，不看盤', media: cardAssets['C01'] };
-    window.cardsData['C02'] = { code:'C02', type:'type-tw', rpg:'獎金給我她奶奶的all in', skill:'TW LSI', cost:1750000, current:1750000, strategy:'006208', sop:'跌幅觸發加碼', media: cardAssets['C02'] }; 
-    window.cardsData['C03'] = { code:'C03', type:'type-yield', rpg:'股息cover每一天', skill:'YIELD', cost:840000, current:840636, strategy:'00878', sop:'股息再投入', media: cardAssets['C03'] };
-    window.cardsData['C04'] = { code:'C04', type:'type-ber', rpg:'問就是正2', skill:'SEALED', cost:500000, current:50000, strategy:'00631L', sop:'波段操作', media: cardAssets['C04'] };
-    window.cardsData['C05'] = { code:'C05', type:'type-us', rpg:'要買就買全世界', skill:'GLOBAL DCA', cost:50000, current:50000, strategy:'VT', sop:'分散全球', media: cardAssets['C05'] };
-    window.cardsData['C06'] = { code:'C06', type:'type-us', rpg:'美國就是我爸爸', skill:'US DCA', cost:50000, current:50000, strategy:'VOO', sop:'相信美國國運', media: cardAssets['C06'] };
-    window.cardsData['C07'] = { code:'C07', type:'type-trap', rpg:'可以進場了嗎?', skill:'AMBUSH', cost:900000, current:900000, strategy:'CASH/006208', sop:'等待崩盤', media: cardAssets['C07'] };
+    // 使用 STRATEGY_TARGETS 表來定義卡牌和標的物的關係
+    window.cardsData['C01'] = { code:'C01', type:'type-tw', rpg:'平庸的定期定額', skill:'TW DCA', cost:2520000, current:2595945, strategy: STRATEGY_TARGETS['C01'], sop:'每月5號扣款，不看盤', media: cardAssets['C01'] };
+    window.cardsData['C02'] = { code:'C02', type:'type-tw', rpg:'獎金給我她奶奶的all in', skill:'TW LSI', cost:1750000, current:1750000, strategy: STRATEGY_TARGETS['C02'], sop:'跌幅觸發加碼', media: cardAssets['C02'] }; 
+    window.cardsData['C03'] = { code:'C03', type:'type-yield', rpg:'股息cover每一天', skill:'YIELD', cost:840000, current:840636, strategy: STRATEGY_TARGETS['C03'], sop:'股息再投入', media: cardAssets['C03'] };
+    window.cardsData['C04'] = { code:'C04', type:'type-ber', rpg:'問就是正2', skill:'SEALED', cost:500000, current:50000, strategy: STRATEGY_TARGETS['C04'], sop:'波段操作', media: cardAssets['C04'] };
+    window.cardsData['C05'] = { code:'C05', type:'type-us', rpg:'要買就買全世界', skill:'GLOBAL DCA', cost:50000, current:50000, strategy: STRATEGY_TARGETS['C05'], sop:'分散全球', media: cardAssets['C05'] };
+    window.cardsData['C06'] = { code:'C06', type:'type-us', rpg:'美國就是我爸爸', skill:'US DCA', cost:50000, current:50000, strategy: STRATEGY_TARGETS['C06'], sop:'相信美國國運', media: cardAssets['C06'] };
+    window.cardsData['C07'] = { code:'C07', type:'type-trap', rpg:'可以進場了嗎?', skill:'AMBUSH', cost:900000, current:900000, strategy: STRATEGY_TARGETS['C07'], sop:'等待崩盤', media: cardAssets['C07'] };
 }
 
 // -----------------------------------------------------
@@ -602,7 +618,7 @@ function renderCards(){
     div.className = `micro-card ${c.type}`;
     div.onclick = () => window.openModal(c.code);
     div.innerHTML = `
-      <div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">ACTIVE</span></div>
+      <div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.strategy}</span></div>
       <div class="mc-image-container">${c.media}</div>
       <div class="mc-footer">
         <div class="mc-chn-name">${c.rpg || ''}</div>
@@ -634,14 +650,14 @@ window.openModal = function(k){
   const btn = document.getElementById('configBtn');
   
   // 根據卡牌代碼導向不同設定視窗
-  if(k === 'C01') {
+  if(k === 'C01' || k === 'C03') { 
       btn.style.display = 'block';
       btn.onclick = window.openSetupModalFromCard;
-      btn.textContent = 'INITIATE CONFIG C01 // 定額配置';
+      btn.textContent = `INITIATE CONFIG ${k} // 定額配置 (${c.strategy})`;
   } else if (k === 'C02') {
       btn.style.display = 'block';
       btn.onclick = window.openC02SetupModal; 
-      btn.textContent = 'INITIATE CONFIG C02 // 跌幅配置';
+      btn.textContent = 'INITIATE CONFIG C02 // 跌幅配置 (006208)';
   } else {
       btn.style.display = 'none';
   }
@@ -654,7 +670,7 @@ window.closeModal = function(){
     document.getElementById('cardModal').style.display='none';
 }
 
-// --- C01 SETUP LOGIC ---
+// --- C01 / C03 SETUP LOGIC ---
 window.openSetupModalFromCard = function() {
     window.closeModal(); 
     window.openSetupModal(); 
@@ -757,10 +773,12 @@ async function saveStrategyToDB() {
     btn.disabled = true;
 
     try {
+        const targetCard = window.cardsData[window.currentCardCode]; 
+        
         const payload = {
             user_id: "commander_001", 
-            strategy_code: "C01",
-            target_symbol: "006208",
+            strategy_code: window.currentCardCode, 
+            target_symbol: targetCard.strategy,
             amount: amt,
             status: "active",
             trigger_config: {
@@ -771,12 +789,12 @@ async function saveStrategyToDB() {
         };
         const docRef = await addDoc(collection(db, "strategies"), payload);
         console.log("Written ID: ", docRef.id);
-        alert(`C01 策略部署成功！\n\nID: ${docRef.id}\n每月扣款日: ${window.setupDates.join(', ')} 號`);
+        alert(`${window.currentCardCode} 策略部署成功！\n\nID: ${docRef.id}\n每月扣款日: ${window.setupDates.join(', ')} 號`);
         window.closeSetupModal();
 
     } catch(e) {
-        console.error("C01 Write Error: ", e);
-        alert("C01 寫入失敗: " + e.message + "\n(請確認 Firestore 規則已開啟 Test Mode)");
+        console.error("C01/C03 Write Error: ", e);
+        alert(`C01/C03 寫入失敗: ${e.message} (請確認 Firestore 規則已開啟 Test Mode)`);
     } finally {
         btn.textContent = "CONFIRM & DEPLOY";
         btn.disabled = false;
@@ -803,7 +821,7 @@ async function saveC02StrategyToDB() {
         const payload = {
             user_id: "commander_001", 
             strategy_code: "C02",
-            target_symbol: "006208", 
+            target_symbol: STRATEGY_TARGETS['C02'], 
             amount: amt,
             status: "active",
             trigger_config: {
@@ -828,18 +846,40 @@ async function saveC02StrategyToDB() {
 
 
 // -----------------------------------------------------
-// 7. ADMIN / SIMULATION ENGINE (UPGRADED)
+// 7. ADMIN / SIMULATION ENGINE (REAL PRICE & MULTI-ASSET)
 // -----------------------------------------------------
 async function getStockPrice(symbol) {
+    const config = ASSET_CONFIGS[symbol];
+    if (!config) return 100.00; 
+    
     await new Promise(r => setTimeout(r, 500)); 
 
-    if (symbol === '006208') {
-        const base = 110; 
-        const fluctuation = (Math.random() * 7) - 2; 
-        return (base + fluctuation).toFixed(2); 
+    // --- 邏輯 A: 呼叫 GAS 獲取真實價格 (僅 006208) ---
+    if (config.priceSource === 'GAS_API' && symbol === '006208') {
+         try {
+            const response = await fetch(GAS_PRICE_API_URL);
+            const result = await response.json();
+            
+            if (result.status === 'success' && result.price) {
+                // 回傳真實收盤價
+                return result.price.toFixed(2);
+            } else {
+                console.warn(`GAS API error for ${symbol}: ${result.message || 'Unknown error'}`);
+                return config.basePrice.toFixed(2); 
+            }
+        } catch (e) {
+            console.error("Failed to connect to GAS API:", e);
+            return config.basePrice.toFixed(2); 
+        }
     }
     
-    return 100.00;
+    // --- 邏輯 B: 模擬價格 (其他所有標的) ---
+    if (config.priceSource === 'SIM') {
+        const fluctuation = (Math.random() * (config.basePrice * 0.04)) - (config.basePrice * 0.02); 
+        return (config.basePrice + fluctuation).toFixed(2); 
+    }
+
+    return config.basePrice.toFixed(2);
 }
 
 
@@ -847,12 +887,13 @@ window.runDailyCheck = async function(simulationDate = new Date()) {
     console.log("⚡ 系統啟動：開始執行每日檢查...");
     const day = simulationDate.getDate(); 
     
-    // 1. 取得今日股價並模擬昨日收盤價 (用於 C02 計算跌幅)
-    const currentPrice = Number(await getStockPrice('006208'));
+    // 1. 獲取 006208 的真實價格作為基準（用於計算 C02 跌幅）
+    const baseSymbol = '006208';
+    const currentPrice = Number(await getStockPrice(baseSymbol));
     const yesterdayPrice = currentPrice / (1 + (Math.random() * 0.06 - 0.03)); 
     const dropPercent = ((yesterdayPrice - currentPrice) / yesterdayPrice) * 100;
     
-    console.log(`[006208 報價] 今日: ${currentPrice.toFixed(2)} | 昨日模擬: ${yesterdayPrice.toFixed(2)} | 跌幅: ${dropPercent.toFixed(2)}%`);
+    console.log(`[${baseSymbol} 報價] 今日: ${currentPrice.toFixed(2)} | 跌幅: ${dropPercent.toFixed(2)}%`);
     
     // 2. 獲取所有活躍策略
     const q = query(
@@ -875,38 +916,42 @@ window.runDailyCheck = async function(simulationDate = new Date()) {
             let isTriggered = false;
             let note = "";
             
-            // --- C01 邏輯：時間觸發 ---
-            if (strategy.strategy_code === 'C01' && strategy.trigger_config.type === 'fixed_date') {
+            const targetSymbol = strategy.target_symbol;
+            // 獲取當前策略目標的價格 (如果是 006208 則為真實價格，否則為模擬價格)
+            const priceToUse = Number(await getStockPrice(targetSymbol)); 
+
+            // --- C01/C03 邏輯：時間觸發 ---
+            if ((strategy.strategy_code === 'C01' || strategy.strategy_code === 'C03') && strategy.trigger_config.type === 'fixed_date') {
                 if (strategy.trigger_config.dates.includes(day)) {
                     isTriggered = true;
-                    note = `C01 定期定額觸發 (設定日: ${day}號)`;
+                    note = `${strategy.strategy_code} 定期定額觸發 (設定日: ${day}號)`;
                 }
             } 
             
             // --- C02 邏輯：條件觸發 (跌幅) ---
             else if (strategy.strategy_code === 'C02' && strategy.trigger_config.type === 'drop_percent') {
                 const threshold = strategy.trigger_config.drop_threshold;
+                // 檢查是否達到跌幅門檻 (使用 006208 的跌幅作為觸發基準)
                 if (dropPercent >= threshold) {
                     isTriggered = true;
                     note = `C02 跌幅加碼觸發 (跌幅 >= ${threshold}%)`;
-                    // ⚠️ 備註：未來需加入檢查「本月執行次數是否達到上限」
                 }
             }
 
             // 3. 執行交易
             if (isTriggered) {
                 const amount = strategy.amount;
-                const shares = (amount / currentPrice).toFixed(2);
+                const shares = (amount / priceToUse).toFixed(2);
 
                 const logRef = doc(collection(db, "execution_logs"));
                 batch.set(logRef, {
                     strategy_id: docSnapshot.id,
                     user_id: strategy.user_id,
                     strategy_code: strategy.strategy_code,
-                    symbol: strategy.target_symbol,
+                    symbol: targetSymbol, 
                     action: "BUY",
                     execution_date: simulationDate.toISOString().split('T')[0], 
-                    price: Number(currentPrice), 
+                    price: priceToUse, 
                     amount: amount,
                     shares: parseFloat(shares),
                     note: note,
@@ -920,11 +965,10 @@ window.runDailyCheck = async function(simulationDate = new Date()) {
             await batch.commit();
             await fetchRealLogs();
             
-            const latestPrice = await getStockPrice('006208');
-            alert(`🎉 執行報告\n\n成功觸發：${executedCount} 筆交易\n\n今日成交價(模擬)：${latestPrice}`);
+            alert(`🎉 執行報告\n\n成功觸發：${executedCount} 筆交易\n\n今日 ${baseSymbol} 跌幅(模擬)：${dropPercent.toFixed(2)}%`);
             
         } else {
-            alert(`📅 模擬日期：${day} 號\n檢查完畢，今日無任何策略觸發。\n(模擬跌幅: ${dropPercent.toFixed(2)}%)`);
+            alert(`📅 模擬日期：${day} 號\n檢查完畢，今日無任何策略觸發。\n(今日 ${baseSymbol} 跌幅: ${dropPercent.toFixed(2)}%)`);
         }
 
     } catch (error) {
@@ -958,7 +1002,6 @@ async function fetchRealLogs() {
         let html = '';
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-            // toFixed(2) 確保價格顯示兩位小數
             const formattedPrice = data.price ? data.price.toFixed(2) : 'N/A';
             const statusColor = data.action === 'BUY' ? 'var(--gold)' : '#888';
             
@@ -980,7 +1023,6 @@ async function fetchRealLogs() {
 
     } catch (e) {
         console.error("Error fetching logs:", e);
-        // 如果 Firebase 報錯通常是索引問題，提供提示
         logContainer.innerHTML = `<div style="padding:15px;color:var(--tw)">讀取失敗: 資料庫索引建立中或權限不足。<br><small>${e.message}</small></div>`;
     }
 }

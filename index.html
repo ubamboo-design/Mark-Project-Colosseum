@@ -5,418 +5,418 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PROJECT CAGE : 戰區指揮版 (Final Sync - C01/C02)</title>
 <style>
-    :root {
-        --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
-        --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; 
-        --gold: #ffd700; --green: #00ff6a; --red: #ff2a2a; --purple: #a600ff; 
-        --dark-purple: #9400d3; --cyan: #00f7ff; --emergency: #ff0000;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); background-image: radial-gradient(circle at 50% 0%, #1a1a20 0%, #050505 70%); color: var(--text); font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.3; overflow-x: hidden; padding-bottom: 30px; }
-    
-    /* HEADER */
-    header { padding: 35px 20px; background: transparent; position: relative; display: flex; align-items: center; justify-content: center; gap: 20px; }
-    #pageLogo { height: 60px; width: auto; object-fit: contain; display: none; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3)); }
-    .header-text { text-align: left; display: flex; flex-direction: column; justify-content: center; }
-    h1 { font-size: 2.8rem; letter-spacing: 6px; text-transform: uppercase; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.15); font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; line-height: 1; }
-    .meta-info { font-family: 'Courier New', monospace; color: var(--gold); margin-top: 5px; font-size: 0.9rem; opacity: 0.8; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
-    .container { max-width: 1600px; margin: 0 auto; padding: 0 20px; }
-    
-    /* PLAYER BUTTON */
-    .player-btn-container { position: absolute; top: 30px; right: 30px; z-index: 100; }
-    .cmd-btn {
-        background: rgba(0,0,0,0.6); border: 1px solid var(--gold); color: var(--gold);
-        padding: 10px 20px; font-family: 'Courier New'; font-weight: bold; cursor: pointer;
-        transition: 0.3s; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(5px);
-        clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-    }
-    .cmd-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+    :root {
+        --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
+        --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; 
+        --gold: #ffd700; --green: #00ff6a; --red: #ff2a2a; --purple: #a600ff; 
+        --dark-purple: #9400d3; --cyan: #00f7ff; --emergency: #ff0000;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); background-image: radial-gradient(circle at 50% 0%, #1a1a20 0%, #050505 70%); color: var(--text); font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.3; overflow-x: hidden; padding-bottom: 30px; }
+    
+    /* HEADER */
+    header { padding: 35px 20px; background: transparent; position: relative; display: flex; align-items: center; justify-content: center; gap: 20px; }
+    #pageLogo { height: 60px; width: auto; object-fit: contain; display: none; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3)); }
+    .header-text { text-align: left; display: flex; flex-direction: column; justify-content: center; }
+    h1 { font-size: 2.8rem; letter-spacing: 6px; text-transform: uppercase; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.15); font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; line-height: 1; }
+    .meta-info { font-family: 'Courier New', monospace; color: var(--gold); margin-top: 5px; font-size: 0.9rem; opacity: 0.8; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+    .container { max-width: 1600px; margin: 0 auto; padding: 0 20px; }
+    
+    /* PLAYER BUTTON */
+    .player-btn-container { position: absolute; top: 30px; right: 30px; z-index: 100; }
+    .cmd-btn {
+        background: rgba(0,0,0,0.6); border: 1px solid var(--gold); color: var(--gold);
+        padding: 10px 20px; font-family: 'Courier New'; font-weight: bold; cursor: pointer;
+        transition: 0.3s; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(5px);
+        clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    }
+    .cmd-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
 
-    /* DASHBOARD */
-    .dashboard-panel { background: linear-gradient(180deg, rgba(20,20,25,0.9), rgba(5,5,5,0.95)); border: 1px solid #333; border-radius: 20px; padding: 25px; margin: 30px 0; box-shadow: 0 0 50px rgba(0,0,0,0.7); position: relative; overflow: hidden; backdrop-filter: blur(10px); }
-    .dashboard-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--tw), var(--gold), var(--us)); box-shadow: 0 0 15px var(--gold); }
-    .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 20px; }
-    .dash-group { display: flex; flex-direction: column; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px; border: 1px solid #222; position: relative; height: 100%; justify-content: space-between; }
-    .dash-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-    .dash-flag { font-size: 1.4rem; }
-    .dash-title { font-size: 1rem; font-weight: 900; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
-    .data-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
-    .data-label { font-size: 0.8rem; color: #888; font-weight: bold; letter-spacing: 0.5px; }
-    .data-val { font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: bold; color: #ddd; }
-    .data-val.asset { color: #fff; font-size: 1.25rem; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
-    .profit-block { margin-top: 15px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-    .profit-main { font-family: 'Courier New'; font-size: 1.3rem; font-weight: 900; }
-    .profit-sub { font-size: 0.9rem; font-weight: bold; }
-    .total-big-val { font-family: 'Courier New'; font-size: 2.6rem; font-weight: 900; color: #fff; text-align: right; margin: 5px 0; text-shadow: 0 0 20px rgba(255,215,0,0.3); line-height: 1.1; }
-    .total-roi-display { font-family: 'Courier New'; font-size: 1.2rem; font-weight: bold; text-align: right; margin-bottom: 10px; opacity: 0.9; }
-    .rate-display { font-family: 'Courier New'; font-size: 0.75rem; color: var(--gold); opacity: 0.7; text-align: right; margin-top: 5px; letter-spacing: 1px; }
-    
-    /* COLORS */
-    .c-tw { color: var(--tw); text-shadow: 0 0 10px rgba(255,42,42,0.3); }
-    .c-us { color: var(--us); text-shadow: 0 0 10px rgba(0,210,255,0.3); }
-    .c-gold { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.3); }
-    .color-profit { color: var(--green)!important; text-shadow: 0 0 15px rgba(0,255,106,0.2); }
-    .color-loss { color: var(--red)!important; text-shadow: 0 0 15px rgba(255,42,42,0.2); }
-    .color-gold { color: var(--gold)!important; text-shadow: 0 0 20px rgba(255,215,0,0.6); } 
-    .color-dead { color: var(--dark-purple)!important; text-shadow: 0 0 20px rgba(148,0,211,0.6); }
-    
-    @media(max-width: 900px) { 
-        .dash-grid { grid-template-columns: 1fr; gap: 15px; } .total-big-val { font-size: 2rem; } 
-        header { flex-direction: column; gap: 15px; } .header-text { text-align: center; } 
-        .player-btn-container { position: relative; top: 0; right: 0; margin-bottom: 20px; display: flex; justify-content: center;}
-    }
+    /* DASHBOARD */
+    .dashboard-panel { background: linear-gradient(180deg, rgba(20,20,25,0.9), rgba(5,5,5,0.95)); border: 1px solid #333; border-radius: 20px; padding: 25px; margin: 30px 0; box-shadow: 0 0 50px rgba(0,0,0,0.7); position: relative; overflow: hidden; backdrop-filter: blur(10px); }
+    .dashboard-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--tw), var(--gold), var(--us)); box-shadow: 0 0 15px var(--gold); }
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 20px; }
+    .dash-group { display: flex; flex-direction: column; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px; border: 1px solid #222; position: relative; height: 100%; justify-content: space-between; }
+    .dash-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+    .dash-flag { font-size: 1.4rem; }
+    .dash-title { font-size: 1rem; font-weight: 900; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
+    .data-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .data-label { font-size: 0.8rem; color: #888; font-weight: bold; letter-spacing: 0.5px; }
+    .data-val { font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: bold; color: #ddd; }
+    .data-val.asset { color: #fff; font-size: 1.25rem; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
+    .profit-block { margin-top: 15px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+    .profit-main { font-family: 'Courier New'; font-size: 1.3rem; font-weight: 900; }
+    .profit-sub { font-size: 0.9rem; font-weight: bold; }
+    .total-big-val { font-family: 'Courier New'; font-size: 2.6rem; font-weight: 900; color: #fff; text-align: right; margin: 5px 0; text-shadow: 0 0 20px rgba(255,215,0,0.3); line-height: 1.1; }
+    .total-roi-display { font-family: 'Courier New'; font-size: 1.2rem; font-weight: bold; text-align: right; margin-bottom: 10px; opacity: 0.9; }
+    .rate-display { font-family: 'Courier New'; font-size: 0.75rem; color: var(--gold); opacity: 0.7; text-align: right; margin-top: 5px; letter-spacing: 1px; }
+    
+    /* COLORS */
+    .c-tw { color: var(--tw); text-shadow: 0 0 10px rgba(255,42,42,0.3); }
+    .c-us { color: var(--us); text-shadow: 0 0 10px rgba(0,210,255,0.3); }
+    .c-gold { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.3); }
+    .color-profit { color: var(--green)!important; text-shadow: 0 0 15px rgba(0,255,106,0.2); }
+    .color-loss { color: var(--red)!important; text-shadow: 0 0 15px rgba(255,42,42,0.2); }
+    .color-gold { color: var(--gold)!important; text-shadow: 0 0 20px rgba(255,215,0,0.6); } 
+    .color-dead { color: var(--dark-purple)!important; text-shadow: 0 0 20px rgba(148,0,211,0.6); }
+    
+    @media(max-width: 900px) { 
+        .dash-grid { grid-template-columns: 1fr; gap: 15px; } .total-big-val { font-size: 2rem; } 
+        header { flex-direction: column; gap: 15px; } .header-text { text-align: center; } 
+        .player-btn-container { position: relative; top: 0; right: 0; margin-bottom: 20px; display: flex; justify-content: center;}
+    }
 
-    /* SECTIONS */
-    .section-title { font-size: 1.3rem; border-left: 5px solid var(--gold); padding-left: 15px; margin: 50px 0 25px; text-transform: uppercase; font-weight: 900; color: #fff; display: flex; align-items: center; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
-    .section-title::after { content: ''; flex-grow: 1; height: 1px; background: #333; margin-left: 20px; }
+    /* SECTIONS */
+    .section-title { font-size: 1.3rem; border-left: 5px solid var(--gold); padding-left: 15px; margin: 50px 0 25px; text-transform: uppercase; font-weight: 900; color: #fff; display: flex; align-items: center; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+    .section-title::after { content: ''; flex-grow: 1; height: 1px; background: #333; margin-left: 20px; }
 
-    /* DECK */
-    .deck-wrapper { overflow-x: auto; padding-bottom: 25px; padding-top: 10px; }
-    .deck-grid { display: grid; grid-template-columns: repeat(8, minmax(110px, 1fr)); gap: 10px; min-width: 1000px; }
-    .micro-card { background: var(--card); border: 2px solid #333; border-radius: 16px; padding: 10px; transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; min-height: 220px; position: relative; overflow: hidden; }
-    .micro-card::after { content: ''; position: absolute; top: 6px; left: 6px; right: 6px; bottom: 6px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; pointer-events: none; transition: all 0.3s; }
-    .micro-card:hover { transform: translateY(-10px); z-index: 10; }
-    .mc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 0 5px; position: relative; z-index: 2; }
-    .mc-code { font-size: 0.8rem; font-weight: 900; color: #fff; opacity: 0.8; font-family: 'Arial Black'; } 
-    .mc-target { font-size: 0.6rem; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); padding: 2px 4px; border-radius: 4px; color: #aaa; font-family: 'Courier New'; }
-    .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; margin: 2px 0 10px; position: relative; z-index: 2; }
-    .mc-media { width: 64px; height: 64px; object-fit: contain; transition: all .4s; }
-    .micro-card:hover .mc-media { transform: scale(1.15); }
-    .mc-footer { text-align: center; margin-top: auto; position: relative; z-index: 2; padding: 0 2px; }
-    .mc-chn-name { font-size: 0.85rem; font-weight: 900; color: #fff; margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 1px; min-height: 35px; display:flex; align-items:center; justify-content:center; }
-    .mc-eng-name { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: none; }
-    .mc-cost-badge { display: inline-block; margin-top: 2px; padding: 3px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.7rem; color: #aaa; background: rgba(0,0,0,0.8); }
-    img.mc-media { filter: drop-shadow(0 0 2px rgba(255,255,255,0.5)); }
-    
-    .type-tw { border-color: var(--tw); } .type-tw:hover { box-shadow: 0 0 25px rgba(255,42,42,0.4); }
-    .type-tw img.mc-media { filter: drop-shadow(0 0 5px var(--tw)); } 
-    .type-us { border-color: var(--us); } .type-us:hover { box-shadow: 0 0 25px rgba(0,210,255,0.4); }
-    .type-us img.mc-media { filter: drop-shadow(0 0 5px var(--us)); }
-    .type-yield { border-color: var(--yield); } .type-yield:hover { box-shadow: 0 0 25px rgba(0,255,106,0.4); }
-    .type-yield img.mc-media { filter: drop-shadow(0 0 5px var(--yield)); } 
-    .type-ber { border-color: var(--ber); } .type-ber:hover { box-shadow: 0 0 25px rgba(255,145,0,0.4); }
-    .type-ber img.mc-media { filter: drop-shadow(0 0 5px var(--ber)); } 
-    .type-trap { border-color: var(--trap); } .type-trap:hover { box-shadow: 0 0 25px rgba(189,0,255,0.4); }
-    .type-trap img.mc-media { filter: drop-shadow(0 0 5px var(--trap)); } 
+    /* DECK */
+    .deck-wrapper { overflow-x: auto; padding-bottom: 25px; padding-top: 10px; }
+    .deck-grid { display: grid; grid-template-columns: repeat(8, minmax(110px, 1fr)); gap: 10px; min-width: 1000px; }
+    .micro-card { background: var(--card); border: 2px solid #333; border-radius: 16px; padding: 10px; transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; min-height: 220px; position: relative; overflow: hidden; }
+    .micro-card::after { content: ''; position: absolute; top: 6px; left: 6px; right: 6px; bottom: 6px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; pointer-events: none; transition: all 0.3s; }
+    .micro-card:hover { transform: translateY(-10px); z-index: 10; }
+    .mc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 0 5px; position: relative; z-index: 2; }
+    .mc-code { font-size: 0.8rem; font-weight: 900; color: #fff; opacity: 0.8; font-family: 'Arial Black'; } 
+    .mc-target { font-size: 0.6rem; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); padding: 2px 4px; border-radius: 4px; color: #aaa; font-family: 'Courier New'; }
+    .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; margin: 2px 0 10px; position: relative; z-index: 2; }
+    .mc-media { width: 64px; height: 64px; object-fit: contain; transition: all .4s; }
+    .micro-card:hover .mc-media { transform: scale(1.15); }
+    .mc-footer { text-align: center; margin-top: auto; position: relative; z-index: 2; padding: 0 2px; }
+    .mc-chn-name { font-size: 0.85rem; font-weight: 900; color: #fff; margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 1px; min-height: 35px; display:flex; align-items:center; justify-content:center; }
+    .mc-eng-name { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: none; }
+    .mc-cost-badge { display: inline-block; margin-top: 2px; padding: 3px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.7rem; color: #aaa; background: rgba(0,0,0,0.8); }
+    img.mc-media { filter: drop-shadow(0 0 2px rgba(255,255,255,0.5)); }
+    
+    .type-tw { border-color: var(--tw); } .type-tw:hover { box-shadow: 0 0 25px rgba(255,42,42,0.4); }
+    .type-tw img.mc-media { filter: drop-shadow(0 0 5px var(--tw)); } 
+    .type-us { border-color: var(--us); } .type-us:hover { box-shadow: 0 0 25px rgba(0,210,255,0.4); }
+    .type-us img.mc-media { filter: drop-shadow(0 0 5px var(--us)); }
+    .type-yield { border-color: var(--yield); } .type-yield:hover { box-shadow: 0 0 25px rgba(0,255,106,0.4); }
+    .type-yield img.mc-media { filter: drop-shadow(0 0 5px var(--yield)); } 
+    .type-ber { border-color: var(--ber); } .type-ber:hover { box-shadow: 0 0 25px rgba(255,145,0,0.4); }
+    .type-ber img.mc-media { filter: drop-shadow(0 0 5px var(--ber)); } 
+    .type-trap { border-color: var(--trap); } .type-trap:hover { box-shadow: 0 0 25px rgba(189,0,255,0.4); }
+    .type-trap img.mc-media { filter: drop-shadow(0 0 5px var(--trap)); } 
 
-    /* EVENTS LOG */
-    .event-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; padding-bottom: 10px; }
-    .event-card { background: rgba(255,255,255,0.03); border: 1px solid #333; border-left: 4px solid var(--cyan); border-radius: 8px; padding: 20px; position: relative; transition: .3s; height: 100%; display: flex; flex-direction: column; }
-    .event-card:hover { background: rgba(0, 247, 255, 0.05); border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 247, 255, 0.1); }
-    .event-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-family: 'Courier New'; font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
-    .event-date { color: #888; letter-spacing: 1px; }
-    .event-status { color: var(--gold); font-weight: bold; background: rgba(255,215,0,0.1); padding: 2px 8px; border-radius: 4px; }
-    .event-content { font-size: 1rem; color: #eee; line-height: 1.6; font-weight: 500; }
-    @keyframes red-flash { 0% { box-shadow: 0 0 5px rgba(255,0,0,0.2); border-color: rgba(255,0,0,0.3); } 50% { box-shadow: 0 0 25px rgba(255,0,0,0.8); border-color: rgba(255,0,0,1); } 100% { box-shadow: 0 0 5px rgba(255,0,0,0.2); border-color: rgba(255,0,0,0.3); } }
-    .event-card.emergency { animation: red-flash 1.5s infinite ease-in-out; border-left-color: var(--emergency) !important; }
-    .event-card.emergency .event-status { color: var(--emergency); background: rgba(255, 0, 0, 0.15); }
-    @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
+    /* EVENTS LOG */
+    .event-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; padding-bottom: 10px; }
+    .event-card { background: rgba(255,255,255,0.03); border: 1px solid #333; border-left: 4px solid var(--cyan); border-radius: 8px; padding: 20px; position: relative; transition: .3s; height: 100%; display: flex; flex-direction: column; }
+    .event-card:hover { background: rgba(0, 247, 255, 0.05); border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 247, 255, 0.1); }
+    .event-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-family: 'Courier New'; font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+    .event-date { color: #888; letter-spacing: 1px; }
+    .event-status { color: var(--gold); font-weight: bold; background: rgba(255,215,0,0.1); padding: 2px 8px; border-radius: 4px; }
+    .event-content { font-size: 1rem; color: #eee; line-height: 1.6; font-weight: 500; }
+    @keyframes red-flash { 0% { box-shadow: 0 0 5px rgba(255,0,0,0.2); border-color: rgba(255,0,0,0.3); } 50% { box-shadow: 0 0 25px rgba(255,0,0,0.8); border-color: rgba(255,0,0,1); } 100% { box-shadow: 0 0 5px rgba(255,0,0,0.2); border-color: rgba(255,0,0,0.3); } }
+    .event-card.emergency { animation: red-flash 1.5s infinite ease-in-out; border-left-color: var(--emergency) !important; }
+    .event-card.emergency .event-status { color: var(--emergency); background: rgba(255, 0, 0, 0.15); }
+    @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
-    /* MODAL */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; }
-    .modal-active { display: flex; animation: fadeIn 0.2s; }
-    .modal-content { background: #121214; border: 2px solid #444; border-radius: 16px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 0 80px rgba(0,0,0,1); }
-    .modal-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
-    .m-code { font-size: 2.2rem; font-weight: 900; color: #fff; }
-    .m-skill { font-size: 1.2rem; color: #aaa; font-weight: bold; margin-left: 15px; }
-    .close-btn { font-size: 2rem; cursor: pointer; color: #666; line-height: 1; }
-    .close-btn:hover { color: #fff; }
-    .m-row { margin-bottom: 15px; }
-    .m-label { display: block; font-size: 0.75rem; color: #555; text-transform: uppercase; margin-bottom: 5px; font-weight: bold; letter-spacing: 1px; }
-    .m-value { font-size: 1.1rem; color: #ccc; line-height: 1.5; }
-    .m-value.highlight { font-size: 1.6rem; font-weight: 900; color: var(--gold); font-family: 'Courier New'; }
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; }
+    .modal-active { display: flex; animation: fadeIn 0.2s; }
+    .modal-content { background: #121214; border: 2px solid #444; border-radius: 16px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 0 80px rgba(0,0,0,1); }
+    .modal-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+    .m-code { font-size: 2.2rem; font-weight: 900; color: #fff; }
+    .m-skill { font-size: 1.2rem; color: #aaa; font-weight: bold; margin-left: 15px; }
+    .close-btn { font-size: 2rem; cursor: pointer; color: #666; line-height: 1; }
+    .close-btn:hover { color: #fff; }
+    .m-row { margin-bottom: 15px; }
+    .m-label { display: block; font-size: 0.75rem; color: #555; text-transform: uppercase; margin-bottom: 5px; font-weight: bold; letter-spacing: 1px; }
+    .m-value { font-size: 1.1rem; color: #ccc; line-height: 1.5; }
+    .m-value.highlight { font-size: 1.6rem; font-weight: 900; color: var(--gold); font-family: 'Courier New'; }
 
-    /* FORM STYLES */
-    .form-group { margin-bottom: 20px; text-align: left; }
-    .form-label { display: block; color: var(--us); font-size: 0.8rem; margin-bottom: 8px; font-family: 'Courier New'; letter-spacing: 1px; }
-    .cyber-input {
-        width: 100%; background: #050505; border: 1px solid #333; color: #fff; padding: 12px;
-        font-family: 'Segoe UI', sans-serif; font-size: 1rem; outline: none; transition: 0.3s; border-radius: 4px;
-    }
-    .cyber-input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
-    textarea.cyber-input { resize: vertical; min-height: 80px; }
-    .save-btn {
-        width: 100%; padding: 15px; background: var(--gold); color: #000; border: none; font-weight: 900;
-        cursor: pointer; font-family: 'Arial Black'; text-transform: uppercase; letter-spacing: 2px;
-        clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-        transition: 0.2s;
-        margin-top: 10px;
-    }
-    .save-btn:hover { background: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.5); }
-    .save-btn:disabled { background: #333; color: #666; cursor: wait; box-shadow: none; }
+    /* FORM STYLES */
+    .form-group { margin-bottom: 20px; text-align: left; }
+    .form-label { display: block; color: var(--us); font-size: 0.8rem; margin-bottom: 8px; font-family: 'Courier New'; letter-spacing: 1px; }
+    .cyber-input {
+        width: 100%; background: #050505; border: 1px solid #333; color: #fff; padding: 12px;
+        font-family: 'Segoe UI', sans-serif; font-size: 1rem; outline: none; transition: 0.3s; border-radius: 4px;
+    }
+    .cyber-input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
+    textarea.cyber-input { resize: vertical; min-height: 80px; }
+    .save-btn {
+        width: 100%; padding: 15px; background: var(--gold); color: #000; border: none; font-weight: 900;
+        cursor: pointer; font-family: 'Arial Black'; text-transform: uppercase; letter-spacing: 2px;
+        clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        transition: 0.2s;
+        margin-top: 10px;
+    }
+    .save-btn:hover { background: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.5); }
+    .save-btn:disabled { background: #333; color: #666; cursor: wait; box-shadow: none; }
 
-    /* CONFIG BUTTON (NEW) */
-    .config-btn {
-        width: 100%; padding: 10px; background: transparent; color: var(--cyan); 
-        border: 1px solid var(--cyan); font-weight: bold; font-family: 'Courier New'; cursor: pointer;
-        margin-top: 15px; transition: 0.3s;
-    }
-    .config-btn:hover { background: rgba(0, 247, 255, 0.1); box-shadow: 0 0 10px rgba(0, 247, 255, 0.3); }
+    /* CONFIG BUTTON (NEW) */
+    .config-btn {
+        width: 100%; padding: 10px; background: transparent; color: var(--cyan); 
+        border: 1px solid var(--cyan); font-weight: bold; font-family: 'Courier New'; cursor: pointer;
+        margin-top: 15px; transition: 0.3s;
+    }
+    .config-btn:hover { background: rgba(0, 247, 255, 0.1); box-shadow: 0 0 10px rgba(0, 247, 255, 0.3); }
 
-    /* DATE PICKER GRID (NEW) */
-    .date-grid {
-        display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;
-        background: rgba(0,0,0,0.5); padding: 10px; border: 1px solid #333; border-radius: 4px;
-    }
-    .date-cell {
-        aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-        background: #111; border: 1px solid #333; color: #666;
-        cursor: pointer; font-family: 'Courier New'; font-weight: bold; font-size: 0.9rem;
-        transition: 0.2s;
-    }
-    .date-cell:hover:not(:disabled) { border-color: var(--gold); color: #fff; }
-    .date-cell.selected { background: var(--gold); color: #000; border-color: var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-    .date-cell:disabled { opacity: 0.3; cursor: not-allowed; }
+    /* DATE PICKER GRID (NEW) */
+    .date-grid {
+        display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;
+        background: rgba(0,0,0,0.5); padding: 10px; border: 1px solid #333; border-radius: 4px;
+    }
+    .date-cell {
+        aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+        background: #111; border: 1px solid #333; color: #666;
+        cursor: pointer; font-family: 'Courier New'; font-weight: bold; font-size: 0.9rem;
+        transition: 0.2s;
+    }
+    .date-cell:hover:not(:disabled) { border-color: var(--gold); color: #fff; }
+    .date-cell.selected { background: var(--gold); color: #000; border-color: var(--gold); box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    .date-cell:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    /* SETUP INFO BOX (NEW) */
-    .setup-info-box {
-        margin-top: 20px; background: rgba(0, 255, 106, 0.1); border: 1px solid var(--green);
-        padding: 15px; border-radius: 6px;
-    }
-    .si-label { font-size: 0.7rem; color: var(--green); letter-spacing: 1px; display: block; margin-bottom: 5px; }
-    .si-val { font-size: 1.4rem; font-weight: 900; color: #fff; font-family: 'Courier New'; }
-    .si-sub { font-size: 0.8rem; color: #aaa; margin-top: 5px; }
+    /* SETUP INFO BOX (NEW) */
+    .setup-info-box {
+        margin-top: 20px; background: rgba(0, 255, 106, 0.1); border: 1px solid var(--green);
+        padding: 15px; border-radius: 6px;
+    }
+    .si-label { font-size: 0.7rem; color: var(--green); letter-spacing: 1px; display: block; margin-bottom: 5px; }
+    .si-val { font-size: 1.4rem; font-weight: 900; color: #fff; font-family: 'Courier New'; }
+    .si-sub { font-size: 0.8rem; color: #aaa; margin-top: 5px; }
 
-    /* LOADOUT STYLES */
-    .loadout-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .loadout-count { font-family: 'Courier New'; color: var(--gold); font-weight: bold; font-size: 0.9rem; }
-    .loadout-grid {
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px;
-        margin-bottom: 25px; background: #080808; padding: 15px; border: 1px solid #333; border-radius: 8px;
-    }
-    .select-card {
-        border: 1px solid #333; background: rgba(255,255,255,0.05); border-radius: 6px; padding: 5px;
-        cursor: pointer; opacity: 0.4; transition: all 0.2s; text-align: center; position: relative;
-    }
-    .select-card:hover { opacity: 0.8; transform: translateY(-2px); }
-    .select-card.active {
-        opacity: 1; border-color: var(--gold); background: rgba(255, 215, 0, 0.1); box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-    }
-    .select-card.active::after {
-        content: 'EQUIPPED'; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
-        background: var(--gold); color: #000; font-size: 0.5rem; padding: 1px 4px; border-radius: 4px; font-weight: 900; white-space: nowrap;
-    }
-    .sc-img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 5px; }
-    .sc-code { font-size: 0.7rem; color: #aaa; font-weight: bold; display: block; }
+    /* LOADOUT STYLES */
+    .loadout-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .loadout-count { font-family: 'Courier New'; color: var(--gold); font-weight: bold; font-size: 0.9rem; }
+    .loadout-grid {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px;
+        margin-bottom: 25px; background: #080808; padding: 15px; border: 1px solid #333; border-radius: 8px;
+    }
+    .select-card {
+        border: 1px solid #333; background: rgba(255,255,255,0.05); border-radius: 6px; padding: 5px;
+        cursor: pointer; opacity: 0.4; transition: all 0.2s; text-align: center; position: relative;
+    }
+    .select-card:hover { opacity: 0.8; transform: translateY(-2px); }
+    .select-card.active {
+        opacity: 1; border-color: var(--gold); background: rgba(255, 215, 0, 0.1); box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    }
+    .select-card.active::after {
+        content: 'EQUIPPED'; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
+        background: var(--gold); color: #000; font-size: 0.5rem; padding: 1px 4px; border-radius: 4px; font-weight: 900; white-space: nowrap;
+    }
+    .sc-img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 5px; }
+    .sc-code { font-size: 0.7rem; color: #aaa; font-weight: bold; display: block; }
 
-    /* ROSTER STYLES (NEW) */
-    .roster-grid {
-        display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;
-    }
-    .player-row {
-        background: rgba(10,10,12,0.9);
-        border: 1px solid #333;
-        border-left: 4px solid #444;
-        border-radius: 8px;
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        transition: 0.3s;
-    }
-    .player-row.active-user {
-        border-color: var(--gold);
-        background: linear-gradient(90deg, rgba(255,215,0,0.05) 0%, rgba(0,0,0,0) 100%);
-        box-shadow: 0 0 15px rgba(255,215,0,0.1);
-    }
-    .player-avatar {
-        width: 60px; height: 60px;
-        background: #222;
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.5rem;
-        border: 2px solid #555;
-    }
-    .active-user .player-avatar { border-color: var(--gold); background: rgba(255,215,0,0.1); }
-    
-    .player-info { flex-grow: 1; }
-    .pi-name { font-family: 'Arial Black'; font-size: 1.2rem; color: #fff; text-transform: uppercase; margin-bottom: 4px; }
-    .pi-bio { font-size: 0.85rem; color: #888; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-width: 600px; }
-    
-    .mini-deck { display: flex; gap: 8px; }
-    .mini-card-icon { 
-        width: 45px; height: 45px; 
-        background: #000; 
-        border: 1px solid #444; 
-        border-radius: 6px; 
-        padding: 4px;
-        display: flex; align-items: center; justify-content: center;
-    }
-    .mini-card-icon img { width: 100%; height: 100%; object-fit: contain; }
+    /* ROSTER STYLES (NEW) */
+    .roster-grid {
+        display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;
+    }
+    .player-row {
+        background: rgba(10,10,12,0.9);
+        border: 1px solid #333;
+        border-left: 4px solid #444;
+        border-radius: 8px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: 0.3s;
+    }
+    .player-row.active-user {
+        border-color: var(--gold);
+        background: linear-gradient(90deg, rgba(255,215,0,0.05) 0%, rgba(0,0,0,0) 100%);
+        box-shadow: 0 0 15px rgba(255,215,0,0.1);
+    }
+    .player-avatar {
+        width: 60px; height: 60px;
+        background: #222;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.5rem;
+        border: 2px solid #555;
+    }
+    .active-user .player-avatar { border-color: var(--gold); background: rgba(255,215,0,0.1); }
+    
+    .player-info { flex-grow: 1; }
+    .pi-name { font-family: 'Arial Black'; font-size: 1.2rem; color: #fff; text-transform: uppercase; margin-bottom: 4px; }
+    .pi-bio { font-size: 0.85rem; color: #888; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-width: 600px; }
+    
+    .mini-deck { display: flex; gap: 8px; }
+    .mini-card-icon { 
+        width: 45px; height: 45px; 
+        background: #000; 
+        border: 1px solid #444; 
+        border-radius: 6px; 
+        padding: 4px;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .mini-card-icon img { width: 100%; height: 100%; object-fit: contain; }
 
-    @media(max-width: 768px) {
-        .player-row { flex-direction: column; align-items: flex-start; }
-        .mini-deck { margin-top: 10px; }
-    }
+    @media(max-width: 768px) {
+        .player-row { flex-direction: column; align-items: flex-start; }
+        .mini-deck { margin-top: 10px; }
+    }
 </style>
 </head>
 <body>
 <header>
-  <div style="position:absolute; top:10px; left:10px; opacity:0.5;">
-    <button onclick="window.runDailyCheck()" style="background:#333; color:#fff; border:1px solid #555; padding:5px; cursor:pointer;">
-        ⚙️ TEST RUN (TODAY)
-    </button>
-  </div>
+  <div style="position:absolute; top:10px; left:10px; opacity:0.5;">
+    <button onclick="window.runDailyCheck()" style="background:#333; color:#fff; border:1px solid #555; padding:5px; cursor:pointer;">
+        ⚙️ TEST RUN (TODAY)
+    </button>
+  </div>
 
-  <img id="pageLogo" src="" alt="Logo">
-  <div class="header-text">
-      <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v13.4 LIVE • GAS SYNC • 2025-2031</div>
-  </div>
-  <div class="player-btn-container">
-    <button class="cmd-btn" onclick="openPlayerModal()">
-        <span>👾 COMMANDER</span>
-    </button>
-  </div>
+  <img id="pageLogo" src="" alt="Logo">
+  <div class="header-text">
+      <h1>PROJECT CAGE</h1>
+      <div class="meta-info">v13.4 LIVE • GAS SYNC • 2025-2031</div>
+  </div>
+  <div class="player-btn-container">
+    <button class="cmd-btn" onclick="openPlayerModal()">
+        <span>👾 COMMANDER</span>
+    </button>
+  </div>
 </header>
 
 <div class="container">
-  <div class="dashboard-panel">
-    <div class="dash-grid">
-      <div class="dash-group" style="border-color: rgba(255,42,42,0.3);">
-        <div class="dash-header"><span class="dash-flag">🇹🇼</span><span class="dash-title c-tw">TWD 核心戰情</span></div>
-        <div class="data-row"><span class="data-label">總成本 COST</span><span class="data-val" id="costTW">...</span></div>
-        <div class="data-row"><span class="data-label">總現值 ASSET</span><span class="data-val asset" id="assetTW">...</span></div>
-        <div class="profit-block"><span class="profit-main" id="plTW_val">...</span><span class="profit-sub" id="plTW_pct">...</span></div>
-      </div>
-      <div class="dash-group" style="border-color: rgba(0,210,255,0.3);">
-        <div class="dash-header"><span class="dash-flag">🇺🇸</span><span class="dash-title c-us">USD 核心戰情</span></div>
-        <div class="data-row"><span class="data-label">總成本 COST</span><span class="data-val" id="costUS">...</span></div>
-        <div class="data-row"><span class="data-label">總現值 ASSET</span><span class="data-val asset" id="assetUS">...</span></div>
-        <div class="profit-block"><span class="profit-main" id="plUS_val">...</span><span class="profit-sub" id="plUS_pct">...</span></div>
-      </div>
-      <div class="dash-group" style="border-color: rgba(255,215,0,0.3);">
-        <div class="dash-header" style="justify-content: center;"><span class="dash-flag">🏆</span><span class="dash-title c-gold">TOTAL ASSET 總身價</span></div>
-        <div class="total-big-val" id="totalAsset">...</div>
-        <div class="total-roi-display" id="totalROI">...</div>
-        <div class="data-row"><span class="data-label">總投入成本 (TWD)</span><span class="data-val" id="totalCostTWD">...</span></div>
-        <div class="data-row"><span class="data-label">總帳面損益 (TWD)</span><span class="data-val" id="totalDiff">...</span></div>
-        <div class="rate-display" id="rateInfo">Loading Rate...</div>
-      </div>
-    </div>
-  </div>
+  <div class="dashboard-panel">
+    <div class="dash-grid">
+      <div class="dash-group" style="border-color: rgba(255,42,42,0.3);">
+        <div class="dash-header"><span class="dash-flag">🇹🇼</span><span class="dash-title c-tw">TWD 核心戰情</span></div>
+        <div class="data-row"><span class="data-label">總成本 COST</span><span class="data-val" id="costTW">...</span></div>
+        <div class="data-row"><span class="data-label">總現值 ASSET</span><span class="data-val asset" id="assetTW">...</span></div>
+        <div class="profit-block"><span class="profit-main" id="plTW_val">...</span><span class="profit-sub" id="plTW_pct">...</span></div>
+      </div>
+      <div class="dash-group" style="border-color: rgba(0,210,255,0.3);">
+        <div class="dash-header"><span class="dash-flag">🇺🇸</span><span class="dash-title c-us">USD 核心戰情</span></div>
+        <div class="data-row"><span class="data-label">總成本 COST</span><span class="data-val" id="costUS">...</span></div>
+        <div class="data-row"><span class="data-label">總現值 ASSET</span><span class="data-val asset" id="assetUS">...</span></div>
+        <div class="profit-block"><span class="profit-main" id="plUS_val">...</span><span class="profit-sub" id="plUS_pct">...</span></div>
+      </div>
+      <div class="dash-group" style="border-color: rgba(255,215,0,0.3);">
+        <div class="dash-header" style="justify-content: center;"><span class="dash-flag">🏆</span><span class="dash-title c-gold">TOTAL ASSET 總身價</span></div>
+        <div class="total-big-val" id="totalAsset">...</div>
+        <div class="total-roi-display" id="totalROI">...</div>
+        <div class="data-row"><span class="data-label">總投入成本 (TWD)</span><span class="data-val" id="totalCostTWD">...</span></div>
+        <div class="data-row"><span class="data-label">總帳面損益 (TWD)</span><span class="data-val" id="totalDiff">...</span></div>
+        <div class="rate-display" id="rateInfo">Loading Rate...</div>
+      </div>
+    </div>
+  </div>
 
-  <div class="section-title">I. 八大技能卡牌 (THE 8 SKILL CARDS)</div>
-  <div class="deck-wrapper"><div class="deck-grid" id="cardContainer"><div class="loading">CONNECTING TO DATABASE...</div></div></div>
+  <div class="section-title">I. 八大技能卡牌 (THE 8 SKILL CARDS)</div>
+  <div class="deck-wrapper"><div class="deck-grid" id="cardContainer"><div class="loading">CONNECTING TO DATABASE...</div></div></div>
 
-  <div class="section-title">II. 事件簿 (EVENT LOG)</div>
-  <div class="event-list" id="eventContainer">
-      <div class="loading" style="padding:10px; color:#666">CHECKING LOGS...</div>
-  </div>
+  <div class="section-title">II. 事件簿 (EVENT LOG)</div>
+  <div class="event-list" id="eventContainer">
+      <div class="loading" style="padding:10px; color:#666">CHECKING LOGS...</div>
+  </div>
 
-  <div class="section-title">III. 參賽者名單 (PLAYER ROSTER)</div>
-  <div id="playerRoster" class="roster-grid">
-    </div>
+  <div class="section-title">III. 參賽者名單 (PLAYER ROSTER)</div>
+  <div id="playerRoster" class="roster-grid">
+    </div>
 
 </div>
 
 <div id="cardModal" class="modal-overlay" onclick="closeModal()">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      <div><span class="m-code" id="mCode"></span><span class="m-skill" id="mSkill"></span></div>
-      <span class="close-btn" onclick="closeModal()">&times;</span>
-    </div>
-    <div class="m-row"><span class="m-label">初始資金 (CAPITAL)</span><div class="m-value highlight" id="mCost"></div></div>
-    <div class="m-row"><span class="m-label">戰略定位 (STRATEGY)</span><div class="m-value" id="mStrategy"></div></div>
-    <div class="m-row"><span class="m-label">嚴格執行 SOP</span><div class="m-value" id="mSop" style="padding:15px;background:rgba(0,0,0,0.3);border-left:3px solid #555;border-radius:6px"></div></div>
-    <button class="config-btn" id="configBtn" onclick="openSetupModalFromCard()">INITIATE CONFIG // 啟動配置</button>
-  </div>
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div><span class="m-code" id="mCode"></span><span class="m-skill" id="mSkill"></span></div>
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+    </div>
+    <div class="m-row"><span class="m-label">初始資金 (CAPITAL)</span><div class="m-value highlight" id="mCost"></div></div>
+    <div class="m-row"><span class="m-label">戰略定位 (STRATEGY)</span><div class="m-value" id="mStrategy"></div></div>
+    <div class="m-row"><span class="m-label">嚴格執行 SOP</span><div class="m-value" id="mSop" style="padding:15px;background:rgba(0,0,0,0.3);border-left:3px solid #555;border-radius:6px"></div></div>
+    <button class="config-btn" id="configBtn" onclick="openSetupModalFromCard()">INITIATE CONFIG // 啟動配置</button>
+  </div>
 </div>
 
 <div id="setupModal" class="modal-overlay" onclick="closeSetupModal()">
-    <div class="modal-content" onclick="event.stopPropagation()" style="border-color: var(--tw);">
-      <div class="modal-header">
-        <div><span class="m-code" style="color:var(--tw)">C01 CONFIG</span><span class="m-skill">定期定額設定</span></div>
-        <span class="close-btn" onclick="closeSetupModal()">&times;</span>
-      </div>
-      
-      <div class="form-group">
-          <label class="form-label">每次扣款金額 (AMOUNT)</label>
-          <input type="number" class="cyber-input" id="setupAmount" value="3000" oninput="calculateTotal()">
-      </div>
+    <div class="modal-content" onclick="event.stopPropagation()" style="border-color: var(--tw);">
+      <div class="modal-header">
+        <div><span class="m-code" style="color:var(--tw)">C01 CONFIG</span><span class="m-skill">定期定額設定</span></div>
+        <span class="close-btn" onclick="closeSetupModal()">&times;</span>
+      </div>
+      
+      <div class="form-group">
+          <label class="form-label">每次扣款金額 (AMOUNT)</label>
+          <input type="number" class="cyber-input" id="setupAmount" value="3000" oninput="calculateTotal()">
+      </div>
 
-      <div class="form-group">
-          <label class="form-label">每月扣款日 (DATE SELECTOR - MAX 3)</label>
-          <div class="date-grid" id="dateGrid">
-              </div>
-      </div>
+      <div class="form-group">
+          <label class="form-label">每月扣款日 (DATE SELECTOR - MAX 3)</label>
+          <div class="date-grid" id="dateGrid">
+              </div>
+      </div>
 
-      <div class="setup-info-box">
-          <span class="si-label">PROJECTED CAPITAL (7 YEARS)</span>
-          <div class="si-val" id="setupTotal">$ 0</div>
-          <div class="si-sub" id="setupFormula">公式: 金額 x 次數 x 84</div>
-      </div>
+      <div class="setup-info-box">
+          <span class="si-label">PROJECTED CAPITAL (7 YEARS)</span>
+          <div class="si-val" id="setupTotal">$ 0</div>
+          <div class="si-sub" id="setupFormula">公式: 金額 x 次數 x 84</div>
+      </div>
 
-      <button class="save-btn" id="confirmSetupBtn">CONFIRM & DEPLOY</button>
-    </div>
+      <button class="save-btn" id="confirmSetupBtn">CONFIRM & DEPLOY</button>
+    </div>
 </div>
 
 <div id="c02SetupModal" class="modal-overlay" onclick="closeC02SetupModal()">
-    <div class="modal-content" onclick="event.stopPropagation()" style="border-color: var(--tw);">
-      <div class="modal-header">
-        <div><span class="m-code" style="color:var(--tw)">C02 CONFIG</span><span class="m-skill">跌幅加碼設定</span></div>
-        <span class="close-btn" onclick="closeC02SetupModal()">&times;</span>
-      </div>
-      
-      <div class="form-group">
-          <label class="form-label">跌幅觸發點 (TRIGGER %)</label>
-          <input type="number" class="cyber-input" id="c02DropPercent" value="2.0" step="0.1" placeholder="例如：2.0 (代表下跌 2% 觸發)">
-          <div style="font-size:0.75rem; color:#888; margin-top:5px;">觸發計算基準：與前一交易日收盤價相比 (使用 006208 股價基準)</div>
-      </div>
+    <div class="modal-content" onclick="event.stopPropagation()" style="border-color: var(--tw);">
+      <div class="modal-header">
+        <div><span class="m-code" style="color:var(--tw)">C02 CONFIG</span><span class="m-skill">跌幅加碼設定</span></div>
+        <span class="close-btn" onclick="closeC02SetupModal()">&times;</span>
+      </div>
+      
+      <div class="form-group">
+          <label class="form-label">跌幅觸發點 (TRIGGER %)</label>
+          <input type="number" class="cyber-input" id="c02DropPercent" value="2.0" step="0.1" placeholder="例如：2.0 (代表下跌 2% 觸發)">
+          <div style="font-size:0.75rem; color:#888; margin-top:5px;">觸發計算基準：與前一交易日收盤價相比 (使用 006208 股價基準)</div>
+      </div>
 
-      <div class="form-group">
-          <label class="form-label">單次加碼金額 (AMOUNT)</label>
-          <input type="number" class="cyber-input" id="c02Amount" value="10000" oninput="calculateC02Total()">
-      </div>
-      
-      <div class="form-group">
-          <label class="form-label">每月最大執行次數 (MONTHLY CAP)</label>
-          <input type="number" class="cyber-input" id="c02MaxCount" value="5" oninput="calculateC02Total()" placeholder="避免崩盤時無限加碼">
-      </div>
+      <div class="form-group">
+          <label class="form-label">單次加碼金額 (AMOUNT)</label>
+          <input type="number" class="cyber-input" id="c02Amount" value="10000" oninput="calculateC02Total()">
+      </div>
+      
+      <div class="form-group">
+          <label class="form-label">每月最大執行次數 (MONTHLY CAP)</label>
+          <input type="number" class="cyber-input" id="c02MaxCount" value="5" oninput="calculateC02Total()" placeholder="避免崩盤時無限加碼">
+      </div>
 
-      <div class="setup-info-box" style="border-color: var(--red);">
-          <span class="si-label" style="color:var(--red);">MAX CAPITAL REQUIREMENT (7 YEARS)</span>
-          <div class="si-val" id="c02SetupTotal">$ 0</div>
-          <div class="si-sub" id="c02SetupFormula">公式: 金額 x 次數上限 x 84</div>
-      </div>
+      <div class="setup-info-box" style="border-color: var(--red);">
+          <span class="si-label" style="color:var(--red);">MAX CAPITAL REQUIREMENT (7 YEARS)</span>
+          <div class="si-val" id="c02SetupTotal">$ 0</div>
+          <div class="si-sub" id="c02SetupFormula">公式: 金額 x 次數上限 x 84</div>
+      </div>
 
-      <button class="save-btn" id="confirmC02SetupBtn">CONFIRM & DEPLOY C02</button>
-    </div>
+      <button class="save-btn" id="confirmC02SetupBtn">CONFIRM & DEPLOY C02</button>
+    </div>
 </div>
 
 <div id="playerModal" class="modal-overlay" onclick="closePlayerModal()">
-    <div class="modal-content" onclick="event.stopPropagation()" style="border-color: var(--us);">
-      <div class="modal-header">
-        <div><span class="m-code" style="color:var(--us)">PROFILE</span><span class="m-skill">指揮官資料</span></div>
-        <span class="close-btn" onclick="closePlayerModal()">&times;</span>
-      </div>
-      
-      <div class="form-group">
-          <label class="form-label">代號 (NAME)</label>
-          <input type="text" class="cyber-input" id="pName" placeholder="輸入玩家名稱...">
-      </div>
-  
-      <div class="form-group">
-          <label class="form-label">核心理念 (BIO)</label>
-          <textarea class="cyber-input" id="pBio" placeholder="輸入自我介紹或投資哲學..."></textarea>
-      </div>
+    <div class="modal-content" onclick="event.stopPropagation()" style="border-color: var(--us);">
+      <div class="modal-header">
+        <div><span class="m-code" style="color:var(--us)">PROFILE</span><span class="m-skill">指揮官資料</span></div>
+        <span class="close-btn" onclick="closePlayerModal()">&times;</span>
+      </div>
+      
+      <div class="form-group">
+          <label class="form-label">代號 (NAME)</label>
+          <input type="text" class="cyber-input" id="pName" placeholder="輸入玩家名稱...">
+      </div>
+  
+      <div class="form-group">
+          <label class="form-label">核心理念 (BIO)</label>
+          <textarea class="cyber-input" id="pBio" placeholder="輸入自我介紹或投資哲學..."></textarea>
+      </div>
 
-      <div class="form-group">
-        <div class="loadout-header">
-            <label class="form-label">戰術配置 (LOADOUT)</label>
-            <span class="loadout-count" id="loadoutCounter">0 / 3</span>
-        </div>
-        <div class="loadout-grid" id="loadoutSelector">
-            </div>
-      </div>
-  
-      <div class="form-group">
-          <label class="form-label">交戰守則 (SOP)</label>
-          <textarea class="cyber-input" id="pRules" style="min-height:120px" placeholder="輸入進出規則..."></textarea>
-      </div>
-  
-      <button class="save-btn" onclick="savePlayerProfile()">SAVE DATA</button>
-    </div>
+      <div class="form-group">
+        <div class="loadout-header">
+            <label class="form-label">戰術配置 (LOADOUT)</label>
+            <span class="loadout-count" id="loadoutCounter">0 / 3</span>
+        </div>
+        <div class="loadout-grid" id="loadoutSelector">
+            </div>
+      </div>
+  
+      <div class="form-group">
+          <label class="form-label">交戰守則 (SOP)</label>
+          <textarea class="cyber-input" id="pRules" style="min-height:120px" placeholder="輸入進出規則..."></textarea>
+      </div>
+  
+      <button class="save-btn" onclick="savePlayerProfile()">SAVE DATA</button>
+    </div>
 </div>
 
 <script type="module">
@@ -424,349 +424,330 @@
 // 1. FIREBASE CONFIGURATION (已填入您的金鑰)
 // -----------------------------------------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { 
-    getFirestore, collection, addDoc, serverTimestamp, 
-    query, where, getDocs, writeBatch, doc, orderBy, limit 
+import { 
+    getFirestore, collection, addDoc, serverTimestamp, 
+    query, where, getDocs, writeBatch, doc, orderBy, limit 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBTGxO2JnZiKaXpJnzhJNQNF2sUNwfjGPk",
-  authDomain: "project-cage-980ed.firebaseapp.com",
-  projectId: "project-cage-980ed",
-  storageBucket: "project-cage-980ed.firebasestorage.app",
-  messagingSenderId: "1084859704396",
-  appId: "1:1084859704396:web:84bed3888c2f04952a80e9"
+  apiKey: "AIzaSyBTGxO2JnZiKaXpJnzhJNQNF2sUNwfjGPk",
+  authDomain: "project-cage-980ed.firebaseapp.com",
+  projectId: "project-cage-980ed",
+  storageBucket: "project-cage-980ed.firebasestorage.app",
+  messagingSenderId: "1084859704396",
+  appId: "1:1084859704396:web:84bed3888c2f04952a80e9"
 };
 
 let db;
 try {
-    const app = initializeApp(firebaseConfig);
-    db = getFirestore(app);
-    console.log("Firebase initialized");
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    console.log("Firebase initialized");
 } catch(e) {
-    console.warn("Firebase Config missing or invalid. DB features will be disabled.");
+    console.warn("Firebase Config missing or invalid. DB features will be disabled.");
 }
 
 // -----------------------------------------------------
 // 2. GLOBAL VARIABLES & ASSET CONFIGURATION
 // -----------------------------------------------------
-window.currentRate = 31.29; 
+window.currentRate = 31.29; 
 window.cardsData = {};
 window.eventsData = [];
-window.logoUrl = ''; 
-window.currentCardCode = null; 
-window.setupDates = []; 
+window.logoUrl = ''; 
+window.currentCardCode = null; 
+window.setupDates = []; 
 
-// ⚠️ GAS PRICE API URL: 使用您成功部署的網址
-const GAS_PRICE_API_URL = "https://script.google.com/macros/s/AKfycbzUEM6TBvxllpT918GowT1dctyXliijxhVgoFNBBdDljjCl2r9h2_Nas9mUOokFitSdra/exec"; 
+// ⚠️ 替換成您部署 GAS Web App 後取得的 URL
+const GAS_PRICE_API_URL = "YOUR_GAS_WEB_APP_URL_HERE"; 
 
 // 核心：標的物配置表 (未來新增標的物，只需在這裡新增一筆即可)
 const ASSET_CONFIGS = {
-    '006208': { name: '富邦台50', currency: 'TWD', type: 'TW', basePrice: 110.00, priceSource: 'GAS_API' },
-    '00878': { name: '國泰永續高股息', currency: 'TWD', type: 'TW', basePrice: 22.00, priceSource: 'SIM' },
-    '0050': { name: '元大台灣50', currency: 'TWD', type: 'TW', basePrice: 140.00, priceSource: 'SIM' },
-    '0056': { name: '元大高股息', currency: 'TWD', type: 'TW', basePrice: 38.00, priceSource: 'SIM' },
-    '00631L': { name: '元大台灣50正2', currency: 'TWD', type: 'TW', basePrice: 80.00, priceSource: 'SIM' },
-    'VOO': { name: 'S&P 500 ETF', currency: 'USD', type: 'US', basePrice: 400.00, priceSource: 'SIM' },
-    'VTI': { name: 'Vanguard Total Stock Market', currency: 'USD', type: 'US', basePrice: 250.00, priceSource: 'SIM' },
-    'VT': { name: 'Vanguard Total World Stock', currency: 'USD', type: 'US', basePrice: 105.00, priceSource: 'SIM' },
+    '006208': { name: '富邦台50', currency: 'TWD', type: 'TW', basePrice: 110.00, priceSource: 'GAS_API' },
+    '00878': { name: '國泰永續高股息', currency: 'TWD', type: 'TW', basePrice: 22.00, priceSource: 'SIM' },
+    '0050': { name: '元大台灣50', currency: 'TWD', type: 'TW', basePrice: 140.00, priceSource: 'SIM' },
+    '0056': { name: '元大高股息', currency: 'TWD', type: 'TW', basePrice: 38.00, priceSource: 'SIM' },
+    '00631L': { name: '元大台灣50正2', currency: 'TWD', type: 'TW', basePrice: 80.00, priceSource: 'SIM' },
+    'VOO': { name: 'S&P 500 ETF', currency: 'USD', type: 'US', basePrice: 400.00, priceSource: 'SIM' },
+    'VTI': { name: 'Vanguard Total Stock Market', currency: 'USD', type: 'US', basePrice: 250.00, priceSource: 'SIM' },
+    'VT': { name: 'Vanguard Total World Stock', currency: 'USD', type: 'US', basePrice: 105.00, priceSource: 'SIM' },
 };
 
 // 策略代碼與標的物的映射
 const STRATEGY_TARGETS = {
-    'C01': '006208', 
-    'C02': '006208', 
-    'C03': '00878',  
-    'C04': '00631L', 
-    'C05': 'VT',     
-    'C06': 'VOO',    
-    'C07': '0050',   // C07 使用 0050 作為標的
+    'C01': '006208', 
+    'C02': '006208', 
+    'C03': '00878',  
+    'C04': '00631L', 
+    'C05': 'VT',     
+    'C06': 'VOO',    
+    'C07': '0050',   // C07 使用 0050 作為標的
 };
 
 // Define categories (TWD/USD 判斷仍然需要)
 window.usdCodes = ['C05', 'C06'];
-window.twdCodes = ['C01', 'C02', 'C03', 'C04', 'C07']; 
+window.twdCodes = ['C01', 'C02', 'C03', 'C04', 'C07']; 
 
 // -----------------------------------------------------
 // 3. INITIALIZATION
 // -----------------------------------------------------
-
-// Assets: 使用外部 PNG 連結 (修復圖片載入問題)
-const CARD_IMAGE_URLS = {
-    'C01': `https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png`,
-    'C02': `https://ubamboo-design.github.io/Mark-investment-dashboard/C02.png`,
-    'C03': `https://ubamboo-design.github.io/Mark-investment-dashboard/C03.png`,
-    'C04': `https://ubamboo-design.github.io/Mark-investment-dashboard/C04.png`,
-    'C05': `https://ubamboo-design.github.io/Mark-investment-dashboard/C05.png`,
-    'C06': `https://ubamboo-design.github.io/Mark-investment-dashboard/C06.png`,
-    'C07': `https://ubamboo-design.github.io/Mark-investment-dashboard/C07.png`
-};
-
 init();
 
 async function init() {
-    try {
-        const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-        const rateData = await rateRes.json();
-        if(rateData && rateData.rates && rateData.rates.TWD) {
-            window.currentRate = rateData.rates.TWD; 
-            document.getElementById('rateInfo').textContent = `USD/TWD: ${window.currentRate}`;
-        }
-    } catch (e) {
-        console.warn('Rate Fetch Error');
-        document.getElementById('rateInfo').textContent = `USD/TWD: ${window.currentRate} (Offline)`;
-    }
+    try {
+        const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const rateData = await rateRes.json();
+        if(rateData && rateData.rates && rateData.rates.TWD) {
+            window.currentRate = rateData.rates.TWD; 
+            document.getElementById('rateInfo').textContent = `USD/TWD: ${window.currentRate}`;
+        }
+    } catch (e) {
+        console.warn('Rate Fetch Error');
+        document.getElementById('rateInfo').textContent = `USD/TWD: ${window.currentRate} (Offline)`;
+    }
 
-    loadManualData();
-    renderAll();
-    
-    // FETCH REAL DATA FROM DB
-    fetchRealLogs();
+    loadManualData();
+    renderAll();
+    
+    // FETCH REAL DATA FROM DB
+    fetchRealLogs();
 
-    // Attach event listeners
-    document.getElementById('confirmSetupBtn').addEventListener('click', saveStrategyToDB);
-    document.getElementById('confirmC02SetupBtn').addEventListener('click', saveC02StrategyToDB);
+    // Attach event listeners
+    document.getElementById('confirmSetupBtn').addEventListener('click', saveStrategyToDB);
+    document.getElementById('confirmC02SetupBtn').addEventListener('click', saveC02StrategyToDB);
 }
 
-// 根據策略代碼獲取所有標的物資訊 (已修正圖片載入邏輯)
+// 根據策略代碼獲取所有標的物資訊
 function loadManualData() {
-    // 獲取圖片 media 內容的輔助函式
-    const getMedia = (code) => {
-        const url = CARD_IMAGE_URLS[code] || 'https://via.placeholder.com/64';
-        return `<img src="${url}" class="mc-media" alt="${code}">`;
-    };
-
-    // 使用 STRATEGY_TARGETS 表來定義卡牌和標的物的關係
-    window.cardsData['C01'] = { code:'C01', type:'type-tw', rpg:'平庸的定期定額', skill:'TW DCA', cost:2520000, current:2595945, strategy: STRATEGY_TARGETS['C01'], sop:'每月5號扣款，不看盤', media: getMedia('C01') };
-    window.cardsData['C02'] = { code:'C02', type:'type-tw', rpg:'獎金給我她奶奶的all in', skill:'TW LSI', cost:1750000, current:1750000, strategy: STRATEGY_TARGETS['C02'], sop:'跌幅觸發加碼', media: getMedia('C02') }; 
-    window.cardsData['C03'] = { code:'C03', type:'type-yield', rpg:'股息cover每一天', skill:'YIELD', cost:840000, current:840636, strategy: STRATEGY_TARGETS['C03'], sop:'股息再投入', media: getMedia('C03') };
-    window.cardsData['C04'] = { code:'C04', type:'type-ber', rpg:'問就是正2', skill:'SEALED', cost:500000, current:50000, strategy: STRATEGY_TARGETS['C04'], sop:'波段操作', media: getMedia('C04') };
-    window.cardsData['C05'] = { code:'C05', type:'type-us', rpg:'要買就買全世界', skill:'GLOBAL DCA', cost:50000, current:50000, strategy: STRATEGY_TARGETS['C05'], sop:'分散全球', media: getMedia('C05') };
-    window.cardsData['C06'] = { code:'C06', type:'type-us', rpg:'美國就是我爸爸', skill:'US DCA', cost:50000, current:50000, strategy: STRATEGY_TARGETS['C06'], sop:'相信美國國運', media: getMedia('C06') };
-    window.cardsData['C07'] = { code:'C07', type:'type-trap', rpg:'可以進場了嗎?', skill:'AMBUSH', cost:900000, current:900000, strategy: STRATEGY_TARGETS['C07'], sop:'等待崩盤', media: getMedia('C07') };
+    // 使用 STRATEGY_TARGETS 表來定義卡牌和標的物的關係
+    window.cardsData['C01'] = { code:'C01', type:'type-tw', rpg:'平庸的定期定額', skill:'TW DCA', cost:2520000, current:2595945, strategy: STRATEGY_TARGETS['C01'], sop:'每月5號扣款，不看盤', media: cardAssets['C01'] };
+    window.cardsData['C02'] = { code:'C02', type:'type-tw', rpg:'獎金給我她奶奶的all in', skill:'TW LSI', cost:1750000, current:1750000, strategy: STRATEGY_TARGETS['C02'], sop:'跌幅觸發加碼', media: cardAssets['C02'] }; 
+    window.cardsData['C03'] = { code:'C03', type:'type-yield', rpg:'股息cover每一天', skill:'YIELD', cost:840000, current:840636, strategy: STRATEGY_TARGETS['C03'], sop:'股息再投入', media: cardAssets['C03'] };
+    window.cardsData['C04'] = { code:'C04', type:'type-ber', rpg:'問就是正2', skill:'SEALED', cost:500000, current:50000, strategy: STRATEGY_TARGETS['C04'], sop:'波段操作', media: cardAssets['C04'] };
+    window.cardsData['C05'] = { code:'C05', type:'type-us', rpg:'要買就買全世界', skill:'GLOBAL DCA', cost:50000, current:50000, strategy: STRATEGY_TARGETS['C05'], sop:'分散全球', media: cardAssets['C05'] };
+    window.cardsData['C06'] = { code:'C06', type:'type-us', rpg:'美國就是我爸爸', skill:'US DCA', cost:50000, current:50000, strategy: STRATEGY_TARGETS['C06'], sop:'相信美國國運', media: cardAssets['C06'] };
+    window.cardsData['C07'] = { code:'C07', type:'type-trap', rpg:'可以進場了嗎?', skill:'AMBUSH', cost:900000, current:900000, strategy: STRATEGY_TARGETS['C07'], sop:'等待崩盤', media: cardAssets['C07'] };
 }
 
 // -----------------------------------------------------
 // 4. RENDERING FUNCTIONS
 // -----------------------------------------------------
 function calc(cost, cur){
-  if(cost===0) return {roi:0, arrow:'-', cls:'', diff: 0, sign: ''};
-  const diff = cur - cost;
-  const roiRaw = ((diff)/cost);
-  const roi = (roiRaw*100).toFixed(1);
-  let cls = 'color-loss'; 
-  if (roiRaw >= 0.5) cls = 'color-gold'; 
-  else if (roiRaw >= 0) cls = 'color-profit'; 
-  else if (roiRaw <= -0.5) cls = 'color-dead'; 
-  else cls = 'color-loss'; 
-  return {roi, arrow: roi>=0 ? '▲' : '▼', sign: roi>=0 ? '+' : '', cls, diff};
+  if(cost===0) return {roi:0, arrow:'-', cls:'', diff: 0, sign: ''};
+  const diff = cur - cost;
+  const roiRaw = ((diff)/cost);
+  const roi = (roiRaw*100).toFixed(1);
+  let cls = 'color-loss'; 
+  if (roiRaw >= 0.5) cls = 'color-gold'; 
+  else if (roiRaw >= 0) cls = 'color-profit'; 
+  else if (roiRaw <= -0.5) cls = 'color-dead'; 
+  else cls = 'color-loss'; 
+  return {roi, arrow: roi>=0 ? '▲' : '▼', sign: roi>=0 ? '+' : '', cls, diff};
 }
 
-function renderAll(){ 
-    renderHeader();
-    renderDashboard(); 
-    renderCards(); 
-    renderPlayerRoster();
+function renderAll(){ 
+    renderHeader();
+    renderDashboard(); 
+    renderCards(); 
+    renderPlayerRoster();
 }
 
 function renderHeader() {
-    const logoImg = document.getElementById('pageLogo');
-    if (window.logoUrl && window.logoUrl.startsWith('http')) {
-        logoImg.src = window.logoUrl;
-        logoImg.style.display = 'block';
-    }
+    const logoImg = document.getElementById('pageLogo');
+    if (window.logoUrl && window.logoUrl.startsWith('http')) {
+        logoImg.src = window.logoUrl;
+        logoImg.style.display = 'block';
+    }
 }
 
 function renderDashboard(){
-  let tcTW=0, taTW=0, tcUS=0, taUS=0;
-  Object.values(window.cardsData).forEach(c => { 
-      if (window.usdCodes.includes(c.code)) { 
-          tcUS += c.cost; taUS += c.current; 
-      } else {
-          tcTW += c.cost; taTW += c.current; 
-      }
-  });
+  let tcTW=0, taTW=0, tcUS=0, taUS=0;
+  Object.values(window.cardsData).forEach(c => { 
+      if (window.usdCodes.includes(c.code)) { 
+          tcUS += c.cost; taUS += c.current; 
+      } else {
+          tcTW += c.cost; taTW += c.current; 
+      }
+  });
 
-  const sTW = calc(tcTW, taTW);
-  document.getElementById('costTW').textContent = '$' + (tcTW/10000).toFixed(0) + '萬';
-  document.getElementById('assetTW').textContent = '$' + (taTW/10000).toFixed(0) + '萬';
-  const plTW_val = (sTW.diff/10000).toFixed(1);
-  document.getElementById('plTW_val').textContent = `${sTW.sign}$${plTW_val}萬`;
-  document.getElementById('plTW_val').className = `profit-main ${sTW.cls}`;
-  document.getElementById('plTW_pct').textContent = `${sTW.arrow} ${sTW.roi}%`;
-  document.getElementById('plTW_pct').className = `profit-sub ${sTW.cls}`;
+  const sTW = calc(tcTW, taTW);
+  document.getElementById('costTW').textContent = '$' + (tcTW/10000).toFixed(0) + '萬';
+  document.getElementById('assetTW').textContent = '$' + (taTW/10000).toFixed(0) + '萬';
+  const plTW_val = (sTW.diff/10000).toFixed(1);
+  document.getElementById('plTW_val').textContent = `${sTW.sign}$${plTW_val}萬`;
+  document.getElementById('plTW_val').className = `profit-main ${sTW.cls}`;
+  document.getElementById('plTW_pct').textContent = `${sTW.arrow} ${sTW.roi}%`;
+  document.getElementById('plTW_pct').className = `profit-sub ${sTW.cls}`;
 
-  const sUS = calc(tcUS, taUS);
-  document.getElementById('costUS').textContent = '$' + (tcUS).toLocaleString(); 
-  document.getElementById('assetUS').textContent = '$' + (taUS).toLocaleString();
-  const plUS_val = (sUS.diff).toLocaleString();
-  document.getElementById('plUS_val').textContent = `${sUS.sign}$${plUS_val}`;
-  document.getElementById('plUS_val').className = `profit-main ${sUS.cls}`;
-  document.getElementById('plUS_pct').textContent = `${sUS.arrow} ${sUS.roi}%`;
-  document.getElementById('plUS_pct').className = `profit-sub ${sUS.cls}`;
+  const sUS = calc(tcUS, taUS);
+  document.getElementById('costUS').textContent = '$' + (tcUS).toLocaleString(); 
+  document.getElementById('assetUS').textContent = '$' + (taUS).toLocaleString();
+  const plUS_val = (sUS.diff).toLocaleString();
+  document.getElementById('plUS_val').textContent = `${sUS.sign}$${plUS_val}`;
+  document.getElementById('plUS_val').className = `profit-main ${sUS.cls}`;
+  document.getElementById('plUS_pct').textContent = `${sUS.arrow} ${sUS.roi}%`;
+  document.getElementById('plUS_pct').className = `profit-sub ${sUS.cls}`;
 
-  const totalAssetTWD = taTW + (taUS * window.currentRate);
-  const totalCostTWD = tcTW + (tcUS * window.currentRate); 
-  const sTotal = calc(totalCostTWD, totalAssetTWD);
-  const cur = document.getElementById('totalAsset'); 
-  cur.textContent = 'NT$ ' + (totalAssetTWD/10000).toFixed(0) + '萬';
-  cur.className = 'total-big-val ' + sTotal.cls;
-  document.getElementById('totalCostTWD').textContent = '$' + (totalCostTWD/10000).toFixed(0) + '萬';
-  const totalDiff = totalAssetTWD - totalCostTWD;
-  const totalSign = totalDiff >= 0 ? '+' : '';
-  const elDiff = document.getElementById('totalDiff');
-  elDiff.textContent = `${totalSign}$${(totalDiff/10000).toFixed(1)}萬`;
-  elDiff.className = `data-val ${sTotal.cls}`;
-   
-  const elTotalROI = document.getElementById('totalROI');
-  elTotalROI.textContent = `${sTotal.arrow} ${sTotal.sign}${sTotal.roi}%`;
-  elTotalROI.className = `total-roi-display ${sTotal.cls}`;
+  const totalAssetTWD = taTW + (taUS * window.currentRate);
+  const totalCostTWD = tcTW + (tcUS * window.currentRate); 
+  const sTotal = calc(totalCostTWD, totalAssetTWD);
+  const cur = document.getElementById('totalAsset'); 
+  cur.textContent = 'NT$ ' + (totalAssetTWD/10000).toFixed(0) + '萬';
+  cur.className = 'total-big-val ' + sTotal.cls;
+  document.getElementById('totalCostTWD').textContent = '$' + (totalCostTWD/10000).toFixed(0) + '萬';
+  const totalDiff = totalAssetTWD - totalCostTWD;
+  const totalSign = totalDiff >= 0 ? '+' : '';
+  const elDiff = document.getElementById('totalDiff');
+  elDiff.textContent = `${totalSign}$${(totalDiff/10000).toFixed(1)}萬`;
+  elDiff.className = `data-val ${sTotal.cls}`;
+   
+  const elTotalROI = document.getElementById('totalROI');
+  elTotalROI.textContent = `${sTotal.arrow} ${sTotal.sign}${sTotal.roi}%`;
+  elTotalROI.className = `total-roi-display ${sTotal.cls}`;
 }
 
-// 已修正圖片載入邏輯，並確保顯示策略代碼
 function renderCards(){
-  const con=document.getElementById('cardContainer'); con.innerHTML='';
-  Object.values(window.cardsData).forEach(c=>{
-    let costDisplay = '';
-    if(window.usdCodes.includes(c.code)) {
-        costDisplay = (c.cost).toLocaleString();
-    } else {
-        costDisplay = (c.cost / 10000).toFixed(0) + '萬';
-    }
-    const div = document.createElement('div');
-    div.className = `micro-card ${c.type}`;
-    div.onclick = () => window.openModal(c.code);
-    div.innerHTML = `
-      <div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.strategy}</span></div>
-      <div class="mc-image-container">${c.media}</div>
-      <div class="mc-footer">
-        <div class="mc-chn-name">${c.rpg || ''}</div>
-        <div class="mc-eng-name">${c.skill}</div>
-        <div class="mc-cost-badge">$${costDisplay}</div>
-      </div>`;
-    con.appendChild(div);
-  });
+  const con=document.getElementById('cardContainer'); con.innerHTML='';
+  Object.values(window.cardsData).forEach(c=>{
+    let costDisplay = '';
+    if(window.usdCodes.includes(c.code)) {
+        costDisplay = (c.cost).toLocaleString();
+    } else {
+        costDisplay = (c.cost / 10000).toFixed(0) + '萬';
+    }
+    const div = document.createElement('div');
+    div.className = `micro-card ${c.type}`;
+    div.onclick = () => window.openModal(c.code);
+    div.innerHTML = `
+      <div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.strategy}</span></div>
+      <div class="mc-image-container">${c.media}</div>
+      <div class="mc-footer">
+        <div class="mc-chn-name">${c.rpg || ''}</div>
+        <div class="mc-eng-name">${c.skill}</div>
+        <div class="mc-cost-badge">$${costDisplay}</div>
+      </div>`;
+    con.appendChild(div);
+  });
 }
 
 // -----------------------------------------------------
 // 5. MODAL LOGIC (VIEW & SETUP)
 // -----------------------------------------------------
 window.openModal = function(k){
-  window.currentCardCode = k;
-  const c=window.cardsData[k];
-  document.getElementById('mCode').textContent=c.code;
-  document.getElementById('mSkill').textContent=c.skill;
-  let moneyPrefix = 'NT$ ';
-  if(window.usdCodes.includes(c.code)) moneyPrefix = 'US$ ';
-  document.getElementById('mCost').textContent=`${moneyPrefix}${c.cost.toLocaleString()}`;
-  document.getElementById('mStrategy').textContent=c.rpg; 
-  document.getElementById('mSop').textContent=c.sop || c.strategy;
-  
-  const map={'type-tw':'--tw','type-us':'--us','type-yield':'--yield','type-ber':'--ber','type-trap':'--trap'};
-  const color=getComputedStyle(document.documentElement).getPropertyValue(map[c.type]||'--gold').trim();
-  document.getElementById('cardModal').querySelector('.modal-content').style.borderColor=color;
-  
-  const btn = document.getElementById('configBtn');
-  
-  // 根據卡牌代碼導向不同設定視窗
-  if(k === 'C01' || k === 'C03') { 
-      btn.style.display = 'block';
-      btn.onclick = window.openSetupModalFromCard;
-      btn.textContent = `INITIATE CONFIG ${k} // 定額配置 (${c.strategy})`;
-  } else if (k === 'C02') {
-      btn.style.display = 'block';
-      btn.onclick = window.openC02SetupModal; 
-      btn.textContent = 'INITIATE CONFIG C02 // 跌幅配置 (006208)';
-  } else {
-      btn.style.display = 'none';
-  }
+  window.currentCardCode = k;
+  const c=window.cardsData[k];
+  document.getElementById('mCode').textContent=c.code;
+  document.getElementById('mSkill').textContent=c.skill;
+  let moneyPrefix = 'NT$ ';
+  if(window.usdCodes.includes(c.code)) moneyPrefix = 'US$ ';
+  document.getElementById('mCost').textContent=`${moneyPrefix}${c.cost.toLocaleString()}`;
+  document.getElementById('mStrategy').textContent=c.rpg; 
+  document.getElementById('mSop').textContent=c.sop || c.strategy;
+  
+  const map={'type-tw':'--tw','type-us':'--us','type-yield':'--yield','type-ber':'--ber','type-trap':'--trap'};
+  const color=getComputedStyle(document.documentElement).getPropertyValue(map[c.type]||'--gold').trim();
+  document.getElementById('cardModal').querySelector('.modal-content').style.borderColor=color;
+  
+  const btn = document.getElementById('configBtn');
+  
+  // 根據卡牌代碼導向不同設定視窗
+  if(k === 'C01' || k === 'C03') { 
+      btn.style.display = 'block';
+      btn.onclick = window.openSetupModalFromCard;
+      btn.textContent = `INITIATE CONFIG ${k} // 定額配置 (${c.strategy})`;
+  } else if (k === 'C02') {
+      btn.style.display = 'block';
+      btn.onclick = window.openC02SetupModal; 
+      btn.textContent = 'INITIATE CONFIG C02 // 跌幅配置 (006208)';
+  } else {
+      btn.style.display = 'none';
+  }
 
-  document.getElementById('cardModal').style.display='flex';
-  document.getElementById('cardModal').classList.add('modal-active');
+  document.getElementById('cardModal').style.display='flex';
+  document.getElementById('cardModal').classList.add('modal-active');
 }
 
 window.closeModal = function(){
-    document.getElementById('cardModal').style.display='none';
+    document.getElementById('cardModal').style.display='none';
 }
 
 // --- C01 / C03 SETUP LOGIC ---
 window.openSetupModalFromCard = function() {
-    window.closeModal(); 
-    window.openSetupModal(); 
+    window.closeModal(); 
+    window.openSetupModal(); 
 }
 
 window.openSetupModal = function() {
-    window.setupDates = []; 
-    renderDateGrid();
-    document.getElementById('setupAmount').value = 3000;
-    window.calculateTotal();
-    
-    const modal = document.getElementById('setupModal');
-    modal.style.display = 'flex';
-    modal.classList.add('modal-active');
+    window.setupDates = []; 
+    renderDateGrid();
+    document.getElementById('setupAmount').value = 3000;
+    window.calculateTotal();
+    
+    const modal = document.getElementById('setupModal');
+    modal.style.display = 'flex';
+    modal.classList.add('modal-active');
 }
 
 window.closeSetupModal = function() {
-    document.getElementById('setupModal').style.display='none';
+    document.getElementById('setupModal').style.display='none';
 }
 
 function renderDateGrid() {
-    const grid = document.getElementById('dateGrid');
-    grid.innerHTML = '';
-    for(let i=1; i<=31; i++) {
-        const div = document.createElement('div');
-        div.className = 'date-cell';
-        div.id = `day-${i}`;
-        div.textContent = i;
-        div.onclick = () => window.toggleDate(i);
-        grid.appendChild(div);
-    }
+    const grid = document.getElementById('dateGrid');
+    grid.innerHTML = '';
+    for(let i=1; i<=31; i++) {
+        const div = document.createElement('div');
+        div.className = 'date-cell';
+        div.id = `day-${i}`;
+        div.textContent = i;
+        div.onclick = () => window.toggleDate(i);
+        grid.appendChild(div);
+    }
 }
 
 window.toggleDate = function(day) {
-    const idx = window.setupDates.indexOf(day);
-    if(idx > -1) {
-        window.setupDates.splice(idx, 1);
-        document.getElementById(`day-${day}`).classList.remove('selected');
-    } else {
-        if(window.setupDates.length >= 3) {
-            alert('系統限制: 每月最多只能設定 3 個扣款日');
-            return;
-        }
-        window.setupDates.push(day);
-        document.getElementById(`day-${day}`).classList.add('selected');
-    }
-    window.calculateTotal();
+    const idx = window.setupDates.indexOf(day);
+    if(idx > -1) {
+        window.setupDates.splice(idx, 1);
+        document.getElementById(`day-${day}`).classList.remove('selected');
+    } else {
+        if(window.setupDates.length >= 3) {
+            alert('系統限制: 每月最多只能設定 3 個扣款日');
+            return;
+        }
+        window.setupDates.push(day);
+        document.getElementById(`day-${day}`).classList.add('selected');
+    }
+    window.calculateTotal();
 }
 
 window.calculateTotal = function() {
-    const amt = parseInt(document.getElementById('setupAmount').value) || 0;
-    const freq = window.setupDates.length;
-    const total = amt * freq * 84; // 7 years = 84 months
-    document.getElementById('setupTotal').textContent = `$ ${total.toLocaleString()}`;
-    document.getElementById('setupFormula').textContent = `公式: ${amt} x ${freq}次 x 84個月`;
+    const amt = parseInt(document.getElementById('setupAmount').value) || 0;
+    const freq = window.setupDates.length;
+    const total = amt * freq * 84; // 7 years = 84 months
+    document.getElementById('setupTotal').textContent = `$ ${total.toLocaleString()}`;
+    document.getElementById('setupFormula').textContent = `公式: ${amt} x ${freq}次 x 84個月`;
 }
 
 // --- C02 SETUP LOGIC ---
 
 window.openC02SetupModal = function() {
-    window.calculateC02Total();
-    const modal = document.getElementById('c02SetupModal');
-    modal.style.display = 'flex';
-    modal.classList.add('modal-active');
+    window.calculateC02Total();
+    const modal = document.getElementById('c02SetupModal');
+    modal.style.display = 'flex';
+    modal.classList.add('modal-active');
 }
 
 window.closeC02SetupModal = function() {
-    document.getElementById('c02SetupModal').style.display='none';
+    document.getElementById('c02SetupModal').style.display='none';
 }
 
 window.calculateC02Total = function() {
-    const amt = parseInt(document.getElementById('c02Amount').value) || 0;
-    const max = parseInt(document.getElementById('c02MaxCount').value) || 0;
-    const total = amt * max * 84; // 7 years = 84 months
-    
-    document.getElementById('c02SetupTotal').textContent = `$ ${total.toLocaleString()}`;
-    document.getElementById('c02SetupFormula').textContent = `公式: ${amt} x ${max}次/月 x 84個月`;
+    const amt = parseInt(document.getElementById('c02Amount').value) || 0;
+    const max = parseInt(document.getElementById('c02MaxCount').value) || 0;
+    const total = amt * max * 84; // 7 years = 84 months
+    
+    document.getElementById('c02SetupTotal').textContent = `$ ${total.toLocaleString()}`;
+    document.getElementById('c02SetupFormula').textContent = `公式: ${amt} x ${max}次/月 x 84個月`;
 }
 
 
@@ -774,93 +755,93 @@ window.calculateC02Total = function() {
 // 6. SAVE TO DB FUNCTIONS
 // -----------------------------------------------------
 async function saveStrategyToDB() {
-    if(!db) {
-        alert("資料庫連線失敗，請檢查 Firebase 設定。");
-        return;
-    }
-    const amt = parseInt(document.getElementById('setupAmount').value);
-    if(!amt || amt <= 0) {
-        alert("錯誤: 請輸入有效的扣款金額");
-        return;
-    }
-    if(window.setupDates.length === 0) {
-        alert("錯誤: 請至少選擇一個扣款日");
-        return;
-    }
-    const btn = document.getElementById('confirmSetupBtn');
-    btn.textContent = "UPLOADING...";
-    btn.disabled = true;
+    if(!db) {
+        alert("資料庫連線失敗，請檢查 Firebase 設定。");
+        return;
+    }
+    const amt = parseInt(document.getElementById('setupAmount').value);
+    if(!amt || amt <= 0) {
+        alert("錯誤: 請輸入有效的扣款金額");
+        return;
+    }
+    if(window.setupDates.length === 0) {
+        alert("錯誤: 請至少選擇一個扣款日");
+        return;
+    }
+    const btn = document.getElementById('confirmSetupBtn');
+    btn.textContent = "UPLOADING...";
+    btn.disabled = true;
 
-    try {
-        const targetCard = window.cardsData[window.currentCardCode]; 
-        
-        const payload = {
-            user_id: "commander_001", 
-            strategy_code: window.currentCardCode, 
-            target_symbol: targetCard.strategy,
-            amount: amt,
-            status: "active",
-            trigger_config: {
-                type: "fixed_date",
-                dates: window.setupDates.sort((a,b)=>a-b)
-            },
-            created_at: serverTimestamp()
-        };
-        const docRef = await addDoc(collection(db, "strategies"), payload);
-        console.log("Written ID: ", docRef.id);
-        alert(`${window.currentCardCode} 策略部署成功！\n\nID: ${docRef.id}\n每月扣款日: ${window.setupDates.join(', ')} 號`);
-        window.closeSetupModal();
+    try {
+        const targetCard = window.cardsData[window.currentCardCode]; 
+        
+        const payload = {
+            user_id: "commander_001", 
+            strategy_code: window.currentCardCode, 
+            target_symbol: targetCard.strategy,
+            amount: amt,
+            status: "active",
+            trigger_config: {
+                type: "fixed_date",
+                dates: window.setupDates.sort((a,b)=>a-b)
+            },
+            created_at: serverTimestamp()
+        };
+        const docRef = await addDoc(collection(db, "strategies"), payload);
+        console.log("Written ID: ", docRef.id);
+        alert(`${window.currentCardCode} 策略部署成功！\n\nID: ${docRef.id}\n每月扣款日: ${window.setupDates.join(', ')} 號`);
+        window.closeSetupModal();
 
-    } catch(e) {
-        console.error("C01/C03 Write Error: ", e);
-        alert(`C01/C03 寫入失敗: ${e.message} (請確認 Firestore 規則已開啟 Test Mode)`);
-    } finally {
-        btn.textContent = "CONFIRM & DEPLOY";
-        btn.disabled = false;
-    }
+    } catch(e) {
+        console.error("C01/C03 Write Error: ", e);
+        alert(`C01/C03 寫入失敗: ${e.message} (請確認 Firestore 規則已開啟 Test Mode)`);
+    } finally {
+        btn.textContent = "CONFIRM & DEPLOY";
+        btn.disabled = false;
+    }
 }
 
 async function saveC02StrategyToDB() {
-    if(!db) { alert("資料庫連線失敗。"); return; }
-    
-    const dropPercent = parseFloat(document.getElementById('c02DropPercent').value);
-    const amt = parseInt(document.getElementById('c02Amount').value);
-    const maxCount = parseInt(document.getElementById('c02MaxCount').value);
+    if(!db) { alert("資料庫連線失敗。"); return; }
+    
+    const dropPercent = parseFloat(document.getElementById('c02DropPercent').value);
+    const amt = parseInt(document.getElementById('c02Amount').value);
+    const maxCount = parseInt(document.getElementById('c02MaxCount').value);
 
-    if(!amt || amt <= 0 || !maxCount || maxCount <= 0 || !dropPercent || dropPercent <= 0) {
-        alert("錯誤: C02 所有數值必須大於 0 (跌幅只需填入正數)。");
-        return;
-    }
+    if(!amt || amt <= 0 || !maxCount || maxCount <= 0 || !dropPercent || dropPercent <= 0) {
+        alert("錯誤: C02 所有數值必須大於 0 (跌幅只需填入正數)。");
+        return;
+    }
 
-    const btn = document.getElementById('confirmC02SetupBtn');
-    btn.textContent = "UPLOADING...";
-    btn.disabled = true;
+    const btn = document.getElementById('confirmC02SetupBtn');
+    btn.textContent = "UPLOADING...";
+    btn.disabled = true;
 
-    try {
-        const payload = {
-            user_id: "commander_001", 
-            strategy_code: "C02",
-            target_symbol: STRATEGY_TARGETS['C02'], 
-            amount: amt,
-            status: "active",
-            trigger_config: {
-                type: "drop_percent",
-                drop_threshold: dropPercent, 
-                max_monthly_count: maxCount  
-            },
-            created_at: serverTimestamp()
-        };
-        const docRef = await addDoc(collection(db, "strategies"), payload);
-        alert(`C02 策略部署成功！\n跌幅 >= ${dropPercent}% 時，加碼 $${amt.toLocaleString()}`);
-        window.closeC02SetupModal();
+    try {
+        const payload = {
+            user_id: "commander_001", 
+            strategy_code: "C02",
+            target_symbol: STRATEGY_TARGETS['C02'], 
+            amount: amt,
+            status: "active",
+            trigger_config: {
+                type: "drop_percent",
+                drop_threshold: dropPercent, 
+                max_monthly_count: maxCount  
+            },
+            created_at: serverTimestamp()
+        };
+        const docRef = await addDoc(collection(db, "strategies"), payload);
+        alert(`C02 策略部署成功！\n跌幅 >= ${dropPercent}% 時，加碼 $${amt.toLocaleString()}`);
+        window.closeC02SetupModal();
 
-    } catch(e) {
-        console.error("C02 Write Error: ", e);
-        alert("C02 寫入失敗: " + e.message);
-    } finally {
-        btn.textContent = "CONFIRM & DEPLOY C02";
-        btn.disabled = false;
-    }
+    } catch(e) {
+        console.error("C02 Write Error: ", e);
+        alert("C02 寫入失敗: " + e.message);
+    } finally {
+        btn.textContent = "CONFIRM & DEPLOY C02";
+        btn.disabled = false;
+    }
 }
 
 
@@ -868,306 +849,306 @@ async function saveC02StrategyToDB() {
 // 7. ADMIN / SIMULATION ENGINE (REAL PRICE & MULTI-ASSET)
 // -----------------------------------------------------
 async function getStockPrice(symbol) {
-    const config = ASSET_CONFIGS[symbol];
-    if (!config) return 100.00; 
-    
-    await new Promise(r => setTimeout(r, 500)); 
+    const config = ASSET_CONFIGS[symbol];
+    if (!config) return 100.00; 
+    
+    await new Promise(r => setTimeout(r, 500)); 
 
-    // --- 邏輯 A: 呼叫 GAS 獲取真實價格 (僅 006208) ---
-    if (config.priceSource === 'GAS_API' && symbol === '006208') {
-         try {
-            const response = await fetch(GAS_PRICE_API_URL);
-            const result = await response.json();
-            
-            if (result.status === 'success' && result.price) {
-                // 回傳真實收盤價
-                return result.price.toFixed(2);
-            } else {
-                console.warn(`GAS API error for ${symbol}: ${result.message || 'Unknown error'}`);
-                return config.basePrice.toFixed(2); 
-            }
-        } catch (e) {
-            console.error("Failed to connect to GAS API:", e);
-            return config.basePrice.toFixed(2); 
-        }
-    }
-    
-    // --- 邏輯 B: 模擬價格 (其他所有標的) ---
-    if (config.priceSource === 'SIM') {
-        const fluctuation = (Math.random() * (config.basePrice * 0.04)) - (config.basePrice * 0.02); 
-        return (config.basePrice + fluctuation).toFixed(2); 
-    }
+    // --- 邏輯 A: 呼叫 GAS 獲取真實價格 (僅 006208) ---
+    if (config.priceSource === 'GAS_API' && symbol === '006208') {
+         try {
+            const response = await fetch(GAS_PRICE_API_URL);
+            const result = await response.json();
+            
+            if (result.status === 'success' && result.price) {
+                // 回傳真實收盤價
+                return result.price.toFixed(2);
+            } else {
+                console.warn(`GAS API error for ${symbol}: ${result.message || 'Unknown error'}`);
+                return config.basePrice.toFixed(2); 
+            }
+        } catch (e) {
+            console.error("Failed to connect to GAS API:", e);
+            return config.basePrice.toFixed(2); 
+        }
+    }
+    
+    // --- 邏輯 B: 模擬價格 (其他所有標的) ---
+    if (config.priceSource === 'SIM') {
+        const fluctuation = (Math.random() * (config.basePrice * 0.04)) - (config.basePrice * 0.02); 
+        return (config.basePrice + fluctuation).toFixed(2); 
+    }
 
-    return config.basePrice.toFixed(2);
+    return config.basePrice.toFixed(2);
 }
 
 
 window.runDailyCheck = async function(simulationDate = new Date()) {
-    console.log("⚡ 系統啟動：開始執行每日檢查...");
-    const day = simulationDate.getDate(); 
-    
-    // 1. 獲取 006208 的真實價格作為基準（用於計算 C02 跌幅）
-    const baseSymbol = '006208';
-    const currentPrice = Number(await getStockPrice(baseSymbol));
-    const yesterdayPrice = currentPrice / (1 + (Math.random() * 0.06 - 0.03)); 
-    const dropPercent = ((yesterdayPrice - currentPrice) / yesterdayPrice) * 100;
-    
-    console.log(`[${baseSymbol} 報價] 今日: ${currentPrice.toFixed(2)} | 跌幅: ${dropPercent.toFixed(2)}%`);
-    
-    // 2. 獲取所有活躍策略
-    const q = query(
-        collection(db, "strategies"), 
-        where("status", "==", "active") 
-    );
+    console.log("⚡ 系統啟動：開始執行每日檢查...");
+    const day = simulationDate.getDate(); 
+    
+    // 1. 獲取 006208 的真實價格作為基準（用於計算 C02 跌幅）
+    const baseSymbol = '006208';
+    const currentPrice = Number(await getStockPrice(baseSymbol));
+    const yesterdayPrice = currentPrice / (1 + (Math.random() * 0.06 - 0.03)); 
+    const dropPercent = ((yesterdayPrice - currentPrice) / yesterdayPrice) * 100;
+    
+    console.log(`[${baseSymbol} 報價] 今日: ${currentPrice.toFixed(2)} | 跌幅: ${dropPercent.toFixed(2)}%`);
+    
+    // 2. 獲取所有活躍策略
+    const q = query(
+        collection(db, "strategies"), 
+        where("status", "==", "active") 
+    );
 
-    try {
-        const querySnapshot = await getDocs(q);
-        if (querySnapshot.empty) {
-            alert(`📅 模擬日期：${day} 號\n沒有找到活躍策略。`);
-            return;
-        }
+    try {
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+            alert(`📅 模擬日期：${day} 號\n沒有找到活躍策略。`);
+            return;
+        }
 
-        let executedCount = 0;
-        const batch = writeBatch(db); 
+        let executedCount = 0;
+        const batch = writeBatch(db); 
 
-        for (const docSnapshot of querySnapshot.docs) {
-            const strategy = docSnapshot.data();
-            let isTriggered = false;
-            let note = "";
-            
-            const targetSymbol = strategy.target_symbol;
-            // 獲取當前策略目標的價格 (如果是 006208 則為真實價格，否則為模擬價格)
-            const priceToUse = Number(await getStockPrice(targetSymbol)); 
+        for (const docSnapshot of querySnapshot.docs) {
+            const strategy = docSnapshot.data();
+            let isTriggered = false;
+            let note = "";
+            
+            const targetSymbol = strategy.target_symbol;
+            // 獲取當前策略目標的價格 (如果是 006208 則為真實價格，否則為模擬價格)
+            const priceToUse = Number(await getStockPrice(targetSymbol)); 
 
-            // --- C01/C03 邏輯：時間觸發 ---
-            if ((strategy.strategy_code === 'C01' || strategy.strategy_code === 'C03') && strategy.trigger_config.type === 'fixed_date') {
-                if (strategy.trigger_config.dates.includes(day)) {
-                    isTriggered = true;
-                    note = `${strategy.strategy_code} 定期定額觸發 (設定日: ${day}號)`;
-                }
-            } 
-            
-            // --- C02 邏輯：條件觸發 (跌幅) ---
-            else if (strategy.strategy_code === 'C02' && strategy.trigger_config.type === 'drop_percent') {
-                const threshold = strategy.trigger_config.drop_threshold;
-                // 檢查是否達到跌幅門檻 (使用 006208 的跌幅作為觸發基準)
-                if (dropPercent >= threshold) {
-                    isTriggered = true;
-                    note = `C02 跌幅加碼觸發 (跌幅 >= ${threshold}%)`;
-                }
-            }
+            // --- C01/C03 邏輯：時間觸發 ---
+            if ((strategy.strategy_code === 'C01' || strategy.strategy_code === 'C03') && strategy.trigger_config.type === 'fixed_date') {
+                if (strategy.trigger_config.dates.includes(day)) {
+                    isTriggered = true;
+                    note = `${strategy.strategy_code} 定期定額觸發 (設定日: ${day}號)`;
+                }
+            } 
+            
+            // --- C02 邏輯：條件觸發 (跌幅) ---
+            else if (strategy.strategy_code === 'C02' && strategy.trigger_config.type === 'drop_percent') {
+                const threshold = strategy.trigger_config.drop_threshold;
+                // 檢查是否達到跌幅門檻 (使用 006208 的跌幅作為觸發基準)
+                if (dropPercent >= threshold) {
+                    isTriggered = true;
+                    note = `C02 跌幅加碼觸發 (跌幅 >= ${threshold}%)`;
+                }
+            }
 
-            // 3. 執行交易
-            if (isTriggered) {
-                const amount = strategy.amount;
-                const shares = (amount / priceToUse).toFixed(2);
+            // 3. 執行交易
+            if (isTriggered) {
+                const amount = strategy.amount;
+                const shares = (amount / priceToUse).toFixed(2);
 
-                const logRef = doc(collection(db, "execution_logs"));
-                batch.set(logRef, {
-                    strategy_id: docSnapshot.id,
-                    user_id: strategy.user_id,
-                    strategy_code: strategy.strategy_code,
-                    symbol: targetSymbol, 
-                    action: "BUY",
-                    execution_date: simulationDate.toISOString().split('T')[0], 
-                    price: priceToUse, 
-                    amount: amount,
-                    shares: parseFloat(shares),
-                    note: note,
-                    created_at: serverTimestamp()
-                });
-                executedCount++;
-            }
-        }
+                const logRef = doc(collection(db, "execution_logs"));
+                batch.set(logRef, {
+                    strategy_id: docSnapshot.id,
+                    user_id: strategy.user_id,
+                    strategy_code: strategy.strategy_code,
+                    symbol: targetSymbol, 
+                    action: "BUY",
+                    execution_date: simulationDate.toISOString().split('T')[0], 
+                    price: priceToUse, 
+                    amount: amount,
+                    shares: parseFloat(shares),
+                    note: note,
+                    created_at: serverTimestamp()
+                });
+                executedCount++;
+            }
+        }
 
-        if (executedCount > 0) {
-            await batch.commit();
-            await fetchRealLogs();
-            
-            alert(`🎉 執行報告\n\n成功觸發：${executedCount} 筆交易\n\n今日 ${baseSymbol} 跌幅(模擬)：${dropPercent.toFixed(2)}%`);
-            
-        } else {
-            alert(`📅 模擬日期：${day} 號\n檢查完畢，今日無任何策略觸發。\n(今日 ${baseSymbol} 跌幅: ${dropPercent.toFixed(2)}%)`);
-        }
+        if (executedCount > 0) {
+            await batch.commit();
+            await fetchRealLogs();
+            
+            alert(`🎉 執行報告\n\n成功觸發：${executedCount} 筆交易\n\n今日 ${baseSymbol} 跌幅(模擬)：${dropPercent.toFixed(2)}%`);
+            
+        } else {
+            alert(`📅 模擬日期：${day} 號\n檢查完畢，今日無任何策略觸發。\n(今日 ${baseSymbol} 跌幅: ${dropPercent.toFixed(2)}%)`);
+        }
 
-    } catch (error) {
-        console.error("執行失敗:", error);
-        alert("系統錯誤: " + error.message);
-    }
+    } catch (error) {
+        console.error("執行失敗:", error);
+        alert("系統錯誤: " + error.message);
+    }
 };
 
 // -----------------------------------------------------
 // 8. REAL-TIME LOG FETCHING
 // -----------------------------------------------------
 async function fetchRealLogs() {
-    const logContainer = document.getElementById('eventContainer');
-    logContainer.innerHTML = '<div class="loading" style="padding:10px; color:#666">SYNCING DATA...</div>';
+    const logContainer = document.getElementById('eventContainer');
+    logContainer.innerHTML = '<div class="loading" style="padding:10px; color:#666">SYNCING DATA...</div>';
 
-    try {
-        const q = query(
-            collection(db, "execution_logs"),
-            orderBy("execution_date", "desc"),
-            orderBy("created_at", "desc"), 
-            limit(5)
-        );
+    try {
+        const q = query(
+            collection(db, "execution_logs"),
+            orderBy("execution_date", "desc"),
+            orderBy("created_at", "desc"), 
+            limit(5)
+        );
 
-        const querySnapshot = await getDocs(q);
-        
-        if (querySnapshot.empty) {
-            logContainer.innerHTML = '<div style="padding:15px;color:#666">NO ACTIVE LOGS. (尚無交易紀錄)</div>';
-            return;
-        }
+        const querySnapshot = await getDocs(q);
+        
+        if (querySnapshot.empty) {
+            logContainer.innerHTML = '<div style="padding:15px;color:#666">NO ACTIVE LOGS. (尚無交易紀錄)</div>';
+            return;
+        }
 
-        let html = '';
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const formattedPrice = data.price ? data.price.toFixed(2) : 'N/A';
-            const statusColor = data.action === 'BUY' ? 'var(--gold)' : '#888';
-            
-            html += `
-            <div class="event-card">
-                <div class="event-header">
-                    <span class="event-date">${data.execution_date}</span>
-                    <span class="event-status" style="color:${statusColor}">${data.action}</span>
-                </div>
-                <div class="event-content">
-                    <span style="color:#fff;font-weight:bold">${data.symbol} (${data.strategy_code})</span> 
-                    成交價 ${formattedPrice} | 股數 ${data.shares}<br>
-                    <span style="font-size:0.8rem;color:#666">${data.note}</span>
-                </div>
-            </div>`;
-        });
-        
-        logContainer.innerHTML = html;
+        let html = '';
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const formattedPrice = data.price ? data.price.toFixed(2) : 'N/A';
+            const statusColor = data.action === 'BUY' ? 'var(--gold)' : '#888';
+            
+            html += `
+            <div class="event-card">
+                <div class="event-header">
+                    <span class="event-date">${data.execution_date}</span>
+                    <span class="event-status" style="color:${statusColor}">${data.action}</span>
+                </div>
+                <div class="event-content">
+                    <span style="color:#fff;font-weight:bold">${data.symbol} (${data.strategy_code})</span> 
+                    成交價 ${formattedPrice} | 股數 ${data.shares}<br>
+                    <span style="font-size:0.8rem;color:#666">${data.note}</span>
+                </div>
+            </div>`;
+        });
+        
+        logContainer.innerHTML = html;
 
-    } catch (e) {
-        console.error("Error fetching logs:", e);
-        logContainer.innerHTML = `<div style="padding:15px;color:var(--tw)">讀取失敗: 資料庫索引建立中或權限不足。<br><small>${e.message}</small></div>`;
-    }
+    } catch (e) {
+        console.error("Error fetching logs:", e);
+        logContainer.innerHTML = `<div style="padding:15px;color:var(--tw)">讀取失敗: 資料庫索引建立中或權限不足。<br><small>${e.message}</small></div>`;
+    }
 }
 
 // --- COMMANDER / PLAYER PROFILE LOGIC ---
 let currentLoadout = [];
 const MAX_LOADOUT = 3;
 const defaultProfile = {
-    name: "UBAMBOO",
-    bio: "長期主義者，專注於資產配置與自動化投資。",
-    rules: "1. 絕不賣出 (除非緊急需求)\n2. 每月定期定額\n3. 暴跌時加碼"
+    name: "UBAMBOO",
+    bio: "長期主義者，專注於資產配置與自動化投資。",
+    rules: "1. 絕不賣出 (除非緊急需求)\n2. 每月定期定額\n3. 暴跌時加碼"
 };
 
 function renderLoadoutGrid() {
-    const container = document.getElementById('loadoutSelector');
-    container.innerHTML = '';
-    Object.values(window.cardsData).forEach(c => {
-        const div = document.createElement('div');
-        div.className = 'select-card';
-        div.id = `sel-${c.code}`;
-        div.onclick = () => toggleLoadout(c.code);
-        div.innerHTML = `
-            ${c.media.replace('class="mc-media"', 'class="sc-img"')}
-            <span class="sc-code">${c.code}</span>
-        `;
-        container.appendChild(div);
-    });
+    const container = document.getElementById('loadoutSelector');
+    container.innerHTML = '';
+    Object.values(window.cardsData).forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'select-card';
+        div.id = `sel-${c.code}`;
+        div.onclick = () => toggleLoadout(c.code);
+        div.innerHTML = `
+            ${c.media.replace('class="mc-media"', 'class="sc-img"')}
+            <span class="sc-code">${c.code}</span>
+        `;
+        container.appendChild(div);
+    });
 }
 
 function toggleLoadout(code) {
-    const idx = currentLoadout.indexOf(code);
-    if (idx > -1) {
-        currentLoadout.splice(idx, 1);
-    } else {
-        if (currentLoadout.length >= MAX_LOADOUT) {
-            alert("系統警告: 裝備槽已滿 (MAX 3 SLOTS)");
-            return;
-        }
-        currentLoadout.push(code);
-    }
-    updateLoadoutVisuals();
+    const idx = currentLoadout.indexOf(code);
+    if (idx > -1) {
+        currentLoadout.splice(idx, 1);
+    } else {
+        if (currentLoadout.length >= MAX_LOADOUT) {
+            alert("系統警告: 裝備槽已滿 (MAX 3 SLOTS)");
+            return;
+        }
+        currentLoadout.push(code);
+    }
+    updateLoadoutVisuals();
 }
 
 function updateLoadoutVisuals() {
-    document.querySelectorAll('.select-card').forEach(el => el.classList.remove('active'));
-    currentLoadout.forEach(code => {
-        const el = document.getElementById(`sel-${code}`);
-        if(el) el.classList.add('active');
-    });
-    const counter = document.getElementById('loadoutCounter');
-    counter.textContent = `${currentLoadout.length} / ${MAX_LOADOUT}`;
-    counter.style.color = currentLoadout.length === MAX_LOADOUT ? 'var(--gold)' : '#666';
+    document.querySelectorAll('.select-card').forEach(el => el.classList.remove('active'));
+    currentLoadout.forEach(code => {
+        const el = document.getElementById(`sel-${code}`);
+        if(el) el.classList.add('active');
+    });
+    const counter = document.getElementById('loadoutCounter');
+    counter.textContent = `${currentLoadout.length} / ${MAX_LOADOUT}`;
+    counter.style.color = currentLoadout.length === MAX_LOADOUT ? 'var(--gold)' : '#666';
 }
 
 window.openPlayerModal = function() {
-    document.getElementById('pName').value = localStorage.getItem('cage_pName') || defaultProfile.name;
-    document.getElementById('pBio').value = localStorage.getItem('cage_pBio') || defaultProfile.bio;
-    document.getElementById('pRules').value = localStorage.getItem('cage_pRules') || defaultProfile.rules;
-    
-    renderLoadoutGrid();
-    const savedLoadout = localStorage.getItem('cage_loadout');
-    if (savedLoadout) {
-        currentLoadout = JSON.parse(savedLoadout);
-    } else {
-        currentLoadout = [];
-    }
-    updateLoadoutVisuals();
+    document.getElementById('pName').value = localStorage.getItem('cage_pName') || defaultProfile.name;
+    document.getElementById('pBio').value = localStorage.getItem('cage_pBio') || defaultProfile.bio;
+    document.getElementById('pRules').value = localStorage.getItem('cage_pRules') || defaultProfile.rules;
+    
+    renderLoadoutGrid();
+    const savedLoadout = localStorage.getItem('cage_loadout');
+    if (savedLoadout) {
+        currentLoadout = JSON.parse(savedLoadout);
+    } else {
+        currentLoadout = [];
+    }
+    updateLoadoutVisuals();
 
-    const modal = document.getElementById('playerModal');
-    modal.style.display = 'flex';
-    modal.classList.add('modal-active');
+    const modal = document.getElementById('playerModal');
+    modal.style.display = 'flex';
+    modal.classList.add('modal-active');
 }
 
 window.closePlayerModal = function() {
-    document.getElementById('playerModal').style.display = 'none';
+    document.getElementById('playerModal').style.display = 'none';
 }
 
 window.savePlayerProfile = function() {
-    const name = document.getElementById('pName').value;
-    const bio = document.getElementById('pBio').value;
-    const rules = document.getElementById('pRules').value;
+    const name = document.getElementById('pName').value;
+    const bio = document.getElementById('pBio').value;
+    const rules = document.getElementById('pRules').value;
 
-    localStorage.setItem('cage_pName', name);
-    localStorage.setItem('cage_pBio', bio);
-    localStorage.setItem('cage_pRules', rules);
-    localStorage.setItem('cage_loadout', JSON.stringify(currentLoadout));
+    localStorage.setItem('cage_pName', name);
+    localStorage.setItem('cage_pBio', bio);
+    localStorage.setItem('cage_pRules', rules);
+    localStorage.setItem('cage_loadout', JSON.stringify(currentLoadout));
 
-    alert(`COMMANDER DATA SAVED\n配置已更新: ${currentLoadout.length} 張卡牌`);
-    renderPlayerRoster();
-    window.closePlayerModal();
+    alert(`COMMANDER DATA SAVED\n配置已更新: ${currentLoadout.length} 張卡牌`);
+    renderPlayerRoster();
+    window.closePlayerModal();
 }
 
 function renderPlayerRoster() {
-    const rosterContainer = document.getElementById('playerRoster');
-    const pName = localStorage.getItem('cage_pName') || defaultProfile.name;
-    const pBio = localStorage.getItem('cage_pBio') || defaultProfile.bio;
-    const loadoutStr = localStorage.getItem('cage_loadout');
-    let loadout = [];
-    
-    if(loadoutStr) loadout = JSON.parse(loadoutStr);
+    const rosterContainer = document.getElementById('playerRoster');
+    const pName = localStorage.getItem('cage_pName') || defaultProfile.name;
+    const pBio = localStorage.getItem('cage_pBio') || defaultProfile.bio;
+    const loadoutStr = localStorage.getItem('cage_loadout');
+    let loadout = [];
+    
+    if(loadoutStr) loadout = JSON.parse(loadoutStr);
 
-    let deckHTML = '';
-    if(loadout.length > 0) {
-        deckHTML = '<div class="mini-deck">';
-        loadout.forEach(code => {
-            const card = window.cardsData[code];
-            if(card) {
-                const imgTag = card.media.replace('class="mc-media"', ''); 
-                deckHTML += `<div class="mini-card-icon" title="${card.skill}">${imgTag}</div>`;
-            }
-        });
-        deckHTML += '</div>';
-    } else {
-        deckHTML = '<div class="mini-deck" style="color:#555;font-size:0.8rem">NO LOADOUT</div>';
-    }
+    let deckHTML = '';
+    if(loadout.length > 0) {
+        deckHTML = '<div class="mini-deck">';
+        loadout.forEach(code => {
+            const card = window.cardsData[code];
+            if(card) {
+                const imgTag = card.media.replace('class="mc-media"', ''); 
+                deckHTML += `<div class="mini-card-icon" title="${card.skill}">${imgTag}</div>`;
+            }
+        });
+        deckHTML += '</div>';
+    } else {
+        deckHTML = '<div class="mini-deck" style="color:#555;font-size:0.8rem">NO LOADOUT</div>';
+    }
 
-    rosterContainer.innerHTML = `
-        <div class="player-row active-user">
-            <div class="player-avatar">👾</div>
-            <div class="player-info">
-                <div class="pi-name">${pName}</div>
-                <div class="pi-bio">${pBio}</div>
-            </div>
-            ${deckHTML}
-        </div>
-    `;
+    rosterContainer.innerHTML = `
+        <div class="player-row active-user">
+            <div class="player-avatar">👾</div>
+            <div class="player-info">
+                <div class="pi-name">${pName}</div>
+                <div class="pi-bio">${pBio}</div>
+            </div>
+            ${deckHTML}
+        </div>
+    `;
 }
 
 document.addEventListener('keydown',e=>e.key==='Escape'&& (window.closeModal() || window.closePlayerModal() || window.closeSetupModal() || window.closeC02SetupModal()));

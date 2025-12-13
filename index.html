@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : LIVE</title>
+<title>PROJECT CAGE : RELOADED</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -22,7 +22,7 @@
 
     /* HEADER */
     header { padding: 35px 20px; background: transparent; position: relative; display: flex; align-items: center; justify-content: center; gap: 20px; }
-    #pageLogo { height: 60px; width: auto; object-fit: contain; display: none; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3)); }
+    #pageLogo { height: 80px; width: auto; object-fit: contain; display: none; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3)); }
     .header-text { text-align: left; display: flex; flex-direction: column; justify-content: center; }
     h1 { font-size: 2.8rem; letter-spacing: 6px; text-transform: uppercase; color: #fff; text-shadow: 0 0 30px rgba(255,255,255,0.15); font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; line-height: 1; }
     .meta-info { font-family: 'Courier New', monospace; color: var(--gold); margin-top: 5px; font-size: 0.9rem; opacity: 0.8; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
@@ -178,7 +178,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v12.57 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v13.0 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 
@@ -245,31 +245,45 @@
 
 <script>
 // =========================================================
-//  ✅ 您的正確網址已填入 (YOUR SHEET URL)
+//  ✅ 您的正確網址 (TSV)
 // =========================================================
 const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv';
 
-// === 備份資料 (FALLBACK) ===
+// === 備份資料 (FALLBACK) - 根據您最新的截圖更新 ===
 const FALLBACK_DATA = `
 A (code)	B (type)	C (rpg)	D (target)	E (skill)	F (cost)	G (current)	H (strategy)	I (sop)	J (image)
-C01	type-tw	平庸的涼涼戰艦	006208	TW DCA	NT$ 2,520,000	2,595,945	無腦持續買進台股	每月5,15,25號扣款	
-C02	type-tw	驚奇隊長	006208	TW LSI	NT$ 1,750,000	1,750,000	All-in策略	跌破年線買進	
-C03	type-yield	股息cover每一天	00878	YIELD	NT$ 840,000	840,636	現金流心理帳戶	每個月5號扣款	
-C04	type-ber	開核避正2	00631L	SEALED	NT$ 500,000	500,000	波動避險	股災發生時啟用	
-C05	type-us	麥哲倫與全世界	VT	GLOBAL DCA	$50,000.00	50,000	分散全世界	每月5號買600美金	
-C06	type-us	美國制霸	VOO	US DCA	$60,000.00	50,000	抗通膨	每月5號買600美金	
-C07	type-trap	可以抄底了嗎?	CASH/006208	AMBUSH	NT$ 900,000	900,000	等待大崩盤	盤整時投入	
-C02-1	type-tw	履歷才是最強Asset	006208	TW LSI	NT$ 500,000	500,000	人力資本轉換	加薪投入	
+C01	type-tw	平庸的定期定額	006208	TW DCA	NT$2,520,000	2,595,945	賣暢銷書賺到財富自由的大師們都推薦的平庸策略	每個月 5 ,15,25號：每次扣款 NT$10,000	https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png
+C02	type-tw	QQQ獎金給我她奶奶的all in	006208	TW LSI	NT$1,750,000	1,750,000	獎金就是他奶奶的用來all in的，有錢就加碼，沒錢就續抱，完美體現生命周期投資法的精隨	年終過完年後首週五加碼 NT$15 萬，年中過完中秋後周五NT$10萬持續7年	https://ubamboo-design.github.io/Mark-investment-dashboard/C02.png
+C03	type-yield	股息cover每一天	00878	YIELD	NT$840,000	840,636	最滿足心理帳戶的坑爹的策略，既割又割，散戶依舊前仆後進	每月 5 號：扣款 NT$10,000	https://ubamboo-design.github.io/Mark-investment-dashboard/C03.png
+C04	type-ber	問就是正2	00631L	SEALED	NT$500,000	500,000		股票50:現金50 ，當股票資產偏離 >75% 或 <50% 強制再平衡	https://ubamboo-design.github.io/Mark-investment-dashboard/C04.png
+C05	type-us	要買就買全世界	VT	GLOBAL DCA	$50,000.00	50,000	資產配置我好棒	每月 5 號買600美金，若1股超過則買1股(美金的換匯成本約1:30)	https://ubamboo-design.github.io/Mark-investment-dashboard/C05.png
+C06	type-us	美國就是我爸爸	VOO	US DCA	$50,000.00	50,000	我就舔	每月 5 號買600美金，若1股超過則買1股(美金的換匯成本約1:30)	https://ubamboo-design.github.io/Mark-investment-dashboard/C06.png
+C07	type-trap	可以進場了嗎?	CASH/006208	AMBUSH	NT$900,000	900,000	再等一等好了~然後就沒有然後了~	股市修正20%後進場9萬，每下跌10%加碼18/27/36	https://ubamboo-design.github.io/Mark-investment-dashboard/C07.png
+C02-1	type-tw	履歷才是最強Asset	006208	TW LSI	NT$500,000	500,000	等待大崩盤的那一天我就贏了?	2025/1/6 開盤抽(PK正2的50:50)，若比原策略強就加碼。(一種自我行銷是非對錯)	https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png
 	
-代號	名稱	觀點	投資人	情緒	學理	
-P01	台股定期定額	C01	單純簡單	路人	無心流	市場報酬	
-P02	台股核心	C01+C02-1+C02-2	重倉最大	積極	自信	核心衛星	
-P03	最強的盾	C03	息收穩定	保守	安心	現金流折現	
-P04	無限抄底之術	C07	大跌才有	完美主義	猶豫	擇時交易	
+代號	名稱	牌組	競技亮點	投資人格側寫	預期心理衝突	
+P01	台股定期定額	C01	單純驗證「大師們推薦的平庸策略」到底有多平庸。	佛系躺平族：相信大師，放棄思考。	最無心理負擔，但也最容易在多頭市場感到無聊而手癢亂動。	
+P02	台股雙核心	C01 + C02-1+C02-2	當市場大漲時嫌 C01 慢，大跌時怪 C02 衝太快。	穩健進取型：試圖在平庸與激進間取得平衡。單筆投入的條件是不能離場，必須持續買進平滑成本並長期在場內	
+P03	最貴的安眠藥	C03	長期績效最差，但是心理最舒服，最適合焦慮睡不著的投資人	收租心態者：只在乎現金流，不在乎淨值。	熊市中最抗跌（心理上），但在牛市中會因跑輸大盤而焦慮。	
+P04	無限等待之術	C07	大機率會空手很久。驗證「擇時等待」是否會輸給「閉眼投入」。	完美主義者：試圖扮演上帝。	大機率長期空手，最終可能在受不了時高點追進。	
 	
-事件簿			
-2025/12/12	緊急	戰情室啟動		
-2025/12/24	預料日曆	聖誕節休市		
+P05	大哥沒有輸	C02-1	是否能跑贏槓桿流。	沒人會這樣投資!!	資金效率壓滿，但是贏的路徑太單一，需承受巨大的單日損益波動，心臟強度需極高。	
+P06	槓桿投資法	C04	是封神還是風神?	數學賭徒用紀律駕馭槓桿波動。	在自動的扣寫機制下，逆價差與槓桿偏移能一直有效嗎?	
+	
+P07	全球雙核心	C05 + C06	全球基本盤加美股加速器，也是「資產配置派」與「美股至上派」的流派。	資產配置派：既要分散又要績效。	內心的矛盾：VT 的拖累會讓其不斷質疑為何不全押 VOO。	
+P08	全球資產配置	C05	小孩子才做選擇	懷疑論者：不相信任何單一國家能長盛不衰。	極度考驗耐心，需對抗 FOMO（錯失恐懼症）。	
+P09	帝國信仰者	C06	簡單暴力的「舔狗」策略，賭的就是美國的霸權。	帝國主義者：賭美國國運。	在美元走弱或美股回調時，信仰崩塌的風險最大。	
+	
+P10	台美暴力型	C02(全) + C06	台股重壓 + 美股重壓。這是一個極度看好台美科技連動的進攻組合。	科技信徒：看好台美科技連動。	進攻性最強，波動最劇烈，是多頭市場的王者，空頭市場的亡者。	
+P11	選擇障礙型	C01+C05+C06	大師說什麼好我就跟	雖然我不知道什麼好，反正都給我來一點	
+P12	真的好無聊型	C01 +C03+ C05	理論上波動最小、最符合學術界建議的「好無聊」組合。	學院派：理論上最正確的組合。	「好無聊」是最大的敵人，容易因缺乏刺激而被拋棄。	
+P13	跨國槓鈴策略	C03+C06	台灣複委託投資人中相當普遍（推估約佔 20% - 25%）	心理帳戶的平衡（槓鈴結構）	投資人會陷入**「後悔」**的迴圈。看著 VOO 漲了 20%，而手中的高股息 ETF 只漲 5%（加上配息也才 10%），投資人會不斷質疑自己：「為什麼我不乾脆 All-in VOO 就好？」但若真的賣掉高股息，又會立刻焦慮沒有現金流來繳房貸或生活費
+	
+事件簿	狀態	內容	
+2025/12/12	緊急	聯準會降息	
+2025/12/24	風和日麗	聖誕節	
+	
+Logo	https://ubamboo-design.github.io/Mark-investment-dashboard/Mark_Investment_LOGO1.png
 `.trim();
 
 let currentRate = 32.5;
@@ -305,14 +319,9 @@ async function triggerRefresh(keepOpen = false) {
 const twdCodes = ['C01', 'C02', 'C02-1', 'C02-2', 'C03', 'C04', 'C07'];
 const usdCodes = ['C05', 'C06'];
 
-const cardAssets = {
-    'C01': `<img src="https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png" class="mc-media" alt="TW DCA">`,
-    'C02': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M45 5 Q55 -5 60 8 Q65 0 50 0" fill="#ff2a2a" opacity="0.6"/><path d="M50 10 L18 42 L22 46 L54 14 Z" fill="#444" stroke="currentColor" stroke-width="2"/><line x1="26" y1="34" x2="46" y2="14" stroke="currentColor" stroke-width="1"/><path d="M18 42 L14 46 L18 50 L22 46" fill="currentColor"/><path d="M14 46 L8 52" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="6" cy="54" r="3" fill="currentColor"/><path d="M10 50 Q20 40 30 50 T50 50" stroke="#ffd700" stroke-width="2" fill="none" stroke-dasharray="2 2"/><circle cx="20" cy="55" r="2" fill="#ffd700"/><circle cx="35" cy="58" r="3" fill="#ffd700"/></svg>`,
-    'C03': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M22 52 L24 60 H40 L42 52 H22 Z" fill="none" stroke="currentColor" stroke-width="2"/><rect x="20" y="48" width="24" height="4" rx="2" fill="currentColor"/><path d="M32 48 L32 20" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="14" r="8" fill="#000" stroke="currentColor" stroke-width="2"/><text x="32" y="17" font-size="10" text-anchor="middle" fill="currentColor" font-weight="bold">$</text><path d="M32 36 Q12 30 12 18" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="18" r="6" fill="#000" stroke="currentColor" stroke-width="2"/><text x="12" y="21" font-size="8" text-anchor="middle" fill="currentColor">$</text><path d="M32 28 Q52 22 52 10" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="52" cy="10" r="6" fill="#000" stroke="currentColor" stroke-width="2"/><text x="52" y="13" font-size="8" text-anchor="middle" fill="currentColor">$</text></svg>`,
-    'C04': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><line x1="14" y1="50" x2="50" y2="14" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><line x1="50" y1="50" x2="14" y2="14" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M14 14 L8 8 Q4 18 14 24 Z" fill="currentColor"/><path d="M14 14 L20 8 Q10 4 4 14 Z" fill="currentColor"/><path d="M50 14 L56 8 Q60 18 50 24 Z" fill="currentColor"/><path d="M50 14 L44 8 Q54 4 60 14 Z" fill="currentColor"/><path d="M32 22 L42 28 V38 L32 44 L22 38 V28 Z" fill="#000" stroke="currentColor" stroke-width="2"/><path d="M32 26 L34 31 H39 L35 34 L36 39 L32 36 L28 39 L29 34 L25 31 H30 Z" fill="currentColor"/></svg>`,
-    'C05': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect x="22" y="24" width="20" height="26" rx="4" fill="#000" stroke="currentColor" stroke-width="2"/><rect x="22" y="12" width="5" height="12" rx="2" fill="currentColor"/><rect x="29" y="8" width="6" height="16" rx="2" fill="currentColor"/><rect x="37" y="10" width="5" height="14" rx="2" fill="currentColor"/><circle cx="32" cy="36" r="6" fill="#000" stroke="currentColor" stroke-width="2"/><circle cx="32" cy="36" r="3" fill="currentColor"/><rect x="42" y="44" width="16" height="10" rx="2" fill="#000" stroke="#fff" stroke-width="1"/><path d="M42 44 H58 V49 H42 Z" fill="#002868"/><path d="M42 49 H58 V54 H42 Z" fill="#bf0a30"/></svg>`,
-    'C06': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M32 4 L56 14 V28 C56 46 32 60 32 60 C32 60 8 46 8 28 V14 L32 4 Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M32 8 L52 16 V28 C52 42 32 54 32 54 C32 54 12 42 12 28 V16 L32 8 Z" stroke="currentColor" stroke-width="1" opacity="0.5" fill="none"/><path d="M24 24 V36 C24 42 40 42 40 36 V24" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M40 24 L35 29 M40 24 L45 29" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/></svg>`,
-    'C07': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><path d="M32 6 C18 6 10 20 10 36 L16 54 H48 L54 36 C54 20 46 6 32 6 Z" stroke="currentColor" stroke-width="3" fill="none"/><path d="M22 36 C22 28 26 22 32 22 C38 22 42 28 42 36 L32 46 L22 36 Z" fill="currentColor" opacity="0.8"/><path d="M26 34 L30 36 M38 34 L34 36" stroke="#000" stroke-width="2"/><circle cx="48" cy="48" r="10" stroke="#fff" stroke-width="2" fill="#000"/><line x1="48" y1="42" x2="48" y2="54" stroke="#fff" stroke-width="2"/><line x1="42" y1="48" x2="54" y2="48" stroke="#fff" stroke-width="2"/></svg>`
+// 預設圖示 (當抓不到圖片時使用)
+const defaultIcons = {
+    'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>`
 };
 
 init();
@@ -374,18 +383,19 @@ function parseSheetData(text){
     if(c[0] === '代號' && c[1] === '名稱') { mode = 'STRATEGIES'; continue; }
     if(c[0] === '事件簿') { mode = 'EVENTS'; continue; }
 
-    // 1. 卡片模式
+    // 1. 卡片模式 (修正：圖片在J欄=index 9, 策略=index 7, SOP=index 8)
     if(c[0].startsWith('C')) {
-        let skillName = c[4]; if(c[0] === 'C05') skillName = 'VT DCA';
+        let skillName = c[4]; 
         let costRaw = c[5] ? c[5].replace(/[NT$US,\s]/g, '') : '0';
         let currentRaw = c[6] ? c[6].replace(/[NT$US,\s]/g, '') : '0';
         
-        if (c[0] === 'logo' && c[1]) logoUrl = c[1];
+        if (c[0] === 'Logo' && c[1]) logoUrl = c[1]; // 有時候Logo會藏在這裡
 
+        // 圖片連結在 J欄 (Index 9)
         let imgUrl = c[9] ? c[9].trim() : '';
         let displayMedia = imgUrl.startsWith('http') 
             ? `<img src="${imgUrl}" class="mc-media" alt="${skillName}">` 
-            : (cardAssets[c[0]] || cardAssets['C01']);
+            : (defaultIcons['C01']);
         
         cardsData[c[0]] = {
             code: c[0], type: c[1], rpg: c[2], target: c[3], skill: skillName,
@@ -393,7 +403,7 @@ function parseSheetData(text){
             strategy: c[7], sop: c[8], media: displayMedia
         };
     } 
-    // 2. 策略模式
+    // 2. 策略模式 (修正：牌組在C欄=index 2, 亮點=index 3, 人格=index 4, 衝突=index 5)
     else if(c[0].startsWith('P')){
           if(!portfolios[currentGroup]) portfolios[currentGroup] = [];
           portfolios[currentGroup].push({
@@ -403,10 +413,11 @@ function parseSheetData(text){
               mindset: c[3] || '-', 
               persona: c[4] || '-',
               conflict: c[5] || '-',
-              theory: c[6] || '-'
+              theory: '-' // 截圖中似乎沒有學理這一欄了
           });
     }
-    else if (mode === 'STRATEGIES' && c[0] && !c[0].startsWith('P') && c[0] !== '代號') {
+    // 抓群組標題 (例如：小朋友齊打交區)
+    else if (mode === 'STRATEGIES' && c[0] && !c[0].startsWith('P') && c[0] !== '代號' && c.length < 5) {
         if(c[0].length > 0) currentGroup = c[0].trim();
     }
     // 3. 事件模式
@@ -417,6 +428,10 @@ function parseSheetData(text){
             content: c[2] || '',
             isUrgent: (c[1] || '').includes('緊急') 
         });
+    }
+    // 抓 LOGO (最下面一行)
+    if(c[0] === 'Logo' && c[1]) {
+        logoUrl = c[1];
     }
   }
 }
@@ -590,7 +605,6 @@ function renderArena(){
                     <div class="d-row"><span class="d-label">💭 散戶想法</span><span class="d-text">${p.mindset}</span></div>
                     <div class="d-row"><span class="d-label">👤 投資人格</span><span class="d-text">${p.persona}</span></div>
                     <div class="d-row"><span class="d-label">⚡ 心理矛盾</span><span class="d-text warn">${p.conflict}</span></div>
-                    <div class="d-row"><span class="d-label">📚 學理分析</span><span class="d-text" style="color:#00f7ff">${p.theory}</span></div>
                 </div>
             </div>
           </div>`;

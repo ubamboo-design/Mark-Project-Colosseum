@@ -139,8 +139,6 @@
         width: 100%; padding: 15px; background: var(--gold); color: #000; border: none; font-weight: 900;
         cursor: pointer; font-family: 'Arial Black'; text-transform: uppercase; letter-spacing: 2px;
         clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-        transition: 0.2s;
-        margin-top: 10px;
     }
     .save-btn:hover { background: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.5); }
     .save-btn:disabled { background: #333; color: #666; cursor: wait; box-shadow: none; }
@@ -515,7 +513,7 @@ window.onerror = function (message, source, lineno, colno, error) {
         `;
         errorDisplay.style.display = 'block';
     }
-    return true; // 阻止默認的瀏覽器錯誤處理
+    return true; 
 };
 
 
@@ -540,6 +538,7 @@ async function init() {
         renderAll();
     } catch (e) {
         window.onerror(`Initialization Error: ${e.message}`, 'loadManualData/renderAll', 'N/A', 'N/A', e);
+        return; // 初始化失敗，停止後續操作
     }
     
     // FETCH REAL DATA FROM DB

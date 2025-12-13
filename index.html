@@ -83,7 +83,6 @@
     .mc-chn-name { font-size: 1rem; font-weight: 900; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 1px; }
     .mc-eng-name { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
     .mc-cost-badge { display: inline-block; margin-top: 2px; padding: 3px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.7rem; color: #aaa; background: rgba(0,0,0,0.8); }
-    
     svg.mc-media { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     img.mc-media { filter: drop-shadow(0 0 3px rgba(255,255,255,0.5)); }
     .type-tw { border-color: var(--tw); } .type-tw:hover { box-shadow: 0 0 25px rgba(255,42,42,0.4); } .type-tw img.mc-media { filter: drop-shadow(0 0 8px var(--tw)); }
@@ -105,7 +104,9 @@
     .event-card.emergency .event-status { color: var(--emergency); background: rgba(255, 0, 0, 0.15); }
     @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
-    /* ARENA 2x2 */
+    /* ================================================================= */
+    /* ARENA: 2x2 QUADRANT LAYOUT WITH GRID BARS                         */
+    /* ================================================================= */
     .arena-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
     .arena-group { background: rgba(255,255,255,0.02); border: 1px solid #222; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; }
     .group-header { display: flex; align-items: center; text-align: center; font-weight: 900; font-size: 1.1rem; color: var(--gold); margin-bottom: 10px; letter-spacing: 2px; }
@@ -131,16 +132,13 @@
     .g-mini-icon.type-tw img { filter: drop-shadow(0 0 5px var(--tw)); } .g-mini-icon.type-us img { filter: drop-shadow(0 0 5px var(--us)); }
 
     .g-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(0,0,0,0.3); border-radius: 0 0 8px 8px; width: 100%; }
-    .g-bar.active + .g-details { max-height: 500px; border: 1px solid #333; border-top: none; }
-    
+    .g-bar.active + .g-details { max-height: 800px; border: 1px solid #333; border-top: none; } /* 增加高度以容納多文字 */
     .highlight-content { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-    
     .d-row { display: flex; align-items: flex-start; gap: 15px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; }
     .d-row:last-child { border: none; }
-    .d-label { width: 90px; flex-shrink: 0; color: var(--gold); font-weight: bold; font-size: 0.85rem; text-align-last: justify; }
-    .d-text { color: #ccc; line-height: 1.4; font-size: 0.9rem; }
+    .d-label { width: 100px; flex-shrink: 0; color: var(--gold); font-weight: bold; font-size: 0.85rem; text-align-last: justify; }
+    .d-text { color: #ccc; line-height: 1.5; font-size: 0.95rem; }
     .d-text.warn { color: #ff6b6b; }
-
     @media(max-width: 900px) { 
         .arena-container { grid-template-columns: 1fr; } 
         .g-bar { grid-template-columns: 50px 1fr auto; grid-template-rows: auto auto; }
@@ -180,7 +178,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v12.51 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v12.53 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 
@@ -344,6 +342,8 @@ function parseSheetData(text){
     }
     else if(!isStrategy && c[0]?.startsWith('C')){
       let skillName = c[4]; if(c[0] === 'C05') skillName = 'VT DCA';
+      
+      // Cost in F(5), Current in G(6)
       let costRaw = c[5] ? c[5].replace(/[NT$US,]/g, '') : '0';
       let currentRaw = c[6] ? c[6].replace(/[NT$US,]/g, '') : '0';
       let imgUrl = c[9] ? c[9].trim() : '';
@@ -363,7 +363,7 @@ function parseSheetData(text){
           portfolios[currentGroup].push({
               code: c[0], name: c[1], deck: c[2] ? c[2].split('+').map(s=>s.trim()) : [],
               deckStr: c[2] || '',
-              // NEW MAPPING: D=Mindset, E=Persona, F=Conflict, G=Theory
+              // NEW MAPPING: D=Mindset(3), E=Persona(4), F=Conflict(5), G=Theory(6)
               mindset: c[3] || '-', 
               persona: c[4] || '-',
               conflict: c[5] || '-',
@@ -539,7 +539,7 @@ function renderArena(){
             <div class="g-details">
                 <div class="highlight-content">
                     <div class="d-row"><span class="d-label">💭 散戶想法</span><span class="d-text">${p.mindset}</span></div>
-                    <div class="d-row"><span class="d-label">👤 人格側寫</span><span class="d-text">${p.persona}</span></div>
+                    <div class="d-row"><span class="d-label">👤 投資人格</span><span class="d-text">${p.persona}</span></div>
                     <div class="d-row"><span class="d-label">⚡ 心理矛盾</span><span class="d-text warn">${p.conflict}</span></div>
                     <div class="d-row"><span class="d-label">📚 學理分析</span><span class="d-text" style="color:#00f7ff">${p.theory}</span></div>
                 </div>

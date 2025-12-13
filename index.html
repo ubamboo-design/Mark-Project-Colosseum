@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : RELOADED v13.2</title>
+<title>PROJECT CAGE : RELOADED v13.3</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -67,22 +67,26 @@
     .section-title { font-size: 1.3rem; border-left: 5px solid var(--gold); padding-left: 15px; margin: 50px 0 25px; text-transform: uppercase; font-weight: 900; color: #fff; display: flex; align-items: center; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
     .section-title::after { content: ''; flex-grow: 1; height: 1px; background: #333; margin-left: 20px; }
 
-    /* DECK - 7 Cards Full Width */
+    /* DECK - 7 Cards Full Width - LARGE FONT VERSION */
     .deck-wrapper { overflow-x: auto; padding-bottom: 25px; padding-top: 10px; }
     .deck-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; min-width: 0; } 
-    .micro-card { background: var(--card); border: 2px solid #333; border-radius: 16px; padding: 10px; transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; min-height: 220px; position: relative; overflow: hidden; }
+    .micro-card { background: var(--card); border: 2px solid #333; border-radius: 16px; padding: 12px 10px; transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; min-height: 240px; /* 加高 */ position: relative; overflow: hidden; }
     .micro-card::after { content: ''; position: absolute; top: 6px; left: 6px; right: 6px; bottom: 6px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; pointer-events: none; transition: all 0.3s; }
     .micro-card:hover { transform: translateY(-10px); z-index: 10; }
+    
     .mc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 0 5px; position: relative; z-index: 2; }
-    .mc-code { font-size: 0.8rem; font-weight: 900; color: #fff; opacity: 0.8; font-family: 'Arial Black'; } 
-    .mc-target { font-size: 0.6rem; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); padding: 2px 4px; border-radius: 4px; color: #aaa; font-family: 'Courier New'; }
+    .mc-code { font-size: 1.1rem; /* 放大 */ font-weight: 900; color: #fff; opacity: 0.9; font-family: 'Arial Black'; } 
+    .mc-target { font-size: 0.75rem; /* 放大 */ background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; color: #aaa; font-family: 'Courier New'; }
+    
     .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; margin: 2px 0 10px; position: relative; z-index: 2; }
-    .mc-media { width: 64px; height: 64px; object-fit: contain; transition: all .4s; }
+    .mc-media { width: 72px; height: 72px; object-fit: contain; transition: all .4s; }
     .micro-card:hover .mc-media { transform: scale(1.15); }
+    
     .mc-footer { text-align: center; margin-top: auto; position: relative; z-index: 2; padding: 0 2px; }
-    .mc-chn-name { font-size: 0.9rem; font-weight: 900; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 1px; }
-    .mc-eng-name { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-    .mc-cost-badge { display: inline-block; margin-top: 2px; padding: 3px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.7rem; color: #aaa; background: rgba(0,0,0,0.8); }
+    .mc-chn-name { font-size: 1.15rem; /* 放大 */ font-weight: 900; color: #fff; margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 1px; line-height: 1.2; }
+    .mc-eng-name { font-size: 0.75rem; /* 放大 */ font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .mc-cost-badge { display: inline-block; margin-top: 2px; padding: 4px 12px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.85rem; /* 放大 */ color: #aaa; background: rgba(0,0,0,0.8); }
+    
     svg.mc-media { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     img.mc-media { filter: drop-shadow(0 0 3px rgba(255,255,255,0.5)); }
     .type-tw { border-color: var(--tw); } .type-tw:hover { box-shadow: 0 0 25px rgba(255,42,42,0.4); } .type-tw img.mc-media { filter: drop-shadow(0 0 8px var(--tw)); }
@@ -107,42 +111,44 @@
     .event-card.emergency .event-status { color: var(--emergency); background: rgba(255, 0, 0, 0.15); }
     @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
-    /* ARENA */
+    /* ARENA - LARGE FONT VERSION */
     .arena-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
     .arena-group { background: rgba(255,255,255,0.02); border: 1px solid #222; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; }
-    .group-header { display: flex; align-items: center; text-align: center; font-weight: 900; font-size: 1.1rem; color: var(--gold); margin-bottom: 10px; letter-spacing: 2px; }
+    .group-header { display: flex; align-items: center; text-align: center; font-weight: 900; font-size: 1.2rem; color: var(--gold); margin-bottom: 12px; letter-spacing: 2px; }
     .group-header::before, .group-header::after { content: ''; flex: 1; border-bottom: 1px solid #333; }
     .group-header::before { margin-right: 15px; } .group-header::after { margin-left: 15px; }
 
-    .g-bar-container { margin-bottom: 5px; width: 100%; }
-    .g-bar { display: grid; grid-template-columns: 50px 1fr 120px 90px; align-items: center; background: var(--bar); padding: 12px 15px; border-radius: 8px; border-left: 4px solid #444; cursor: pointer; transition: .2s; position: relative; border: 1px solid transparent; gap: 10px; }
+    .g-bar-container { margin-bottom: 8px; width: 100%; }
+    .g-bar { display: grid; grid-template-columns: 60px 1fr 120px 110px; /* 調整欄寬 */ align-items: center; background: var(--bar); padding: 15px 15px; border-radius: 8px; border-left: 4px solid #444; cursor: pointer; transition: .2s; position: relative; border: 1px solid transparent; gap: 10px; }
     .g-bar:hover { background: #222; transform: translateX(5px); border-color: rgba(255,255,255,0.1); }
     .g-bar.active { background: #25252a; border-color: rgba(255,215,0,0.2); border-left-color: var(--gold) !important; }
-    .g-code { font-family: 'Courier New'; font-weight: 900; color: #fff; font-size: 1rem; opacity: 0.6; }
+    
+    .g-code { font-family: 'Courier New'; font-weight: 900; color: #fff; font-size: 1.2rem; /* 放大 */ opacity: 0.7; }
     .g-name-group { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
-    .g-name-bar { font-size: 1rem; font-weight: 900; color: #fff; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
-    .g-deck-str { font-size: 0.75rem; color: #666; font-family: 'Courier New'; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .g-name-bar { font-size: 1.3rem; /* 放大 */ font-weight: 900; color: #fff; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
+    .g-deck-str { font-size: 0.9rem; /* 放大 */ color: #666; font-family: 'Courier New'; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; }
+    
     .g-deck-icons { display: flex; align-items: center; gap: 5px; justify-content: center; }
-    .g-roi { font-family: 'Courier New'; font-weight: 900; font-size: 1.1rem; text-align: right; }
+    .g-roi { font-family: 'Courier New'; font-weight: 900; font-size: 1.4rem; /* 放大 */ text-align: right; }
     .g-roi.color-profit { color: var(--green); } .g-roi.color-loss { color: var(--red); }
     .g-roi.color-gold { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
     .g-roi.color-dead { color: var(--dark-purple); text-shadow: 0 0 10px var(--dark-purple); }
 
-    .g-mini-icon { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; }
+    .g-mini-icon { width: 36px; height: 36px; /* 放大 */ display: inline-flex; align-items: center; justify-content: center; }
     .g-mini-icon svg { width: 100%!important; stroke-width: 3!important; } .g-mini-icon img { width: 100%!important; object-fit: contain; }
     .g-mini-icon.type-tw img { filter: drop-shadow(0 0 5px var(--tw)); } .g-mini-icon.type-us img { filter: drop-shadow(0 0 5px var(--us)); }
 
     .g-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(0,0,0,0.3); border-radius: 0 0 8px 8px; width: 100%; }
     .g-bar.active + .g-details { max-height: 800px; border: 1px solid #333; border-top: none; } 
-    .highlight-content { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-    .d-row { display: flex; align-items: flex-start; gap: 15px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; }
+    .highlight-content { padding: 25px; display: flex; flex-direction: column; gap: 15px; }
+    .d-row { display: flex; align-items: flex-start; gap: 15px; font-size: 1.05rem; /* 放大 */ border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; }
     .d-row:last-child { border: none; }
-    .d-label { width: 100px; flex-shrink: 0; color: var(--gold); font-weight: bold; font-size: 0.85rem; text-align-last: justify; }
-    .d-text { color: #ccc; line-height: 1.5; font-size: 0.95rem; }
+    .d-label { width: 110px; flex-shrink: 0; color: var(--gold); font-weight: bold; font-size: 0.95rem; /* 放大 */ text-align-last: justify; }
+    .d-text { color: #ccc; line-height: 1.5; font-size: 1.05rem; /* 放大 */ }
     .d-text.warn { color: #ff6b6b; }
     @media(max-width: 900px) { 
         .arena-container { grid-template-columns: 1fr; } 
-        .g-bar { grid-template-columns: 50px 1fr auto; grid-template-rows: auto auto; }
+        .g-bar { grid-template-columns: 60px 1fr auto; grid-template-rows: auto auto; }
         .g-deck-icons { grid-column: 3; grid-row: 1; justify-content: flex-end; }
         .g-roi { grid-column: 3; grid-row: 2; margin-top: 5px; }
         .group-header::before, .group-header::after { display: none; }
@@ -179,7 +185,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v13.2 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v13.3 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 

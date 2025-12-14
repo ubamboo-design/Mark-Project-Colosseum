@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : RELOADED v14.1 (Icon Fix)</title>
+<title>PROJECT CAGE : RELOADED v14.2 (High Contrast)</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -126,7 +126,19 @@
     .g-code { font-family: 'Courier New'; font-weight: 900; color: #fff; font-size: 1.2rem; opacity: 0.7; }
     .g-name-group { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
     .g-name-bar { font-size: 1.3rem; font-weight: 900; color: #fff; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
-    .g-deck-str { font-size: 0.9rem; color: #666; font-family: 'Courier New'; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; }
+    
+    /* ✅ [修改] 牌組字串樣式：加粗、變亮 */
+    .g-deck-str { 
+        font-size: 0.95rem; 
+        color: #bbb;          /* 改為更亮的灰色 */
+        font-weight: 700;     /* 加粗 */
+        font-family: 'Courier New'; 
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        margin-top: 4px; 
+        letter-spacing: 1px;  /* 增加字距 */
+    }
     
     .g-deck-icons { display: flex; align-items: center; gap: 5px; justify-content: center; }
     .g-roi { font-family: 'Courier New'; font-weight: 900; font-size: 1.4rem; text-align: right; }
@@ -134,9 +146,7 @@
     .g-roi.color-gold { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
     .g-roi.color-dead { color: var(--dark-purple); text-shadow: 0 0 10px var(--dark-purple); }
 
-    /* ========================================================= */
-    /* ✅ 修正後的圖標 CSS (Fix for Icon Alignment) */
-    /* ========================================================= */
+    /* 圖標CSS (保持上一個版本的修正) */
     .g-mini-icon { 
         width: 42px;       
         height: 42px; 
@@ -157,7 +167,6 @@
     .g-mini-icon svg { stroke-width: 3 !important; }
     .g-mini-icon.type-tw img { filter: drop-shadow(0 0 5px var(--tw)); } 
     .g-mini-icon.type-us img { filter: drop-shadow(0 0 5px var(--us)); }
-    /* ========================================================= */
 
     .g-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(0,0,0,0.3); border-radius: 0 0 8px 8px; width: 100%; }
     .g-bar.active + .g-details { max-height: 800px; border: 1px solid #333; border-top: none; } 
@@ -206,7 +215,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v14.1 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v14.2 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 

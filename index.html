@@ -1,482 +1,130 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : STICKMAN v15.1</title>
-<style>
-    /* =========================================
-       v15.1 STICKMAN STYLE (黑底白線手繪風)
-       ========================================= */
-    :root {
-        --bg: #000000;
-        --card-bg: #000000;
-        --text: #ffffff;
-        --line: #ffffff;
-        
-        --gold: #ffeb3b;   /* 螢光黃 */
-        --green: #00ff00;  /* 畫家綠 */
-        --red: #ff0000;    /* 老師改考卷的紅 */
-        --dark-purple: #ff00ff; /* 螢光紫 */
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body { 
-        background-color: var(--bg); 
-        color: var(--text); 
-        /* 嘲諷風格字體 */
-        font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif; 
-        line-height: 1.3; 
-        overflow-x: hidden; 
-        padding-bottom: 50px; 
-    }
-    
-    /* REFRESH SPINNER */
-    #refresh-indicator { position: fixed; top: 0; left: 0; width: 100%; height: 0; background: #fff; color: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: height 0.2s; z-index: 9999; }
-    .spinner { width: 30px; height: 30px; border: 4px solid #000; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 15px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* HEADER */
-    header { padding: 40px 20px; text-align: center; border-bottom: 2px solid #fff; margin-bottom: 40px; position: relative; }
-    header::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: #fff; transform: rotate(0.3deg); } 
-    
-    #pageLogo { height: 100px; width: auto; display: none; filter: grayscale(100%) contrast(150%); margin-bottom: 10px; }
-    
-    h1 { 
-        font-size: 2.5rem; 
-        text-transform: uppercase; 
-        font-weight: 900; 
-        letter-spacing: -1px;
-        text-decoration: underline wavy var(--gold);
-    }
-    .meta-info { font-size: 1rem; color: #aaa; margin-top: 10px; font-weight: bold; font-family: monospace; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-    
-    /* DASHBOARD */
-    .dashboard-panel { margin: 30px 0; }
-    .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 30px; }
-    
-    .dash-group { 
-        padding: 20px; 
-        display: flex; flex-direction: column; justify-content: space-between; 
-        border: 2px solid #fff;
-        /* 手繪風格邊框 */
-        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-        position: relative;
-        background: #000;
-        transition: transform 0.2s;
-    }
-    .dash-group:hover { transform: scale(1.02) rotate(-1deg); }
-
-    .dash-header { margin-bottom: 15px; border-bottom: 2px dashed #555; padding-bottom: 10px; }
-    .dash-title { font-size: 1.4rem; font-weight: 900; }
-    
-    .data-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
-    .data-label { font-size: 1rem; color: #888; font-weight: bold; }
-    .data-val { font-size: 1.5rem; font-weight: 900; font-family: monospace; }
-    
-    .total-big-val { 
-        font-size: 3.5rem; font-weight: 900; text-align: right; 
-        margin: 10px 0; line-height: 1; 
-        text-shadow: 4px 4px 0px #333; 
-    }
-    
-    /* HP BAR (塗鴉風格) */
-    .hp-wrapper {
-        width: 100%; height: 35px; border: 2px solid #fff; 
-        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-        position: relative; margin-bottom: 15px; overflow: hidden; background: #222;
-    }
-    .hp-fill {
-        height: 100%; width: 0%; 
-        background: repeating-linear-gradient(45deg, #fff, #fff 10px, #000 10px, #000 20px);
-        transition: width 1s ease;
-        border-right: 2px solid #fff;
-    }
-    .hp-text {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-        display: flex; align-items: center; justify-content: center;
-        color: #fff; font-weight: 900; font-size: 1rem; 
-        text-shadow: 2px 2px 0 #000; mix-blend-mode: difference;
-    }
-
-    .profit-block { 
-        margin-top: 15px; padding: 10px; border: 2px solid #fff; 
-        background: #000;
-        display: flex; justify-content: space-between; align-items: center;
-        box-shadow: 5px 5px 0px #555;
-    }
-    .profit-main { font-size: 1.4rem; font-weight: 900; }
-    .profit-sub { font-size: 1rem; font-weight: bold; }
-
-    /* COLORS */
-    .color-profit { color: var(--green) !important; }
-    .color-loss { color: var(--red) !important; text-decoration: line-through; }
-    .color-gold { color: var(--gold) !important; } 
-    .color-dead { color: var(--dark-purple) !important; }
-
-    @media(max-width: 900px) { .dash-grid { grid-template-columns: 1fr; } }
-
-    /* SECTIONS */
-    .section-title { 
-        font-size: 1.8rem; margin: 60px 0 30px; font-weight: 900; 
-        text-align: center; border: 2px solid #fff; display: inline-block; padding: 10px 20px;
-        background: #000; transform: rotate(-2deg);
-    }
-    
-    /* CARDS */
-    .deck-wrapper { overflow-x: auto; padding: 20px 0; }
-    .deck-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 20px; min-width: 0; } 
-    
-    .micro-card { 
-        background: #000; 
-        border: 2px solid #fff;
-        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-        padding: 15px; cursor: pointer; 
-        display: flex; flex-direction: column; min-height: 260px; 
-        transition: transform 0.1s;
-    }
-    @keyframes wiggle { 
-        0% { transform: rotate(0deg); } 
-        25% { transform: rotate(2deg); } 
-        50% { transform: rotate(0deg); } 
-        75% { transform: rotate(-2deg); } 
-        100% { transform: rotate(0deg); } 
-    }
-    .micro-card:hover { animation: wiggle 0.2s infinite; background: #111; z-index: 10; border-color: var(--gold); }
-
-    .mc-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-    .mc-code { font-size: 1.2rem; font-weight: 900; border-bottom: 2px solid #fff; }
-    .mc-target { font-size: 0.8rem; background: #fff; color: #000; padding: 2px 6px; font-weight: bold; border-radius: 4px; }
-
-    .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; margin: 10px 0; }
-    .mc-media { width: 80px; height: 80px; object-fit: contain; filter: grayscale(100%) contrast(150%) brightness(1.2); }
-    svg.mc-media { stroke: #fff; stroke-width: 4px; fill: none; stroke-linecap: round; }
-
-    .mc-footer { text-align: center; margin-top: auto; }
-    .mc-chn-name { font-size: 1.2rem; font-weight: 900; margin-bottom: 5px; line-height: 1.1; }
-    .mc-eng-name { font-size: 0.7rem; color: #aaa; text-transform: uppercase; }
-    .mc-cost-badge { display: inline-block; margin-top: 8px; padding: 4px 10px; border: 1px dashed #fff; font-size: 0.9rem; }
-
-    @media(max-width: 1200px) { .deck-grid { grid-template-columns: repeat(4, 1fr); min-width: 800px; } }
-    @media(max-width: 768px) { .deck-grid { grid-template-columns: repeat(2, 1fr); min-width: 100%; } }
-
-    /* EVENT LOG */
-    .event-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .event-card { 
-        border: 2px solid #fff; border-radius: 3px 20px 4px 30px;
-        padding: 20px; position: relative; 
-    }
-    .event-header { display: flex; justify-content: space-between; border-bottom: 1px solid #555; padding-bottom: 10px; margin-bottom: 10px; font-family: monospace; }
-    .event-status { background: #fff; color: #000; padding: 0 5px; font-weight: bold; }
-    .event-card.emergency { border-color: var(--red); background: repeating-linear-gradient(45deg, #000, #000 10px, #220000 10px, #220000 20px); }
-
-    /* ARENA */
-    .arena-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .arena-group { border: 2px solid #fff; padding: 15px; border-radius: 10px; }
-    .group-header { 
-        text-align: center; font-size: 1.6rem; font-weight: 900; margin-bottom: 20px; 
-        background: #fff; color: #000; display: inline-block; padding: 5px 15px; 
-        transform: rotate(-1deg); width: 100%;
-    }
-
-    .g-bar { 
-        display: grid; grid-template-columns: 60px 1fr 100px 100px; align-items: center; 
-        border: 2px solid #555; margin-bottom: 10px; padding: 10px; cursor: pointer;
-        transition: .2s; border-radius: 5px;
-    }
-    .g-bar:hover { border-color: #fff; transform: translateX(5px); background: #111; }
-    .g-bar.active { border-color: var(--gold); border-style: dashed; }
-
-    .g-code { font-weight: 900; font-size: 1.2rem; }
-    .g-name-bar { font-size: 1.2rem; font-weight: 900; }
-    .g-deck-str { font-size: 0.8rem; color: #888; }
-    .g-roi { font-family: monospace; font-weight: 900; font-size: 1.4rem; text-align: right; }
-    .g-mini-icon img { filter: grayscale(100%); width: 32px; height: 32px; margin: 0 2px; }
-    
-    .g-details { max-height: 0; overflow: hidden; transition: max-height .3s ease; border-left: 2px dashed #fff; margin-left: 10px; }
-    .g-bar.active + .g-details { max-height: 600px; padding: 15px; border-bottom: 2px dashed #fff; }
-    .d-row { margin-bottom: 8px; font-size: 1rem; }
-    .d-label { color: var(--gold); font-weight: bold; margin-right: 10px; }
-
-    /* FOOTER */
-    .footer-grid { margin-top: 50px; border-top: 4px solid #fff; padding-top: 30px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-    .info-box { border: 1px solid #333; padding: 15px; color: #888; border-radius: 8px; }
-    .info-title { color: #fff; display: block; margin-bottom: 5px; font-weight: bold; }
-    .refresh-btn { grid-column: span 2; background: #fff; color: #000; font-weight: 900; text-align: center; cursor: pointer; padding: 15px; font-size: 1.2rem; text-transform: uppercase; border: 2px solid #fff; }
-    .refresh-btn:hover { background: #000; color: #fff; }
-
-    /* MODAL */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 9999; }
-    .modal-content { 
-        background: #000; border: 4px solid #fff; padding: 30px; width: 90%; max-width: 500px; 
-        box-shadow: 10px 10px 0px #fff; 
-    }
-    .modal-header { display: flex; justify-content: space-between; border-bottom: 2px dashed #fff; padding-bottom: 15px; margin-bottom: 20px; }
-    .m-code { font-size: 2.5rem; font-weight: 900; }
-    .m-skill { font-size: 1.2rem; background: #fff; color: #000; padding: 2px 8px; margin-left: 10px; }
-    .close-btn { font-size: 2rem; cursor: pointer; }
-    .m-row { margin-bottom: 15px; }
-    .m-label { display: block; font-size: 0.9rem; color: #888; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
-    .m-value { font-size: 1.2rem; line-height: 1.5; font-family: 'Comic Sans MS', sans-serif; }
-    .m-value.highlight { font-size: 1.8rem; font-weight: 900; color: var(--gold); text-decoration: underline wavy; }
-</style>
-</head>
-<body>
-<div id="refresh-indicator"><div class="refresh-text"><div class="spinner"></div>REFRESHING...</div></div>
-
-<header>
-  <img id="pageLogo" src="" alt="Logo">
-  <div class="header-text">
-      <h1>PROJECT CAGE <br><span style="font-size:1.2rem;background:white;color:black;padding:2px 8px;">STICKMAN EDITION</span></h1>
-      <div class="meta-info">v15.1 // NT$ 1,000 萬 // 2025-2031</div>
-  </div>
-</header>
-
-<div class="container">
-  <div class="dashboard-panel">
-    <div class="dash-grid">
-      <div class="dash-group">
-        <div class="dash-header"><span class="dash-title">TWD 戰情 (台幣)</span></div>
-        <div class="data-row"><span class="data-label">成本 COST</span><span class="data-val" id="costTW">...</span></div>
-        <div class="data-row"><span class="data-label">現值 ASSET</span><span class="data-val" id="assetTW">...</span></div>
-        <div class="profit-block"><span class="profit-main" id="plTW_val">...</span><span class="profit-sub" id="plTW_pct">...</span></div>
-      </div>
-      <div class="dash-group">
-        <div class="dash-header"><span class="dash-title">USD 戰情 (美金)</span></div>
-        <div class="data-row"><span class="data-label">成本 COST</span><span class="data-val" id="costUS">...</span></div>
-        <div class="data-row"><span class="data-label">現值 ASSET</span><span class="data-val" id="assetUS">...</span></div>
-        <div class="profit-block"><span class="profit-main" id="plUS_val">...</span><span class="profit-sub" id="plUS_pct">...</span></div>
-      </div>
-      
-      <div class="dash-group" style="border-style: dashed;">
-        <div class="dash-header" style="justify-content: center;"><span class="dash-title" style="background:var(--gold);color:black;padding:2px 10px;">總身價 (TOTAL)</span></div>
-        <div class="hp-wrapper">
-            <div class="hp-fill" id="hpBar"></div>
-            <div class="hp-text" id="hpText">LOADING...</div>
-        </div>
-        <div class="total-big-val" id="totalAsset">...</div>
-        <div class="total-roi-block">
-            <div class="total-roi-display" id="totalROI" style="text-align:right;font-size:1.5rem;font-weight:900;">...</div>
-        </div>
-        <div class="data-row"><span class="data-label">總投入</span><span class="data-val" id="totalCostTWD" style="font-size:1.1rem">...</span></div>
-        <div class="data-row"><span class="data-label">帳面損益</span><span class="data-val" id="totalDiff" style="font-size:1.1rem">...</span></div>
-        <div class="rate-display" id="rateInfo" style="text-align:right;color:#666;font-size:0.8rem;">Rate...</div>
-      </div>
-    </div>
-  </div>
-
-  <div style="text-align:center;"><div class="section-title">I. 八大技能卡牌 (THE DECK)</div></div>
-  <div class="deck-wrapper"><div class="deck-grid" id="cardContainer"><div class="loading">CONNECTING...</div></div></div>
-
-  <div style="text-align:center;"><div class="section-title">II. 事件簿 (LOGS)</div></div>
-  <div class="event-list" id="eventContainer">
-      <div class="loading" style="padding:10px; color:#666">CHECKING LOGS...</div>
-  </div>
-
-  <div style="text-align:center;"><div class="section-title">III. 投資競技場 (ARENA)</div></div>
-  <div class="arena-container" id="arenaContainer"><div class="loading">LOADING STRATEGIES...</div></div>
-
-  <div class="footer-grid">
-    <div class="info-box"><span class="info-title">🔒 資金封閉鐵律</span>1,000 萬只進不出。嚴禁消費。</div>
-    <div class="info-box"><span class="info-title">⚖️ 全面公開鐵律</span>投資金額、報酬、對帳單全公開。</div>
-    <div class="info-box refresh-btn" onclick="triggerRefresh()">↻ 重新整理 (REFRESH)</div>
-  </div>
-</div>
-
-<div id="cardModal" class="modal-overlay" onclick="closeModal()">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      <div><span class="m-code" id="mCode"></span><span class="m-skill" id="mSkill"></span></div>
-      <span class="close-btn" onclick="closeModal()">&times;</span>
-    </div>
-    <div class="m-row"><span class="m-label">初始資金 (CAPITAL)</span><div class="m-value highlight" id="mCost"></div></div>
-    <div class="m-row"><span class="m-label">戰略定位 (STRATEGY)</span><div class="m-value" id="mStrategy"></div></div>
-    <div class="m-row"><span class="m-label">執行 SOP</span><div class="m-value" id="mSop" style="padding:15px;border:2px solid #555;border-style:dashed;"></div></div>
-  </div>
-</div>
-
 <script>
 // =========================================================
-//  ✅ 完整修復版：STICKMAN 風格 + 穩定連線
+//  PROJECT CAGE v15.2 : 數據強力修復版
 // =========================================================
+
 const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv';
 
-const FALLBACK_DATA = `
-A (code)	B (type)	C (rpg)	D (target)	E (skill)	F (cost)	G (current)	H (strategy)	I (sop)	J (image)
-C01	type-tw	平庸的定期定額	006208	TW DCA	NT$2,520,000	2,595,945	賣暢銷書賺到財富自由的大師們都推薦的平庸策略	每個月 5 ,15,25號：每次扣款 NT$10,000	https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png
-C02	type-tw	QQQ獎金給我她奶奶的all in	006208	TW LSI	NT$1,750,000	1,750,000	獎金就是他奶奶的用來all in的	年終過完年後首週五加碼 NT$15 萬	https://ubamboo-design.github.io/Mark-investment-dashboard/C02.png
-C03	type-yield	股息cover每一天	00878	YIELD	NT$840,000	840,636	最滿足心理帳戶的坑爹的策略	每月 5 號：扣款 NT$10,000	https://ubamboo-design.github.io/Mark-investment-dashboard/C03.png
-C04	type-ber	問就是正2	00631L	SEALED	NT$500,000	500,000	股票50:現金50 ，當股票資產偏離 >75% 或 <50% 強制再平衡	https://ubamboo-design.github.io/Mark-investment-dashboard/C04.png
-C05	type-us	要買就買全世界	VT	GLOBAL DCA	$50,000.00	50,000	資產配置我好棒	每月 5 號買600美金	https://ubamboo-design.github.io/Mark-investment-dashboard/C05.png
-C06	type-us	美國就是我爸爸	VOO	US DCA	$50,000.00	50,000	我就舔	每月 5 號買600美金	https://ubamboo-design.github.io/Mark-investment-dashboard/C06.png
-C07	type-trap	可以進場了嗎?	CASH/006208	AMBUSH	NT$900,000	900,000	再等一等好了~然後就沒有然後了~	股市修正20%後進場9萬	https://ubamboo-design.github.io/Mark-investment-dashboard/C07.png
-C02-1	type-tw	履歷才是最強Asset	006208	TW LSI	NT$500,000	500,000	等待大崩盤的那一天我就贏了?	2025/1/6 開盤抽	https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png
-	
-代號	名稱	牌組	競技亮點	投資人格側寫	預期心理衝突	
-P01	台股定期定額	C01	單純驗證「大師們推薦的平庸策略」到底有多平庸。	佛系躺平族：相信大師，放棄思考。	最無心理負擔。	
-P02	台股雙核心	C01+C02	當市場大漲時嫌 C01 慢，大跌時怪 C02 衝太快。	穩健進取型：試圖在平庸與激進間取得平衡。	單筆投入的條件是不能離場。	
-P03	最貴的安眠藥	C03	長期績效最差，但是心理最舒服	收租心態者：只在乎現金流，不在乎淨值。	熊市中最抗跌（心理上）。	
-P04	無限等待之術	C07	大機率會空手很久。驗證「擇時等待」是否會輸給「閉眼投入」。	完美主義者：試圖扮演上帝。	大機率長期空手。	
-	
-P05	大哥沒有輸	C02-1	是否能跑贏槓桿流。	沒人會這樣投資!!	資金效率壓滿，但是贏的路徑太單一。	
-P06	槓桿投資法	C04	是封神還是風神?	數學賭徒用紀律駕馭槓桿波動。	在自動的扣寫機制下，逆價差與槓桿偏移能一直有效嗎?	
-	
-P07	全球雙核心	C05+C06	全球基本盤加美股加速器。	資產配置派：既要分散又要績效。	內心的矛盾：VT 的拖累會讓其不斷質疑為何不全押 VOO。	
-P08	全球資產配置	C05	小孩子才做選擇	懷疑論者：不相信任何單一國家能長盛不衰。	極度考驗耐心，需對抗 FOMO。	
-P09	帝國信仰者	C06	簡單暴力的「舔狗」策略，賭的就是美國的霸權。	帝國主義者：賭美國國運。	在美元走弱或美股回調時，信仰崩塌的風險最大。	
-	
-P10	台美暴力型	C02+C06	台股重壓 + 美股重壓。	科技信徒：看好台美科技連動。	進攻性最強，波動最劇烈。	
-P11	選擇障礙型	C01+C05+C06	大師說什麼好我就跟	雖然我不知道什麼好，反正都給我來一點	
-P12	真的好無聊型	C01+C03+C05	理論上波動最小。	學院派：理論上最正確的組合。	「好無聊」是最大的敵人。	
-P13	跨國槓鈴策略	C03+C06	台灣複委託投資人中相當普遍	心理帳戶的平衡（槓鈴結構）	投資人會陷入「後悔」的迴圈。
-	
-事件簿	狀態	內容	
-2025/12/12	緊急	聯準會降息	
-2025/12/24	風和日麗	聖誕節	
-	
-Logo	https://ubamboo-design.github.io/Mark-investment-dashboard/Mark_Investment_LOGO1.png
-`.trim();
+// ✅ 改用 JSON 格式儲存備份資料 (不怕格式跑掉)
+const FALLBACK_CARDS = [
+    { code: 'C01', type: 'type-tw', rpg: '平庸的定期定額', target: '006208', skill: 'TW DCA', cost: 2520000, current: 2595945, strategy: '大師推薦的平庸策略', sop: '每月5/15/25扣款1萬', img: '' },
+    { code: 'C02', type: 'type-tw', rpg: '獎金All-in流', target: '006208', skill: 'TW LSI', cost: 1750000, current: 1750000, strategy: '獎金就是拿來All in的', sop: '年終/年中獎金投入', img: '' },
+    { code: 'C03', type: 'type-yield', rpg: '股息Cover每一天', target: '00878', skill: 'YIELD', cost: 840000, current: 840636, strategy: '心理帳戶滿足感', sop: '每月5號扣款1萬', img: '' },
+    { code: 'C04', type: 'type-ber', rpg: '問就是正2', target: '00631L', skill: 'SEALED', cost: 500000, current: 500000, strategy: '股票50:現金50', sop: '偏離>25%再平衡', img: '' },
+    { code: 'C05', type: 'type-us', rpg: '買下全世界', target: 'VT', skill: 'GLOBAL DCA', cost: 1500000, current: 1500000, strategy: '資產配置我好棒', sop: '每月5號買600美金', img: '' },
+    { code: 'C06', type: 'type-us', rpg: '美國是我爸', target: 'VOO', skill: 'US DCA', cost: 1500000, current: 1500000, strategy: '賭美國國運', sop: '每月5號買600美金', img: '' },
+    { code: 'C07', type: 'type-trap', rpg: '無限等待之術', target: 'CASH', skill: 'AMBUSH', cost: 900000, current: 900000, strategy: '股市修正才進場', sop: '跌20%進場', img: '' }
+];
+
+const FALLBACK_PORTFOLIOS = {
+    '未分類': [
+        { code: 'P01', name: '台股定期定額', deck: ['C01'], deckStr: 'C01', mindset: '佛系躺平', persona: '上班族', conflict: '無聊' },
+        { code: 'P02', name: '台股雙核心', deck: ['C01','C02'], deckStr: 'C01+C02', mindset: '平滑與激進並存', persona: '進取型', conflict: '大跌時想跑' },
+        { code: 'P07', name: '全球雙核心', deck: ['C05','C06'], deckStr: 'C05+C06', mindset: 'VT+VOO配置', persona: '美股派', conflict: 'VT拖累績效' }
+    ]
+};
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, eventsData = [];
 let logoUrl = ''; 
-let isFallback = false;
 
-// ================= PULL TO REFRESH =================
-let touchStart = 0;
-let touchEnd = 0;
-const refreshIndicator = document.getElementById('refresh-indicator');
-const spinner = document.querySelector('.spinner');
+// 預設圖示 (黑底白線圓圈)
+const defaultIconSVG = `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="24" stroke="white" stroke-width="4" fill="none"/></svg>`;
 
-document.addEventListener('touchstart', e => { if(window.scrollY === 0) touchStart = e.changedTouches[0].screenY; });
-document.addEventListener('touchmove', e => {
-    if(window.scrollY === 0) {
-        touchEnd = e.changedTouches[0].screenY;
-        if(touchEnd > touchStart && (touchEnd - touchStart) < 200) refreshIndicator.style.height = (touchEnd - touchStart) + 'px';
-    }
-});
-document.addEventListener('touchend', async e => {
-    if(window.scrollY === 0 && (touchEnd - touchStart) > 100) triggerRefresh(true);
-    else refreshIndicator.style.height = '0px';
-});
-async function triggerRefresh(keepOpen = false) {
-    if(!keepOpen) refreshIndicator.style.height = '60px';
-    spinner.style.display = 'block';
-    await init();
-    setTimeout(() => { refreshIndicator.style.height = '0px'; spinner.style.display = 'none'; }, 800);
-}
-// ===================================================
-
-const defaultIcons = {
-    'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="25" stroke="white" stroke-width="4" fill="none"/></svg>`
-};
-
+// 初始化
 init();
 
 async function init() {
+    console.log('🚀 初始化開始...');
     cardsData = {}; portfolios = {}; eventsData = [];
-    isFallback = false;
-    const con = document.getElementById('cardContainer');
     
-    // 1. 抓取匯率
+    // 1. 嘗試抓匯率
     try {
         const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
         const rateData = await rateRes.json();
         if(rateData && rateData.rates && rateData.rates.TWD) {
             currentRate = rateData.rates.TWD;
-            document.getElementById('rateInfo').textContent = `USD/TWD: ${currentRate}`;
+            const rEl = document.getElementById('rateInfo');
+            if(rEl) rEl.textContent = `USD/TWD: ${currentRate}`;
         }
-    } catch (e) { console.warn('Rate Fetch Error'); }
+    } catch (e) { console.warn('匯率抓取失敗'); }
 
-    // 2. 抓取 Google Sheet
+    // 2. 嘗試抓 Google Sheet
     try {
         const sheetRes = await fetch(GOOGLE_SHEET_URL);
         if (!sheetRes.ok) throw new Error(`HTTP ${sheetRes.status}`);
         const sheetText = await sheetRes.text();
         
-        if(sheetText.length < 50 || sheetText.trim().startsWith('<')) {
-            throw new Error('格式錯誤，啟動備份');
-        }
-        parseSheetData(sheetText);
-        renderAll();
+        // 檢查是否真的抓到資料 (簡單檢查長度)
+        if(sheetText.length < 50 || sheetText.trim().startsWith('<')) throw new Error('資料無效');
         
-        // 成功連線，移除 OFFLINE 標籤
-        const meta = document.querySelector('.meta-info');
-        if(meta.innerHTML.includes('OFFLINE')) {
-             meta.innerHTML = meta.innerHTML.replace('<span style="color:red">[OFFLINE]</span>', '');
-        }
+        parseSheetData(sheetText);
+        console.log('✅ Google Sheet 資料載入成功');
+        renderAll();
 
     } catch(e) {
-        console.warn('Load fallback...');
-        isFallback = true;
-        parseSheetData(FALLBACK_DATA);
+        console.warn('⚠️ 連線失敗，載入內建備份資料 (JSON Mode)...');
+        loadFallbackJSON();
         renderAll();
         
         // 顯示 OFFLINE 標籤
         const meta = document.querySelector('.meta-info');
-        if(!meta.innerHTML.includes('OFFLINE')) {
-             meta.innerHTML += ` <span style="color:red">[OFFLINE]</span>`;
+        if(meta && !meta.innerHTML.includes('OFFLINE')) {
+             meta.innerHTML += ` <span style="color:red; background:white; padding:0 4px;">[OFFLINE DATA]</span>`;
         }
     }
 }
 
+// 解析 Google Sheet TSV (網路正常時用)
 function parseSheetData(text){
-  const rows = text.split('\n').map(r=>r.trim()); 
-  let currentGroup = '未分類';
-  let mode = 'CARDS'; 
+    const rows = text.split('\n').map(r=>r.trim());
+    let currentGroup = '未分類';
+    let mode = 'CARDS';
 
-  for(let i=0; i<rows.length; i++){
-    if(!rows[i]) continue;
-    const c = rows[i].split('\t'); 
-
-    if(c[0] === '代號' && c[1] === '名稱') { mode = 'STRATEGIES'; continue; }
-    if(c[0] === '事件簿') { mode = 'EVENTS'; continue; }
-
-    if(c[0].startsWith('C')) {
-        let skillName = c[4]; 
-        let costRaw = c[5] ? c[5].replace(/[NT$US,\s]/g, '') : '0';
-        let currentRaw = c[6] ? c[6].replace(/[NT$US,\s]/g, '') : '0';
+    for(let i=0; i<rows.length; i++){
+        if(!rows[i]) continue;
+        const c = rows[i].split('\t'); // 用 Tab 分割
         
-        if (c[0] === 'Logo' && c[1]) logoUrl = c[1];
+        if(c[0] === '代號' && c[1] === '名稱') { mode = 'STRATEGIES'; continue; }
+        if(c[0] === '事件簿') { mode = 'EVENTS'; continue; }
 
-        let imgUrl = c[9] ? c[9].trim() : '';
-        let displayMedia = imgUrl.startsWith('http') 
-            ? `<img src="${imgUrl}" class="mc-media" alt="${skillName}">` 
-            : (defaultIcons['C01']);
-        
-        cardsData[c[0]] = {
-            code: c[0], type: c[1], rpg: c[2], target: c[3], skill: skillName,
-            cost: parseFloat(costRaw), current: parseFloat(currentRaw),
-            strategy: c[7], sop: c[8], media: displayMedia
+        if(c[0].startsWith('C')) {
+            let cost = c[5] ? parseFloat(c[5].replace(/[NT$US,\s]/g, '')) : 0;
+            let cur = c[6] ? parseFloat(c[6].replace(/[NT$US,\s]/g, '')) : 0;
+            let imgUrl = c[9] ? c[9].trim() : '';
+            let media = imgUrl.startsWith('http') ? `<img src="${imgUrl}" class="mc-media">` : defaultIconSVG;
+
+            cardsData[c[0]] = {
+                code: c[0], type: c[1]||'type-tw', rpg: c[2]||'-', target: c[3]||'Unknown', skill: c[4]||'SKILL',
+                cost: cost, current: cur, strategy: c[7]||'', sop: c[8]||'', media: media
+            };
+        }
+        else if(c[0].startsWith('P')) {
+             if(!portfolios[currentGroup]) portfolios[currentGroup] = [];
+             portfolios[currentGroup].push({
+                 code: c[0], name: c[1], deck: c[2]?c[2].split('+'):[], deckStr: c[2]||'',
+                 mindset: c[3]||'', persona: c[4]||'', conflict: c[5]||''
+             });
+        }
+        else if (mode === 'STRATEGIES' && c[0] && !c[0].startsWith('P') && c[0].length>0 && c.length<5) {
+            currentGroup = c[0].trim();
+        }
+        else if(mode === 'EVENTS' && c[0] && c[0].match(/^\d/)) {
+            eventsData.push({ date:c[0], status:c[1], content:c[2], isUrgent:(c[1]||'').includes('緊急') });
+        }
+    }
+}
+
+// 載入 JSON 備份資料 (網路失敗時用)
+function loadFallbackJSON() {
+    FALLBACK_CARDS.forEach(c => {
+        cardsData[c.code] = {
+            ...c,
+            media: defaultIconSVG // 離線時使用預設圖示
         };
-    } 
-    else if(c[0].startsWith('P')){
-          if(!portfolios[currentGroup]) portfolios[currentGroup] = [];
-          portfolios[currentGroup].push({
-              code: c[0], name: c[1], 
-              deck: c[2] ? c[2].split('+').map(s=>s.trim()) : [], 
-              deckStr: c[2] || '',
-              mindset: c[3] || '-',        
-              persona: c[4] || '-',        
-              conflict: c[5] || '-',      
-              theory: '-' 
-          });
-    }
-    else if (mode === 'STRATEGIES' && c[0] && !c[0].startsWith('P') && c[0] !== '代號' && c.length < 5) {
-        if(c[0].length > 0) currentGroup = c[0].trim();
-    }
-    else if(mode === 'EVENTS' && c[0] && c[0].match(/^\d/)) {
-        eventsData.push({ 
-            date: c[0], 
-            status: c[1] || 'Info', 
-            content: c[2] || '',
-            isUrgent: (c[1] || '').includes('緊急') 
-        });
-    }
-    if(c[0] === 'Logo' && c[1]) logoUrl = c[1];
-  }
+    });
+    portfolios = FALLBACK_PORTFOLIOS;
+    eventsData = [{ date: '2025/12/19', status: 'OFFLINE', content: '目前顯示離線數據，請檢查網路連線。', isUrgent: true }];
 }
 
 function calc(cost, cur){
@@ -488,100 +136,76 @@ function calc(cost, cur){
   if (roiRaw >= 0.5) cls = 'color-gold'; 
   else if (roiRaw >= 0) cls = 'color-profit'; 
   else if (roiRaw <= -0.5) cls = 'color-dead'; 
-  else cls = 'color-loss'; 
   return {roi, arrow: roi>=0 ? '▲' : '▼', sign: roi>=0 ? '+' : '', cls, diff};
 }
 
 function renderAll(){ 
-    renderHeader();
     renderDashboard(); 
     renderCards(); 
     renderEvents(); 
     renderArena(); 
 }
 
-function renderHeader() {
-    const logoImg = document.getElementById('pageLogo');
-    if (logoUrl && logoUrl.startsWith('http')) {
-        logoImg.src = logoUrl;
-        logoImg.style.display = 'inline-block';
-    }
-}
-
 function renderDashboard(){
   let tcTW=0, taTW=0, tcUS=0, taUS=0;
   Object.values(cardsData).forEach(c => {
-      if(c.type.includes('us')) {
-          tcUS += c.cost;
-          taUS += c.current;
-      } else {
-          tcTW += c.cost;
-          taTW += c.current;
-      }
+      if(c.type.includes('us')) { tcUS += c.cost; taUS += c.current; } 
+      else { tcTW += c.cost; taTW += c.current; }
   });
 
   const sTW = calc(tcTW, taTW);
-  document.getElementById('costTW').textContent = '$' + (tcTW/10000).toFixed(0) + '萬';
-  document.getElementById('assetTW').textContent = '$' + (taTW/10000).toFixed(0) + '萬';
-  const plTW_val = (sTW.diff/10000).toFixed(1);
-  document.getElementById('plTW_val').textContent = `${sTW.sign}$${plTW_val}萬`;
+  setText('costTW', '$' + (tcTW/10000).toFixed(0) + '萬');
+  setText('assetTW', '$' + (taTW/10000).toFixed(0) + '萬');
+  setText('plTW_val', `${sTW.sign}$${(sTW.diff/10000).toFixed(1)}萬`);
   document.getElementById('plTW_val').className = `profit-main ${sTW.cls}`;
-  document.getElementById('plTW_pct').textContent = `${sTW.arrow} ${sTW.roi}%`;
+  setText('plTW_pct', `${sTW.arrow} ${sTW.roi}%`);
   document.getElementById('plTW_pct').className = `profit-sub ${sTW.cls}`;
 
   const sUS = calc(tcUS, taUS);
-  document.getElementById('costUS').textContent = '$' + (tcUS/10000).toFixed(0) + '萬';
-  document.getElementById('assetUS').textContent = '$' + (taUS/10000).toFixed(0) + '萬';
-  const plUS_val = (sUS.diff/10000).toFixed(1);
-  document.getElementById('plUS_val').textContent = `${sUS.sign}$${plUS_val}萬`;
+  setText('costUS', '$' + (tcUS/10000).toFixed(0) + '萬');
+  setText('assetUS', '$' + (taUS/10000).toFixed(0) + '萬');
+  setText('plUS_val', `${sUS.sign}$${(sUS.diff/10000).toFixed(1)}萬`);
   document.getElementById('plUS_val').className = `profit-main ${sUS.cls}`;
-  document.getElementById('plUS_pct').textContent = `${sUS.arrow} ${sUS.roi}%`;
+  setText('plUS_pct', `${sUS.arrow} ${sUS.roi}%`);
   document.getElementById('plUS_pct').className = `profit-sub ${sUS.cls}`;
 
-  // 總資產
+  // Total
   const totalAssetTWD = taTW + (taUS * currentRate);
   const totalCostTWD = tcTW + (tcUS * currentRate); 
   const sTotal = calc(totalCostTWD, totalAssetTWD);
-  const cur = document.getElementById('totalAsset'); 
-  cur.textContent = 'NT$ ' + totalAssetTWD.toLocaleString(undefined, {maximumFractionDigits: 0});
-  cur.className = 'total-big-val ' + sTotal.cls;
-  document.getElementById('totalCostTWD').textContent = '$' + (totalCostTWD/10000).toFixed(0) + '萬';
-  const totalDiff = totalAssetTWD - totalCostTWD;
-  const totalSign = totalDiff >= 0 ? '+' : '';
-  const elDiff = document.getElementById('totalDiff');
-  elDiff.textContent = `${totalSign}$${(totalDiff/10000).toFixed(1)}萬`;
-  elDiff.className = `data-val ${sTotal.cls}`;
   
-  const elTotalROI = document.getElementById('totalROI');
-  elTotalROI.textContent = `${sTotal.arrow} ${sTotal.sign}${sTotal.roi}%`;
-  elTotalROI.className = `total-roi-display ${sTotal.cls}`;
+  const tEl = document.getElementById('totalAsset');
+  tEl.textContent = 'NT$ ' + totalAssetTWD.toLocaleString(undefined, {maximumFractionDigits: 0});
+  tEl.className = 'total-big-val ' + sTotal.cls;
+  
+  setText('totalCostTWD', '$' + (totalCostTWD/10000).toFixed(0) + '萬');
+  const tDiffEl = document.getElementById('totalDiff');
+  tDiffEl.textContent = `${sTotal.sign}$${((totalAssetTWD - totalCostTWD)/10000).toFixed(1)}萬`;
+  tDiffEl.className = `data-val ${sTotal.cls}`;
+  
+  const roiEl = document.getElementById('totalROI');
+  roiEl.textContent = `${sTotal.arrow} ${sTotal.sign}${sTotal.roi}%`;
+  roiEl.className = `total-roi-display ${sTotal.cls}`;
 
-  // HP Bar Logic
+  // HP Bar
   const hpBar = document.getElementById('hpBar');
   const hpText = document.getElementById('hpText');
-  let hpPercent = (totalAssetTWD / totalCostTWD) * 100;
-  
-  if(totalCostTWD <= 0) hpPercent = 100;
-
+  let hpPercent = totalCostTWD > 0 ? (totalAssetTWD / totalCostTWD) * 100 : 100;
   hpText.textContent = `HP: ${totalAssetTWD.toLocaleString()} / ${totalCostTWD.toLocaleString()}`;
-  
-  hpBar.className = 'hp-fill';
   hpBar.style.width = hpPercent >= 100 ? '100%' : `${hpPercent}%`;
 }
 
 function renderCards(){
   const con=document.getElementById('cardContainer'); con.innerHTML='';
-  if(Object.keys(cardsData).length === 0) {
-      con.innerHTML = '<div style="color:white;padding:20px;">NO DATA FOUND</div>';
-      return;
-  }
+  if(Object.keys(cardsData).length === 0) return;
+  
   Object.values(cardsData).forEach(c=>{
     let costDisplay = (c.cost / 10000).toFixed(0); 
     con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')">
       <div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div>
       <div class="mc-image-container">${c.media}</div>
       <div class="mc-footer">
-        <div class="mc-chn-name">${c.rpg || ''}</div>
+        <div class="mc-chn-name">${c.rpg}</div>
         <div class="mc-eng-name">${c.skill}</div>
         <div class="mc-cost-badge">$${costDisplay}萬</div>
       </div>
@@ -591,79 +215,38 @@ function renderCards(){
 
 function renderEvents(){
     const con = document.getElementById('eventContainer');
-    const validEvents = eventsData.slice(0, 2); 
-    if(validEvents.length === 0) {
-        con.innerHTML = '<div style="padding:15px;color:#666">NO EVENTS LOGGED.</div>';
-        return;
-    }
     con.innerHTML = '';
-    validEvents.forEach(e => {
+    eventsData.slice(0, 2).forEach(e => {
         const urgentClass = e.isUrgent ? ' emergency' : '';
         con.innerHTML += `
         <div class="event-card${urgentClass}">
-            <div class="event-header">
-                <span class="event-date">${e.date}</span>
-                <span class="event-status">${e.status}</span>
-            </div>
+            <div class="event-header"><span class="event-date">${e.date}</span><span class="event-status">${e.status}</span></div>
             <div class="event-content">${e.content}</div>
         </div>`;
     });
 }
 
-function toggleStrategy(element) {
-    const isActive = element.classList.contains('active');
-    document.querySelectorAll('.g-bar.active').forEach(bar => {
-        bar.classList.remove('active');
-    });
-    if (!isActive) {
-        element.classList.add('active');
-    }
-}
-
 function renderArena(){
   const con=document.getElementById('arenaContainer'); con.innerHTML = ''; 
   Object.keys(portfolios).forEach(groupName => {
-      
-      const strategiesWithROI = portfolios[groupName].map(p => {
+      const strategies = portfolios[groupName].map(p => {
           let tc = 0, ta = 0;
-          p.deck.forEach(d => {
-              if(cardsData[d]) { tc += cardsData[d].cost; ta += cardsData[d].current; }
-          });
-          const s = calc(tc, ta);
-          return { ...p, roiVal: parseFloat(s.roi), stats: s }; 
-      });
-
-      strategiesWithROI.sort((a, b) => b.roiVal - a.roiVal);
+          p.deck.forEach(d => { if(cardsData[d]) { tc += cardsData[d].cost; ta += cardsData[d].current; } });
+          return { ...p, stats: calc(tc, ta) }; 
+      }).sort((a, b) => parseFloat(b.stats.roi) - parseFloat(a.stats.roi));
 
       let groupHtml = `<div class="arena-group"><div class="group-header">${groupName}</div>`;
-      
-      strategiesWithROI.forEach(p => {
-        const icons = p.deck.map(code => {
-          const c = cardsData[code];
-          if(c && c.media.includes('<img')) {
-             const srcMatch = c.media.match(/src="([^"]*)"/);
-             const src = srcMatch ? srcMatch[1] : '';
-             return `<span class="g-mini-icon ${c.type}"><img src="${src}"></span>`;
-          } else if(c) {
-             return `<span class="g-mini-icon ${c.type}">${c.media.replace('mc-media', '')}</span>`;
-          }
-          return '';
-        }).join('');
-        
+      strategies.forEach(p => {
+        const icons = p.deck.map(d => cardsData[d] ? `<span class="g-mini-icon">${cardsData[d].media.includes('<img') ? '<img src="'+cardsData[d].media.match(/src="([^"]*)"/)[1]+'">' : cardsData[d].media}</span>` : '').join('');
         const s = p.stats;
-        
         groupHtml += `
           <div class="g-bar-container">
-            <div class="g-bar" onclick="toggleStrategy(this)">
+            <div class="g-bar" onclick="this.classList.toggle('active')">
                 <span class="g-code">${p.code}</span>
-                <div class="g-name-group">
-                    <span class="g-name-bar">${p.name}</span>
-                    <span class="g-deck-str">${p.deckStr}</span>
-                </div>
+                <div class="g-name-group"><span class="g-name-bar">${p.name}</span><span class="g-deck-str">${p.deckStr}</span></div>
                 <div class="g-deck-icons">${icons}</div>
                 <div class="g-roi ${s.cls}">${s.sign}${s.roi}%</div>
             </div>
-            
             <div class="g-details">
                 <div class="highlight-content">
                     <div class="d-row"><span class="d-label">✨ 亮點</span><span class="d-text">${p.mindset}</span></div>
@@ -678,18 +261,22 @@ function renderArena(){
   });
 }
 
+function setText(id, txt) { const el = document.getElementById(id); if(el) el.textContent = txt; }
 function openModal(k){
   const c=cardsData[k];
-  document.getElementById('mCode').textContent=c.code;
-  document.getElementById('mSkill').textContent=c.skill;
-  document.getElementById('mCost').textContent=`${c.type.includes('us')?'US$':'NT$'} ${c.cost.toLocaleString()}`;
-  document.getElementById('mStrategy').textContent=c.strategy;
-  document.getElementById('mSop').textContent=c.sop;
-  document.querySelector('.modal-content').style.borderColor='#fff';
+  setText('mCode', c.code); setText('mSkill', c.skill); setText('mCost', `$${c.cost.toLocaleString()}`);
+  setText('mStrategy', c.strategy); setText('mSop', c.sop);
   document.getElementById('cardModal').style.display='flex';
 }
-function closeModal(){document.getElementById('cardModal').style.display='none'}
+function closeModal(){ document.getElementById('cardModal').style.display='none'; }
 document.addEventListener('keydown',e=>e.key==='Escape'&&closeModal());
+
+// Refresh Logic
+const refreshIndicator = document.getElementById('refresh-indicator');
+const spinner = document.querySelector('.spinner');
+async function triggerRefresh() {
+    refreshIndicator.style.height = '60px'; spinner.style.display = 'block';
+    await init();
+    setTimeout(() => { refreshIndicator.style.height = '0px'; spinner.style.display = 'none'; }, 800);
+}
 </script>
-</body>
-</html>

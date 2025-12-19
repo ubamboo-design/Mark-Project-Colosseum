@@ -1,409 +1,40 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : MOCKING EDITION</title>
-<style>
-    /* =========================================
-       嘲諷風格 (MOCKING STYLE) - 核心變數
-       去你的漸層，去你的高科技
-    ========================================= */
-    :root {
-        --bg: #000000;
-        --line: #ffffff;
-        --text: #ffffff;
-        --gray: #444444;
-        
-        /* 嘲諷亮色：像小畫家預設的顏色 */
-        --profit: #00ff00; /* 極端綠 */
-        --loss: #ff0000;   /* 極端紅 */
-        --gold: #ffff00;   /* 極端黃 */
-        --accent: #ffffff;
-        
-        --border-w: 3px;   /* 粗線條 */
-        --shadow-dist: 6px; /* 硬陰影距離 */
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    /* 字體改用 Comic Sans MS 以達到最大嘲諷效果 */
-    body { 
-        background: var(--bg); 
-        color: var(--text); 
-        font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif; 
-        line-height: 1.3; 
-        overflow-x: hidden; 
-        padding-bottom: 50px; 
-        /* 背景加一點雜訊讓黑色不那麼無聊，像黑板 */
-        background-image: 
-            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-        background-size: 40px 40px;
-    }
-    
-    /* 通用：粗框 + 硬陰影 */
-    .mock-box {
-        border: var(--border-w) solid var(--line);
-        background: #000;
-        box-shadow: var(--shadow-dist) var(--shadow-dist) 0px var(--line); /* 硬陰影核心 */
-        transition: transform 0.1s;
-    }
-    .mock-box:active {
-        transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0px var(--line);
-    }
-
-    /* REFRESH */
-    #refresh-indicator { position: fixed; top: 0; left: 0; width: 100%; height: 0; background: #fff; color: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: height 0.2s; z-index: 9999; border-bottom: var(--border-w) solid #000; }
-    .refresh-text { font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; }
-    .spinner { 
-        width: 30px; height: 30px; 
-        background: #000; 
-        margin-right: 15px; 
-        animation: spin 0.5s steps(4) infinite; /* 逐格動畫，看起來很卡 */
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    /* HEADER */
-    header { padding: 40px 20px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
-    #pageLogo { height: 100px; width: auto; filter: grayscale(100%) contrast(200%) invert(1); border: 2px solid #fff; padding: 5px; background: #000; display: none; }
-    h1 { 
-        font-size: 3rem; 
-        text-transform: uppercase; 
-        font-weight: 900; 
-        text-decoration: underline wavy var(--gold); /* 波浪底線 */
-        margin-bottom: 10px;
-        text-shadow: 4px 4px 0 #444;
-    }
-    .meta-info { font-size: 1rem; color: #aaa; background: #222; padding: 5px 10px; border: 1px dashed #fff; transform: rotate(-2deg); display: inline-block; }
-    .container { max-width: 1600px; margin: 0 auto; padding: 0 20px; }
-    
-    /* DASHBOARD */
-    .dashboard-panel { margin: 30px 0; }
-    .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 30px; }
-    
-    .dash-group { 
-        /* 繼承 mock-box */
-        border: var(--border-w) solid var(--line);
-        background: #000;
-        box-shadow: var(--shadow-dist) var(--shadow-dist) 0px var(--line);
-        padding: 20px; 
-        display: flex; flex-direction: column; justify-content: space-between; 
-        min-height: 220px;
-    }
-    
-    /* 針對不同區域的嘲諷邊框顏色 */
-    .dash-group.tw-style { border-color: #fff; }
-    .dash-group.us-style { border-color: #fff; } 
-    /* 總資產那塊稍微大一點 */
-    .dash-group.total-style { 
-        border: 4px solid var(--gold); 
-        box-shadow: 8px 8px 0px var(--gold);
-    }
-
-    .dash-header { border-bottom: 2px solid #fff; padding-bottom: 10px; margin-bottom: 15px; font-weight: 900; font-size: 1.5rem; }
-    .data-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
-    .data-label { font-size: 1rem; color: #ccc; }
-    .data-val { font-size: 1.5rem; font-weight: bold; }
-    .unit-tag { font-size: 0.8rem; margin-left: 5px; }
-
-    /* HP BAR (手繪風格) */
-    .hp-wrapper {
-        width: 100%; height: 40px; 
-        border: 3px solid #fff; 
-        background: #000;
-        position: relative; margin: 15px 0;
-    }
-    .hp-fill {
-        height: 100%; width: 0%; 
-        background: repeating-linear-gradient(
-            45deg,
-            #fff,
-            #fff 10px,
-            #000 10px,
-            #000 20px
-        ); /* 斑馬線填充 */
-        transition: width 0.5s steps(10); /* 像遊戲一樣一格一格跳 */
-        border-right: 3px solid #fff;
-    }
-    .hp-text {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-        display: flex; align-items: center; justify-content: center;
-        color: #fff; font-weight: 900; font-size: 1.2rem; 
-        text-shadow: 2px 2px 0 #000; mix-blend-mode: difference;
-    }
-    .hp-fill.damaged { background: repeating-linear-gradient(45deg, var(--loss), var(--loss) 10px, #000 10px, #000 20px); }
-    .hp-fill.overheal { background: repeating-linear-gradient(45deg, var(--gold), var(--gold) 10px, #000 10px, #000 20px); }
-
-    .total-big-val { font-size: 3.5rem; font-weight: 900; text-align: right; margin: 10px 0; line-height: 1; text-shadow: 3px 3px 0 #444; }
-    .profit-block { 
-        border: 2px solid #fff; padding: 10px; margin-top: 10px; 
-        display: flex; justify-content: space-between; align-items: center; 
-        background: #111;
-    }
-    .profit-main { font-size: 1.4rem; font-weight: 900; }
-    
-    .color-profit { color: var(--profit) !important; text-shadow: 1px 1px 0 #fff; }
-    .color-loss { color: var(--loss) !important; text-shadow: 1px 1px 0 #fff; }
-    .color-gold { color: var(--gold) !important; }
-    .color-dead { color: #f0f; font-style: italic; text-decoration: line-through; }
-
-    @media(max-width: 900px) { .dash-grid { grid-template-columns: 1fr; } header { padding: 20px 0; } }
-
-    /* SECTIONS */
-    .section-title { 
-        font-size: 2rem; font-weight: 900; 
-        border: 3px solid #fff; 
-        display: inline-block; padding: 10px 20px; margin: 60px 0 30px;
-        background: #000;
-        box-shadow: 5px 5px 0 #fff;
-        transform: rotate(-1deg);
-    }
-
-    /* DECK - CARDS */
-    .deck-wrapper { overflow-x: auto; padding-bottom: 25px; padding-left: 5px; }
-    .deck-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 20px; min-width: 0; } 
-    
-    .micro-card { 
-        background: #000; 
-        border: 3px solid #fff; 
-        padding: 15px; 
-        min-height: 260px; 
-        position: relative; 
-        cursor: pointer; 
-        transition: 0.1s;
-        box-shadow: 6px 6px 0 #fff; /* 硬陰影 */
-        display: flex; flex-direction: column;
-    }
-    .micro-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #fff; background: #111; }
-    .micro-card:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0 #fff; }
-
-    .mc-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 2px dashed #444; padding-bottom: 5px; }
-    .mc-code { font-size: 1.2rem; font-weight: 900; }
-    .mc-target { background: #fff; color: #000; padding: 2px 6px; font-weight: bold; font-size: 0.8rem; }
-    
-    .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
-    /* 強制圖片變成黑白高對比，像影印的一樣 */
-    .mc-media { width: 80px; height: 80px; object-fit: contain; filter: grayscale(100%) contrast(150%); border: 2px solid #333; padding: 5px; border-radius: 0; }
-    
-    .mc-footer { text-align: center; margin-top: auto; }
-    .mc-chn-name { font-size: 1.1rem; font-weight: 900; margin-bottom: 5px; }
-    .mc-eng-name { font-size: 0.8rem; color: #888; text-transform: uppercase; }
-    .mc-cost-badge { margin-top: 8px; display: inline-block; border: 1px solid #fff; padding: 2px 10px; font-size: 0.8rem; background: #222; }
-
-    /* 針對不同類型的嘲諷邊框 */
-    .type-tw { border-color: #fff; }
-    .type-yield { border-color: var(--profit); box-shadow: 6px 6px 0 var(--profit); }
-    .type-ber { border-color: #f60; box-shadow: 6px 6px 0 #f60; }
-    .type-trap { border-color: #a0a; box-shadow: 6px 6px 0 #a0a; }
-
-    @media(max-width: 1200px) { .deck-grid { grid-template-columns: repeat(4, 1fr); min-width: 800px; } }
-    @media(max-width: 768px) { .deck-grid { grid-template-columns: repeat(2, 1fr); min-width: 100%; } }
-
-    /* EVENTS LOG */
-    .event-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .event-card { 
-        border: 3px solid #fff; padding: 20px; background: #000;
-        box-shadow: 6px 6px 0 #fff;
-    }
-    .event-header { display: flex; justify-content: space-between; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 10px; }
-    .event-status { background: #fff; color: #000; padding: 2px 8px; font-weight: bold; transform: rotate(2deg); }
-    .event-card.emergency { 
-        border-color: var(--loss); 
-        box-shadow: 6px 6px 0 var(--loss); 
-        animation: shake 0.5s infinite; /* 緊急就抖動 */
-    }
-    @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 50% { transform: translate(-1px, -1px) rotate(-1deg); } 100% { transform: translate(1px, 1px) rotate(0deg); } }
-
-    /* ARENA */
-    .arena-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-    .arena-group { 
-        border: 3px solid #fff; padding: 15px; position: relative;
-        background: repeating-linear-gradient(0deg, transparent, transparent 19px, #111 20px); /* 筆記本橫線背景 */
-    }
-    .group-header { 
-        font-size: 1.8rem; font-weight: 900; text-align: center; margin-bottom: 20px; 
-        background: #000; display: inline-block; padding: 0 20px; border: 2px solid #fff;
-        position: relative; top: -30px; left: 50%; transform: translateX(-50%);
-    }
-
-    .g-bar { 
-        display: grid; grid-template-columns: 60px 1fr 100px 110px; align-items: center; 
-        border: 2px solid #fff; margin-bottom: 15px; padding: 10px; 
-        background: #000; cursor: pointer; transition: 0.1s;
-        box-shadow: 4px 4px 0 #444;
-    }
-    .g-bar:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #fff; background: #111; }
-    .g-bar.active { background: #fff; color: #000; border-color: #000; box-shadow: none; transform: translate(4px, 4px); }
-    .g-bar.active .g-code, .g-bar.active .g-name-bar, .g-bar.active .g-deck-str, .g-bar.active .g-roi { color: #000; text-shadow: none; }
-    
-    .g-code { font-weight: 900; font-size: 1.2rem; }
-    .g-name-bar { font-weight: 900; font-size: 1.2rem; text-transform: uppercase; }
-    .g-deck-str { font-size: 0.9rem; color: #888; }
-    .g-roi { font-weight: 900; font-size: 1.4rem; text-align: right; }
-    
-    .g-mini-icon img { filter: grayscale(100%); width: 30px; height: 30px; margin: 0 2px; }
-
-    .g-details { max-height: 0; overflow: hidden; transition: max-height 0s; border: 2px solid #fff; border-top: none; width: 95%; margin: 0 auto; background: #111; }
-    .g-bar.active + .g-details { max-height: 600px; padding: 20px; border-width: 3px; display: block; }
-
-    .d-row { margin-bottom: 10px; border-bottom: 1px dashed #555; padding-bottom: 5px; display: flex; }
-    .d-label { width: 100px; font-weight: bold; color: var(--gold); }
-    .d-text { color: #fff; }
-
-    /* FOOTER (THE IRON LAWS) */
-    .footer-grid { margin-top: 60px; border-top: 4px solid #fff; padding-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .info-box { 
-        border: 2px solid #fff; padding: 15px; background: #000;
-        box-shadow: 4px 4px 0 #333;
-    }
-    .info-title { font-size: 1.1rem; font-weight: 900; color: #fff; text-decoration: underline; margin-bottom: 5px; display: block; }
-    .refresh-btn { 
-        grid-column: span 2; 
-        background: #fff; color: #000; font-weight: 900; text-align: center; cursor: pointer; 
-        border: 3px solid #000; outline: 2px solid #fff; margin-top: 10px; padding: 15px;
-    }
-    .refresh-btn:hover { background: #ccc; }
-    .refresh-btn:active { background: #000; color: #fff; }
-
-    /* MODAL */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.2); backdrop-filter: grayscale(1); display: none; align-items: center; justify-content: center; z-index: 9999; }
-    .modal-active { display: flex; }
-    .modal-content { 
-        background: #000; border: 5px solid #fff; padding: 30px; 
-        max-width: 500px; width: 90%; 
-        box-shadow: 15px 15px 0 rgba(255,255,255,0.5); 
-        position: relative;
-    }
-    .close-btn { position: absolute; top: 10px; right: 15px; font-size: 2rem; cursor: pointer; font-weight: 900; }
-    .m-code { font-size: 3rem; font-weight: 900; text-decoration: underline; }
-    .m-value.highlight { font-size: 1.8rem; color: #fff; border: 2px solid #fff; display: inline-block; padding: 5px 10px; transform: rotate(-2deg); margin-top: 5px; }
-
-    @media(max-width: 900px) {
-        .g-bar { grid-template-columns: 60px 1fr auto; grid-template-rows: auto auto; }
-        .g-deck-icons { grid-column: 3; grid-row: 1; }
-        .g-roi { grid-column: 3; grid-row: 2; }
-        .footer-grid { grid-template-columns: 1fr; }
-    }
-</style>
-</head>
-<body>
-<div id="refresh-indicator"><div class="refresh-text"><div class="spinner"></div>REFRESHING...</div></div>
-
-<header>
-  <img id="pageLogo" src="" alt="Logo">
-  <div class="header-text">
-      <h1>PROJECT CAGE</h1>
-      <div class="meta-info">v15.0 MOCKING ED. • NT$ 1,000 萬 • ROUGH STYLE</div>
-  </div>
-</header>
-
-<div class="container">
-  <div class="dashboard-panel">
-    <div class="dash-grid">
-      <div class="dash-group tw-style">
-        <div class="dash-header">TWD 核心</div>
-        <div class="data-row"><span class="data-label">COST</span><span class="data-val" id="costTW">...</span></div>
-        <div class="data-row"><span class="data-label">ASSET</span><span class="data-val asset" id="assetTW">...</span></div>
-        <div class="profit-block"><span class="profit-main" id="plTW_val">...</span><span class="profit-sub" id="plTW_pct">...</span></div>
-      </div>
-      <div class="dash-group us-style">
-        <div class="dash-header">USD 核心</div>
-        <div class="data-row"><span class="data-label">COST</span><span class="data-val" id="costUS">...</span></div>
-        <div class="data-row"><span class="data-label">ASSET</span><span class="data-val asset" id="assetUS">...</span></div>
-        <div class="profit-block"><span class="profit-main" id="plUS_val">...</span><span class="profit-sub" id="plUS_pct">...</span></div>
-      </div>
-      
-      <div class="dash-group total-style">
-        <div class="dash-header" style="text-align: center; border:none;">TOTAL ASSET</div>
-        
-        <div class="hp-wrapper">
-            <div class="hp-fill" id="hpBar"></div>
-            <div class="hp-text" id="hpText">LOADING HP...</div>
-        </div>
-
-        <div class="total-big-val" id="totalAsset">...</div>
-        <div class="total-roi-block">
-            <div class="total-roi-display" id="totalROI" style="text-align: right; font-size: 2rem; font-weight: 900;">...</div>
-        </div>
-        <div class="data-row"><span class="data-label">總成本 (TWD)</span><span class="data-val" id="totalCostTWD">...</span></div>
-        <div class="data-row"><span class="data-label">損益 (TWD)</span><span class="data-val" id="totalDiff">...</span></div>
-        <div class="rate-display" id="rateInfo" style="text-align: right; color: #888;">Loading Rate...</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-title">I. 8 SKILL CARDS</div>
-  <div class="deck-wrapper"><div class="deck-grid" id="cardContainer"><div class="loading">CONNECTING...</div></div></div>
-
-  <div class="section-title">II. EVENT LOG</div>
-  <div class="event-list" id="eventContainer">
-      <div class="loading">CHECKING LOGS...</div>
-  </div>
-
-  <div class="section-title">III. BATTLE ARENA</div>
-  <div class="arena-container" id="arenaContainer"><div class="loading">LOADING STRATEGIES...</div></div>
-
-  <div class="section-title">IV. IRON LAWS</div>
-  <div class="footer-grid">
-    <div class="info-box"><span class="info-title">🔒 資金封閉</span>1,000 萬死也不拿出來用。</div>
-    <div class="info-box"><span class="info-title">⚖️ 全面公開</span>反正虧錢也是給大家笑。</div>
-    <div class="info-box"><span class="info-title">🔄 配息再投入</span>複利是世界第八大奇蹟(吧?)。</div>
-    <div class="info-box"><span class="info-title">🏆 紀律執行</span>機器人是沒有感情的。</div>
-    <div class="info-box refresh-btn" onclick="triggerRefresh()">↻ F5 REFRESH (手動刷新)</div>
-  </div>
-</div>
-
-<div id="cardModal" class="modal-overlay" onclick="closeModal()">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div style="display:flex; justify-content:space-between;">
-        <div class="m-code" id="mCode"></div>
-        <div class="close-btn" onclick="closeModal()">X</div>
-    </div>
-    <div class="m-skill" id="mSkill" style="font-size:1.5rem; margin-bottom:20px; font-weight:bold;"></div>
-    
-    <div class="m-row"><span class="m-label" style="color:#888;">CAPITAL</span><br><div class="m-value highlight" id="mCost"></div></div>
-    <div class="m-row"><span class="m-label" style="color:#888;">STRATEGY</span><br><div class="m-value" id="mStrategy" style="font-size:1.2rem;"></div></div>
-    <div class="m-row"><span class="m-label" style="color:#888;">SOP</span><div class="m-value" id="mSop" style="padding:15px; border:2px dashed #fff; margin-top:5px;"></div></div>
-  </div>
-</div>
-
 <script>
 // =========================================================
-//  核心邏輯保持不變，僅調整部分顯示邏輯以配合樣式
+//  ✅ 修正版連線邏輯 (移除干擾參數)
 // =========================================================
+
+// 請確認這裡是你正確的 Google Sheet TSV 網址
 const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv';
 
-// FALLBACK DATA (SAME AS BEFORE)
+// === 備份資料 (當連線失敗時顯示) ===
 const FALLBACK_DATA = `
 A (code)	B (type)	C (rpg)	D (target)	E (skill)	F (cost)	G (current)	H (strategy)	I (sop)	J (image)
 C01	type-tw	平庸的定期定額	006208	TW DCA	NT$2,520,000	2,595,945	賣暢銷書賺到財富自由的大師們都推薦的平庸策略	每個月 5 ,15,25號：每次扣款 NT$10,000	https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png
-C02	type-tw	QQQ獎金給我她奶奶的all in	006208	TW LSI	NT$1,750,000	1,750,000	獎金就是他奶奶的用來all in的，有錢就加碼，沒錢就續抱，完美體現生命周期投資法的精隨	年終過完年後首週五加碼 NT$15 萬，年中過完中秋後周五NT$10萬持續7年	https://ubamboo-design.github.io/Mark-investment-dashboard/C02.png
-C03	type-yield	股息cover每一天	00878	YIELD	NT$840,000	840,636	最滿足心理帳戶的坑爹的策略，既割又割，散戶依舊前仆後進	每月 5 號：扣款 NT$10,000	https://ubamboo-design.github.io/Mark-investment-dashboard/C03.png
-C04	type-ber	問就是正2	00631L	SEALED	NT$500,000	500,000		股票50:現金50 ，當股票資產偏離 >75% 或 <50% 強制再平衡	https://ubamboo-design.github.io/Mark-investment-dashboard/C04.png
-C05	type-us	要買就買全世界	VT	GLOBAL DCA	$50,000.00	50,000	資產配置我好棒	每月 5 號買600美金，若1股超過則買1股(美金的換匯成本約1:30)	https://ubamboo-design.github.io/Mark-investment-dashboard/C05.png
-C06	type-us	美國就是我爸爸	VOO	US DCA	$50,000.00	50,000	我就舔	每月 5 號買600美金，若1股超過則買1股(美金的換匯成本約1:30)	https://ubamboo-design.github.io/Mark-investment-dashboard/C06.png
-C07	type-trap	可以進場了嗎?	CASH/006208	AMBUSH	NT$900,000	900,000	再等一等好了~然後就沒有然後了~	股市修正20%後進場9萬，每下跌10%加碼18/27/36	https://ubamboo-design.github.io/Mark-investment-dashboard/C07.png
-C02-1	type-tw	履歷才是最強Asset	006208	TW LSI	NT$500,000	500,000	等待大崩盤的那一天我就贏了?	2025/1/6 開盤抽(PK正2的50:50)，若比原策略強就加碼。(一種自我行銷是非對錯)	https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png
+C02	type-tw	QQQ獎金給我她奶奶的all in	006208	TW LSI	NT$1,750,000	1,750,000	獎金就是他奶奶的用來all in的，有錢就加碼	年終過完年後首週五加碼 NT$15 萬	https://ubamboo-design.github.io/Mark-investment-dashboard/C02.png
+C03	type-yield	股息cover每一天	00878	YIELD	NT$840,000	840,636	最滿足心理帳戶的坑爹的策略	每月 5 號：扣款 NT$10,000	https://ubamboo-design.github.io/Mark-investment-dashboard/C03.png
+C04	type-ber	問就是正2	00631L	SEALED	NT$500,000	500,000	股票50:現金50 ，當股票資產偏離 >75% 或 <50% 強制再平衡	https://ubamboo-design.github.io/Mark-investment-dashboard/C04.png
+C05	type-us	要買就買全世界	VT	GLOBAL DCA	$50,000.00	50,000	資產配置我好棒	每月 5 號買600美金	https://ubamboo-design.github.io/Mark-investment-dashboard/C05.png
+C06	type-us	美國就是我爸爸	VOO	US DCA	$50,000.00	50,000	我就舔	每月 5 號買600美金	https://ubamboo-design.github.io/Mark-investment-dashboard/C06.png
+C07	type-trap	可以進場了嗎?	CASH/006208	AMBUSH	NT$900,000	900,000	再等一等好了~然後就沒有然後了~	股市修正20%後進場9萬	https://ubamboo-design.github.io/Mark-investment-dashboard/C07.png
+C02-1	type-tw	履歷才是最強Asset	006208	TW LSI	NT$500,000	500,000	等待大崩盤的那一天我就贏了?	2025/1/6 開盤抽	https://ubamboo-design.github.io/Mark-investment-dashboard/C01.png
 	
 代號	名稱	牌組	競技亮點	投資人格側寫	預期心理衝突	
 P01	台股定期定額	C01	單純驗證「大師們推薦的平庸策略」到底有多平庸。	佛系躺平族：相信大師，放棄思考。	最無心理負擔，但也最容易在多頭市場感到無聊而手癢亂動。	
 P02	台股雙核心	C01+C02	當市場大漲時嫌 C01 慢，大跌時怪 C02 衝太快。	穩健進取型：試圖在平庸與激進間取得平衡。	單筆投入的條件是不能離場，必須持續買進平滑成本並長期在場內	
-P03	最貴的安眠藥	C03	長期績效最差，但是心理最舒服，最適合焦慮睡不著的投資人	收租心態者：只在乎現金流，不在乎淨值。	熊市中最抗跌（心理上），但在牛市中會因跑輸大盤而焦慮。	
+P03	最貴的安眠藥	C03	長期績效最差，但是心理最舒服	收租心態者：只在乎現金流，不在乎淨值。	熊市中最抗跌（心理上），但在牛市中會因跑輸大盤而焦慮。	
 P04	無限等待之術	C07	大機率會空手很久。驗證「擇時等待」是否會輸給「閉眼投入」。	完美主義者：試圖扮演上帝。	大機率長期空手，最終可能在受不了時高點追進。	
 	
-P05	大哥沒有輸	C02-1	是否能跑贏槓桿流。	沒人會這樣投資!!	資金效率壓滿，但是贏的路徑太單一，需承受巨大的單日損益波動，心臟強度需極高。	
+P05	大哥沒有輸	C02-1	是否能跑贏槓桿流。	沒人會這樣投資!!	資金效率壓滿，但是贏的路徑太單一。	
 P06	槓桿投資法	C04	是封神還是風神?	數學賭徒用紀律駕馭槓桿波動。	在自動的扣寫機制下，逆價差與槓桿偏移能一直有效嗎?	
 	
-P07	全球雙核心	C05+C06	全球基本盤加美股加速器，也是「資產配置派」與「美股至上派」的流派。	資產配置派：既要分散又要績效。	內心的矛盾：VT 的拖累會讓其不斷質疑為何不全押 VOO。	
+P07	全球雙核心	C05+C06	全球基本盤加美股加速器。	資產配置派：既要分散又要績效。	內心的矛盾：VT 的拖累會讓其不斷質疑為何不全押 VOO。	
 P08	全球資產配置	C05	小孩子才做選擇	懷疑論者：不相信任何單一國家能長盛不衰。	極度考驗耐心，需對抗 FOMO（錯失恐懼症）。	
 P09	帝國信仰者	C06	簡單暴力的「舔狗」策略，賭的就是美國的霸權。	帝國主義者：賭美國國運。	在美元走弱或美股回調時，信仰崩塌的風險最大。	
 	
 P10	台美暴力型	C02+C06	台股重壓 + 美股重壓。這是一個極度看好台美科技連動的進攻組合。	科技信徒：看好台美科技連動。	進攻性最強，波動最劇烈，是多頭市場的王者，空頭市場的亡者。	
 P11	選擇障礙型	C01+C05+C06	大師說什麼好我就跟	雖然我不知道什麼好，反正都給我來一點	
 P12	真的好無聊型	C01+C03+C05	理論上波動最小、最符合學術界建議的「好無聊」組合。	學院派：理論上最正確的組合。	「好無聊」是最大的敵人，容易因缺乏刺激而被拋棄。	
-P13	跨國槓鈴策略	C03+C06	台灣複委託投資人中相當普遍（推估約佔 20% - 25%）	心理帳戶的平衡（槓鈴結構）	投資人會陷入**「後悔」**的迴圈。看著 VOO 漲了 20%，而手中的高股息 ETF 只漲 5%（加上配息也才 10%），投資人會不斷質疑自己：「為什麼我不乾脆 All-in VOO 就好？」但若真的賣掉高股息，又會立刻焦慮沒有現金流來繳房貸或生活費
+P13	跨國槓鈴策略	C03+C06	台灣複委託投資人中相當普遍	心理帳戶的平衡（槓鈴結構）	投資人會陷入「後悔」的迴圈。
 	
 事件簿	狀態	內容	
 2025/12/12	緊急	聯準會降息	
@@ -417,10 +48,11 @@ let cardsData = {}, portfolios = {}, eventsData = [];
 let logoUrl = ''; 
 let isFallback = false;
 
-// PULL TO REFRESH logic
+// ================= PULL TO REFRESH =================
 let touchStart = 0;
 let touchEnd = 0;
 const refreshIndicator = document.getElementById('refresh-indicator');
+const spinner = document.querySelector('.spinner');
 
 document.addEventListener('touchstart', e => { if(window.scrollY === 0) touchStart = e.changedTouches[0].screenY; });
 document.addEventListener('touchmove', e => {
@@ -435,12 +67,14 @@ document.addEventListener('touchend', async e => {
 });
 async function triggerRefresh(keepOpen = false) {
     if(!keepOpen) refreshIndicator.style.height = '60px';
+    spinner.style.display = 'block';
     await init();
-    setTimeout(() => { refreshIndicator.style.height = '0px'; }, 800);
+    setTimeout(() => { refreshIndicator.style.height = '0px'; spinner.style.display = 'none'; }, 800);
 }
+// ===================================================
 
 const defaultIcons = {
-    'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="4" fill="none"/></svg>`
+    'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="25" stroke="white" stroke-width="4" fill="none"/></svg>`
 };
 
 init();
@@ -450,33 +84,46 @@ async function init() {
     isFallback = false;
     const con = document.getElementById('cardContainer');
     
+    // 1. 抓取匯率
     try {
         const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
         const rateData = await rateRes.json();
         if(rateData && rateData.rates && rateData.rates.TWD) {
             currentRate = rateData.rates.TWD;
-            document.getElementById('rateInfo').textContent = `1 USD = ${currentRate} TWD`;
+            document.getElementById('rateInfo').textContent = `USD/TWD: ${currentRate}`;
         }
     } catch (e) { console.warn('Rate Fetch Error'); }
 
+    // 2. 抓取 Google Sheet 資料 (移除 cacheBuster 參數)
     try {
-        const cacheBuster = `&t=${Date.now()}`;
-        const sheetRes = await fetch(GOOGLE_SHEET_URL + cacheBuster);
+        const sheetRes = await fetch(GOOGLE_SHEET_URL); // 改回最單純的 Fetch
         if (!sheetRes.ok) throw new Error(`HTTP ${sheetRes.status}`);
         const sheetText = await sheetRes.text();
         
+        // 檢查資料是否為 HTML 錯誤頁面
         if(sheetText.length < 50 || sheetText.trim().startsWith('<')) {
-            throw new Error('格式錯誤');
+            throw new Error('格式錯誤，啟動備份模式');
         }
         parseSheetData(sheetText);
         renderAll();
 
+        // 成功連線提示
+        const meta = document.querySelector('.meta-info');
+        if(meta.innerHTML.includes('OFFLINE')) {
+             meta.innerHTML = meta.innerHTML.replace('<span style="color:red">[OFFLINE]</span>', '');
+        }
+
     } catch(e) {
-        console.warn('Fallback Mode');
+        console.warn('Connection failed, loading fallback data...');
         isFallback = true;
         parseSheetData(FALLBACK_DATA);
         renderAll();
-        document.querySelector('.meta-info').innerHTML += ` [OFFLINE]`;
+        
+        // 失敗時顯示 OFFLINE 標籤
+        const meta = document.querySelector('.meta-info');
+        if(!meta.innerHTML.includes('OFFLINE')) {
+             meta.innerHTML += ` <span style="color:red">[OFFLINE]</span>`;
+        }
     }
 }
 
@@ -500,6 +147,7 @@ function parseSheetData(text){
         if (c[0] === 'Logo' && c[1]) logoUrl = c[1];
 
         let imgUrl = c[9] ? c[9].trim() : '';
+        // 為了 Stickman 風格，這裡不強制使用 defaultIcons，若有圖片仍顯示圖片(但CSS會讓它變黑白)
         let displayMedia = imgUrl.startsWith('http') 
             ? `<img src="${imgUrl}" class="mc-media" alt="${skillName}">` 
             : (defaultIcons['C01']);
@@ -518,7 +166,7 @@ function parseSheetData(text){
               deckStr: c[2] || '',
               mindset: c[3] || '-',        
               persona: c[4] || '-',        
-              conflict: c[5] || '-',       
+              conflict: c[5] || '-',      
               theory: '-' 
           });
     }
@@ -562,7 +210,7 @@ function renderHeader() {
     const logoImg = document.getElementById('pageLogo');
     if (logoUrl && logoUrl.startsWith('http')) {
         logoImg.src = logoUrl;
-        logoImg.style.display = 'block';
+        logoImg.style.display = 'inline-block';
     }
 }
 
@@ -581,33 +229,37 @@ function renderDashboard(){
   const sTW = calc(tcTW, taTW);
   document.getElementById('costTW').textContent = '$' + (tcTW/10000).toFixed(0) + '萬';
   document.getElementById('assetTW').textContent = '$' + (taTW/10000).toFixed(0) + '萬';
-  document.getElementById('plTW_val').textContent = `${sTW.sign}${(sTW.diff/10000).toFixed(1)}萬`;
+  const plTW_val = (sTW.diff/10000).toFixed(1);
+  document.getElementById('plTW_val').textContent = `${sTW.sign}$${plTW_val}萬`;
   document.getElementById('plTW_val').className = `profit-main ${sTW.cls}`;
-  document.getElementById('plTW_pct').textContent = `${sTW.roi}%`;
+  document.getElementById('plTW_pct').textContent = `${sTW.arrow} ${sTW.roi}%`;
   document.getElementById('plTW_pct').className = `profit-sub ${sTW.cls}`;
 
   const sUS = calc(tcUS, taUS);
   document.getElementById('costUS').textContent = '$' + (tcUS/10000).toFixed(0) + '萬';
   document.getElementById('assetUS').textContent = '$' + (taUS/10000).toFixed(0) + '萬';
-  document.getElementById('plUS_val').textContent = `${sUS.sign}${(sUS.diff/10000).toFixed(1)}萬`;
+  const plUS_val = (sUS.diff/10000).toFixed(1);
+  document.getElementById('plUS_val').textContent = `${sUS.sign}$${plUS_val}萬`;
   document.getElementById('plUS_val').className = `profit-main ${sUS.cls}`;
-  document.getElementById('plUS_pct').textContent = `${sUS.roi}%`;
+  document.getElementById('plUS_pct').textContent = `${sUS.arrow} ${sUS.roi}%`;
   document.getElementById('plUS_pct').className = `profit-sub ${sUS.cls}`;
 
+  // 總資產
   const totalAssetTWD = taTW + (taUS * currentRate);
   const totalCostTWD = tcTW + (tcUS * currentRate); 
   const sTotal = calc(totalCostTWD, totalAssetTWD);
-  
   const cur = document.getElementById('totalAsset'); 
   cur.textContent = 'NT$ ' + totalAssetTWD.toLocaleString(undefined, {maximumFractionDigits: 0});
   cur.className = 'total-big-val ' + sTotal.cls;
-  
   document.getElementById('totalCostTWD').textContent = '$' + (totalCostTWD/10000).toFixed(0) + '萬';
-  document.getElementById('totalDiff').textContent = `${sTotal.sign}${(sTotal.diff/10000).toFixed(1)}萬`;
-  document.getElementById('totalDiff').className = `data-val ${sTotal.cls}`;
+  const totalDiff = totalAssetTWD - totalCostTWD;
+  const totalSign = totalDiff >= 0 ? '+' : '';
+  const elDiff = document.getElementById('totalDiff');
+  elDiff.textContent = `${totalSign}$${(totalDiff/10000).toFixed(1)}萬`;
+  elDiff.className = `data-val ${sTotal.cls}`;
   
   const elTotalROI = document.getElementById('totalROI');
-  elTotalROI.textContent = `${sTotal.sign}${sTotal.roi}%`;
+  elTotalROI.textContent = `${sTotal.arrow} ${sTotal.sign}${sTotal.roi}%`;
   elTotalROI.className = `total-roi-display ${sTotal.cls}`;
 
   // HP Bar Logic
@@ -620,13 +272,7 @@ function renderDashboard(){
   hpText.textContent = `HP: ${totalAssetTWD.toLocaleString()} / ${totalCostTWD.toLocaleString()}`;
   
   hpBar.className = 'hp-fill';
-  if(hpPercent >= 100) {
-      hpBar.style.width = '100%';
-      hpBar.classList.add('overheal'); 
-  } else {
-      hpBar.style.width = `${hpPercent}%`;
-      hpBar.classList.add('damaged'); 
-  }
+  hpBar.style.width = hpPercent >= 100 ? '100%' : `${hpPercent}%`;
 }
 
 function renderCards(){
@@ -726,9 +372,9 @@ function renderArena(){
             
             <div class="g-details">
                 <div class="highlight-content">
-                    <div class="d-row"><span class="d-label">亮點</span><span class="d-text">${p.mindset}</span></div>
-                    <div class="d-row"><span class="d-label">人格</span><span class="d-text">${p.persona}</span></div>
-                    <div class="d-row"><span class="d-label">衝突</span><span class="d-text" style="color:red">${p.conflict}</span></div>
+                    <div class="d-row"><span class="d-label">✨ 亮點</span><span class="d-text">${p.mindset}</span></div>
+                    <div class="d-row"><span class="d-label">👤 側寫</span><span class="d-text">${p.persona}</span></div>
+                    <div class="d-row"><span class="d-label">⚡ 衝突</span><span class="d-text" style="color:#ff6b6b">${p.conflict}</span></div>
                 </div>
             </div>
           </div>`;
@@ -745,11 +391,9 @@ function openModal(k){
   document.getElementById('mCost').textContent=`${c.type.includes('us')?'US$':'NT$'} ${c.cost.toLocaleString()}`;
   document.getElementById('mStrategy').textContent=c.strategy;
   document.getElementById('mSop').textContent=c.sop;
+  document.querySelector('.modal-content').style.borderColor='#fff';
   document.getElementById('cardModal').style.display='flex';
-  document.getElementById('cardModal').classList.add('modal-active');
 }
 function closeModal(){document.getElementById('cardModal').style.display='none'}
 document.addEventListener('keydown',e=>e.key==='Escape'&&closeModal());
 </script>
-</body>
-</html>

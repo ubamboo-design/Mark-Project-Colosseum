@@ -1,3 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROJECT CAGE : STICKMAN v15.2</title>
+<style>
+    /* =========================================
+       v15.2 STICKMAN STYLE (黑底白線手繪風)
+       ========================================= */
+    :root {
+        --bg: #000000; --text: #ffffff;
+        --gold: #ffeb3b; --green: #00ff00; --red: #ff0000; --dark-purple: #ff00ff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { 
+        background-color: var(--bg); color: var(--text); 
+        font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif; 
+        overflow-x: hidden; padding-bottom: 50px; 
+    }
+    
+    /* REFRESH SPINNER */
+    #refresh-indicator { position: fixed; top: 0; left: 0; width: 100%; height: 0; background: #fff; color: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: height 0.2s; z-index: 9999; }
+    .spinner { width: 30px; height: 30px; border: 4px solid #000; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 15px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* HEADER */
+    header { padding: 40px 20px; text-align: center; border-bottom: 2px solid #fff; margin-bottom: 40px; position: relative; }
+    header::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: #fff; transform: rotate(0.3deg); } 
+    #pageLogo { height: 100px; width: auto; display: none; filter: grayscale(100%) contrast(150%); margin-bottom: 10px; }
+    
+    h1 { font-size: 2.5rem; text-transform: uppercase; font-weight: 900; letter-spacing: -1px; text-decoration: underline wavy var(--gold); }
+    .meta-info { font-size: 1rem; color: #aaa; margin-top: 10px; font-weight: bold; font-family: monospace; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    
+    /* DASHBOARD */
+    .dashboard-panel { margin: 30px 0; }
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 30px; }
+    
+    .dash-group { 
+        padding: 20px; display: flex; flex-direction: column; justify-content: space-between; 
+        border: 2px solid #fff; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+        position: relative; background: #000; transition: transform 0.2s;
+    }
+    .dash-group:hover { transform: scale(1.02) rotate(-1deg); }
+
+    .dash-header { margin-bottom: 15px; border-bottom: 2px dashed #555; padding-bottom: 10px; }
+    .dash-title { font-size: 1.4rem; font-weight: 900; }
+    
+    .data-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .data-label { font-size: 1rem; color: #888; font-weight: bold; }
+    .data-val { font-size: 1.5rem; font-weight: 900; font-family: monospace; }
+    .total-big-val { font-size: 3.5rem; font-weight: 900; text-align: right; margin: 10px 0; line-height: 1; text-shadow: 4px 4px 0px #333; }
+    
+    /* HP BAR */
+    .hp-wrapper {
+        width: 100%; height: 35px; border: 2px solid #fff; 
+        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+        position: relative; margin-bottom: 15px; overflow: hidden; background: #222;
+    }
+    .hp-fill {
+        height: 100%; width: 0%; background: repeating-linear-gradient(45deg, #fff, #fff 10px, #000 10px, #000 20px);
+        transition: width 1s ease; border-right: 2px solid #fff;
+    }
+    .hp-text {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-weight: 900; font-size: 1rem; mix-blend-mode: difference;
+    }
+
+    .profit-block { 
+        margin-top: 15px; padding: 10px; border: 2px solid #fff; background: #000;
+        display: flex; justify-content: space-between; align-items: center; box-shadow: 5px 5px 0px #555;
+    }
+    .profit-main { font-size: 1.4rem; font-weight: 900; }
+    .profit-sub { font-size: 1rem; font-weight: bold; }
+    .color-profit { color: var(--green) !important; }
+    .color-loss { color: var(--red) !important; text-decoration: line-through; }
+    .color-gold { color: var(--gold) !important; } 
+    .color-dead { color: var(--dark-purple) !important; }
+
+    @media(max-width: 900px) { .dash-grid { grid-template-columns: 1fr; } }
+
+    /* SECTIONS */
+    .section-title { 
+        font-size: 1.8rem; margin: 60px 0 30px; font-weight: 900; text-align: center; 
+        border: 2px solid #fff; display: inline-block; padding: 10px 20px;
+        background: #000; transform: rotate(-2deg);
+    }
+    
+    /* CARDS */
+    .deck-wrapper { overflow-x: auto; padding: 20px 0; }
+    .deck-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 20px; min-width: 0; } 
+    
+    .micro-card { 
+        background: #000; border: 2px solid #fff;
+        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+        padding: 15px; cursor: pointer; display: flex; flex-direction: column; min-height: 260px; 
+    }
+    @keyframes wiggle { 
+        0% { transform: rotate(0deg); } 25% { transform: rotate(2deg); } 
+        50% { transform: rotate(0deg); } 75% { transform: rotate(-2deg); } 100% { transform: rotate(0deg); } 
+    }
+    .micro-card:hover { animation: wiggle 0.2s infinite; background: #111; z-index: 10; border-color: var(--gold); }
+
+    .mc-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+    .mc-code { font-size: 1.2rem; font-weight: 900; border-bottom: 2px solid #fff; }
+    .mc-target { font-size: 0.8rem; background: #fff; color: #000; padding: 2px 6px; font-weight: bold; border-radius: 4px; }
+    .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; margin: 10px 0; }
+    .mc-media { width: 80px; height: 80px; object-fit: contain; filter: grayscale(100%) contrast(150%) brightness(1.2); }
+    svg.mc-media { stroke: #fff; stroke-width: 4px; fill: none; stroke-linecap: round; }
+    .mc-footer { text-align: center; margin-top: auto; }
+    .mc-chn-name { font-size: 1.2rem; font-weight: 900; margin-bottom: 5px; line-height: 1.1; }
+    .mc-eng-name { font-size: 0.7rem; color: #aaa; text-transform: uppercase; }
+    .mc-cost-badge { display: inline-block; margin-top: 8px; padding: 4px 10px; border: 1px dashed #fff; font-size: 0.9rem; }
+
+    @media(max-width: 1200px) { .deck-grid { grid-template-columns: repeat(4, 1fr); min-width: 800px; } }
+    @media(max-width: 768px) { .deck-grid { grid-template-columns: repeat(2, 1fr); min-width: 100%; } }
+
+    /* EVENT LOG & ARENA */
+    .event-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .event-card { border: 2px solid #fff; border-radius: 3px 20px 4px 30px; padding: 20px; }
+    .event-header { display: flex; justify-content: space-between; border-bottom: 1px solid #555; padding-bottom: 10px; margin-bottom: 10px; font-family: monospace; }
+    .event-status { background: #fff; color: #000; padding: 0 5px; font-weight: bold; }
+    .event-card.emergency { border-color: var(--red); background: repeating-linear-gradient(45deg, #000, #000 10px, #220000 10px, #220000 20px); }
+
+    .arena-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .arena-group { border: 2px solid #fff; padding: 15px; border-radius: 10px; }
+    .group-header { text-align: center; font-size: 1.6rem; font-weight: 900; margin-bottom: 20px; background: #fff; color: #000; display: inline-block; padding: 5px 15px; transform: rotate(-1deg); width: 100%; }
+    
+    .g-bar { display: grid; grid-template-columns: 60px 1fr 100px 100px; align-items: center; border: 2px solid #555; margin-bottom: 10px; padding: 10px; cursor: pointer; transition: .2s; border-radius: 5px; }
+    .g-bar:hover { border-color: #fff; transform: translateX(5px); background: #111; }
+    .g-bar.active { border-color: var(--gold); border-style: dashed; }
+    .g-code { font-weight: 900; font-size: 1.2rem; }
+    .g-name-bar { font-size: 1.2rem; font-weight: 900; }
+    .g-deck-str { font-size: 0.8rem; color: #888; }
+    .g-roi { font-family: monospace; font-weight: 900; font-size: 1.4rem; text-align: right; }
+    .g-mini-icon img { filter: grayscale(100%); width: 32px; height: 32px; margin: 0 2px; }
+    .g-details { max-height: 0; overflow: hidden; transition: max-height .3s ease; border-left: 2px dashed #fff; margin-left: 10px; }
+    .g-bar.active + .g-details { max-height: 600px; padding: 15px; border-bottom: 2px dashed #fff; }
+    .d-row { margin-bottom: 8px; font-size: 1rem; }
+    .d-label { color: var(--gold); font-weight: bold; margin-right: 10px; }
+
+    /* FOOTER & MODAL */
+    .footer-grid { margin-top: 50px; border-top: 4px solid #fff; padding-top: 30px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+    .info-box { border: 1px solid #333; padding: 15px; color: #888; border-radius: 8px; }
+    .info-title { color: #fff; display: block; margin-bottom: 5px; font-weight: bold; }
+    .refresh-btn { grid-column: span 2; background: #fff; color: #000; font-weight: 900; text-align: center; cursor: pointer; padding: 15px; font-size: 1.2rem; text-transform: uppercase; border: 2px solid #fff; }
+    .refresh-btn:hover { background: #000; color: #fff; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 9999; }
+    .modal-content { background: #000; border: 4px solid #fff; padding: 30px; width: 90%; max-width: 500px; box-shadow: 10px 10px 0px #fff; }
+    .modal-header { display: flex; justify-content: space-between; border-bottom: 2px dashed #fff; padding-bottom: 15px; margin-bottom: 20px; }
+    .m-code { font-size: 2.5rem; font-weight: 900; }
+    .m-skill { font-size: 1.2rem; background: #fff; color: #000; padding: 2px 8px; margin-left: 10px; }
+    .close-btn { font-size: 2rem; cursor: pointer; }
+    .m-row { margin-bottom: 15px; }
+    .m-label { display: block; font-size: 0.9rem; color: #888; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
+    .m-value { font-size: 1.2rem; line-height: 1.5; font-family: 'Comic Sans MS', sans-serif; }
+    .m-value.highlight { font-size: 1.8rem; font-weight: 900; color: var(--gold); text-decoration: underline wavy; }
+</style>
+</head>
+<body>
+<div id="refresh-indicator"><div class="refresh-text"><div class="spinner"></div>REFRESHING...</div></div>
+
+<header>
+  <img id="pageLogo" src="" alt="Logo">
+  <div class="header-text">
+      <h1>PROJECT CAGE <br><span style="font-size:1.2rem;background:white;color:black;padding:2px 8px;">STICKMAN EDITION</span></h1>
+      <div class="meta-info">v15.2 // NT$ 1,000 萬 // 2025-2031</div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="dashboard-panel">
+    <div class="dash-grid">
+      <div class="dash-group">
+        <div class="dash-header"><span class="dash-title">TWD 戰情 (台幣)</span></div>
+        <div class="data-row"><span class="data-label">成本 COST</span><span class="data-val" id="costTW">...</span></div>
+        <div class="data-row"><span class="data-label">現值 ASSET</span><span class="data-val" id="assetTW">...</span></div>
+        <div class="profit-block"><span class="profit-main" id="plTW_val">...</span><span class="profit-sub" id="plTW_pct">...</span></div>
+      </div>
+      <div class="dash-group">
+        <div class="dash-header"><span class="dash-title">USD 戰情 (美金)</span></div>
+        <div class="data-row"><span class="data-label">成本 COST</span><span class="data-val" id="costUS">...</span></div>
+        <div class="data-row"><span class="data-label">現值 ASSET</span><span class="data-val" id="assetUS">...</span></div>
+        <div class="profit-block"><span class="profit-main" id="plUS_val">...</span><span class="profit-sub" id="plUS_pct">...</span></div>
+      </div>
+      
+      <div class="dash-group" style="border-style: dashed;">
+        <div class="dash-header" style="justify-content: center;"><span class="dash-title" style="background:var(--gold);color:black;padding:2px 10px;">總身價 (TOTAL)</span></div>
+        <div class="hp-wrapper">
+            <div class="hp-fill" id="hpBar"></div>
+            <div class="hp-text" id="hpText">LOADING...</div>
+        </div>
+        <div class="total-big-val" id="totalAsset">...</div>
+        <div class="total-roi-block">
+            <div class="total-roi-display" id="totalROI" style="text-align:right;font-size:1.5rem;font-weight:900;">...</div>
+        </div>
+        <div class="data-row"><span class="data-label">總投入</span><span class="data-val" id="totalCostTWD" style="font-size:1.1rem">...</span></div>
+        <div class="data-row"><span class="data-label">帳面損益</span><span class="data-val" id="totalDiff" style="font-size:1.1rem">...</span></div>
+        <div class="rate-display" id="rateInfo" style="text-align:right;color:#666;font-size:0.8rem;">Rate...</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;"><div class="section-title">I. 八大技能卡牌 (THE DECK)</div></div>
+  <div class="deck-wrapper"><div class="deck-grid" id="cardContainer"><div class="loading">CONNECTING...</div></div></div>
+
+  <div style="text-align:center;"><div class="section-title">II. 事件簿 (LOGS)</div></div>
+  <div class="event-list" id="eventContainer">
+      <div class="loading" style="padding:10px; color:#666">CHECKING LOGS...</div>
+  </div>
+
+  <div style="text-align:center;"><div class="section-title">III. 投資競技場 (ARENA)</div></div>
+  <div class="arena-container" id="arenaContainer"><div class="loading">LOADING STRATEGIES...</div></div>
+
+  <div class="footer-grid">
+    <div class="info-box"><span class="info-title">🔒 資金封閉鐵律</span>1,000 萬只進不出。嚴禁消費。</div>
+    <div class="info-box"><span class="info-title">⚖️ 全面公開鐵律</span>投資金額、報酬、對帳單全公開。</div>
+    <div class="info-box refresh-btn" onclick="triggerRefresh()">↻ 重新整理 (REFRESH)</div>
+  </div>
+</div>
+
+<div id="cardModal" class="modal-overlay" onclick="closeModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div><span class="m-code" id="mCode"></span><span class="m-skill" id="mSkill"></span></div>
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+    </div>
+    <div class="m-row"><span class="m-label">初始資金 (CAPITAL)</span><div class="m-value highlight" id="mCost"></div></div>
+    <div class="m-row"><span class="m-label">戰略定位 (STRATEGY)</span><div class="m-value" id="mStrategy"></div></div>
+    <div class="m-row"><span class="m-label">執行 SOP</span><div class="m-value" id="mSop" style="padding:15px;border:2px solid #555;border-style:dashed;"></div></div>
+  </div>
+</div>
+
 <script>
 // =========================================================
 //  PROJECT CAGE v15.2 : 數據強力修復版
@@ -5,7 +243,7 @@
 
 const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv';
 
-// ✅ 改用 JSON 格式儲存備份資料 (不怕格式跑掉)
+// ✅ 改用 JSON 格式儲存備份資料 (不怕複製貼上導致格式跑掉)
 const FALLBACK_CARDS = [
     { code: 'C01', type: 'type-tw', rpg: '平庸的定期定額', target: '006208', skill: 'TW DCA', cost: 2520000, current: 2595945, strategy: '大師推薦的平庸策略', sop: '每月5/15/25扣款1萬', img: '' },
     { code: 'C02', type: 'type-tw', rpg: '獎金All-in流', target: '006208', skill: 'TW LSI', cost: 1750000, current: 1750000, strategy: '獎金就是拿來All in的', sop: '年終/年中獎金投入', img: '' },
@@ -280,3 +518,5 @@ async function triggerRefresh() {
     setTimeout(() => { refreshIndicator.style.height = '0px'; spinner.style.display = 'none'; }, 800);
 }
 </script>
+</body>
+</html>

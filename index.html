@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : RELOADED v14.5 (HP Bar Mode)</title>
+<title>PROJECT CAGE : RELOADED v14.4 (Big Labels)</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
         --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; 
         --gold: #ffd700; --green: #00ff6a; --red: #ff2a2a; --purple: #a600ff; 
         --dark-purple: #9400d3; --cyan: #00f7ff; --emergency: #ff0000;
-        --hp-full: #00ff6a; --hp-low: #ff2a2a; --hp-over: #ffd700;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--bg); background-image: radial-gradient(circle at 50% 0%, #1a1a20 0%, #050505 70%); color: var(--text); font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.3; overflow-x: hidden; padding-bottom: 30px; overscroll-behavior-y: contain; }
@@ -46,71 +45,41 @@
     .dash-title { font-size: 1.4rem; font-weight: 900; letter-spacing: 2px; color: #fff; text-transform: uppercase; }
     .data-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
     
-    /* 標籤文字 */
-    .data-label { font-size: 1.1rem; color: #ccc; font-weight: 800; letter-spacing: 1px; }
+    /* ✅ [修改] 標籤文字：加大、加粗、增亮 */
+    .data-label { 
+        font-size: 1.1rem;      /* 加大 */
+        color: #ccc;            /* 增亮 */
+        font-weight: 800;       /* 加粗 */
+        letter-spacing: 1px; 
+    }
 
-    /* 儀表板數值 */
-    .data-val { font-family: 'Courier New', monospace; font-size: 1.6rem; font-weight: 900; color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
-    .data-val .unit-tag { font-size: 0.9rem; color: #aaa; margin-left: 5px; font-weight: bold; }
-    .data-val.asset { color: #fff; font-size: 1.8rem; text-shadow: 0 0 15px rgba(255,255,255,0.5); }
+    /* ✅ [修改] 儀表板數值樣式：加大、加粗、增亮 (保持上版設定) */
+    .data-val { 
+        font-family: 'Courier New', monospace; 
+        font-size: 1.6rem;       
+        font-weight: 900;        
+        color: #fff;             
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); 
+    }
     
-    /* ========================================= */
-    /* 🔥 [新增] RPG 血條樣式 (HP BAR) */
-    /* ========================================= */
-    .hp-wrapper {
-        width: 100%;
-        height: 32px;
-        background: #111;
-        border: 2px solid #444;
-        border-radius: 4px;
-        position: relative;
-        margin-bottom: 15px;
-        overflow: hidden;
-        box-shadow: inset 0 0 15px #000;
+    /* ✅ [修改] 單位標籤也稍微加大 */
+    .data-val .unit-tag { 
+        font-size: 0.9rem; 
+        color: #aaa; 
+        margin-left: 5px; 
+        font-weight: bold; 
     }
-    .hp-fill {
-        height: 100%;
-        width: 0%; /* JS Control */
-        transition: width 1s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.5s, box-shadow 0.5s;
-        position: relative;
-        z-index: 1;
+
+    .data-val.asset { 
+        color: #fff; 
+        font-size: 1.8rem;       
+        text-shadow: 0 0 15px rgba(255,255,255,0.5); 
     }
-    /* 血條斜紋質感 */
-    .hp-fill::after {
-        content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-        background: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
-        background-size: 20px 20px;
-        animation: stripe-move 2s linear infinite;
-    }
-    @keyframes stripe-move { 0% { background-position: 0 0; } 100% { background-position: 20px 20px; } }
     
-    /* 血條上的文字 (HP 數值) */
-    .hp-text {
-        position: absolute;
-        top: 0; left: 10px;
-        width: 100%; height: 100%;
-        display: flex; align-items: center;
-        color: #fff;
-        font-family: 'Courier New';
-        font-weight: 900;
-        font-size: 0.9rem;
-        z-index: 2;
-        text-shadow: 0 1px 3px #000;
-        letter-spacing: 1px;
-    }
-    /* 血條顏色狀態 */
-    .hp-fill.healthy { background: var(--hp-full); box-shadow: 0 0 15px var(--hp-full); }
-    .hp-fill.damaged { background: var(--hp-low); box-shadow: 0 0 15px var(--hp-low); }
-    .hp-fill.overheal { background: var(--hp-over); box-shadow: 0 0 20px var(--hp-over); }
-
-    /* 總身價大字位置微調 */
-    .total-big-val { font-family: 'Courier New'; font-size: 3rem; font-weight: 900; color: #fff; text-align: right; margin: 5px 0 10px; text-shadow: 0 0 25px rgba(255,215,0,0.4); line-height: 1; }
-
-    /* ========================================= */
-
     .profit-block { margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.4); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.08); }
     .profit-main { font-family: 'Courier New'; font-size: 1.5rem; font-weight: 900; }
     .profit-sub { font-size: 1rem; font-weight: bold; }
+    .total-big-val { font-family: 'Courier New'; font-size: 3rem; font-weight: 900; color: #fff; text-align: right; margin: 5px 0; text-shadow: 0 0 25px rgba(255,215,0,0.4); line-height: 1.1; }
     .total-roi-display { font-family: 'Courier New'; font-size: 1.5rem; font-weight: 900; text-align: right; margin-bottom: 15px; opacity: 1; }
     .rate-display { font-family: 'Courier New'; font-size: 0.75rem; color: var(--gold); opacity: 0.7; text-align: right; margin-top: 5px; letter-spacing: 1px; }
     
@@ -186,16 +155,17 @@
     .g-name-group { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
     .g-name-bar { font-size: 1.3rem; font-weight: 900; color: #fff; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
     
+    /* ✅ [修改] 牌組字串樣式：加粗、變亮 */
     .g-deck-str { 
         font-size: 0.95rem; 
-        color: #bbb;         
-        font-weight: 700;    
+        color: #bbb;          /* 改為更亮的灰色 */
+        font-weight: 700;     /* 加粗 */
         font-family: 'Courier New'; 
         white-space: nowrap; 
         overflow: hidden; 
         text-overflow: ellipsis; 
         margin-top: 4px; 
-        letter-spacing: 1px; 
+        letter-spacing: 1px;  /* 增加字距 */
     }
     
     .g-deck-icons { display: flex; align-items: center; gap: 5px; justify-content: center; }
@@ -204,6 +174,7 @@
     .g-roi.color-gold { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
     .g-roi.color-dead { color: var(--dark-purple); text-shadow: 0 0 10px var(--dark-purple); }
 
+    /* 圖標CSS (保持上一個版本的修正) */
     .g-mini-icon { 
         width: 42px;       
         height: 42px; 
@@ -272,7 +243,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1>PROJECT CAGE 馬克投資．玩的就是真實</h1>
-      <div class="meta-info">v14.5 LIVE • NT$ 1,000 萬 • 2025-2031</div>
+      <div class="meta-info">v14.4 LIVE • NT$ 1,000 萬 • 2025-2031</div>
   </div>
 </header>
 
@@ -291,15 +262,8 @@
         <div class="data-row"><span class="data-label">總現值 ASSET</span><span class="data-val asset" id="assetUS">...<span class="unit-tag">美金</span></span></div>
         <div class="profit-block"><span class="profit-main" id="plUS_val">...</span><span class="profit-sub" id="plUS_pct">...</span></div>
       </div>
-      
       <div class="dash-group total-style">
         <div class="dash-header" style="justify-content: center;"><span class="dash-title c-gold">TOTAL ASSET 總身價</span></div>
-        
-        <div class="hp-wrapper">
-            <div class="hp-fill" id="hpBar"></div>
-            <div class="hp-text" id="hpText">HP: LOADING...</div>
-        </div>
-
         <div class="total-big-val" id="totalAsset">...</div>
         <div class="total-roi-block">
             <div class="total-roi-display" id="totalROI">...</div>
@@ -325,9 +289,9 @@
   <div class="section-title">IV. THE IRON LAWS (核心鐵律)</div>
   <div class="footer-grid">
     <div class="info-box"><span class="info-title">🔒 資金封閉鐵律</span>1,000 萬只進不出。僅能在定存、活存、證券戶間流動，嚴禁消費。</div>
-    <div class="info-box"><span class="info-title">⚖️ 全面公開鐵律</span>投資金額(TWD & USD)、投資報酬(%)、對帳單 。</div>
+    <div class="info-box"><span class="info-title">⚖️ 歸一化競技鐵律</span>績效起點皆為 100%。不比金額大小，只比策略報酬率 (%)。</div>
     <div class="info-box"><span class="info-title">🔄 配息再投入鐵律</span>股息 100% 留倉再投入，視為淨值一部分，維持複利效應。</div>
-    <div class="info-box"><span class="info-title">🏆 紀律執行鐵律</span>每一張卡牌的策略都嚴格執行進出SOP。</div>
+    <div class="info-box"><span class="info-title">🏆 年度 MVP 鐵律</span>每年底頒發金獅(報酬)、鐵盾(穩健)、智冠(CP值)三大獎項。</div>
     <div class="info-box refresh-btn" onclick="triggerRefresh()">↻ REFRESH DATA (刷新資料)</div>
   </div>
 </div>
@@ -554,7 +518,13 @@ function renderHeader() {
 
 function renderDashboard(){
   let tcTW=0, taTW=0, tcUS=0, taUS=0;
+  
+  // 🔥 [修正]：不再使用硬編碼的 'validTw' 或 'validUs' 陣列
+  // 🔥 改為遍歷所有讀取到的卡片，根據其 'type' 自動歸類
+  
   Object.values(cardsData).forEach(c => {
+      // 判斷邏輯：若類型文字中包含 'us'，視為美金
+      // 其他所有類型 (tw, yield, ber, trap) 都視為台幣
       if(c.type.includes('us')) {
           tcUS += c.cost;
           taUS += c.current;
@@ -564,6 +534,7 @@ function renderDashboard(){
       }
   });
 
+  // TWD 區塊計算
   const sTW = calc(tcTW, taTW);
   document.getElementById('costTW').textContent = '$' + (tcTW/10000).toFixed(0) + '萬';
   document.getElementById('assetTW').textContent = '$' + (taTW/10000).toFixed(0) + '萬';
@@ -573,6 +544,7 @@ function renderDashboard(){
   document.getElementById('plTW_pct').textContent = `${sTW.arrow} ${sTW.roi}%`;
   document.getElementById('plTW_pct').className = `profit-sub ${sTW.cls}`;
 
+  // USD 區塊計算
   const sUS = calc(tcUS, taUS);
   document.getElementById('costUS').textContent = '$' + (tcUS/10000).toFixed(0) + '萬';
   document.getElementById('assetUS').textContent = '$' + (taUS/10000).toFixed(0) + '萬';
@@ -582,7 +554,7 @@ function renderDashboard(){
   document.getElementById('plUS_pct').textContent = `${sUS.arrow} ${sUS.roi}%`;
   document.getElementById('plUS_pct').className = `profit-sub ${sUS.cls}`;
 
-  // 總資產計算
+  // 總資產計算 (TWD + USD換算)
   const totalAssetTWD = taTW + (taUS * currentRate);
   const totalCostTWD = tcTW + (tcUS * currentRate); 
   const sTotal = calc(totalCostTWD, totalAssetTWD);
@@ -599,30 +571,6 @@ function renderDashboard(){
   const elTotalROI = document.getElementById('totalROI');
   elTotalROI.textContent = `${sTotal.arrow} ${sTotal.sign}${sTotal.roi}%`;
   elTotalROI.className = `total-roi-display ${sTotal.cls}`;
-
-  // 🔥 [新增] 血條邏輯 (HP Bar Logic)
-  const hpBar = document.getElementById('hpBar');
-  const hpText = document.getElementById('hpText');
-  let hpPercent = (totalAssetTWD / totalCostTWD) * 100;
-  
-  // 防止分母為0
-  if(totalCostTWD <= 0) hpPercent = 100;
-
-  // 設定血條顯示
-  hpText.textContent = `HP: ${totalAssetTWD.toLocaleString()} / ${totalCostTWD.toLocaleString()}`;
-  
-  // 重置類別
-  hpBar.className = 'hp-fill';
-  
-  if(hpPercent >= 100) {
-      // 獲利狀態：血條全滿 + 特效
-      hpBar.style.width = '100%';
-      hpBar.classList.add('overheal'); // 金色/綠色流光
-  } else {
-      // 虧損狀態：血條依照比例縮短
-      hpBar.style.width = `${hpPercent}%`;
-      hpBar.classList.add('damaged'); // 紅色
-  }
 }
 
 function renderCards(){
@@ -632,6 +580,8 @@ function renderCards(){
       return;
   }
   Object.values(cardsData).forEach(c=>{
+    // 🔥 [修正]：移除 'C02-1' 的硬編碼過濾，現在如果 Sheet 裡有這一行，就會顯示
+    
     let costDisplay = (c.cost / 10000).toFixed(0); 
     con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')">
       <div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div>

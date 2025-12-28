@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : RELOADED v14.7 (Dynamic)</title>
+<title>PROJECT CAGE : RELOADED v15.0 (Arena Update)</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -46,14 +46,14 @@
     .data-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
     
     .data-label { 
-        font-size: 1.1rem;      
-        color: #ccc;            
-        font-weight: 800;       
+        font-size: 1.1rem;       
+        color: #ccc;             
+        font-weight: 800;        
         letter-spacing: 1px; 
     }
     .data-val { 
         font-family: 'Courier New', monospace; 
-        font-size: 1.6rem;       
+        font-size: 1.6rem;        
         font-weight: 900;        
         color: #fff;              
         text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); 
@@ -134,76 +134,214 @@
     .event-card.emergency .event-status { color: var(--emergency); background: rgba(255, 0, 0, 0.15); }
     @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
-    /* ARENA */
-    .arena-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
-    .arena-group { background: rgba(255,255,255,0.02); border: 1px solid #222; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; }
-    .group-header { display: flex; align-items: center; text-align: center; font-weight: 900; font-size: 1.2rem; color: var(--gold); margin-bottom: 12px; letter-spacing: 2px; }
-    .group-header::before, .group-header::after { content: ''; flex: 1; border-bottom: 1px solid #333; }
-    .group-header::before { margin-right: 15px; } .group-header::after { margin-left: 15px; }
+    /* ========================================= */
+    /* 🔥 NEW ARENA V15.0 STYLES (競技場新樣式) 🔥 */
+    /* ========================================= */
+    .arena-container { width: 100%; }
 
-    .g-bar-container { margin-bottom: 8px; width: 100%; }
-    .g-bar { display: grid; grid-template-columns: 60px 1fr 120px 110px; align-items: center; background: var(--bar); padding: 15px 15px; border-radius: 8px; border-left: 4px solid #444; cursor: pointer; transition: .2s; position: relative; border: 1px solid transparent; gap: 10px; }
-    .g-bar:hover { background: #222; transform: translateX(5px); border-color: rgba(255,255,255,0.1); }
-    .g-bar.active { background: #25252a; border-color: rgba(255,215,0,0.2); border-left-color: var(--gold) !important; }
+    /* 雙欄佈局容器 */
+    .arena-dashboard-v15 {
+        display: grid;
+        grid-template-columns: 380px 1fr; /* 左側固定寬度，右側自適應 */
+        gap: 25px;
+        height: 550px; /* 固定高度，讓內部卷動 */
+        margin-bottom: 30px;
+    }
+
+    /* --- 左側：排行榜面板 (Leaderboard Panel) --- */
+    .leaderboard-panel {
+        background: linear-gradient(180deg, rgba(20,20,25,0.9), rgba(5,5,5,0.95));
+        border: 1px solid #333;
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 0 30px rgba(0,0,0,0.6);
+        backdrop-filter: blur(5px);
+    }
+    .lb-header {
+        background: linear-gradient(90deg, #1a1a1e, #050505);
+        padding: 15px 20px;
+        border-bottom: 1px solid #444;
+        font-family: 'Arial Black', sans-serif;
+        color: var(--gold);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.1rem;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+    .lb-header-sub { font-size: 0.8rem; color: #888; font-weight: normal; font-family: 'Courier New'; }
     
-    .g-code { font-family: 'Courier New'; font-weight: 900; color: #fff; font-size: 1.2rem; opacity: 0.7; }
-    .g-name-group { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
-    .g-name-bar { font-size: 1.3rem; font-weight: 900; color: #fff; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
+    /* 排行榜列表 */
+    .lb-list {
+        flex-grow: 1;
+        overflow-y: auto; /* 內容過多時垂直捲動 */
+        padding: 5px 0;
+    }
+    /* 捲軸樣式優化 */
+    .lb-list::-webkit-scrollbar { width: 6px; }
+    .lb-list::-webkit-scrollbar-track { background: #0a0a0c; }
+    .lb-list::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+    .lb-row {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: all 0.2s ease;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        cursor: default;
+        position: relative;
+    }
+    .lb-row:hover { background: rgba(255, 255, 255, 0.05); }
     
-    .g-deck-str { 
-        font-size: 0.95rem; 
-        color: #bbb;           
-        font-weight: 700;      
+    .lb-rank { 
+        width: 40px; 
+        font-weight: 900; 
+        color: #555; 
         font-family: 'Courier New'; 
+        font-size: 1.1rem;
+        text-align: center;
+    }
+    .lb-info {
+        flex-grow: 1;
+        padding: 0 15px;
+        overflow: hidden;
+    }
+    .lb-name { 
+        color: #e0e0e0; 
+        font-weight: bold; 
+        font-size: 1rem; 
         white-space: nowrap; 
         overflow: hidden; 
         text-overflow: ellipsis; 
-        margin-top: 4px; 
-        letter-spacing: 1px;  
+        margin-bottom: 3px;
     }
+    .lb-code {
+        font-size: 0.8rem;
+        color: #888;
+        font-family: 'Courier New';
+    }
+    .lb-val { 
+        font-family: 'Courier New', monospace;
+        font-weight: 900; 
+        font-size: 1.2rem;
+        text-align: right; 
+        min-width: 90px;
+    }
+
+    /* 前三名特殊樣式 */
+    .lb-row.rank-1 { background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent); }
+    .lb-row.rank-1 .lb-rank { color: var(--gold); text-shadow: 0 0 15px var(--gold); font-size: 1.3rem; }
+    .lb-row.rank-1 .lb-name { color: var(--gold); }
     
-    .g-deck-icons { display: flex; align-items: center; gap: 5px; justify-content: center; }
-    .g-roi { font-family: 'Courier New'; font-weight: 900; font-size: 1.4rem; text-align: right; }
-    .g-roi.color-profit { color: var(--green); } .g-roi.color-loss { color: var(--red); }
-    .g-roi.color-gold { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
-    .g-roi.color-dead { color: var(--dark-purple); text-shadow: 0 0 10px var(--dark-purple); }
+    .lb-row.rank-2 .lb-rank { color: #e0e0e0; text-shadow: 0 0 10px #e0e0e0; } /* 銀 */
+    .lb-row.rank-3 .lb-rank { color: #cd7f32; text-shadow: 0 0 10px #cd7f32; } /* 銅 */
 
-    .g-mini-icon { 
-        width: 42px;        
-        height: 42px; 
-        display: inline-flex; 
-        align-items: center; 
-        justify-content: center; 
-        margin: 0 2px;
+    /* --- 右側：圖表面板 (Chart Panel) --- */
+    .chart-panel {
+        background: rgba(0,0,0,0.5);
+        border: 1px solid #333;
+        border-radius: 16px;
+        padding: 60px 30px 30px 30px; /* 上方留空間給標題 */
+        position: relative;
+        display: flex;
+        align-items: flex-end; /* 底部對齊 */
+        justify-content: space-evenly; /* 平均分佈 */
+        gap: 8px;
+        backdrop-filter: blur(5px);
+        overflow: hidden;
     }
-    .g-mini-icon svg, 
-    .g-mini-icon img { 
-        width: auto !important;
-        height: auto !important;
-        max-width: 100% !important;
-        max-height: 100% !important;
-        object-fit: contain;
-        display: block;
+    /* 圖表浮水印標題 */
+    .chart-panel::before {
+        content: 'PERFORMANCE ANALYTICS (ROI %)';
+        position: absolute;
+        top: 20px; left: 30px;
+        font-family: 'Arial Black';
+        color: rgba(255,255,255,0.15);
+        font-size: 1.5rem;
+        letter-spacing: 1px;
+        pointer-events: none;
+        z-index: 0;
     }
-    .g-mini-icon svg { stroke-width: 3 !important; }
-    .g-mini-icon.type-tw img { filter: drop-shadow(0 0 5px var(--tw)); } 
-    .g-mini-icon.type-us img { filter: drop-shadow(0 0 5px var(--us)); }
+    /* 背景格線 */
+    .chart-grid {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background-image: 
+            linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+        background-size: 100% 25%, 20% 100%; /* 水平四格，垂直五格 */
+        opacity: 0.5;
+    }
 
-    .g-details { max-height: 0; overflow: hidden; transition: max-height .4s ease; background: rgba(0,0,0,0.3); border-radius: 0 0 8px 8px; width: 100%; }
-    .g-bar.active + .g-details { max-height: 800px; border: 1px solid #333; border-top: none; } 
-    .highlight-content { padding: 25px; display: flex; flex-direction: column; gap: 15px; }
-    .d-row { display: flex; align-items: flex-start; gap: 15px; font-size: 1.05rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; }
-    .d-row:last-child { border: none; }
-    .d-label { width: 110px; flex-shrink: 0; color: var(--gold); font-weight: bold; font-size: 0.95rem; text-align-last: justify; }
-    .d-text { color: #ccc; line-height: 1.5; font-size: 1.05rem; }
-    .d-text.warn { color: #ff6b6b; }
-    @media(max-width: 900px) { 
-        .arena-container { grid-template-columns: 1fr; } 
-        .g-bar { grid-template-columns: 60px 1fr auto; grid-template-rows: auto auto; }
-        .g-deck-icons { grid-column: 3; grid-row: 1; justify-content: flex-end; }
-        .g-roi { grid-column: 3; grid-row: 2; margin-top: 5px; }
-        .group-header::before, .group-header::after { display: none; }
-        .group-header { text-align: left; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    /* 單一長條包裝器 */
+    .bar-wrapper {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+        max-width: 60px; /* 限制最大寬度 */
+        min-width: 30px;
+    }
+    /* 長條本體 */
+    .bar-fill {
+        width: 80%;
+        /* 預設橘金色漸層，會被 JS 覆蓋 */
+        background: linear-gradient(0deg, rgba(255, 145, 0, 0.3) 0%, var(--gold) 100%);
+        border-top: 2px solid #fff;
+        border-radius: 4px 4px 0 0;
+        transition: height 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+        min-height: 4px; /* 確保數值小也看得到 */
+        position: relative;
+        box-shadow: 0 0 20px rgba(255, 145, 0, 0.4);
+    }
+    .bar-fill:hover {
+        filter: brightness(1.2);
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
+    }
+    /* 長條頂部數值 */
+    .bar-val-top {
+        position: absolute;
+        top: -28px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.85rem;
+        color: #fff;
+        font-weight: 900;
+        font-family: 'Courier New';
+        text-shadow: 0 0 5px #000;
+        white-space: nowrap;
+    }
+    /* 底部標籤 */
+    .bar-label-bottom {
+        margin-top: 12px;
+        font-size: 0.75rem;
+        color: #aaa;
+        text-align: center;
+        font-family: 'Courier New';
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
+
+    /* RWD: 手機版變成上下排列 */
+    @media(max-width: 900px) {
+        .arena-dashboard-v15 { grid-template-columns: 1fr; height: auto; gap: 30px; }
+        .leaderboard-panel { height: 400px; } /* 手機版給定高度讓它卷動 */
+        .chart-panel { height: 350px; padding: 50px 15px 20px 15px; }
+        .bar-val-top { font-size: 0.7rem; top: -22px; }
     }
 
     /* FOOTER */
@@ -297,8 +435,8 @@
       <div class="loading" style="padding:10px; color:#666">CHECKING LOGS...</div>
   </div>
 
-  <div class="section-title">III. 投資競技場</div>
-  <div class="arena-container" id="arenaContainer"><div class="loading">LOADING STRATEGIES...</div></div>
+  <div class="section-title">III. 投資競技場 (BATTLE ARENA)</div>
+  <div class="arena-container" id="arenaContainer"></div>
 
   <div class="section-title">IV. THE IRON LAWS (核心鐵律)</div>
   <div class="footer-grid" id="footerContainer">
@@ -332,7 +470,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 const FALLBACK_DATA = `
 A (code)	B (type)	C (rpg)	D (target)	E (skill)	F (cost)	G (current)	H (strategy)	I (sop)	J (image)
 Title	PROJECT CAGE : RELOADED	
-Meta	v14.7 (Fallback) • 2025-2031	
+Meta	v15.0 (Fallback) • 2025-2031	
 L01	🔒 資金封閉鐵律	1,000 萬只進不出。僅能在定存、活存、證券戶間流動，嚴禁消費。
 L02	⚖️ 歸一化競技鐵律	績效起點皆為 100%。不比金額大小，只比策略報酬率 (%)。
 L03	🔄 配息再投入鐵律	股息 100% 留倉再投入，視為淨值一部分，維持複利效應。
@@ -433,13 +571,18 @@ init();
 // 🔄 UPDATED INIT FUNCTION
 // =========================================================
 async function init() {
-    uiLog('=== SYSTEM START (v14.7) ===');
+    uiLog('=== SYSTEM START (v15.0) ===');
     uiLog(`Fetching Data from: ${GOOGLE_SHEET_URL.substring(0, 50)}...`);
     
     cardsData = {}; portfolios = {}; eventsData = []; lawsData = [];
     isFallback = false;
-    const con = document.getElementById('cardContainer');
-    con.innerHTML = '<div class="loading">CONNECTING...</div>';
+    // 確保容器存在再寫入
+    const cardCon = document.getElementById('cardContainer');
+    if(cardCon) cardCon.innerHTML = '<div class="loading">CONNECTING...</div>';
+    
+    const arenaCon = document.getElementById('arenaContainer');
+    if(arenaCon) arenaCon.innerHTML = '<div class="loading">LOADING STRATEGIES...</div>';
+
 
     // 1. Fetch Rate
     try {
@@ -467,10 +610,7 @@ async function init() {
         const sheetText = await sheetRes.text();
         uiLog(`資料下載完成，長度: ${sheetText.length} chars`, 'success');
 
-        // Debug: 檢查是否下載到 HTML 錯誤頁面而非 TSV
         if(sheetText.trim().startsWith('<!DOCTYPE') || sheetText.includes('<html')) {
-            uiLog('⚠️ 嚴重錯誤: 下載到的似乎是網頁 HTML 而非 TSV 資料。可能是權限不足或網址錯誤。', 'error');
-            uiLog('回傳前 100 字元: ' + sheetText.substring(0, 100));
             throw new Error('格式錯誤 (HTML Response)');
         }
 
@@ -480,28 +620,24 @@ async function init() {
 
     } catch(e) {
         uiLog(`連線失敗或解析錯誤: ${e.message}`, 'error');
-        console.warn('Load failed, forcing fallback...');
         isFallback = true;
-        
         uiLog('啟動備份資料 (FALLBACK MODE)...', 'warn');
         parseSheetData(FALLBACK_DATA);
         renderAll();
         
         const meta = document.querySelector('.meta-info');
         if(!meta.innerHTML.includes('OFFLINE')) {
-             meta.innerHTML += ` <span style="color:var(--tw)">[OFFLINE MODE]</span>`;
+              meta.innerHTML += ` <span style="color:var(--tw)">[OFFLINE MODE]</span>`;
         }
         document.getElementById('rateInfo').textContent += ` (Fallback)`;
     }
 }
 
 // =========================================================
-// 📝 UPDATED PARSER (含鐵律與標題解析)
+// 📝 PARSER
 // =========================================================
 function parseSheetData(text){
   const rows = text.split('\n').map(r=>r.trim()); 
-  uiLog(`讀取到 ${rows.length} 行資料`);
-
   let currentGroup = '未分類';
   let mode = 'CARDS'; 
 
@@ -509,45 +645,24 @@ function parseSheetData(text){
     if(!rows[i]) continue;
     const c = rows[i].split('\t'); 
 
-    // Debug: 顯示前幾行內容
-    if(i < 3) uiLog(`Row ${i} Preview: ${c.slice(0, 3).join('|')}`);
-
-    // 🔥 全新功能: 解析標題與鐵律
     if(c[0] === 'Title') { configData.title = c[1]; continue; }
     if(c[0] === 'Meta') { configData.meta = c[1]; continue; }
-    
-    // L開頭代表 Law (鐵律)
-    if(c[0].startsWith('L')) {
-        lawsData.push({ title: c[1], content: c[2] });
-        continue;
-    }
+    if(c[0].startsWith('L')) { lawsData.push({ title: c[1], content: c[2] }); continue; }
 
-    if(c[0] === '代號' && c[1] === '名稱') { mode = 'STRATEGIES'; uiLog('--- 切換模式: 策略組 ---'); continue; }
-    if(c[0] === '事件簿') { mode = 'EVENTS'; uiLog('--- 切換模式: 事件簿 ---'); continue; }
+    if(c[0] === '代號' && c[1] === '名稱') { mode = 'STRATEGIES'; continue; }
+    if(c[0] === '事件簿') { mode = 'EVENTS'; continue; }
 
-    // 1. 卡片模式 (只讀取 C 開頭)
+    // 1. 卡片模式
     if(c[0].startsWith('C')) {
-        // 🔥 防禦機制
-        if (cardsData[c[0]]) {
-            uiLog(`🛡️ 忽略第 ${i+1} 行的重複資料: ${c[0]} (保留上方原始設定)`, 'warn');
-            continue; 
-        }
-
+        if (cardsData[c[0]]) continue; 
         let skillName = c[4]; 
         let costRaw = c[5] ? c[5].replace(/[NT$US,\s]/g, '') : '0';
         let currentRaw = c[6] ? c[6].replace(/[NT$US,\s]/g, '') : '0';
-        
         if (c[0] === 'Logo' && c[1]) logoUrl = c[1];
-
-        // 圖片檢查
         let imgUrl = c[9] ? c[9].trim() : '';
-        if(imgUrl === '') uiLog(`⚠️ 卡片 ${c[0]} 沒有圖片 URL`, 'warn');
-        // else uiLog(`✅ 載入卡片 ${c[0]} 成功`);
-
         let displayMedia = imgUrl.startsWith('http') 
-            ? `<img src="${imgUrl}" class="mc-media" alt="${skillName}" onerror="this.src='';this.parentElement.innerHTML='❌IMG';uiLog('圖片載入失敗: ${c[0]}', 'error')">` 
+            ? `<img src="${imgUrl}" class="mc-media" alt="${skillName}" onerror="this.src='';this.parentElement.innerHTML='❌'">` 
             : (defaultIcons['C01']);
-        
         cardsData[c[0]] = {
             code: c[0], type: c[1], rpg: c[2], target: c[3], skill: skillName,
             cost: parseFloat(costRaw), current: parseFloat(currentRaw),
@@ -561,32 +676,21 @@ function parseSheetData(text){
               code: c[0], name: c[1], 
               deck: c[2] ? c[2].split('+').map(s=>s.trim()) : [], 
               deckStr: c[2] || '',
-              mindset: c[3] || '-',        
-              persona: c[4] || '-',        
-              conflict: c[5] || '-',      
-              theory: '-' 
+              mindset: c[3] || '-', persona: c[4] || '-', conflict: c[5] || '-'
           });
     }
     else if (mode === 'STRATEGIES' && c[0] && !c[0].startsWith('P') && c[0] !== '代號' && c.length < 5) {
-        if(c[0].length > 0) {
-            currentGroup = c[0].trim();
-        }
+        if(c[0].length > 0) currentGroup = c[0].trim();
     }
     else if(mode === 'EVENTS' && c[0] && c[0].match(/^\d/)) {
-        eventsData.push({ 
-            date: c[0], 
-            status: c[1] || 'Info', 
-            content: c[2] || '',
-            isUrgent: (c[1] || '').includes('緊急') 
-        });
+        eventsData.push({ date: c[0], status: c[1] || 'Info', content: c[2] || '', isUrgent: (c[1] || '').includes('緊急') });
     }
     if(c[0] === 'Logo' && c[1]) logoUrl = c[1];
   }
-  uiLog(`解析總結: ${Object.keys(cardsData).length} 卡片, ${eventsData.length} 事件, ${lawsData.length} 鐵律`, 'success');
 }
 
 function calc(cost, cur){
-  if(cost===0) return {roi:0, arrow:'-', cls:'', diff: 0, sign: ''};
+  if(cost===0 || isNaN(cost) || isNaN(cur)) return {roi:0, arrow:'-', cls:'', diff: 0, sign: ''};
   const diff = cur - cost;
   const roiRaw = ((diff)/cost);
   const roi = (roiRaw*100).toFixed(1);
@@ -603,79 +707,55 @@ function renderAll(){
     renderDashboard(); 
     renderCards(); 
     renderEvents(); 
-    renderArena(); 
+    renderArena(); // 🔥 呼叫新的渲染函數
     renderFooter();
 }
 
 function renderHeader() {
     const logoImg = document.getElementById('pageLogo');
     if (logoUrl && logoUrl.startsWith('http')) {
-        logoImg.src = logoUrl;
-        logoImg.style.display = 'block';
+        logoImg.src = logoUrl; logoImg.style.display = 'block';
     }
-    // 動態設定標題與 Meta
     document.getElementById('pageTitle').textContent = configData.title;
     document.getElementById('pageMeta').textContent = configData.meta;
 }
 
 function renderFooter() {
     const con = document.getElementById('footerContainer');
-    con.innerHTML = ''; // 清空目前的內容
-    
-    // 1. 渲染從 Google Sheet 讀取的鐵律
+    con.innerHTML = ''; 
     if(lawsData.length > 0) {
         lawsData.forEach(law => {
-            con.innerHTML += `
-            <div class="info-box">
-                <span class="info-title">${law.title}</span>
-                ${law.content}
-            </div>`;
+            con.innerHTML += `<div class="info-box"><span class="info-title">${law.title}</span>${law.content}</div>`;
         });
     } else {
-        con.innerHTML = '<div class="info-box">暫無鐵律資料 (請在 Sheet 增加 L01~L04)</div>';
+        con.innerHTML = '<div class="info-box">暫無鐵律資料</div>';
     }
-
-    // 2. 補上功能按鈕 (這些是 UI 功能，保持在程式碼中)
-    con.innerHTML += `
-    <div class="info-box refresh-btn" onclick="triggerRefresh()">↻ REFRESH DATA (刷新資料)</div>
-    <div class="info-box refresh-btn" onclick="toggleDebug()" style="border-color: #0f0; color: #0f0;">🐞 TOGGLE DEBUGGER</div>
-    `;
+    con.innerHTML += `<div class="info-box refresh-btn" onclick="triggerRefresh()">↻ REFRESH DATA</div><div class="info-box refresh-btn" onclick="toggleDebug()" style="border-color:#0f0;color:#0f0;">🐞 DEBUG</div>`;
 }
 
 function renderDashboard(){
   let tcTW=0, taTW=0, tcUS=0, taUS=0;
-  
   Object.values(cardsData).forEach(c => {
-      if(c.type.includes('us')) {
-          tcUS += c.cost;
-          taUS += c.current;
-      } else {
-          tcTW += c.cost;
-          taTW += c.current;
-      }
+      if(c.type.includes('us')) { tcUS += c.cost; taUS += c.current; } 
+      else { tcTW += c.cost; taTW += c.current; }
   });
 
-  // TWD 區塊計算
   const sTW = calc(tcTW, taTW);
   document.getElementById('costTW').textContent = '$' + (tcTW/10000).toFixed(0) + '萬';
   document.getElementById('assetTW').textContent = '$' + (taTW/10000).toFixed(0) + '萬';
-  const plTW_val = (sTW.diff/10000).toFixed(1);
-  document.getElementById('plTW_val').textContent = `${sTW.sign}$${plTW_val}萬`;
+  document.getElementById('plTW_val').textContent = `${sTW.sign}$${(sTW.diff/10000).toFixed(1)}萬`;
   document.getElementById('plTW_val').className = `profit-main ${sTW.cls}`;
   document.getElementById('plTW_pct').textContent = `${sTW.arrow} ${sTW.roi}%`;
   document.getElementById('plTW_pct').className = `profit-sub ${sTW.cls}`;
 
-  // USD 區塊計算
   const sUS = calc(tcUS, taUS);
   document.getElementById('costUS').textContent = '$' + (tcUS/10000).toFixed(0) + '萬';
   document.getElementById('assetUS').textContent = '$' + (taUS/10000).toFixed(0) + '萬';
-  const plUS_val = (sUS.diff/10000).toFixed(1);
-  document.getElementById('plUS_val').textContent = `${sUS.sign}$${plUS_val}萬`;
+  document.getElementById('plUS_val').textContent = `${sUS.sign}$${(sUS.diff/10000).toFixed(1)}萬`;
   document.getElementById('plUS_val').className = `profit-main ${sUS.cls}`;
   document.getElementById('plUS_pct').textContent = `${sUS.arrow} ${sUS.roi}%`;
   document.getElementById('plUS_pct').className = `profit-sub ${sUS.cls}`;
 
-  // 總資產計算
   const totalAssetTWD = taTW + (taUS * currentRate);
   const totalCostTWD = tcTW + (tcUS * currentRate); 
   const sTotal = calc(totalCostTWD, totalAssetTWD);
@@ -684,11 +764,9 @@ function renderDashboard(){
   cur.className = 'total-big-val ' + sTotal.cls;
   document.getElementById('totalCostTWD').textContent = '$' + (totalCostTWD/10000).toFixed(0) + '萬';
   const totalDiff = totalAssetTWD - totalCostTWD;
-  const totalSign = totalDiff >= 0 ? '+' : '';
   const elDiff = document.getElementById('totalDiff');
-  elDiff.textContent = `${totalSign}$${(totalDiff/10000).toFixed(1)}萬`;
+  elDiff.textContent = `${totalDiff>=0?'+':''}$${(totalDiff/10000).toFixed(1)}萬`;
   elDiff.className = `data-val ${sTotal.cls}`;
-  
   const elTotalROI = document.getElementById('totalROI');
   elTotalROI.textContent = `${sTotal.arrow} ${sTotal.sign}${sTotal.roi}%`;
   elTotalROI.className = `total-roi-display ${sTotal.cls}`;
@@ -696,20 +774,13 @@ function renderDashboard(){
 
 function renderCards(){
   const con=document.getElementById('cardContainer'); con.innerHTML='';
-  if(Object.keys(cardsData).length === 0) {
-      con.innerHTML = '<div style="color:white;padding:20px;">NO DATA FOUND</div>';
-      return;
-  }
+  if(Object.keys(cardsData).length === 0) { con.innerHTML = '<div>NO DATA</div>'; return; }
   Object.values(cardsData).forEach(c=>{
     let costDisplay = (c.cost / 10000).toFixed(0); 
     con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')">
       <div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div>
       <div class="mc-image-container">${c.media}</div>
-      <div class="mc-footer">
-        <div class="mc-chn-name">${c.rpg || ''}</div>
-        <div class="mc-eng-name">${c.skill}</div>
-        <div class="mc-cost-badge">$${costDisplay}萬</div>
-      </div>
+      <div class="mc-footer"><div class="mc-chn-name">${c.rpg||''}</div><div class="mc-eng-name">${c.skill}</div><div class="mc-cost-badge">$${costDisplay}萬</div></div>
     </div>`;
   });
 }
@@ -717,82 +788,112 @@ function renderCards(){
 function renderEvents(){
     const con = document.getElementById('eventContainer');
     const validEvents = eventsData.slice(0, 2); 
-    if(validEvents.length === 0) {
-        con.innerHTML = '<div style="padding:15px;color:#666">NO EVENTS LOGGED.</div>';
-        return;
-    }
+    if(validEvents.length === 0) { con.innerHTML = '<div style="color:#666">NO EVENTS.</div>'; return; }
     con.innerHTML = '';
     validEvents.forEach(e => {
-        const urgentClass = e.isUrgent ? ' emergency' : '';
-        con.innerHTML += `
-        <div class="event-card${urgentClass}">
-            <div class="event-header">
-                <span class="event-date">${e.date}</span>
-                <span class="event-status">${e.status}</span>
-            </div>
-            <div class="event-content">${e.content}</div>
-        </div>`;
+        con.innerHTML += `<div class="event-card${e.isUrgent?' emergency':''}"><div class="event-header"><span class="event-date">${e.date}</span><span class="event-status">${e.status}</span></div><div class="event-content">${e.content}</div></div>`;
     });
 }
 
-function toggleStrategy(element) {
-    const isActive = element.classList.contains('active');
-    document.querySelectorAll('.g-bar.active').forEach(bar => {
-        bar.classList.remove('active');
-    });
-    if (!isActive) {
-        element.classList.add('active');
-    }
-}
-
+// =========================================================
+// 🔥 NEW ARENA RENDER FUNCTION (v15.0) 🔥
+// =========================================================
 function renderArena(){
-  const con=document.getElementById('arenaContainer'); con.innerHTML = ''; 
-  Object.keys(portfolios).forEach(groupName => {
-      let groupHtml = `<div class="arena-group"><div class="group-header">${groupName}</div>`;
-      
-      portfolios[groupName].forEach(p => {
-        let tc=0, ta=0;
-        const icons=p.deck.map(code=>{
-          const c=cardsData[code];
-          if(c && c.media.includes('<img')) {
-             const srcMatch = c.media.match(/src="([^"]*)"/);
-             const src = srcMatch ? srcMatch[1] : '';
-             return `<span class="g-mini-icon ${c.type}"><img src="${src}"></span>`;
-          } else if(c) {
-             return `<span class="g-mini-icon ${c.type}">${c.media.replace('mc-media', '')}</span>`;
-          }
-          return '';
-        }).join('');
-        
-        p.deck.forEach(d=>{ 
-            if(cardsData[d]) { tc+=cardsData[d].cost; ta+=cardsData[d].current; } 
+    const con = document.getElementById('arenaContainer'); 
+    con.innerHTML = ''; 
+    
+    // 1. 收集並扁平化所有策略數據
+    let allStrategies = [];
+    Object.keys(portfolios).forEach(groupName => {
+        portfolios[groupName].forEach(p => {
+            let tc = 0, ta = 0;
+            p.deck.forEach(code => {
+                const c = cardsData[code];
+                if (c) { tc += c.cost; ta += c.current; }
+            });
+            // 防止除以零或無數據的狀況
+            if(tc === 0) tc = 1; 
+            const res = calc(tc, ta);
+            allStrategies.push({
+                code: p.code, name: p.name,
+                roiNum: parseFloat(res.roi), // 數值型 ROI 用於排序和圖表高度
+                roiStr: res.roi,             // 字串型 ROI 用於顯示
+                cls: res.cls, sign: res.sign
+            });
         });
-        const s=calc(tc, ta);
+    });
+
+    // 2. 排序：ROI 由高到低
+    allStrategies.sort((a, b) => b.roiNum - a.roiNum);
+    
+    // 僅取前 13 名顯示 (如需求描述)
+    const topStrategies = allStrategies.slice(0, 13);
+
+    // 3. 準備 HTML 結構
+    let html = `<div class="arena-dashboard-v15">`;
+
+    // --- 左側：排行榜 (Leaderboard) ---
+    html += `
+    <div class="leaderboard-panel">
+        <div class="lb-header">
+            <span>LIVE BATTLE RANKING</span>
+            <span class="lb-header-sub">TOP ${topStrategies.length}</span>
+        </div>
+        <div class="lb-list">`;
+    
+    topStrategies.forEach((s, index) => {
+        const rankClass = `rank-${index + 1}`;
+        html += `
+            <div class="lb-row ${rankClass}">
+                <span class="lb-rank">#${index + 1}</span>
+                <div class="lb-info">
+                    <div class="lb-name">${s.name}</div>
+                    <div class="lb-code">${s.code}</div>
+                </div>
+                <span class="lb-val ${s.cls}">${s.sign}${s.roiStr}%</span>
+            </div>`;
+    });
+    html += `</div></div>`; // End leaderboard-panel
+
+    // --- 右側：長條圖 (Bar Chart) ---
+    html += `<div class="chart-panel"><div class="chart-grid"></div>`;
+    
+    // 找出最大 ROI 用於設定圖表比例 (設定最低天花板為 10% 以防數值太小)
+    let maxROI = Math.max(...topStrategies.map(s => s.roiNum));
+    if (maxROI < 10) maxROI = 10;
+    if (maxROI <= 0) maxROI = 1; // 防止全負數時出錯
+
+    topStrategies.forEach(s => {
+        // 計算高度百分比 (最小給 2% 以確保顯示)
+        let heightPct = (s.roiNum / maxROI) * 100;
+        if (heightPct < 2 && s.roiNum > -99) heightPct = 2; 
+        if (s.roiNum <= -99) heightPct = 0; // 破產保護
         
-        groupHtml += `
-          <div class="g-bar-container">
-            <div class="g-bar" onclick="toggleStrategy(this)">
-                <span class="g-code">${p.code}</span>
-                <div class="g-name-group">
-                    <span class="g-name-bar">${p.name}</span>
-                    <span class="g-deck-str">${p.deckStr}</span>
+        // 根據 ROI 動態改變顏色 (金/綠/紅)
+        let barColorBg = 'linear-gradient(0deg, rgba(255, 145, 0, 0.3) 0%, var(--gold) 100%)';
+        let shadowColor = 'rgba(255, 215, 0, 0.6)';
+        if(s.cls.includes('profit')) {
+             barColorBg = 'linear-gradient(0deg, rgba(0, 255, 106, 0.3) 0%, var(--green) 100%)';
+             shadowColor = 'rgba(0, 255, 106, 0.6)';
+        } else if (s.cls.includes('loss') || s.cls.includes('dead')) {
+             barColorBg = 'linear-gradient(0deg, rgba(255, 42, 42, 0.3) 0%, var(--red) 100%)';
+             shadowColor = 'rgba(255, 42, 42, 0.6)';
+        }
+
+        html += `
+            <div class="bar-wrapper">
+                <div class="bar-fill" style="height: ${heightPct}%; background: ${barColorBg}; box-shadow: 0 0 20px ${shadowColor};">
+                    <span class="bar-val-top">${s.roiStr}%</span>
                 </div>
-                <div class="g-deck-icons">${icons}</div>
-                <div class="g-roi ${s.cls}">${s.sign}${s.roi}%</div>
-            </div>
-            
-            <div class="g-details">
-                <div class="highlight-content">
-                    <div class="d-row"><span class="d-label">✨ 競技亮點</span><span class="d-text">${p.mindset}</span></div>
-                    <div class="d-row"><span class="d-label">👤 人格側寫</span><span class="d-text">${p.persona}</span></div>
-                    <div class="d-row"><span class="d-label">⚡ 心理衝突</span><span class="d-text warn">${p.conflict}</span></div>
-                </div>
-            </div>
-          </div>`;
-      });
-      groupHtml += `</div>`;
-      con.innerHTML += groupHtml;
-  });
+                <div class="bar-label-bottom">${s.code}</div>
+            </div>`;
+    });
+
+    html += `</div>`; // End chart-panel
+    html += `</div>`; // End arena-dashboard-v15
+
+    // 4. 注入 DOM
+    con.innerHTML = html;
 }
 
 function openModal(k){

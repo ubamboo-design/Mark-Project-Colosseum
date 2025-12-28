@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : RELOADED v15.9 (Icons & ID Sort)</title>
+<title>PROJECT CAGE : RELOADED v16.0 (Balanced)</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -131,14 +131,14 @@
     @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
     /* ========================================= */
-    /* 🔥 COMPACT ARENA v15.9 🔥 */
+    /* 🔥 COMPACT ARENA v16.0 (Balanced & Neater) 🔥 */
     /* ========================================= */
     .arena-container { width: 100%; }
 
     .arena-dashboard-v15 {
         display: grid;
-        grid-template-columns: 350px 1fr; /* 左側加寬一點以容納圖標 */
-        gap: 15px;
+        grid-template-columns: 480px 1fr; /* 🔥 左側加寬，縮小右側圖表佔比 */
+        gap: 20px;
         height: 320px; 
         margin-bottom: 20px;
     }
@@ -175,6 +175,7 @@
     .lb-list::-webkit-scrollbar-track { background: #0a0a0c; }
     .lb-list::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
+    /* 🔥 LIST ROW: Rank -> Name -> Icons -> Val */
     .lb-row {
         display: flex;
         align-items: center;
@@ -186,24 +187,39 @@
     }
     .lb-row:hover { background: rgba(255, 255, 255, 0.05); }
     
-    .lb-rank { width: 25px; font-weight: 900; color: #555; font-family: 'Courier New'; font-size: 0.9rem; text-align: center; }
+    .lb-rank { width: 30px; font-weight: 900; color: #555; font-family: 'Courier New'; font-size: 0.9rem; text-align: center; }
     
-    .lb-deck {
-        display: flex;
-        gap: 4px;
-        margin-right: 10px;
+    /* 🔥 固定寬度資訊欄，確保圖標對齊 */
+    .lb-info { 
+        width: 170px; /* 固定寬度 */
+        padding: 0 10px; 
+        overflow: hidden; 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center;
+        flex-shrink: 0; 
     }
-    .lb-card-icon {
-        width: 24px;
-        height: 24px;
-        object-fit: contain;
-        filter: drop-shadow(0 0 2px rgba(255,255,255,0.3));
-    }
-
-    .lb-info { flex-grow: 1; padding: 0 5px; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
     .lb-name { color: #e0e0e0; font-weight: bold; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 1px; }
     .lb-code { font-size: 0.7rem; color: #888; font-family: 'Courier New'; }
-    .lb-val { font-family: 'Courier New', monospace; font-weight: 900; font-size: 1rem; text-align: right; min-width: 70px; }
+
+    .lb-deck {
+        flex-grow: 1;
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        justify-content: flex-start;
+        overflow: hidden;
+    }
+    .lb-card-icon {
+        width: 26px;
+        height: 26px;
+        object-fit: contain;
+        filter: drop-shadow(0 0 2px rgba(255,255,255,0.3));
+        transition: transform 0.2s;
+    }
+    .lb-card-icon:hover { transform: scale(1.2); }
+
+    .lb-val { font-family: 'Courier New', monospace; font-weight: 900; font-size: 1rem; text-align: right; min-width: 75px; margin-left: auto; }
 
     .lb-row.rank-1 .lb-rank { color: var(--gold); text-shadow: 0 0 10px var(--gold); font-size: 1.1rem; }
     .lb-row.rank-1 .lb-name { color: var(--gold); }
@@ -220,12 +236,12 @@
         display: flex;
         align-items: flex-end; 
         justify-content: space-evenly; 
-        gap: 5px; 
+        gap: 4px; /* 更緊密的間距 */
         backdrop-filter: blur(5px);
         overflow: hidden;
     }
     .chart-panel::before {
-        content: 'TOP 13 PERFORMANCE (BY ID)'; /* 標題改為 BY ID */
+        content: 'TOP 13 (BY ID)'; 
         position: absolute;
         top: 10px; left: 15px;
         font-family: 'Arial Black';
@@ -244,10 +260,10 @@
 
     .bar-wrapper {
         flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; z-index: 1;
-        max-width: 50px; min-width: 20px; 
+        max-width: 45px; min-width: 15px; 
     }
     .bar-fill {
-        width: 70%;
+        width: 75%;
         background: linear-gradient(0deg, rgba(255, 145, 0, 0.3) 0%, var(--gold) 100%);
         border-top: 2px solid #fff;
         border-radius: 4px 4px 0 0;
@@ -386,7 +402,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 const FALLBACK_DATA = `
 A (code)	B (type)	C (rpg)	D (target)	E (skill)	F (cost)	G (current)	H (strategy)	I (sop)	J (image)
 Title	PROJECT CAGE : RELOADED	
-Meta	v15.9 (Icons & ID Sort) • 2025-2031	
+Meta	v16.0 (Balanced) • 2025-2031	
 L01	🔒 資金封閉鐵律	1,000 萬只進不出。僅能在定存、活存、證券戶間流動，嚴禁消費。
 L02	⚖️ 歸一化競技鐵律	績效起點皆為 100%。不比金額大小，只比策略報酬率 (%)。
 L03	🔄 配息再投入鐵律	股息 100% 留倉再投入，視為淨值一部分，維持複利效應。
@@ -479,7 +495,7 @@ const defaultIcons = {
 init();
 
 async function init() {
-    uiLog('=== SYSTEM START (v15.9) ===');
+    uiLog('=== SYSTEM START (v16.0) ===');
     uiLog(`Fetching Data from: ${GOOGLE_SHEET_URL.substring(0, 50)}...`);
     
     cardsData = {}; portfolios = {}; strategiesData = {}; eventsData = []; lawsData = [];
@@ -557,7 +573,7 @@ function parseSheetData(text){
         cardsData[c[0]] = {
             code: c[0], type: c[1], rpg: c[2], target: c[3], skill: skillName,
             cost: parseFloat(costRaw), current: parseFloat(currentRaw),
-            strategy: c[7], sop: c[8], media: displayMedia, imgUrl: imgUrl 
+            strategy: c[7], sop: c[8], media: displayMedia, imgUrl: imgUrl
         };
     } 
     else if(c[0].startsWith('P')){
@@ -721,7 +737,7 @@ function renderArena(){
 
     // 2. 圖表排序 (依 編號 P01, P02... 排序)
     let chartStrategies = [...allStrategies].sort((a, b) => a.code.localeCompare(b.code));
-    const topChart = chartStrategies.slice(0, 13); // 取前13個 (雖然現在只有13個)
+    const topChart = chartStrategies.slice(0, 13); 
 
     let html = `<div class="arena-dashboard-v15">`;
 
@@ -748,14 +764,15 @@ function renderArena(){
             }
         }).join('');
 
+        // 🔥 更新順序：Rank -> Info(Name/Code) -> Deck(Icons) -> Val
         html += `
             <div class="lb-row ${rankClass}" onclick="openStrategyModal('${s.code}')">
                 <span class="lb-rank">#${index + 1}</span>
-                <div class="lb-deck">${deckIcons}</div>
                 <div class="lb-info">
                     <div class="lb-name">${s.name}</div>
                     <div class="lb-code">${s.code}</div>
                 </div>
+                <div class="lb-deck">${deckIcons}</div>
                 <span class="lb-val ${s.cls}">${s.sign}${s.roiStr}%</span>
             </div>`;
     });
@@ -785,7 +802,7 @@ function renderArena(){
 
         html += `
             <div class="bar-wrapper">
-                <div class="bar-fill" style="height: ${heightPct}%; background: ${barColorBg}; box-shadow: 0 0 20px ${shadowColor};">
+                <div class="bar-fill" style="height: ${heightPct}%; background: ${barColorBg}; box-shadow: 0 0 15px ${shadowColor};">
                     <span class="bar-val-top">${s.roiStr}%</span>
                 </div>
                 <div class="bar-label-bottom">${s.code}</div>

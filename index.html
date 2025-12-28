@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : RELOADED v15.2 (Compact View)</title>
+<title>PROJECT CAGE : RELOADED v15.4 (Ultra Slim)</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -20,93 +20,108 @@
     .spinner { width: 20px; height: 20px; border: 3px solid rgba(0,247,255,0.3); border-radius: 50%; border-top-color: var(--cyan); animation: spin 1s ease-in-out infinite; display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* HEADER - 縮小版 */
-    header { padding: 15px 20px; background: transparent; position: relative; display: flex; align-items: center; justify-content: center; gap: 15px; }
-    #pageLogo { height: 50px; width: auto; object-fit: contain; display: none; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3)); }
-    .header-text { text-align: left; display: flex; flex-direction: column; justify-content: center; }
-    h1 { font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.15); font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; line-height: 1; }
-    .meta-info { font-family: 'Courier New', monospace; color: var(--gold); margin-top: 3px; font-size: 0.8rem; opacity: 0.8; letter-spacing: 2px; }
+    /* HEADER - 微型化 */
+    header { padding: 10px 20px 5px 20px; background: transparent; position: relative; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px; }
+    #pageLogo { height: 30px; width: auto; object-fit: contain; display: none; filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3)); }
+    .header-text { text-align: left; display: flex; flex-direction: row; align-items: baseline; gap: 15px; }
+    h1 { font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.1); font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; line-height: 1; }
+    .meta-info { font-family: 'Courier New', monospace; color: var(--gold); font-size: 0.7rem; opacity: 0.8; letter-spacing: 1px; }
     .container { max-width: 1800px; margin: 0 auto; padding: 0 20px; }
     
-    /* DASHBOARD - COMPACT MODE (緊湊模式) */
+    /* 🔥 ULTRA SLIM DASHBOARD (v15.4) 🔥 */
+    /* 改為橫向長條佈局，不再是網格 */
     .dashboard-panel { 
-        background: linear-gradient(180deg, rgba(20,20,25,0.9), rgba(5,5,5,0.95)); 
+        background: linear-gradient(90deg, rgba(20,20,25,0.9), rgba(5,5,5,0.95)); 
         border: 1px solid #333; 
-        border-radius: 12px; 
-        padding: 15px; /* 縮小內距 */
-        margin: 10px 0 20px 0; /* 縮小外距 */
-        box-shadow: 0 0 30px rgba(0,0,0,0.5); 
+        border-radius: 50px; /* 膠囊狀 */
+        padding: 5px 25px; 
+        margin: 0 0 25px 0; 
+        box-shadow: 0 0 15px rgba(0,0,0,0.6); 
         position: relative; 
         overflow: hidden; 
         backdrop-filter: blur(10px); 
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 80px; /* 強制高度 */
     }
-    .dashboard-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--tw), var(--gold), var(--us)); box-shadow: 0 0 10px var(--gold); }
-    .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 15px; } /* 縮小間距 */
+    .dashboard-panel::before { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--tw), var(--gold), var(--us)); box-shadow: 0 0 5px var(--gold); }
     
+    /* 隱藏原本的 Grid 結構，改用 Flex */
+    .dash-grid { display: contents; } 
+
+    /* 每一個數據群組 (TWD, USD, TOTAL) */
     .dash-group { 
-        display: flex; flex-direction: column; 
-        background: rgba(255,255,255,0.03); 
-        border-radius: 8px; 
-        padding: 12px 15px; /* 縮小內距 */
-        border: 1px solid #333; 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center;
+        background: transparent; 
+        border: none; 
+        padding: 0 15px;
         position: relative; 
         height: 100%; 
-        justify-content: space-between; 
+        border-right: 1px dashed rgba(255,255,255,0.1);
+        min-width: 200px;
     }
-    .dash-group.tw-style { border-color: var(--tw); box-shadow: inset 0 0 15px rgba(255, 42, 42, 0.05); }
-    .dash-group.us-style { border-color: var(--us); box-shadow: inset 0 0 15px rgba(0, 210, 255, 0.05); }
-    .dash-group.total-style { border-color: var(--gold); box-shadow: inset 0 0 15px rgba(255, 215, 0, 0.05); }
+    .dash-group:last-child { border-right: none; flex-grow: 1; align-items: flex-end;}
+    .dash-group.tw-style, .dash-group.us-style, .dash-group.total-style { box-shadow: none; border-color: transparent; }
 
-    .dash-header { display: flex; align-items: center; justify-content: flex-start; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
-    .dash-title { font-size: 1.1rem; font-weight: 900; letter-spacing: 1px; color: #fff; text-transform: uppercase; } /* 字體縮小 */
-    .data-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+    /* 隱藏不需要的元素以節省空間 */
+    .data-row { display: block; margin: 0; line-height: 1; }
+    .data-label { font-size: 0.65rem; color: #888; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; display: block; }
+    .dash-header { display: none; } /* 隱藏標題，直接秀數字 */
     
-    .data-label { font-size: 0.9rem; color: #bbb; font-weight: 700; letter-spacing: 1px; }
-    .data-val { font-family: 'Courier New', monospace; font-size: 1.25rem; font-weight: 900; color: #fff; } /* 字體縮小 */
-    .data-val .unit-tag { font-size: 0.75rem; color: #888; margin-left: 3px; }
-    .data-val.asset { color: #fff; font-size: 1.35rem; }
+    /* 數值樣式 */
+    .data-val { font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: 900; color: #fff; } 
+    .data-val.asset { color: #fff; font-size: 1.4rem; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+    .unit-tag { font-size: 0.7rem; color: #555; margin-left: 2px; }
 
-    /* 獲利區塊變扁 */
-    .profit-block { margin-top: 8px; padding: 8px 10px; background: rgba(0,0,0,0.4); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.08); }
-    .profit-main { font-family: 'Courier New'; font-size: 1.1rem; font-weight: 900; }
-    .profit-sub { font-size: 0.9rem; font-weight: bold; }
-
-    /* 總資產大字縮小 */
-    .total-big-val { font-family: 'Courier New'; font-size: 2.2rem; font-weight: 900; color: #fff; text-align: right; margin: 2px 0; text-shadow: 0 0 20px rgba(255,215,0,0.3); line-height: 1.1; }
-    .total-roi-display { font-family: 'Courier New'; font-size: 1.2rem; font-weight: 900; text-align: right; margin-bottom: 8px; opacity: 1; }
-    .rate-display { font-family: 'Courier New'; font-size: 0.7rem; color: var(--gold); opacity: 0.7; text-align: right; margin-top: 2px; }
+    /* 總資產專屬樣式 */
+    .total-big-val { font-family: 'Courier New'; font-size: 2.2rem; font-weight: 900; color: var(--gold); text-align: right; margin: 0; text-shadow: 0 0 15px rgba(255,215,0,0.4); line-height: 1; }
+    .total-roi-display { font-family: 'Courier New'; font-size: 1rem; font-weight: 900; text-align: right; opacity: 1; margin-top: 2px; }
     
+    /* 獲利顯示微型化 */
+    .profit-block { margin-top: 0; padding: 0; background: transparent; border: none; display: inline-block; }
+    .profit-main { font-family: 'Courier New'; font-size: 0.9rem; font-weight: 900; margin-right: 5px; }
+    .profit-sub { font-size: 0.8rem; font-weight: bold; }
+
+    /* 顏色定義 */
     .c-tw { color: var(--tw); } .c-us { color: var(--us); } .c-gold { color: var(--gold); }
-    .color-profit { color: var(--green)!important; text-shadow: 0 0 10px rgba(0,255,106,0.4); }
-    .color-loss { color: var(--red)!important; text-shadow: 0 0 10px rgba(255,42,42,0.4); }
-    .color-gold { color: var(--gold)!important; text-shadow: 0 0 20px rgba(255,215,0,0.6); } 
-    .color-dead { color: var(--dark-purple)!important; text-shadow: 0 0 20px rgba(148,0,211,0.6); }
+    .color-profit { color: var(--green)!important; text-shadow: 0 0 5px rgba(0,255,106,0.4); }
+    .color-loss { color: var(--red)!important; text-shadow: 0 0 5px rgba(255,42,42,0.4); }
     
-    @media(max-width: 900px) { .dash-grid { grid-template-columns: 1fr; gap: 10px; } .total-big-val { font-size: 2rem; } header { flex-direction: column; gap: 10px; } .header-text { text-align: center; } .dash-header { justify-content: center; } }
+    /* RWD for Slim Dashboard */
+    @media(max-width: 900px) { 
+        .dashboard-panel { flex-direction: column; height: auto; border-radius: 15px; padding: 15px; gap: 15px; }
+        .dash-group { border-right: none; border-bottom: 1px dashed #333; padding-bottom: 10px; width: 100%; align-items: center; text-align: center; }
+        .dash-group:last-child { border-bottom: none; align-items: center; }
+        .total-big-val { font-size: 2rem; }
+        .header-text { flex-direction: column; gap: 5px; }
+    }
 
     /* SECTIONS */
-    .section-title { font-size: 1.1rem; border-left: 4px solid var(--gold); padding-left: 12px; margin: 30px 0 15px; text-transform: uppercase; font-weight: 900; color: #fff; display: flex; align-items: center; letter-spacing: 2px; }
-    .section-title::after { content: ''; flex-grow: 1; height: 1px; background: #333; margin-left: 15px; }
+    .section-title { font-size: 0.9rem; border-left: 3px solid var(--cyan); padding-left: 10px; margin: 25px 0 10px; text-transform: uppercase; font-weight: 900; color: #fff; display: flex; align-items: center; letter-spacing: 2px; }
+    .section-title::after { content: ''; flex-grow: 1; height: 1px; background: #222; margin-left: 15px; }
 
     /* DECK */
     .deck-wrapper { overflow-x: auto; padding-bottom: 25px; padding-top: 5px; }
-    .deck-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; min-width: 0; } 
-    .micro-card { background: var(--card); border: 2px solid #333; border-radius: 14px; padding: 10px; transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: flex; flex-direction: column; min-height: 220px; position: relative; overflow: hidden; }
-    .micro-card::after { content: ''; position: absolute; top: 6px; left: 6px; right: 6px; bottom: 6px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; pointer-events: none; transition: all 0.3s; }
-    .micro-card:hover { transform: translateY(-8px); z-index: 10; }
+    .deck-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; min-width: 0; } 
+    .micro-card { background: var(--card); border: 2px solid #333; border-radius: 12px; padding: 8px; transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: flex; flex-direction: column; min-height: 200px; position: relative; overflow: hidden; }
+    .micro-card::after { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; pointer-events: none; transition: all 0.3s; }
+    .micro-card:hover { transform: translateY(-6px); z-index: 10; }
     
-    .mc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; padding: 0 5px; position: relative; z-index: 2; }
-    .mc-code { font-size: 1rem; font-weight: 900; color: #fff; opacity: 0.9; font-family: 'Arial Black'; } 
-    .mc-target { font-size: 0.7rem; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); padding: 1px 5px; border-radius: 4px; color: #aaa; font-family: 'Courier New'; }
+    .mc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding: 0 4px; position: relative; z-index: 2; }
+    .mc-code { font-size: 0.9rem; font-weight: 900; color: #fff; opacity: 0.9; font-family: 'Arial Black'; } 
+    .mc-target { font-size: 0.65rem; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); padding: 1px 4px; border-radius: 4px; color: #aaa; font-family: 'Courier New'; }
     
-    .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; margin: 2px 0 8px; position: relative; z-index: 2; }
-    .mc-media { width: 64px; height: 64px; object-fit: contain; transition: all .4s; }
+    .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; margin: 2px 0 6px; position: relative; z-index: 2; }
+    .mc-media { width: 56px; height: 56px; object-fit: contain; transition: all .4s; }
     .micro-card:hover .mc-media { transform: scale(1.15); }
     
     .mc-footer { text-align: center; margin-top: auto; position: relative; z-index: 2; padding: 0 2px; }
-    .mc-chn-name { font-size: 1rem; font-weight: 900; color: #fff; margin-bottom: 3px; text-shadow: 0 2px 10px rgba(0,0,0,1); letter-spacing: 1px; line-height: 1.2; }
-    .mc-eng-name { font-size: 0.7rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-    .mc-cost-badge { display: inline-block; margin-top: 2px; padding: 2px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.8rem; color: #aaa; background: rgba(0,0,0,0.8); }
+    .mc-chn-name { font-size: 0.9rem; font-weight: 900; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 8px rgba(0,0,0,1); letter-spacing: 0.5px; line-height: 1.2; }
+    .mc-eng-name { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+    .mc-cost-badge { display: inline-block; margin-top: 1px; padding: 1px 8px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.75rem; color: #aaa; background: rgba(0,0,0,0.8); }
     
     svg.mc-media { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     img.mc-media { filter: drop-shadow(0 0 3px rgba(255,255,255,0.5)); }
@@ -133,202 +148,129 @@
     @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
 
     /* ========================================= */
-    /* 🔥 COMPACT ARENA STYLES 🔥 */
+    /* 🔥 ULTRA COMPACT ARENA (v15.4) 🔥 */
     /* ========================================= */
     .arena-container { width: 100%; }
 
-    /* 雙欄佈局容器 - 高度調低 */
+    /* 高度縮減至 280px */
     .arena-dashboard-v15 {
         display: grid;
-        grid-template-columns: 350px 1fr; 
-        gap: 20px;
-        height: 480px; /* 從 550px 縮小至 480px */
-        margin-bottom: 30px;
+        grid-template-columns: 320px 1fr; 
+        gap: 15px;
+        height: 280px; 
+        margin-bottom: 20px;
     }
 
-    /* --- 左側：排行榜面板 --- */
+    /* 左側：排行榜面板 */
     .leaderboard-panel {
         background: linear-gradient(180deg, rgba(20,20,25,0.9), rgba(5,5,5,0.95));
         border: 1px solid #333;
-        border-radius: 12px;
+        border-radius: 10px;
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        box-shadow: 0 0 25px rgba(0,0,0,0.6);
+        box-shadow: 0 0 20px rgba(0,0,0,0.6);
         backdrop-filter: blur(5px);
     }
     .lb-header {
-        background: linear-gradient(90deg, #1a1a1e, #050505);
-        padding: 12px 15px;
+        background: #111;
+        padding: 8px 12px;
         border-bottom: 1px solid #444;
         font-family: 'Arial Black', sans-serif;
-        color: var(--gold);
+        color: var(--cyan);
         text-transform: uppercase;
         letter-spacing: 1px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 1rem;
-        text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        font-size: 0.9rem;
     }
-    .lb-header-sub { font-size: 0.75rem; color: #888; font-weight: normal; font-family: 'Courier New'; }
+    .lb-header-sub { font-size: 0.7rem; color: #666; font-weight: normal; font-family: 'Courier New'; }
     
-    .lb-list {
-        flex-grow: 1;
-        overflow-y: auto; 
-        padding: 5px 0;
-    }
-    .lb-list::-webkit-scrollbar { width: 5px; }
-    .lb-list::-webkit-scrollbar-track { background: #0a0a0c; }
-    .lb-list::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    .lb-list { flex-grow: 1; overflow-y: auto; padding: 0; }
+    .lb-list::-webkit-scrollbar { width: 3px; }
+    .lb-list::-webkit-scrollbar-track { background: #000; }
+    .lb-list::-webkit-scrollbar-thumb { background: #444; }
 
     .lb-row {
         display: flex;
         align-items: center;
-        padding: 10px 12px;
+        padding: 6px 10px;
         border-bottom: 1px solid rgba(255,255,255,0.05);
-        transition: all 0.2s ease;
         font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         cursor: default;
-        position: relative;
     }
     .lb-row:hover { background: rgba(255, 255, 255, 0.05); }
     
-    .lb-rank { 
-        width: 30px; 
-        font-weight: 900; 
-        color: #555; 
-        font-family: 'Courier New'; 
-        font-size: 1rem;
-        text-align: center;
-    }
-    .lb-info {
-        flex-grow: 1;
-        padding: 0 10px;
-        overflow: hidden;
-    }
-    .lb-name { 
-        color: #e0e0e0; 
-        font-weight: bold; 
-        font-size: 0.95rem; 
-        white-space: nowrap; 
-        overflow: hidden; 
-        text-overflow: ellipsis; 
-        margin-bottom: 2px;
-    }
-    .lb-code {
-        font-size: 0.75rem;
-        color: #888;
-        font-family: 'Courier New';
-    }
-    .lb-val { 
-        font-family: 'Courier New', monospace;
-        font-weight: 900; 
-        font-size: 1.1rem;
-        text-align: right; 
-        min-width: 80px;
-    }
+    .lb-rank { width: 25px; font-weight: 900; color: #555; font-family: 'Courier New'; font-size: 0.85rem; text-align: center; }
+    .lb-info { flex-grow: 1; padding: 0 8px; overflow: hidden; }
+    .lb-name { color: #e0e0e0; font-weight: bold; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lb-code { font-size: 0.7rem; color: #666; font-family: 'Courier New'; }
+    .lb-val { font-family: 'Courier New', monospace; font-weight: 900; font-size: 0.95rem; text-align: right; min-width: 60px; }
 
-    .lb-row.rank-1 { background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent); }
-    .lb-row.rank-1 .lb-rank { color: var(--gold); text-shadow: 0 0 15px var(--gold); font-size: 1.2rem; }
+    .lb-row.rank-1 .lb-rank { color: var(--gold); }
     .lb-row.rank-1 .lb-name { color: var(--gold); }
-    .lb-row.rank-2 .lb-rank { color: #e0e0e0; text-shadow: 0 0 10px #e0e0e0; }
-    .lb-row.rank-3 .lb-rank { color: #cd7f32; text-shadow: 0 0 10px #cd7f32; }
+    .lb-row.rank-2 .lb-rank { color: #e0e0e0; }
+    .lb-row.rank-3 .lb-rank { color: #cd7f32; }
 
-    /* --- 右側：圖表面板 --- */
+    /* 右側：圖表面板 */
     .chart-panel {
-        background: rgba(0,0,0,0.5);
+        background: rgba(0,0,0,0.4);
         border: 1px solid #333;
-        border-radius: 12px;
-        padding: 40px 20px 25px 20px;
+        border-radius: 10px;
+        padding: 30px 15px 20px 15px;
         position: relative;
         display: flex;
         align-items: flex-end; 
         justify-content: space-evenly; 
-        gap: 6px;
+        gap: 15px; 
         backdrop-filter: blur(5px);
         overflow: hidden;
     }
     .chart-panel::before {
-        content: 'PERFORMANCE ANALYTICS (ROI %)';
+        content: 'TOP 5 ROI %';
         position: absolute;
-        top: 15px; left: 20px;
+        top: 8px; left: 12px;
         font-family: 'Arial Black';
-        color: rgba(255,255,255,0.15);
-        font-size: 1.2rem;
+        color: rgba(255,255,255,0.1);
+        font-size: 0.85rem;
         letter-spacing: 1px;
         pointer-events: none;
-        z-index: 0;
     }
     .chart-grid {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        z-index: 0;
-        background-image: 
-            linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-        background-size: 100% 25%, 20% 100%;
-        opacity: 0.5;
+        position: absolute; inset: 0; pointer-events: none; z-index: 0;
+        background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 100% 25%;
     }
 
     .bar-wrapper {
-        flex: 1;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: center;
-        position: relative;
-        z-index: 1;
-        max-width: 50px; 
-        min-width: 25px;
+        flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; z-index: 1;
+        max-width: 50px; min-width: 30px;
     }
     .bar-fill {
-        width: 80%;
-        background: linear-gradient(0deg, rgba(255, 145, 0, 0.3) 0%, var(--gold) 100%);
+        width: 60%;
+        background: #444;
         border-top: 2px solid #fff;
         border-radius: 4px 4px 0 0;
         transition: height 1s cubic-bezier(0.25, 0.8, 0.25, 1);
         min-height: 4px;
         position: relative;
-        box-shadow: 0 0 20px rgba(255, 145, 0, 0.4);
-    }
-    .bar-fill:hover {
-        filter: brightness(1.2);
-        box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
     }
     .bar-val-top {
-        position: absolute;
-        top: -24px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 0.75rem;
-        color: #fff;
-        font-weight: 900;
-        font-family: 'Courier New';
-        text-shadow: 0 0 5px #000;
+        position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+        font-size: 0.7rem; color: #fff; font-weight: 900; font-family: 'Courier New'; text-shadow: 0 0 5px #000;
         white-space: nowrap;
     }
     .bar-label-bottom {
-        margin-top: 8px;
-        font-size: 0.7rem;
-        color: #aaa;
-        text-align: center;
-        font-family: 'Courier New';
-        font-weight: bold;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
+        margin-top: 4px; font-size: 0.65rem; color: #888; text-align: center; font-family: 'Courier New'; font-weight: bold;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
     }
 
     /* RWD */
     @media(max-width: 900px) {
-        .arena-dashboard-v15 { grid-template-columns: 1fr; height: auto; gap: 20px; }
-        .leaderboard-panel { height: 350px; } 
-        .chart-panel { height: 300px; padding: 40px 10px 10px 10px; }
-        .bar-val-top { font-size: 0.65rem; top: -18px; }
+        .arena-dashboard-v15 { grid-template-columns: 1fr; height: auto; gap: 15px; }
+        .leaderboard-panel { height: 250px; } 
+        .chart-panel { height: 200px; padding: 30px 10px 10px 10px; }
     }
 
     /* FOOTER */
@@ -379,42 +321,33 @@
 <div id="refresh-indicator"><div class="refresh-text"><div class="spinner"></div>REFRESHING...</div></div>
 
 <header>
-  <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">LOADING...</h1>
       <div class="meta-info" id="pageMeta">LOADING DATA...</div>
   </div>
+  <img id="pageLogo" src="" alt="Logo">
 </header>
 
 <div class="container">
   <div class="dashboard-panel">
-    <div class="dash-grid">
       <div class="dash-group tw-style">
-        <div class="dash-header"><span class="dash-title c-tw">TWD 戰情</span></div>
-        <div class="data-row"><span class="data-label">COST</span><span class="data-val" id="costTW">...<span class="unit-tag">萬</span></span></div>
-        <div class="data-row"><span class="data-label">ASSET</span><span class="data-val asset" id="assetTW">...<span class="unit-tag">萬</span></span></div>
-        <div class="profit-block"><span class="profit-main" id="plTW_val">...</span><span class="profit-sub" id="plTW_pct">...</span></div>
+        <span class="data-label">TWD ASSET</span>
+        <span class="data-val asset" id="assetTW">...<span class="unit-tag">萬</span></span>
+        <div class="profit-block"><span class="profit-main" id="plTW_val">...</span></div>
       </div>
       <div class="dash-group us-style">
-        <div class="dash-header"><span class="dash-title c-us">USD 戰情</span></div>
-        <div class="data-row"><span class="data-label">COST</span><span class="data-val" id="costUS">...<span class="unit-tag">萬</span></span></div>
-        <div class="data-row"><span class="data-label">ASSET</span><span class="data-val asset" id="assetUS">...<span class="unit-tag">萬</span></span></div>
-        <div class="profit-block"><span class="profit-main" id="plUS_val">...</span><span class="profit-sub" id="plUS_pct">...</span></div>
+        <span class="data-label">USD ASSET</span>
+        <span class="data-val asset" id="assetUS">...<span class="unit-tag">萬</span></span>
+        <div class="profit-block"><span class="profit-main" id="plUS_val">...</span></div>
       </div>
       <div class="dash-group total-style">
-        <div class="dash-header" style="justify-content: center;"><span class="dash-title c-gold">TOTAL ASSET</span></div>
+        <span class="data-label">TOTAL NET WORTH</span>
         <div class="total-big-val" id="totalAsset">...</div>
-        <div class="total-roi-block">
-            <div class="total-roi-display" id="totalROI">...</div>
-        </div>
-        <div class="data-row"><span class="data-label">總成本 (TWD)</span><span class="data-val" id="totalCostTWD">...</span></div>
-        <div class="data-row"><span class="data-label">總損益 (TWD)</span><span class="data-val" id="totalDiff">...</span></div>
-        <div class="rate-display" id="rateInfo">Loading Rate...</div>
+        <div class="total-roi-display" id="totalROI">...</div>
       </div>
-    </div>
   </div>
 
-  <div class="section-title">I. LIVE BATTLE (投資競技場)</div>
+  <div class="section-title">I. LIVE BATTLE (競技場)</div>
   <div class="arena-container" id="arenaContainer"></div>
 
   <div class="section-title">II. SKILL CARDS (八大技能卡牌)</div>
@@ -457,7 +390,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 const FALLBACK_DATA = `
 A (code)	B (type)	C (rpg)	D (target)	E (skill)	F (cost)	G (current)	H (strategy)	I (sop)	J (image)
 Title	PROJECT CAGE : RELOADED	
-Meta	v15.2 (Compact View) • 2025-2031	
+Meta	v15.4 (Ultra Slim) • 2025-2031	
 L01	🔒 資金封閉鐵律	1,000 萬只進不出。僅能在定存、活存、證券戶間流動，嚴禁消費。
 L02	⚖️ 歸一化競技鐵律	績效起點皆為 100%。不比金額大小，只比策略報酬率 (%)。
 L03	🔄 配息再投入鐵律	股息 100% 留倉再投入，視為淨值一部分，維持複利效應。
@@ -558,7 +491,7 @@ init();
 // 🔄 UPDATED INIT FUNCTION
 // =========================================================
 async function init() {
-    uiLog('=== SYSTEM START (v15.2) ===');
+    uiLog('=== SYSTEM START (v15.4) ===');
     uiLog(`Fetching Data from: ${GOOGLE_SHEET_URL.substring(0, 50)}...`);
     
     cardsData = {}; portfolios = {}; eventsData = []; lawsData = [];
@@ -577,7 +510,6 @@ async function init() {
         if(rateData && rateData.rates && rateData.rates.TWD) {
             currentRate = rateData.rates.TWD;
             uiLog(`匯率更新成功: 1 USD = ${currentRate} TWD`, 'success');
-            document.getElementById('rateInfo').textContent = `USD/TWD: ${currentRate}`;
         }
     } catch (e) { 
         uiLog('匯率 API 連線失敗，使用預設值', 'warn'); 
@@ -615,7 +547,6 @@ async function init() {
         if(!meta.innerHTML.includes('OFFLINE')) {
               meta.innerHTML += ` <span style="color:var(--tw)">[OFFLINE MODE]</span>`;
         }
-        document.getElementById('rateInfo').textContent += ` (Fallback)`;
     }
 }
 
@@ -727,32 +658,22 @@ function renderDashboard(){
   });
 
   const sTW = calc(tcTW, taTW);
-  document.getElementById('costTW').textContent = '$' + (tcTW/10000).toFixed(0) + '萬';
   document.getElementById('assetTW').textContent = '$' + (taTW/10000).toFixed(0) + '萬';
-  document.getElementById('plTW_val').textContent = `${sTW.sign}$${(sTW.diff/10000).toFixed(1)}萬`;
+  document.getElementById('plTW_val').textContent = `${sTW.arrow}${sTW.roi}%`;
   document.getElementById('plTW_val').className = `profit-main ${sTW.cls}`;
-  document.getElementById('plTW_pct').textContent = `${sTW.arrow} ${sTW.roi}%`;
-  document.getElementById('plTW_pct').className = `profit-sub ${sTW.cls}`;
 
   const sUS = calc(tcUS, taUS);
-  document.getElementById('costUS').textContent = '$' + (tcUS/10000).toFixed(0) + '萬';
   document.getElementById('assetUS').textContent = '$' + (taUS/10000).toFixed(0) + '萬';
-  document.getElementById('plUS_val').textContent = `${sUS.sign}$${(sUS.diff/10000).toFixed(1)}萬`;
+  document.getElementById('plUS_val').textContent = `${sUS.arrow}${sUS.roi}%`;
   document.getElementById('plUS_val').className = `profit-main ${sUS.cls}`;
-  document.getElementById('plUS_pct').textContent = `${sUS.arrow} ${sUS.roi}%`;
-  document.getElementById('plUS_pct').className = `profit-sub ${sUS.cls}`;
 
   const totalAssetTWD = taTW + (taUS * currentRate);
   const totalCostTWD = tcTW + (tcUS * currentRate); 
   const sTotal = calc(totalCostTWD, totalAssetTWD);
   const cur = document.getElementById('totalAsset'); 
-  cur.textContent = 'NT$ ' + totalAssetTWD.toLocaleString(undefined, {maximumFractionDigits: 0});
+  cur.textContent = 'NT$' + (totalAssetTWD/10000).toFixed(0) + '萬';
   cur.className = 'total-big-val ' + sTotal.cls;
-  document.getElementById('totalCostTWD').textContent = '$' + (totalCostTWD/10000).toFixed(0) + '萬';
-  const totalDiff = totalAssetTWD - totalCostTWD;
-  const elDiff = document.getElementById('totalDiff');
-  elDiff.textContent = `${totalDiff>=0?'+':''}$${(totalDiff/10000).toFixed(1)}萬`;
-  elDiff.className = `data-val ${sTotal.cls}`;
+  
   const elTotalROI = document.getElementById('totalROI');
   elTotalROI.textContent = `${sTotal.arrow} ${sTotal.sign}${sTotal.roi}%`;
   elTotalROI.className = `total-roi-display ${sTotal.cls}`;
@@ -782,7 +703,7 @@ function renderEvents(){
 }
 
 // =========================================================
-// 🔥 NEW ARENA RENDER FUNCTION (v15.2) 🔥
+// 🔥 NEW ARENA RENDER FUNCTION (v15.4 - TOP 5 + COMPACT) 🔥
 // =========================================================
 function renderArena(){
     const con = document.getElementById('arenaContainer'); 
@@ -812,8 +733,8 @@ function renderArena(){
     // 2. 排序：ROI 由高到低
     allStrategies.sort((a, b) => b.roiNum - a.roiNum);
     
-    // 僅取前 13 名顯示 (如需求描述)
-    const topStrategies = allStrategies.slice(0, 13);
+    // 🔥 只取前 5 名 🔥
+    const topStrategies = allStrategies.slice(0, 5);
 
     // 3. 準備 HTML 結構
     let html = `<div class="arena-dashboard-v15">`;
@@ -822,7 +743,7 @@ function renderArena(){
     html += `
     <div class="leaderboard-panel">
         <div class="lb-header">
-            <span>LIVE BATTLE RANKING</span>
+            <span>LIVE BATTLE</span>
             <span class="lb-header-sub">TOP ${topStrategies.length}</span>
         </div>
         <div class="lb-list">`;
@@ -844,31 +765,31 @@ function renderArena(){
     // --- 右側：長條圖 (Bar Chart) ---
     html += `<div class="chart-panel"><div class="chart-grid"></div>`;
     
-    // 找出最大 ROI 用於設定圖表比例 (設定最低天花板為 10% 以防數值太小)
+    // 找出最大 ROI 用於設定圖表比例
     let maxROI = Math.max(...topStrategies.map(s => s.roiNum));
     if (maxROI < 10) maxROI = 10;
-    if (maxROI <= 0) maxROI = 1; // 防止全負數時出錯
+    if (maxROI <= 0) maxROI = 1; 
 
     topStrategies.forEach(s => {
-        // 計算高度百分比 (最小給 2% 以確保顯示)
+        // 計算高度百分比
         let heightPct = (s.roiNum / maxROI) * 100;
-        if (heightPct < 2 && s.roiNum > -99) heightPct = 2; 
-        if (s.roiNum <= -99) heightPct = 0; // 破產保護
+        if (heightPct < 4 && s.roiNum > -99) heightPct = 4; // 稍微拉高最小值，讓圖表好看
+        if (s.roiNum <= -99) heightPct = 0; 
         
         // 根據 ROI 動態改變顏色 (金/綠/紅)
-        let barColorBg = 'linear-gradient(0deg, rgba(255, 145, 0, 0.3) 0%, var(--gold) 100%)';
-        let shadowColor = 'rgba(255, 215, 0, 0.6)';
+        let barColorBg = '#444'; // 預設深灰
+        
         if(s.cls.includes('profit')) {
              barColorBg = 'linear-gradient(0deg, rgba(0, 255, 106, 0.3) 0%, var(--green) 100%)';
-             shadowColor = 'rgba(0, 255, 106, 0.6)';
         } else if (s.cls.includes('loss') || s.cls.includes('dead')) {
              barColorBg = 'linear-gradient(0deg, rgba(255, 42, 42, 0.3) 0%, var(--red) 100%)';
-             shadowColor = 'rgba(255, 42, 42, 0.6)';
+        } else {
+             barColorBg = 'linear-gradient(0deg, rgba(255, 145, 0, 0.3) 0%, var(--gold) 100%)';
         }
 
         html += `
             <div class="bar-wrapper">
-                <div class="bar-fill" style="height: ${heightPct}%; background: ${barColorBg}; box-shadow: 0 0 20px ${shadowColor};">
+                <div class="bar-fill" style="height: ${heightPct}%; background: ${barColorBg};">
                     <span class="bar-val-top">${s.roiStr}%</span>
                 </div>
                 <div class="bar-label-bottom">${s.code}</div>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT CAGE : RELOADED v16.2 (Dynamic)</title>
+<title>PROJECT CAGE : RELOADED v16.1 (Balanced/Dynamic)</title>
 <style>
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
@@ -558,7 +558,7 @@ function renderDashboard(){
   const sTW = calc(tcTW, taTW);
   document.getElementById('costTW').textContent = '$' + (tcTW/10000).toFixed(0) + '萬';
   document.getElementById('assetTW').textContent = '$' + (taTW/10000).toFixed(0) + '萬';
-  document.getElementById('plTW_val').textContent = `${sTW.sign}$${(sTW.diff/10000).toFixed(1)}萬';
+  document.getElementById('plTW_val').textContent = `${sTW.sign}$${(sTW.diff/10000).toFixed(1)}萬`;
   document.getElementById('plTW_val').className = `profit-main ${sTW.cls}`;
   document.getElementById('plTW_pct').textContent = `${sTW.arrow} ${sTW.roi}%`;
   document.getElementById('plTW_pct').className = `profit-sub ${sTW.cls}`;
@@ -587,13 +587,11 @@ function renderDashboard(){
   elTotalROI.className = `total-roi-display ${sTotal.cls}`;
 }
 
-// 🔥 UPDATED RENDER ARENA (Dynamic Scale)
+// 🔥 修改處：這裡改回了原版結構，只加入「動態縮放」邏輯
 function renderArena(){
     const con = document.getElementById('arenaContainer'); 
     con.innerHTML = ''; 
     let allStrategies = [];
-    
-    // 1. 整理數據
     Object.keys(portfolios).forEach(groupName => {
         portfolios[groupName].forEach(p => {
             let tc = 0, ta = 0;
@@ -607,14 +605,12 @@ function renderArena(){
     let listStrategies = [...allStrategies].sort((a, b) => b.roiNum - a.roiNum);
     let chartStrategies = [...allStrategies].sort((a, b) => a.code.localeCompare(b.code)).slice(0, 13);
 
-    // 2. 計算動態最大刻度 (Dynamic Scale)
-    let absMax = Math.max(...chartStrategies.map(s => Math.abs(s.roiNum)));
-    // 如果最大波動小於 0.2%，我們就將刻度設為 0.2% (避免除以 0 或刻度過小)，否則使用最大值 * 1.1
-    let maxScale = Math.max(absMax * 1.1, 0.2); 
+    // 🔥 這裡就是動態縮放的新邏輯 (Dynamic Scale)
+    let maxRoiAbs = Math.max(...chartStrategies.map(s => Math.abs(s.roiNum)));
+    // 設定天花板：至少 0.5% 以防全都是 0，否則取最大值的 1.2 倍
+    let dynamicCeiling = Math.max(maxRoiAbs * 1.2, 0.5);
 
     let html = `<div class="arena-dashboard-v15"><div class="leaderboard-panel"><div class="lb-header"><span>LIVE BATTLE</span><span class="lb-header-sub">${allStrategies.length} ENTRIES</span></div><div class="lb-list">`;
-    
-    // 3. 渲染列表 (左側)
     listStrategies.forEach((s, index) => {
         const deckIcons = s.rawDeck.map(cardCode => {
             const card = cardsData[cardCode];
@@ -622,15 +618,15 @@ function renderArena(){
         }).join('');
         html += `<div class="lb-row rank-${index+1}" onclick="openStrategyModal('${s.code}')"><span class="lb-rank">#${index+1}</span><div class="lb-info"><div class="lb-name">${s.name}</div><div class="lb-code">${s.code}</div></div><div class="lb-deck">${deckIcons}</div><span class="lb-val ${s.cls}">${s.sign}${s.roiStr}%</span></div>`;
     });
-
-    // 4. 渲染圖表 (右側) - 加入 Scale 顯示
-    html += `</div></div><div class="chart-panel">
-             <div style="position:absolute; top:10px; right:15px; font-family:'Courier New'; font-size:0.7rem; color:#666; border:1px solid #333; padding:2px 5px; border-radius:4px;">SCALE: ±${maxScale.toFixed(2)}%</div>
-             <div class="chart-grid"></div>`;
+    
+    // 右上角顯示目前的比例尺 Scale
+    html += `</div></div><div class="chart-panel"><div style="position:absolute;top:10px;right:10px;font-size:0.7rem;color:#666;border:1px solid #444;padding:2px 5px;border-radius:4px;">SCALE: ${dynamicCeiling.toFixed(2)}%</div><div class="chart-grid"></div>`;
     
     chartStrategies.forEach(s => {
-        let heightPct = (Math.abs(s.roiNum) / maxScale) * 100;
+        // 🔥 使用 dynamicCeiling 計算高度
+        let heightPct = (Math.abs(s.roiNum) / dynamicCeiling) * 100;
         
+        // 保持原版 v16.1 的紅漲綠跌
         let barColorBg = 'var(--gold)';
         let shadowColor = 'rgba(255, 215, 0, 0.6)';
         if(s.cls === 'color-profit') { barColorBg = 'var(--red)'; shadowColor = 'rgba(255, 42, 42, 0.6)'; }

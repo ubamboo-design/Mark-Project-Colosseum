@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT CAGE : RELOADED v16.13 (Target Col M)</title>
+<title>PROJECT CAGE : RELOADED v16.14 (No Scroll)</title>
 <style>
-    /* CSS 樣式完全保持不變 */
+    /* CSS: 僅修改 Arena 區塊，其餘保留 v16.13 */
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
         --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; 
@@ -100,11 +100,27 @@
     .event-card.emergency .event-status { color: var(--emergency); background: rgba(255, 0, 0, 0.15); }
     @keyframes red-flash { 0% { box-shadow: 0 0 5px rgba(255,0,0,0.2); } 50% { box-shadow: 0 0 25px rgba(255,0,0,0.5); } 100% { box-shadow: 0 0 5px rgba(255,0,0,0.2); } }
     @media(max-width: 768px) { .event-list { grid-template-columns: 1fr; } }
+    
+    /* 🛠️ ARENA 修正：移除卷軸，自動高度，左右拉伸 */
     .arena-container { width: 100%; }
-    .arena-dashboard-v15 { display: grid; grid-template-columns: 480px 1fr; gap: 20px; height: 320px; margin-bottom: 20px; }
-    .leaderboard-panel { background: linear-gradient(180deg, rgba(20,20,25,0.9), rgba(5,5,5,0.95)); border: 1px solid #333; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+    .arena-dashboard-v15 { display: grid; grid-template-columns: 480px 1fr; gap: 20px; margin-bottom: 20px; height: auto; align-items: stretch; }
+    .leaderboard-panel { 
+        background: linear-gradient(180deg, rgba(20,20,25,0.9), rgba(5,5,5,0.95)); 
+        border: 1px solid #333; 
+        border-radius: 10px; 
+        overflow: hidden; 
+        display: flex; 
+        flex-direction: column; 
+        box-shadow: 0 0 20px rgba(0,0,0,0.6); 
+        backdrop-filter: blur(5px);
+        height: auto; /* 自動長高 */
+    }
     .lb-header { background: linear-gradient(90deg, #1a1a1e, #050505); padding: 10px 15px; border-bottom: 1px solid #444; font-family: 'Arial Black', sans-serif; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
-    .lb-list { flex-grow: 1; overflow-y: auto; padding: 2px 0; }
+    .lb-list { 
+        flex-grow: 1; 
+        overflow-y: visible; /* 移除 Scroll Bar */
+        padding: 2px 0; 
+    }
     .lb-row { display: flex; align-items: center; padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.2s ease; cursor: pointer; }
     .lb-row:hover { background: rgba(255, 255, 255, 0.05); }
     .lb-rank { width: 30px; font-weight: 900; color: #555; font-family: 'Courier New'; font-size: 0.9rem; text-align: center; }
@@ -116,13 +132,30 @@
     .lb-val { font-family: 'Courier New', monospace; font-weight: 900; font-size: 1rem; text-align: right; min-width: 75px; margin-left: auto; }
     .lb-row.rank-1 .lb-rank { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
     .lb-row.rank-1 .lb-name { color: var(--gold); }
-    .chart-panel { background: rgba(0,0,0,0.5); border: 1px solid #333; border-radius: 10px; padding: 30px 10px 20px 10px; position: relative; display: flex; align-items: flex-end; justify-content: space-evenly; gap: 4px; backdrop-filter: blur(5px); overflow: hidden; }
+    
+    .chart-panel { 
+        background: rgba(0,0,0,0.5); 
+        border: 1px solid #333; 
+        border-radius: 10px; 
+        padding: 30px 10px 20px 10px; 
+        position: relative; 
+        display: flex; 
+        align-items: flex-end; 
+        justify-content: space-evenly; 
+        gap: 4px; 
+        backdrop-filter: blur(5px); 
+        overflow: hidden; 
+        height: auto; /* 自動跟隨左側高度 */
+        min-height: 300px;
+    }
     .chart-panel::before { content: 'TOP 13 (BY ID)'; position: absolute; top: 10px; left: 15px; font-family: 'Arial Black'; color: rgba(255,255,255,0.15); font-size: 1rem; letter-spacing: 1px; pointer-events: none; }
     .chart-grid { position: absolute; inset: 0; pointer-events: none; z-index: 0; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 100% 25%; opacity: 0.5; }
     .bar-wrapper { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; z-index: 1; max-width: 45px; min-width: 15px; }
     .bar-fill { width: 75%; border-top: 2px solid #fff; border-radius: 4px 4px 0 0; transition: height 1s cubic-bezier(0.25, 0.8, 0.25, 1); min-height: 4px; position: relative; }
     .bar-val-top { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 0.65rem; color: #fff; font-weight: 900; font-family: 'Courier New'; white-space: nowrap; }
     .bar-label-bottom { margin-top: 6px; font-size: 0.6rem; color: #aaa; text-align: center; font-family: 'Courier New'; font-weight: bold; width: 100%; overflow: hidden; text-overflow: ellipsis; }
+    @media(max-width: 900px) { .arena-dashboard-v15 { grid-template-columns: 1fr; height: auto; gap: 15px; } .leaderboard-panel { height: auto; } .chart-panel { height: 250px; } }
+    
     .footer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 50px; border-top: 1px solid #222; padding-top: 30px; }
     .info-box { background: #111; padding: 20px; border-radius: 12px; font-size: 0.9rem; color: #777; border: 1px solid #222; transition: .3s; }
     .info-title { color: #fff; font-weight: bold; margin-bottom: 8px; display: block; font-size: 1rem; letter-spacing: 1px; }
@@ -214,7 +247,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT CAGE', meta: 'v16.12' };
+let configData = { title: 'PROJECT CAGE', meta: 'v16.14' };
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -223,9 +256,7 @@ function toggleDebug() { const panel = document.getElementById('debug-panel'); p
 function uiLog(msg, type = 'info') { const panel = document.getElementById('debug-panel'); panel.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>`; panel.scrollTop = panel.scrollHeight; }
 
 async function init() {
-    // 🛑 修正重複問題：每次 init 都先把資料清空
     cardsData = {}; portfolios = {}; strategiesData = {}; eventsData = []; lawsData = [];
-
     try {
         const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
         const rateData = await rateRes.json();
@@ -267,8 +298,7 @@ function parseSheetData(text){
     } else if(c[0].startsWith('P')){
         if(!portfolios[currentGroup]) portfolios[currentGroup] = [];
         
-        // 🛠️ 智能抓取 ROI：直接鎖定 M 欄 (Index 12)
-        // 注意：Excel欄位 A=0 ... M=12
+        // 🛠️ 精確鎖定 M 欄 (Index 12)
         let sheetROI = c[12] ? c[12].replace('%', '').trim() : '0';
 
         let sObj = { 

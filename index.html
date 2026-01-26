@@ -4,15 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT CAGE : RELOADED v16.10 (Fix)</title>
+<title>PROJECT CAGE : RELOADED v16.11 (Sheet ROI Sync)</title>
 <style>
-    /* CSS 完全保持不變 */
+    /* CSS 與前版完全相同，無更動 */
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
         --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; 
         --gold: #ffd700; 
-        --red: #ff2a2a;   /* 獲利色 (台股紅) */
-        --green: #00ff6a; /* 虧損色 (台股綠) */
+        --red: #ff2a2a;   /* 獲利色 (紅) */
+        --green: #00ff6a; /* 虧損色 (綠) */
         --cyan: #00f7ff; 
         --emergency: #ff0000;
         --hud-cyan: #00eaff; --hud-green: #00ff4c; --hud-gold: #ffcc00;
@@ -153,7 +153,6 @@
       <div class="meta-info" id="pageMeta">LOADING DATA...</div>
   </div>
 </header>
-
 <div class="container">
   <div class="dashboard-wrapper">
       <div class="dash-grid">
@@ -179,7 +178,6 @@
           </div>
       </div>
   </div>
-
   <div class="section-title">I. LIVE BATTLE (投資競技場)</div>
   <div class="arena-container" id="arenaContainer"></div>
   <div class="section-title">II. SKILL CARDS (七大技能卡牌)</div>
@@ -189,9 +187,7 @@
   <div class="section-title">IV. IRON LAWS (核心鐵律)</div>
   <div class="footer-grid" id="footerContainer"></div>
 </div>
-
 <div class="container"><div id="debug-panel">Waiting for logs...</div></div>
-
 <div id="cardModal" class="modal-overlay" onclick="closeModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
     <div class="modal-header"><div><span class="m-code" id="mCode"></span><span class="m-skill" id="mSkill"></span></div><span class="close-btn" onclick="closeModal()">&times;</span></div>
@@ -203,7 +199,7 @@
 </div>
 
 <script>
-// 🛠️ 核心修正：自動連結修復 + 資料重複預防
+// 🛠️ Google Drive 自動修復邏輯
 function fixDriveUrl(url) {
     if (!url) return '';
     if (url.includes('drive.google.com')) {
@@ -214,11 +210,10 @@ function fixDriveUrl(url) {
 }
 
 const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv';
-const FALLBACK_DATA = `Title	PROJECT COLOSSEUM\nMeta	v16.10 (Fix)\nL01	🔒 資金封閉鐵律	1,000 萬只進不出。\nLogo	https://ubamboo-design.github.io/Mark-investment-dashboard/Mark_Investment_LOGO1.png`.trim();
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT CAGE', meta: 'LOADING...' };
+let configData = { title: 'PROJECT CAGE', meta: 'v16.11' };
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -227,9 +222,7 @@ function toggleDebug() { const panel = document.getElementById('debug-panel'); p
 function uiLog(msg, type = 'info') { const panel = document.getElementById('debug-panel'); panel.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>`; panel.scrollTop = panel.scrollHeight; }
 
 async function init() {
-    // 🛑 修正重複問題：每次 init 都先把資料清空
     cardsData = {}; portfolios = {}; strategiesData = {}; eventsData = []; lawsData = [];
-
     try {
         const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
         const rateData = await rateRes.json();
@@ -240,7 +233,7 @@ async function init() {
         const sheetText = await sheetRes.text();
         parseSheetData(sheetText);
         renderAll();
-    } catch(e) { parseSheetData(FALLBACK_DATA); renderAll(); }
+    } catch(e) { console.error('Sheet Loading Failed'); }
 }
 
 function parseSheetData(text){
@@ -254,6 +247,7 @@ function parseSheetData(text){
     if(c[0].startsWith('L')) { lawsData.push({ title: c[1], content: c[2] }); return; }
     if(c[0] === '代號' && c[1] === '名稱') { mode = 'STRATEGIES'; return; }
     if(c[0] === '事件簿') { mode = 'EVENTS'; return; }
+    
     if(c[0].startsWith('C')) {
         let costRaw = c[5] || '0', curRaw = c[6] || '0', invRaw = c[13] || '0';
         let isUSD = costRaw.includes('$') && !costRaw.includes('NT$');
@@ -264,13 +258,20 @@ function parseSheetData(text){
             cost: parseFloat(costRaw.replace(/[NT$US,\s]/g, '')) || 0,
             current: parseFloat(curRaw.replace(/[NT$US,\s]/g, '')) || 0,
             invested: parseFloat(invRaw.replace(/[NT$US,\s]/g, '')) || 0,
-            strategy: c[7], sop: c[8], imgUrl: imgUrl,
-            media: imgUrl ? `<img src="${imgUrl}" class="mc-media">` : defaultIcons['C01']
+            media: imgUrl ? `<img src="${imgUrl}" class="mc-media">` : defaultIcons['C01'],
+            strategy: c[7], sop: c[8], imgUrl: imgUrl
         };
     } else if(c[0].startsWith('P')){
-          if(!portfolios[currentGroup]) portfolios[currentGroup] = [];
-          let sObj = { code: c[0], name: c[1], deck: c[2] ? c[2].split('+').map(s=>s.trim()) : [], mindset: c[3] || '-', persona: c[4] || '-', conflict: c[5] || '-' };
-          portfolios[currentGroup].push(sObj); strategiesData[c[0]] = sObj;
+        if(!portfolios[currentGroup]) portfolios[currentGroup] = [];
+        // 🛠️ 關鍵修正：直接讀取 Sheet 上的報酬率欄位 (N欄, Index 13)
+        // 注意：Excel欄位順序 A=0, ..., N=13
+        let sheetROI = c[13] ? c[13].replace('%', '').trim() : '0';
+        let sObj = { 
+            code: c[0], name: c[1], deck: c[2] ? c[2].split('+').map(s=>s.trim()) : [], 
+            mindset: c[3] || '-', persona: c[4] || '-', conflict: c[5] || '-',
+            sheetROI: parseFloat(sheetROI) // 存入 Sheet 讀到的 ROI
+        };
+        portfolios[currentGroup].push(sObj); strategiesData[c[0]] = sObj;
     } else if (mode === 'STRATEGIES' && c[0] && !c[0].startsWith('P') && c.length < 5) {
         currentGroup = c[0].trim();
     } else if(mode === 'EVENTS' && c[0] && c[0].match(/^\d/)) {
@@ -281,19 +282,21 @@ function parseSheetData(text){
 }
 
 function calc(cost, cur){
-  if(!cost || isNaN(cost)) return {roi:0, arrow:'-', cls:'', diff: 0, sign: ''};
+  if(!cost) return {roi:0, arrow:'-', cls:'', diff: 0, sign: ''};
   const diff = cur - cost, roiRaw = diff/cost, roi = (roiRaw*100).toFixed(1);
   let cls = roiRaw >= 0.5 ? 'color-gold' : roiRaw >= 0 ? 'color-profit' : roiRaw <= -0.5 ? 'color-dead' : 'color-loss';
-  return {roi, arrow: roi>=0 ? '▲' : '▼', sign: roi>=0 ? '+' : '', cls, diff};
+  return {roi, arrow: diff>=0 ? '▲' : '▼', sign: diff>=0 ? '+' : '', cls, diff};
 }
-
-function renderAll(){ renderHeader(); renderDashboard(); renderCards(); renderEvents(); renderArena(); renderFooter(); }
-function renderHeader() { const img = document.getElementById('pageLogo'); if (logoUrl) { img.src = logoUrl; img.style.display = 'block'; } document.getElementById('pageTitle').textContent = configData.title; document.getElementById('pageMeta').textContent = configData.meta; }
 
 function renderDashboard(){
   let tcTW=0, taTW=0, tcUS=0, taUS=0;
-  Object.values(cardsData).forEach(c => { if(c.isUSD) { tcUS += c.cost; taUS += c.current; } else { tcTW += c.cost; taTW += c.current; } });
+  Object.values(cardsData).forEach(c => {
+      if(c.isUSD) { tcUS += c.cost; taUS += c.current; } 
+      else { tcTW += c.cost; taTW += c.current; }
+  });
   const sTW = calc(tcTW, taTW), sUS = calc(tcUS, taUS);
+  const totalAssetTWD = taTW + (taUS * currentRate), totalCostTWD = tcTW + (tcUS * currentRate);
+  const sTotal = calc(totalCostTWD, totalAssetTWD);
   document.getElementById('costTW').textContent = '總投入: NT$ ' + (tcTW/10000).toFixed(0) + '萬';
   document.getElementById('assetTW').textContent = taTW.toLocaleString();
   document.getElementById('plTW_val').textContent = `${sTW.sign}${sTW.diff.toLocaleString()}`;
@@ -304,48 +307,57 @@ function renderDashboard(){
   document.getElementById('plUS_val').textContent = `${sUS.sign}$${sUS.diff.toLocaleString()}`;
   document.getElementById('plUS_val').className = `pl-val ${sUS.cls}`;
   document.getElementById('plUS_pct').textContent = `(${sUS.sign}${sUS.roi}%)`;
-  const totalAssetTWD = taTW + (taUS * currentRate), totalCostTWD = tcTW + (tcUS * currentRate), sTotal = calc(totalCostTWD, totalAssetTWD);
-  const cur = document.getElementById('totalAsset'); cur.textContent = 'TWD ' + Math.round(totalAssetTWD).toLocaleString();
+  const cur = document.getElementById('totalAsset');
+  cur.textContent = 'TWD ' + Math.round(totalAssetTWD).toLocaleString();
   cur.style.color = sTotal.roi >= 0 ? '#fff' : '#ffaaaa';
 }
 
 function renderArena(){
     const con = document.getElementById('arenaContainer'); con.innerHTML = ''; 
     let allS = [];
-    Object.keys(portfolios).forEach(g => { portfolios[g].forEach(p => {
-        let tc = 0, ta = 0;
-        p.deck.forEach(code => { const c = cardsData[code]; if (c) { 
-            let costVal = c.isUSD ? c.cost * currentRate : c.cost;
-            let curVal = c.isUSD ? c.current * currentRate : c.current;
-            tc += costVal; ta += curVal; 
-        } });
-        const res = calc(tc, ta);
-        allS.push({ code: p.code, name: p.name, roiNum: parseFloat(res.roi), roiStr: res.roi, cls: res.cls, sign: res.sign, rawDeck: p.deck });
-    }); });
-    let listS = [...allS].sort((a, b) => b.roiNum - a.roiNum);
-    let chartS = [...allS].sort((a, b) => a.code.localeCompare(b.code)).slice(0, 13);
-    let maxR = Math.max(...chartS.map(s => Math.abs(s.roiNum)), 10), dynamicC = maxR * 1.2;
+    Object.keys(portfolios).forEach(g => portfolios[g].forEach(p => {
+        // 🛠️ 修正：直接使用 Sheet 讀到的 ROI，不再重新計算
+        const roiNum = p.sheetROI; 
+        // 判斷顏色邏輯
+        let cls = roiNum >= 50 ? 'color-gold' : roiNum >= 0 ? 'color-profit' : roiNum <= -50 ? 'color-dead' : 'color-loss';
+        let sign = roiNum >= 0 ? '+' : '';
+        
+        allS.push({ code: p.code, name: p.name, roiNum: roiNum, roiStr: roiNum.toFixed(2), cls: cls, sign: sign, rawDeck: p.deck });
+    }));
+    allS.sort((a, b) => b.roiNum - a.roiNum); // 依照 Excel 報酬率排序
+
     let html = `<div class="arena-dashboard-v15"><div class="leaderboard-panel"><div class="lb-header"><span>LIVE BATTLE</span><span>${allS.length} ENTRIES</span></div><div class="lb-list">`;
-    listS.forEach((s, i) => {
-        const deckIcons = s.rawDeck.map(code => { const card = cardsData[code]; return card?.imgUrl ? `<img src="${card.imgUrl}" class="lb-card-icon">` : `<div class="lb-card-icon" style="background:#222;font-size:8px;line-height:26px;text-align:center;">${code}</div>`; }).join('');
-        html += `<div class="lb-row rank-${i+1}" onclick="openStrategyModal('${s.code}')"><span class="lb-rank">#${i+1}</span><div class="lb-info"><div class="lb-name">${s.name}</div><div class="lb-code">${s.code}</div></div><div class="lb-deck">${deckIcons}</div><span class="lb-val ${s.cls}">${s.sign}${s.roiStr}%</span></div>`;
+    allS.forEach((s, i) => {
+        const deck = s.rawDeck.map(code => {
+            const card = cardsData[code];
+            return card?.imgUrl ? `<img src="${fixDriveUrl(card.imgUrl)}" class="lb-card-icon">` : `<div class="lb-card-icon" style="background:#222;font-size:8px;">${code}</div>`;
+        }).join('');
+        html += `<div class="lb-row rank-${i+1}" onclick="openStrategyModal('${s.code}')"><span class="lb-rank">#${i+1}</span><div class="lb-info"><div class="lb-name">${s.name}</div><div class="lb-code">${s.code}</div></div><div class="lb-deck">${deck}</div><span class="lb-val ${s.cls}">${s.sign}${s.roiStr}%</span></div>`;
     });
-    html += `</div></div><div class="chart-panel"><div style="position:absolute;top:10px;right:10px;font-size:0.7rem;color:#666;border:1px solid #444;padding:2px 5px;border-radius:4px;">SCALE: ${dynamicC.toFixed(0)}%</div><div class="chart-grid"></div>`;
-    chartS.forEach(s => {
-        let h = (Math.abs(s.roiNum) / dynamicC) * 100;
+    
+    let maxR = Math.max(...allS.map(x => Math.abs(x.roiNum)), 10);
+    con.innerHTML = html + `</div></div><div class="chart-panel"><div class="chart-grid"></div>` + 
+    allS.slice(0, 13).map(s => {
+        let h = (Math.abs(s.roiNum) / (maxR * 1.2)) * 100;
         let color = s.cls === 'color-profit' ? 'var(--red)' : (s.cls==='color-gold'?'var(--gold)':'var(--green)');
-        html += `<div class="bar-wrapper"><div class="bar-fill" style="height: ${h}%; background: ${color}; box-shadow: 0 0 15px ${color};"><span class="bar-val-top">${s.roiStr}%</span></div><div class="bar-label-bottom">${s.code}</div></div>`;
-    });
-    con.innerHTML = html + `</div></div>`;
+        return `<div class="bar-wrapper"><div class="bar-fill" style="height:${h}%; background:${color}; box-shadow: 0 0 10px ${color}"><span class="bar-val-top">${s.roiStr}%</span></div><div class="bar-label-bottom">${s.code}</div></div>`;
+    }).join('') + `</div></div>`;
 }
 
-function renderCards(){ const con=document.getElementById('cardContainer'); con.innerHTML=''; Object.values(cardsData).forEach(c=>{ con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')"><div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div><div class="mc-image-container">${c.media}</div><div class="mc-footer"><div class="mc-chn-name">${c.rpg||''}</div><div class="mc-eng-name">${c.skill}</div><div class="mc-cost-badge">$${(c.cost/10000).toFixed(0)}萬</div></div></div>`; });}
+function renderCards(){
+    const con=document.getElementById('cardContainer'); con.innerHTML='';
+    Object.values(cardsData).forEach(c=>{
+        con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')"><div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div><div class="mc-image-container">${c.media}</div><div class="mc-footer"><div class="mc-chn-name">${c.rpg||''}</div><div class="mc-eng-name">${c.skill}</div><div class="mc-cost-badge">$${(c.cost/10000).toFixed(0)}萬</div></div></div>`;
+    });
+}
 function renderEvents(){ const con = document.getElementById('eventContainer'); con.innerHTML = eventsData.slice(0, 2).map(e => `<div class="event-card${e.isUrgent?' emergency':''}"><div class="event-header"><span class="event-date">${e.date}</span><span class="event-status">${e.status}</span></div><div class="event-content">${e.content}</div></div>`).join(''); }
-function renderFooter() { const con = document.getElementById('footerContainer'); con.innerHTML = lawsData.map(law => `<div class="info-box"><span class="info-title">${law.title}</span>${law.content}</div>`).join('') + `<div class="info-box refresh-btn" onclick="triggerRefresh()">↻ REFRESH DATA</div><div class="info-box refresh-btn" onclick="toggleDebug()" style="border-color:#0f0;color:#0f0;">🐞 DEBUG</div>`; }
+function renderFooter() { const con = document.getElementById('footerContainer'); con.innerHTML = lawsData.map(law => `<div class="info-box"><span class="info-title">${law.title}</span>${law.content}</div>`).join('') + `<div class="info-box refresh-btn" onclick="init()">↻ REFRESH DATA</div>`; }
 function openModal(k){ const c=cardsData[k]; document.getElementById('mCode').textContent=c.code; document.getElementById('mSkill').textContent=c.skill; document.getElementById('val1').textContent = `${c.isUSD?'US$':'NT$'} ${c.cost.toLocaleString()}`; document.getElementById('val_invested').textContent = `${c.isUSD?'US$':'NT$'} ${c.invested.toLocaleString()}`; document.getElementById('val2').textContent = c.strategy; document.getElementById('val3').textContent = c.sop; document.getElementById('cardModal').style.display='flex'; document.getElementById('cardModal').classList.add('modal-active'); }
 function openStrategyModal(k) { const s = strategiesData[k]; document.getElementById('mCode').textContent = s.code; document.getElementById('mSkill').textContent = s.name; document.getElementById('val1').textContent = s.mindset; document.getElementById('val_invested').textContent = '-'; document.getElementById('val2').textContent = s.persona; document.getElementById('val3').textContent = s.conflict; document.getElementById('cardModal').style.display = 'flex'; document.getElementById('cardModal').classList.add('modal-active'); }
 function closeModal(){document.getElementById('cardModal').style.display='none'}
-async function triggerRefresh() { await init(); }
+function renderHeader() { const img = document.getElementById('pageLogo'); if (logoUrl) { img.src = logoUrl; img.style.display = 'block'; } document.getElementById('pageTitle').textContent = configData.title; document.getElementById('pageMeta').textContent = configData.meta; }
+function renderAll(){ renderHeader(); renderDashboard(); renderCards(); renderEvents(); renderArena(); renderFooter(); }
+
 init();
 </script>
 </body>

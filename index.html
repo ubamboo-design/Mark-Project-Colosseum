@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT CAGE : RELOADED v16.21 (Split Budget)</title>
+<title>PROJECT CAGE : RELOADED v16.22 (Modal Sync)</title>
 <style>
-    /* CSS: 大部分沿用 v16.19，僅新增 HUD 內部排版樣式 */
+    /* CSS: 保持 v16.19 的完美佈局，僅優化 Modal 樣式 */
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
         --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; 
@@ -50,17 +50,14 @@
     .orb-ring::before { content: ''; position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; background: var(--hud-gold); box-shadow: 0 0 10px var(--hud-gold); border-radius: 50%; }
     @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } }
     @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-    .hud-title { font-family: 'Segoe UI', sans-serif; font-weight: 700; font-size: 1.2rem; text-align: center; margin-bottom: 15px; position: relative; z-index: 2; letter-spacing: 1px; padding-bottom: 5px; }
-    
-    /* 🛠️ 新增 HUD 分流排版樣式 */
+    .hud-title { font-family: 'Segoe UI', sans-serif; font-weight: 700; font-size: 1.2rem; text-align: center; margin-bottom: 20px; position: relative; z-index: 2; letter-spacing: 1px; padding-bottom: 5px; }
     .data-group { margin-bottom: 15px; position: relative; z-index: 2; }
     .hud-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.1); padding: 4px 0; font-size: 0.85rem; font-family: 'Segoe UI', sans-serif; }
     .hud-row .lbl { color: #888; font-weight: bold; }
     .hud-row .val { color: #ccc; font-family: var(--font-num); font-weight: bold; letter-spacing: 1px; }
-    
     .sub-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-bottom: 2px; font-family: 'Segoe UI', sans-serif; text-align: center; }
     .main-val { font-family: var(--font-num); font-size: 2.2rem; font-weight: 700; letter-spacing: 1px; line-height: 1; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); text-align: center; margin-top: 5px; }
-    
+    .cost-val { font-family: 'Segoe UI', sans-serif; font-size: 0.9rem; color: #aaa; letter-spacing: 1px; font-weight: bold; }
     .pl-block { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; margin-top: auto; width: 100%; text-align: center; position: relative; z-index: 2; }
     .pl-val { font-family: var(--font-num); font-size: 1.3rem; font-weight: bold; }
     .pl-pct { font-size: 0.9rem; margin-left: 5px; opacity: 0.8; font-family: var(--font-num); }
@@ -222,7 +219,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT CAGE', meta: 'v16.21' };
+let configData = { title: 'PROJECT CAGE', meta: 'v16.22' };
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -258,14 +255,11 @@ function parseSheetData(text){
     if(c[0] === '事件簿') { mode = 'EVENTS'; return; }
     
     if(c[0].startsWith('C')) {
-        // 🛠️ F欄=預算 (Budget), N欄=已投 (Invested)
         let budgetRaw = c[5] || '0';
         let currentRaw = c[6] || '0';
         let investedRaw = c[13] || '0';
-        
         let isUSD = budgetRaw.includes('$') && !budgetRaw.includes('NT$');
         let imgUrl = fixDriveUrl(c[9] ? c[9].trim() : '');
-        
         cardsData[c[0]] = {
             code: c[0], type: c[1], rpg: c[2], target: c[3], skill: c[4],
             isUSD: isUSD,
@@ -277,28 +271,18 @@ function parseSheetData(text){
         };
     } else if(c[0].startsWith('P')){
         if(!portfolios[currentGroup]) portfolios[currentGroup] = [];
-        
         let rawInv = c[9] ? c[9].trim() : '0';
         let displayInv = rawInv;
-        if (rawInv.includes('NT')) {
-            displayInv = 'NT$' + rawInv.replace(/[^0-9,.]/g, '');
-        } else {
-            displayInv = 'USD$' + rawInv.replace(/[^0-9,.]/g, '');
-        }
-
+        if (rawInv.includes('NT')) { displayInv = 'NT$' + rawInv.replace(/[^0-9,.]/g, ''); } 
+        else { displayInv = 'USD$' + rawInv.replace(/[^0-9,.]/g, ''); }
         let sheetROI = '0';
-        for(let k=c.length-1; k>=0; k--) {
-            if(c[k] && c[k].includes('%')) {
-                sheetROI = c[k].replace('%','').trim();
-                break;
-            }
-        }
-
+        for(let k=c.length-1; k>=0; k--) { if(c[k] && c[k].includes('%')) { sheetROI = c[k].replace('%','').trim(); break; } }
         let sObj = { 
             code: c[0], name: c[1], deck: c[2] ? c[2].split('+').map(s=>s.trim()) : [], 
             mindset: c[3] || '-', persona: c[4] || '-', conflict: c[5] || '-',
-            sheetROI: parseFloat(sheetROI),
-            sheetInvested: displayInv 
+            sheetROI: parseFloat(sheetROI), sheetInvested: displayInv,
+            // 🛠️ 策略彈窗專用資料
+            budget: c[5] || '-', invested: c[9] || '-'
         };
         portfolios[currentGroup].push(sObj); strategiesData[c[0]] = sObj;
     } else if (mode === 'STRATEGIES' && c[0] && !c[0].startsWith('P') && c.length < 5) {
@@ -310,8 +294,6 @@ function parseSheetData(text){
   });
 }
 
-// 🛠️ Calc: (Current - Budget) / Budget -> HUD P/L logic
-// HUD is showing "Current Asset vs Budget". 
 function calc(cost, cur){
   if(!cost) return {roi:0, arrow:'-', cls:'', diff: 0, sign: ''};
   const diff = cur - cost, roi = ((diff/cost)*100).toFixed(1);
@@ -322,21 +304,10 @@ function calc(cost, cur){
 function renderDashboard(){
   let budgetTW=0, investedTW=0, assetTW=0;
   let budgetUS=0, investedUS=0, assetUS=0;
-
   Object.values(cardsData).forEach(c => {
-      if(c.isUSD) { 
-          budgetUS += c.budget; 
-          investedUS += c.invested;
-          assetUS += c.current; 
-      } else { 
-          budgetTW += c.budget; 
-          investedTW += c.invested;
-          assetTW += c.current; 
-      }
+      if(c.isUSD) { budgetUS += c.budget; investedUS += c.invested; assetUS += c.current; } 
+      else { budgetTW += c.budget; investedTW += c.invested; assetTW += c.current; }
   });
-
-  // TWD HUD
-  // P/L = Asset - Budget (Total Account P/L)
   const sTW = calc(budgetTW, assetTW);
   document.getElementById('budgetTW').textContent = 'NT$ ' + (budgetTW/10000).toFixed(0) + '萬';
   document.getElementById('investedTW').textContent = 'NT$ ' + (investedTW/10000).toFixed(0) + '萬';
@@ -344,8 +315,6 @@ function renderDashboard(){
   document.getElementById('plTW_val').textContent = `${sTW.sign}${sTW.diff.toLocaleString()}`;
   document.getElementById('plTW_val').className = `pl-val ${sTW.cls}`;
   document.getElementById('plTW_pct').textContent = `(${sTW.sign}${sTW.roi}%)`;
-
-  // USD HUD
   const sUS = calc(budgetUS, assetUS);
   document.getElementById('budgetUS').textContent = '$ ' + (budgetUS/10000).toFixed(2) + '萬';
   document.getElementById('investedUS').textContent = '$ ' + (investedUS/10000).toFixed(2) + '萬';
@@ -353,8 +322,6 @@ function renderDashboard(){
   document.getElementById('plUS_val').textContent = `${sUS.sign}$${sUS.diff.toLocaleString()}`;
   document.getElementById('plUS_val').className = `pl-val ${sUS.cls}`;
   document.getElementById('plUS_pct').textContent = `(${sUS.sign}${sUS.roi}%)`;
-
-  // TOTAL HUD
   const totalAssetTWD = assetTW + (assetUS * currentRate);
   const totalBudgetTWD = budgetTW + (budgetUS * currentRate);
   const sTotal = calc(totalBudgetTWD, totalAssetTWD);
@@ -373,49 +340,48 @@ function renderArena(){
         allS.push({ code: p.code, name: p.name, roiNum: roiNum, roiStr: roiNum.toFixed(2), cls: cls, sign: sign, rawDeck: p.deck, invested: p.sheetInvested });
     }));
     allS.sort((a, b) => b.roiNum - a.roiNum); 
-
-    let html = `<div class="arena-dashboard-v15"><div class="leaderboard-panel">
-        <div class="lb-header">
-            <span class="title">LIVE BATTLE</span>
-            <span class="lbl-inv">已投入金額</span>
-            <span class="lbl-roi">報酬率</span>
-        </div>
-        <div class="lb-list">`;
-        
+    let html = `<div class="arena-dashboard-v15"><div class="leaderboard-panel"><div class="lb-header"><span class="title">LIVE BATTLE</span><span class="lbl-inv">已投入金額</span><span class="lbl-roi">報酬率</span></div><div class="lb-list">`;
     allS.forEach((s, i) => {
-        const deck = s.rawDeck.map(code => {
-            const card = cardsData[code];
-            return card?.imgUrl ? `<img src="${fixDriveUrl(card.imgUrl)}" class="lb-card-icon">` : `<div class="lb-card-icon" style="background:#222;font-size:8px;">${code}</div>`;
-        }).join('');
-        
-        html += `<div class="lb-row rank-${i+1}" onclick="openStrategyModal('${s.code}')">
-            <span class="lb-rank">#${i+1}</span>
-            <div class="lb-info"><div class="lb-name">${s.name}</div><div class="lb-code">${s.code}</div></div>
-            <div class="lb-deck">${deck}</div>
-            <div class="lb-invested">${s.invested}</div>
-            <span class="lb-val ${s.cls}">${s.sign}${s.roiStr}%</span>
-        </div>`;
+        const deck = s.rawDeck.map(code => { const card = cardsData[code]; return card?.imgUrl ? `<img src="${fixDriveUrl(card.imgUrl)}" class="lb-card-icon">` : `<div class="lb-card-icon" style="background:#222;font-size:8px;">${code}</div>`; }).join('');
+        html += `<div class="lb-row rank-${i+1}" onclick="openStrategyModal('${s.code}')"><span class="lb-rank">#${i+1}</span><div class="lb-info"><div class="lb-name">${s.name}</div><div class="lb-code">${s.code}</div></div><div class="lb-deck">${deck}</div><div class="lb-invested">${s.invested}</div><span class="lb-val ${s.cls}">${s.sign}${s.roiStr}%</span></div>`;
     });
-    
     let maxR = Math.max(...allS.map(x => Math.abs(x.roiNum)), 10);
-    con.innerHTML = html + `</div></div><div class="chart-panel"><div class="chart-grid"></div>` + 
-    allS.slice(0, 13).map(s => {
-        let h = (Math.abs(s.roiNum) / (maxR * 1.2)) * 100;
-        let color = s.cls === 'color-profit' ? 'var(--red)' : (s.cls==='color-gold'?'var(--gold)':'var(--green)');
-        return `<div class="bar-wrapper"><div class="bar-fill" style="height:${h}%; background:${color}; box-shadow: 0 0 10px ${color}"><span class="bar-val-top">${s.roiStr}%</span></div><div class="bar-label-bottom">${s.code}</div></div>`;
-    }).join('') + `</div></div>`;
+    con.innerHTML = html + `</div></div><div class="chart-panel"><div class="chart-grid"></div>` + allS.slice(0, 13).map(s => { let h = (Math.abs(s.roiNum) / (maxR * 1.2)) * 100; let color = s.cls === 'color-profit' ? 'var(--red)' : (s.cls==='color-gold'?'var(--gold)':'var(--green)'); return `<div class="bar-wrapper"><div class="bar-fill" style="height:${h}%; background:${color}; box-shadow: 0 0 10px ${color}"><span class="bar-val-top">${s.roiStr}%</span></div><div class="bar-label-bottom">${s.code}</div></div>`; }).join('') + `</div></div>`;
 }
 
-function renderCards(){
-    const con=document.getElementById('cardContainer'); con.innerHTML='';
-    Object.values(cardsData).forEach(c=>{
-        con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')"><div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div><div class="mc-image-container">${c.media}</div><div class="mc-footer"><div class="mc-chn-name">${c.rpg||''}</div><div class="mc-eng-name">${c.skill}</div><div class="mc-cost-badge">$${(c.budget/10000).toFixed(0)}萬</div></div></div>`;
-    });
-}
+function renderCards(){ const con=document.getElementById('cardContainer'); con.innerHTML=''; Object.values(cardsData).forEach(c=>{ con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')"><div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div><div class="mc-image-container">${c.media}</div><div class="mc-footer"><div class="mc-chn-name">${c.rpg||''}</div><div class="mc-eng-name">${c.skill}</div><div class="mc-cost-badge">$${(c.budget/10000).toFixed(0)}萬</div></div></div>`; });}
 function renderEvents(){ const con = document.getElementById('eventContainer'); con.innerHTML = eventsData.slice(0, 2).map(e => `<div class="event-card${e.isUrgent?' emergency':''}"><div class="event-header"><span class="event-date">${e.date}</span><span class="event-status">${e.status}</span></div><div class="event-content">${e.content}</div></div>`).join(''); }
 function renderFooter() { const con = document.getElementById('footerContainer'); con.innerHTML = lawsData.map(law => `<div class="info-box"><span class="info-title">${law.title}</span>${law.content}</div>`).join('') + `<div class="info-box refresh-btn" onclick="init()">↻ REFRESH DATA</div>`; }
-function openModal(k){ const c=cardsData[k]; document.getElementById('mCode').textContent=c.code; document.getElementById('mSkill').textContent=c.skill; document.getElementById('val1').textContent = `${c.isUSD?'US$':'NT$'} ${c.budget.toLocaleString()}`; document.getElementById('val_invested').textContent = `${c.isUSD?'US$':'NT$'} ${c.invested.toLocaleString()}`; document.getElementById('val2').textContent = c.strategy; document.getElementById('val3').textContent = c.sop; document.getElementById('cardModal').style.display='flex'; document.getElementById('cardModal').classList.add('modal-active'); }
-function openStrategyModal(k) { const s = strategiesData[k]; document.getElementById('mCode').textContent = s.code; document.getElementById('mSkill').textContent = s.name; document.getElementById('val1').textContent = s.mindset; document.getElementById('val_invested').textContent = '-'; document.getElementById('val2').textContent = s.persona; document.getElementById('val3').textContent = s.conflict; document.getElementById('cardModal').style.display = 'flex'; document.getElementById('cardModal').classList.add('modal-active'); }
+
+// 🛠️ 卡牌彈窗 (Cards)
+function openModal(k){ 
+    const c=cardsData[k]; 
+    document.getElementById('mCode').textContent=c.code; 
+    document.getElementById('mSkill').textContent=c.skill; 
+    // 顯示預算與實際投入
+    document.getElementById('val1').textContent = `${c.isUSD?'US$':'NT$'} ${c.budget.toLocaleString()}`; 
+    document.getElementById('val_invested').textContent = `${c.isUSD?'US$':'NT$'} ${c.invested.toLocaleString()}`; 
+    document.getElementById('val2').textContent = c.strategy; 
+    document.getElementById('val3').textContent = c.sop; 
+    document.getElementById('cardModal').style.display='flex'; 
+    document.getElementById('cardModal').classList.add('modal-active'); 
+}
+
+// 🛠️ 策略彈窗 (Strategies)
+function openStrategyModal(k) { 
+    const s = strategiesData[k]; 
+    document.getElementById('mCode').textContent = s.code; 
+    document.getElementById('mSkill').textContent = s.name; 
+    // 對應到策略 Sheet 的預算與投入欄位
+    document.getElementById('val1').textContent = s.budget; 
+    document.getElementById('val_invested').textContent = s.invested; 
+    // 策略與SOP對應欄位 (Mindset / Persona)
+    document.getElementById('val2').textContent = s.mindset; 
+    document.getElementById('val3').textContent = s.persona; 
+    document.getElementById('cardModal').style.display = 'flex'; 
+    document.getElementById('cardModal').classList.add('modal-active'); 
+}
+
 function closeModal(){document.getElementById('cardModal').style.display='none'}
 function renderHeader() { const img = document.getElementById('pageLogo'); if (logoUrl) { img.src = logoUrl; img.style.display = 'block'; } document.getElementById('pageTitle').textContent = configData.title; document.getElementById('pageMeta').textContent = configData.meta; }
 function renderAll(){ renderHeader(); renderDashboard(); renderCards(); renderEvents(); renderArena(); renderFooter(); }

@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT CAGE : RELOADED v16.20 (8-Column Deck)</title>
+<title>PROJECT CAGE : RELOADED v16.21 (Split Budget)</title>
 <style>
-    /* CSS 部分：主要修改 .deck-grid，其餘保持 v16.19 */
+    /* CSS: 大部分沿用 v16.19，僅新增 HUD 內部排版樣式 */
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
         --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; 
@@ -50,12 +50,18 @@
     .orb-ring::before { content: ''; position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; background: var(--hud-gold); box-shadow: 0 0 10px var(--hud-gold); border-radius: 50%; }
     @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } }
     @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-    .hud-title { font-family: 'Segoe UI', sans-serif; font-weight: 700; font-size: 1.2rem; text-align: center; margin-bottom: 20px; position: relative; z-index: 2; letter-spacing: 1px; padding-bottom: 5px; }
-    .data-group { text-align: center; margin-bottom: 15px; position: relative; z-index: 2; }
-    .sub-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-bottom: 2px; font-family: 'Segoe UI', sans-serif; }
-    .main-val { font-family: var(--font-num); font-size: 2.2rem; font-weight: 700; letter-spacing: 1px; line-height: 1; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
-    .cost-val { font-family: 'Segoe UI', sans-serif; font-size: 0.9rem; color: #aaa; letter-spacing: 1px; font-weight: bold; }
-    .pl-block { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; margin-top: 10px; width: 100%; text-align: center; position: relative; z-index: 2; }
+    .hud-title { font-family: 'Segoe UI', sans-serif; font-weight: 700; font-size: 1.2rem; text-align: center; margin-bottom: 15px; position: relative; z-index: 2; letter-spacing: 1px; padding-bottom: 5px; }
+    
+    /* 🛠️ 新增 HUD 分流排版樣式 */
+    .data-group { margin-bottom: 15px; position: relative; z-index: 2; }
+    .hud-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.1); padding: 4px 0; font-size: 0.85rem; font-family: 'Segoe UI', sans-serif; }
+    .hud-row .lbl { color: #888; font-weight: bold; }
+    .hud-row .val { color: #ccc; font-family: var(--font-num); font-weight: bold; letter-spacing: 1px; }
+    
+    .sub-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-bottom: 2px; font-family: 'Segoe UI', sans-serif; text-align: center; }
+    .main-val { font-family: var(--font-num); font-size: 2.2rem; font-weight: 700; letter-spacing: 1px; line-height: 1; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); text-align: center; margin-top: 5px; }
+    
+    .pl-block { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; margin-top: auto; width: 100%; text-align: center; position: relative; z-index: 2; }
     .pl-val { font-family: var(--font-num); font-size: 1.3rem; font-weight: bold; }
     .pl-pct { font-size: 0.9rem; margin-left: 5px; opacity: 0.8; font-family: var(--font-num); }
     .total-val { font-family: var(--font-num); font-size: 3.5rem; font-weight: 700; color: #fff; text-shadow: 0 0 20px rgba(255,204,0,0.8); margin: 0; position: relative; z-index: 2; line-height: 1.1; }
@@ -64,16 +70,8 @@
     .c-green { color: var(--hud-green); }
     .section-title { font-size: 1rem; border-left: 3px solid var(--gold); padding-left: 10px; margin: 25px 0 10px; text-transform: uppercase; font-weight: 900; color: #fff; display: flex; align-items: center; letter-spacing: 2px; }
     .section-title::after { content: ''; flex-grow: 1; height: 1px; background: #333; margin-left: 15px; }
-    
-    /* 🛠️ 卡牌排列修正：改為 8 欄 */
     .deck-wrapper { overflow-x: auto; padding-bottom: 25px; padding-top: 5px; }
-    .deck-grid { 
-        display: grid; 
-        grid-template-columns: repeat(8, 1fr); /* 修正為 8 欄 */
-        gap: 12px; 
-        min-width: 0; 
-    } 
-    
+    .deck-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; min-width: 0; } 
     .micro-card { background: var(--card); border: 2px solid #333; border-radius: 12px; padding: 8px; transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: flex; flex-direction: column; min-height: 200px; position: relative; overflow: hidden; }
     .micro-card::after { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; pointer-events: none; transition: all 0.3s; }
     .micro-card:hover { transform: translateY(-6px); z-index: 10; }
@@ -94,11 +92,8 @@
     .type-yield { border-color: var(--yield); } .type-yield:hover { box-shadow: 0 0 25px rgba(0,255,106,0.4); } .type-yield img.mc-media { filter: drop-shadow(0 0 8px var(--yield)); }
     .type-ber { border-color: var(--ber); } .type-ber:hover { box-shadow: 0 0 25px rgba(255,145,0,0.4); } .type-ber img.mc-media { filter: drop-shadow(0 0 8px var(--ber)); }
     .type-trap { border-color: var(--trap); } .type-trap:hover { box-shadow: 0 0 25px rgba(189,0,255,0.4); } .type-trap img.mc-media { filter: drop-shadow(0 0 8px var(--trap)); }
-    
-    /* 🛠️ RWD: 當螢幕變窄時，自動變為 4 欄或 2 欄 */
     @media(max-width: 1400px) { .deck-grid { grid-template-columns: repeat(4, 1fr); min-width: 800px; } }
     @media(max-width: 768px) { .deck-grid { grid-template-columns: repeat(2, 1fr); min-width: 100%; } }
-    
     .event-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; padding-bottom: 10px; }
     .event-card { background: rgba(255,255,255,0.03); border: 1px solid #333; border-left: 4px solid var(--cyan); border-radius: 8px; padding: 20px; position: relative; transition: .3s; height: 100%; display: flex; flex-direction: column; }
     .event-card:hover { background: rgba(0, 247, 255, 0.05); border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 247, 255, 0.1); }
@@ -174,13 +169,13 @@
       <div class="dash-grid">
           <div class="hud-screen cyan">
               <div class="hud-title">TWD 戰情</div>
-              <div class="data-group"><div class="cost-val" id="costTW">總投入: ...</div></div>
+              <div class="data-group"><div class="hud-row"><span class="lbl">預算</span><span class="val" id="budgetTW">...</span></div><div class="hud-row"><span class="lbl">已投</span><span class="val" id="investedTW">...</span></div></div>
               <div class="data-group"><div class="sub-label">台股現值</div><div class="main-val c-cyan" id="assetTW">...</div></div>
-              <div class="pl-block"><div class="sub-label">即時損益</div><div><span class="pl-val" id="plTW_val">...</span><span class="pl-pct" id="plTW_pct">...</span></div></div>
+              <div class="pl-block"><div class="sub-label">即時損益 (含配息)</div><div><span class="pl-val" id="plTW_val">...</span><span class="pl-pct" id="plTW_pct">...</span></div></div>
           </div>
           <div class="hud-screen green">
               <div class="hud-title">USD 戰情</div>
-              <div class="data-group"><div class="cost-val" id="costUS">總投入: ...</div></div>
+              <div class="data-group"><div class="hud-row"><span class="lbl">BUDGET</span><span class="val" id="budgetUS">...</span></div><div class="hud-row"><span class="lbl">INVESTED</span><span class="val" id="investedUS">...</span></div></div>
               <div class="data-group"><div class="sub-label">美股現值</div><div class="main-val c-green" id="assetUS">...</div></div>
               <div class="pl-block"><div class="sub-label">損益表現</div><div><span class="pl-val" id="plUS_val">...</span><span class="pl-pct" id="plUS_pct">...</span></div></div>
           </div>
@@ -189,7 +184,6 @@
               <div class="hud-title" style="margin-bottom:5px;">總合資產</div>
               <div class="total-val" id="totalAsset">...</div>
               <div class="total-sub">當前綜合表現</div>
-              <span id="totalCostTWD" style="display:none"></span><span id="totalDiff" style="display:none"></span><span id="totalROI" style="display:none"></span>
               <div style="position:absolute; bottom:15px; right:20px; color:#666; font-size:0.8rem; z-index:2; font-family:var(--font-num)" id="rateInfo">LOADING...</div>
           </div>
       </div>
@@ -207,7 +201,7 @@
 <div id="cardModal" class="modal-overlay" onclick="closeModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
     <div class="modal-header"><div><span class="m-code" id="mCode"></span><span class="m-skill" id="mSkill"></span></div><span class="close-btn" onclick="closeModal()">&times;</span></div>
-    <div class="m-row"><span class="m-label">初始資金 (CAPITAL)</span><div class="m-value highlight" id="val1"></div></div>
+    <div class="m-row"><span class="m-label">初始資金 (BUDGET)</span><div class="m-value highlight" id="val1"></div></div>
     <div class="m-row"><span class="m-label" style="color:var(--cyan)">🔥 實際投入 (INVESTED)</span><div class="m-value" id="val_invested" style="color:#00d2ff; font-weight:bold; font-family:'Courier New'"></div></div>
     <div class="m-row"><span class="m-label">戰略定位 (STRATEGY)</span><div class="m-value" id="val2"></div></div>
     <div class="m-row"><span class="m-label">嚴格執行 SOP</span><div class="m-value" id="val3" style="padding:15px;background:rgba(0,0,0,0.3);border-left:3px solid #555;border-radius:6px"></div></div>
@@ -228,7 +222,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT CAGE', meta: 'v16.20' };
+let configData = { title: 'PROJECT CAGE', meta: 'v16.21' };
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -264,15 +258,20 @@ function parseSheetData(text){
     if(c[0] === '事件簿') { mode = 'EVENTS'; return; }
     
     if(c[0].startsWith('C')) {
-        let costRaw = c[5] || '0', curRaw = c[6] || '0', invRaw = c[13] || '0';
-        let isUSD = costRaw.includes('$') && !costRaw.includes('NT$');
+        // 🛠️ F欄=預算 (Budget), N欄=已投 (Invested)
+        let budgetRaw = c[5] || '0';
+        let currentRaw = c[6] || '0';
+        let investedRaw = c[13] || '0';
+        
+        let isUSD = budgetRaw.includes('$') && !budgetRaw.includes('NT$');
         let imgUrl = fixDriveUrl(c[9] ? c[9].trim() : '');
+        
         cardsData[c[0]] = {
             code: c[0], type: c[1], rpg: c[2], target: c[3], skill: c[4],
             isUSD: isUSD,
-            cost: parseFloat(costRaw.replace(/[NT$US,\s]/g, '')) || 0,
-            current: parseFloat(curRaw.replace(/[NT$US,\s]/g, '')) || 0,
-            invested: parseFloat(invRaw.replace(/[NT$US,\s]/g, '')) || 0,
+            budget: parseFloat(budgetRaw.replace(/[NT$US,\s]/g, '')) || 0,
+            current: parseFloat(currentRaw.replace(/[NT$US,\s]/g, '')) || 0,
+            invested: parseFloat(investedRaw.replace(/[NT$US,\s]/g, '')) || 0,
             media: imgUrl ? `<img src="${imgUrl}" class="mc-media">` : defaultIcons['C01'],
             strategy: c[7], sop: c[8], imgUrl: imgUrl
         };
@@ -311,6 +310,8 @@ function parseSheetData(text){
   });
 }
 
+// 🛠️ Calc: (Current - Budget) / Budget -> HUD P/L logic
+// HUD is showing "Current Asset vs Budget". 
 function calc(cost, cur){
   if(!cost) return {roi:0, arrow:'-', cls:'', diff: 0, sign: ''};
   const diff = cur - cost, roi = ((diff/cost)*100).toFixed(1);
@@ -319,24 +320,44 @@ function calc(cost, cur){
 }
 
 function renderDashboard(){
-  let tcTW=0, taTW=0, tcUS=0, taUS=0;
+  let budgetTW=0, investedTW=0, assetTW=0;
+  let budgetUS=0, investedUS=0, assetUS=0;
+
   Object.values(cardsData).forEach(c => {
-      if(c.isUSD) { tcUS += c.cost; taUS += c.current; } 
-      else { tcTW += c.cost; taTW += c.current; }
+      if(c.isUSD) { 
+          budgetUS += c.budget; 
+          investedUS += c.invested;
+          assetUS += c.current; 
+      } else { 
+          budgetTW += c.budget; 
+          investedTW += c.invested;
+          assetTW += c.current; 
+      }
   });
-  const sTW = calc(tcTW, taTW), sUS = calc(tcUS, taUS);
-  const totalAssetTWD = taTW + (taUS * currentRate), totalCostTWD = tcTW + (tcUS * currentRate);
-  const sTotal = calc(totalCostTWD, totalAssetTWD);
-  document.getElementById('costTW').textContent = '總投入: NT$ ' + (tcTW/10000).toFixed(0) + '萬';
-  document.getElementById('assetTW').textContent = taTW.toLocaleString();
+
+  // TWD HUD
+  // P/L = Asset - Budget (Total Account P/L)
+  const sTW = calc(budgetTW, assetTW);
+  document.getElementById('budgetTW').textContent = 'NT$ ' + (budgetTW/10000).toFixed(0) + '萬';
+  document.getElementById('investedTW').textContent = 'NT$ ' + (investedTW/10000).toFixed(0) + '萬';
+  document.getElementById('assetTW').textContent = assetTW.toLocaleString();
   document.getElementById('plTW_val').textContent = `${sTW.sign}${sTW.diff.toLocaleString()}`;
   document.getElementById('plTW_val').className = `pl-val ${sTW.cls}`;
   document.getElementById('plTW_pct').textContent = `(${sTW.sign}${sTW.roi}%)`;
-  document.getElementById('costUS').textContent = '總投入: US$ ' + (tcUS/10000).toFixed(1) + '萬';
-  document.getElementById('assetUS').textContent = '$' + taUS.toLocaleString();
+
+  // USD HUD
+  const sUS = calc(budgetUS, assetUS);
+  document.getElementById('budgetUS').textContent = '$ ' + (budgetUS/10000).toFixed(2) + '萬';
+  document.getElementById('investedUS').textContent = '$ ' + (investedUS/10000).toFixed(2) + '萬';
+  document.getElementById('assetUS').textContent = '$' + assetUS.toLocaleString();
   document.getElementById('plUS_val').textContent = `${sUS.sign}$${sUS.diff.toLocaleString()}`;
   document.getElementById('plUS_val').className = `pl-val ${sUS.cls}`;
   document.getElementById('plUS_pct').textContent = `(${sUS.sign}${sUS.roi}%)`;
+
+  // TOTAL HUD
+  const totalAssetTWD = assetTW + (assetUS * currentRate);
+  const totalBudgetTWD = budgetTW + (budgetUS * currentRate);
+  const sTotal = calc(totalBudgetTWD, totalAssetTWD);
   const cur = document.getElementById('totalAsset');
   cur.textContent = 'TWD ' + Math.round(totalAssetTWD).toLocaleString();
   cur.style.color = sTotal.roi >= 0 ? '#fff' : '#ffaaaa';
@@ -388,12 +409,12 @@ function renderArena(){
 function renderCards(){
     const con=document.getElementById('cardContainer'); con.innerHTML='';
     Object.values(cardsData).forEach(c=>{
-        con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')"><div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div><div class="mc-image-container">${c.media}</div><div class="mc-footer"><div class="mc-chn-name">${c.rpg||''}</div><div class="mc-eng-name">${c.skill}</div><div class="mc-cost-badge">$${(c.cost/10000).toFixed(0)}萬</div></div></div>`;
+        con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')"><div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div><div class="mc-image-container">${c.media}</div><div class="mc-footer"><div class="mc-chn-name">${c.rpg||''}</div><div class="mc-eng-name">${c.skill}</div><div class="mc-cost-badge">$${(c.budget/10000).toFixed(0)}萬</div></div></div>`;
     });
 }
 function renderEvents(){ const con = document.getElementById('eventContainer'); con.innerHTML = eventsData.slice(0, 2).map(e => `<div class="event-card${e.isUrgent?' emergency':''}"><div class="event-header"><span class="event-date">${e.date}</span><span class="event-status">${e.status}</span></div><div class="event-content">${e.content}</div></div>`).join(''); }
 function renderFooter() { const con = document.getElementById('footerContainer'); con.innerHTML = lawsData.map(law => `<div class="info-box"><span class="info-title">${law.title}</span>${law.content}</div>`).join('') + `<div class="info-box refresh-btn" onclick="init()">↻ REFRESH DATA</div>`; }
-function openModal(k){ const c=cardsData[k]; document.getElementById('mCode').textContent=c.code; document.getElementById('mSkill').textContent=c.skill; document.getElementById('val1').textContent = `${c.isUSD?'US$':'NT$'} ${c.cost.toLocaleString()}`; document.getElementById('val_invested').textContent = `${c.isUSD?'US$':'NT$'} ${c.invested.toLocaleString()}`; document.getElementById('val2').textContent = c.strategy; document.getElementById('val3').textContent = c.sop; document.getElementById('cardModal').style.display='flex'; document.getElementById('cardModal').classList.add('modal-active'); }
+function openModal(k){ const c=cardsData[k]; document.getElementById('mCode').textContent=c.code; document.getElementById('mSkill').textContent=c.skill; document.getElementById('val1').textContent = `${c.isUSD?'US$':'NT$'} ${c.budget.toLocaleString()}`; document.getElementById('val_invested').textContent = `${c.isUSD?'US$':'NT$'} ${c.invested.toLocaleString()}`; document.getElementById('val2').textContent = c.strategy; document.getElementById('val3').textContent = c.sop; document.getElementById('cardModal').style.display='flex'; document.getElementById('cardModal').classList.add('modal-active'); }
 function openStrategyModal(k) { const s = strategiesData[k]; document.getElementById('mCode').textContent = s.code; document.getElementById('mSkill').textContent = s.name; document.getElementById('val1').textContent = s.mindset; document.getElementById('val_invested').textContent = '-'; document.getElementById('val2').textContent = s.persona; document.getElementById('val3').textContent = s.conflict; document.getElementById('cardModal').style.display = 'flex'; document.getElementById('cardModal').classList.add('modal-active'); }
 function closeModal(){document.getElementById('cardModal').style.display='none'}
 function renderHeader() { const img = document.getElementById('pageLogo'); if (logoUrl) { img.src = logoUrl; img.style.display = 'block'; } document.getElementById('pageTitle').textContent = configData.title; document.getElementById('pageMeta').textContent = configData.meta; }

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT CAGE : RELOADED v16.29 (Glow Restore)</title>
+<title>PROJECT CAGE : RELOADED v16.31 (Strategy Logic Fix)</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -83,13 +83,10 @@
     .deck-wrapper { overflow-x: auto; padding-bottom: 25px; padding-top: 5px; }
     .deck-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; min-width: 0; } 
     
-    /* =========================================
-       🚀 卡牌修復區域：恢復霓虹邊框
-       ========================================= */
+    /* Card (Neon Glow Restored) */
     .micro-card { 
-        /* 基礎背景與陰影，但不強制覆蓋邊框顏色 */
         background: linear-gradient(145deg, #25252a, #121214);
-        border: 2px solid #333; /* 預設邊框，會被 type-class 覆蓋 */
+        border: 2px solid #333; 
         border-radius: 12px; 
         padding: 8px; 
         transition: all .3s; 
@@ -114,7 +111,7 @@
     .mc-eng-name { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
     .mc-cost-badge { display: inline-block; margin-top: 1px; padding: 1px 8px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.75rem; color: #aaa; background: rgba(0,0,0,0.8); }
     
-    /* 🛠️ 恢復卡牌邊框與發光 */
+    /* Glow Restoration */
     .type-tw { border-color: var(--tw) !important; box-shadow: 0 0 15px rgba(255, 42, 42, 0.2); } 
     .type-tw:hover { box-shadow: 0 0 25px rgba(255, 42, 42, 0.5); }
     .type-tw img.mc-media { filter: drop-shadow(0 0 8px var(--tw)); }
@@ -139,7 +136,6 @@
     .arena-container { width: 100%; }
     .arena-dashboard-v15 { display: grid; grid-template-columns: 600px 1fr; gap: 20px; margin-bottom: 20px; height: auto; align-items: stretch; }
     
-    /* Leaderboard Panel (保持金屬感) */
     .leaderboard-panel { 
         background: linear-gradient(160deg, #2d2d35 0%, #141417 100%);
         border-top: 1px solid rgba(255,255,255,0.2);
@@ -168,7 +164,7 @@
     .lb-row.rank-1 .lb-rank { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
     .lb-row.rank-1 .lb-name { color: var(--gold); }
     
-    /* Chart Panel (魔改零軸) */
+    /* Chart Panel */
     .chart-panel { 
         background: rgba(0, 5, 10, 0.8); 
         border-top: 1px solid rgba(0, 247, 255, 0.4);
@@ -295,6 +291,7 @@
     <div class="modal-header"><div><span class="m-code" id="mCode"></span><span class="m-skill" id="mSkill"></span></div><span class="close-btn" onclick="closeModal()">&times;</span></div>
     <div class="m-row"><span class="m-label">初始資金 (BUDGET)</span><div class="m-value highlight" id="val1"></div></div>
     <div class="m-row"><span class="m-label">🔥 實際投入 (INVESTED)</span><div class="m-value" id="val_invested"></div></div>
+    <div class="m-row" id="row_shares"><span class="m-label">持有股數 (SHARES)</span><div class="m-value" id="val_shares"></div></div>
     <div class="m-row"><span class="m-label">戰略定位 (STRATEGY)</span><div class="m-value" id="val2"></div></div>
     <div class="m-row"><span class="m-label">嚴格執行 SOP</span><div class="m-value" id="val3" style="padding:15px;background:rgba(0,0,0,0.3);border-left:3px solid #555;border-radius:6px"></div></div>
   </div>
@@ -314,7 +311,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT CAGE', meta: 'v16.29' };
+let configData = { title: 'PROJECT CAGE', meta: 'v16.31' };
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -353,6 +350,7 @@ function parseSheetData(text){
         let budgetRaw = c[5] || '0';
         let currentRaw = c[6] || '0';
         let investedRaw = c[13] || '0';
+        let sharesRaw = c[11] || '0'; 
         let isUSD = budgetRaw.includes('$') && !budgetRaw.includes('NT$');
         let imgUrl = fixDriveUrl(c[9] ? c[9].trim() : '');
         cardsData[c[0]] = {
@@ -361,6 +359,7 @@ function parseSheetData(text){
             budget: parseFloat(budgetRaw.replace(/[NT$US,\s]/g, '')) || 0,
             current: parseFloat(currentRaw.replace(/[NT$US,\s]/g, '')) || 0,
             invested: parseFloat(investedRaw.replace(/[NT$US,\s]/g, '')) || 0,
+            shares: sharesRaw,
             media: imgUrl ? `<img src="${imgUrl}" class="mc-media">` : defaultIcons['C01'],
             strategy: c[7] || '-', sop: c[8] || '-', imgUrl: imgUrl
         };
@@ -489,6 +488,9 @@ function openModal(k){
     document.getElementById('mSkill').textContent=c.skill; 
     document.getElementById('val1').textContent = `${c.isUSD?'US$':'NT$'} ${c.budget.toLocaleString()}`; 
     document.getElementById('val_invested').textContent = `${c.isUSD?'US$':'NT$'} ${c.invested.toLocaleString()}`; 
+    // 🛠️ 卡牌彈窗顯示股數，並開啟顯示
+    document.getElementById('val_shares').textContent = c.shares;
+    document.getElementById('row_shares').style.display = 'flex'; // Show
     document.getElementById('val2').textContent = c.strategy; 
     document.getElementById('val3').textContent = c.sop; 
     document.getElementById('cardModal').style.display='flex'; 
@@ -502,6 +504,9 @@ function openStrategyModal(k) {
     document.getElementById('val1').textContent = s.budget; 
     document.getElementById('val_invested').textContent = s.invested; 
     
+    // 🛠️ 策略彈窗隱藏股數
+    document.getElementById('row_shares').style.display = 'none'; // Hide
+
     let displayStrategy = s.highlight;
     let displaySOP = s.explain;
     if (!displayStrategy || displayStrategy === '-') {

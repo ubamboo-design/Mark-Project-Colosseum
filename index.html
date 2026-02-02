@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT CAGE : RELOADED v16.39 (Video Signal Fix)</title>
+<title>PROJECT CAGE : RELOADED v16.41 (Instant Video)</title>
 <style>
-    /* CSS 全局設定 (保持穩定版樣式) */
+    /* CSS 全局設定 (保持 v16.39 樣式) */
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
         --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; 
@@ -99,6 +99,7 @@
         box-shadow: 0 5px 15px rgba(0,0,0,0.5); 
     }
     .micro-card:hover { transform: translateY(-6px); z-index: 10; }
+    
     .mc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding: 0 4px; z-index: 2; }
     .mc-code { font-size: 0.9rem; font-weight: 900; color: #fff; opacity: 0.9; font-family: 'Arial Black'; } 
     .mc-target { font-size: 0.65rem; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); padding: 1px 4px; border-radius: 4px; color: #aaa; font-family: 'Courier New'; }
@@ -129,7 +130,7 @@
     /* Arena */
     .arena-container { width: 100%; }
     
-    /* 🛠️ v16.39 Arena Grid Layout: 3 Columns (List | Chart | Video) */
+    /* Arena Grid */
     .arena-dashboard-v15 { 
         display: grid; 
         grid-template-columns: 420px 1.2fr 320px; 
@@ -195,7 +196,7 @@
     @keyframes growUp { from { height: 0; opacity: 0; } }
     @keyframes growDown { from { height: 0; opacity: 0; } }
 
-    /* 🛠️ v16.39: YouTube Panel */
+    /* YouTube Panel */
     .yt-panel {
         background: linear-gradient(160deg, #2d2d35 0%, #141417 100%);
         border-top: 1px solid rgba(255,255,255,0.2);
@@ -211,7 +212,6 @@
         align-items: center;
         cursor: pointer;
         transition: transform 0.3s;
-        /* Ensure it matches chart height or min-height */
         min-height: 400px; 
     }
     .yt-panel:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.9), 0 0 20px rgba(255, 0, 0, 0.2); }
@@ -237,7 +237,6 @@
         margin-top: 10px; font-size: 0.8rem; color: #888; width: 100%; text-align: center;
         font-family: 'Courier New'; font-weight: bold;
     }
-    /* Fallback State */
     .yt-no-signal {
         width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;
         background: repeating-linear-gradient(0deg, #111 0px, #111 2px, #222 3px);
@@ -257,7 +256,6 @@
         .pl-val { font-size: 0.85rem; }
         .pl-pct { font-size: 0.6rem; display: block; margin-left: 0; margin-top: -2px; }
         .sub-label { font-size: 0.6rem; opacity: 0.7; }
-        /* 🛠️ Mobile: Stack columns vertically */
         .arena-dashboard-v15 { grid-template-columns: 1fr; height: auto; gap: 15px; } 
         .leaderboard-panel { height: auto; } 
         .chart-panel { height: 350px; }
@@ -362,6 +360,9 @@
 </div>
 
 <script>
+// 🛠️ v16.41: Hardcoded fallback video (Source from user screenshot)
+const DEFAULT_YT = 'https://www.youtube.com/watch?v=7rY3QaVQrzo';
+
 function fixDriveUrl(url) {
     if (!url) return '';
     if (url.includes('drive.google.com')) {
@@ -381,7 +382,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT CAGE', meta: 'v16.39', ytUrl: '' }; 
+let configData = { title: 'PROJECT CAGE', meta: 'v16.41', ytUrl: '' }; 
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -407,17 +408,22 @@ async function init() {
 function parseSheetData(text){
   const rows = text.split('\n').map(r=>r.trim()); 
   
-  // 🛠️ v16.39 Smart Scan: Find row containing 'youtube.com' in Col B or C
-  // This is much safer than relying on "Row 31" which might shift.
-  for(let i=0; i<rows.length; i++) {
-      const cols = rows[i].split('\t');
-      // Check column 1 (B) or 2 (C) for youtube link
-      if(cols.length > 1) {
-          if (cols[1] && (cols[1].includes('youtube.com') || cols[1].includes('youtu.be'))) {
-              configData.ytUrl = cols[1].trim();
-              break; // Found it, stop scanning
+  // 🛠️ v16.41 God-Mode Scan: 全表無死角搜尋 YouTube 連結
+  for(let r of rows) {
+      if(!r) continue;
+      const cells = r.split('\t');
+      for(let cell of cells) {
+          if(cell && (cell.includes('youtube.com') || cell.includes('youtu.be'))) {
+              configData.ytUrl = cell.trim();
+              break; 
           }
       }
+      if(configData.ytUrl) break;
+  }
+  
+  // 🛠️ v16.41: Fallback (如果 Sheet 讀不到，就用預設值)
+  if (!configData.ytUrl) {
+      configData.ytUrl = DEFAULT_YT;
   }
 
   let currentGroup = '未分類', mode = 'CARDS'; 
@@ -556,12 +562,11 @@ function renderArena(){
     }));
     allS.sort((a, b) => b.roiNum - a.roiNum); 
     
-    // 🛠️ v16.39: Generate YT HTML (Smart Scan Result)
+    // 🛠️ v16.41: Render Video (Using ConfigData which now has a fallback)
     let ytHTML = '';
     const ytId = getYoutubeId(configData.ytUrl);
     
     if(ytId) {
-        // Show Video
         ytHTML = `<div class="yt-panel" onclick="window.open('${configData.ytUrl}', '_blank')">
             <div class="yt-header">LATEST REPORT</div>
             <div class="yt-thumb-wrapper">
@@ -571,12 +576,11 @@ function renderArena(){
             <div class="yt-footer">點擊觀看解盤影片</div>
         </div>`;
     } else {
-        // 🛠️ v16.39: Fallback UI (Always occupy space)
         ytHTML = `<div class="yt-panel">
             <div class="yt-no-signal">
                 <div style="font-size:30px; margin-bottom:10px;">⚡</div>
                 <div>NO SIGNAL</div>
-                <div style="font-size:0.7rem; margin-top:5px; opacity:0.6;">Check Sheet Row 31</div>
+                <div style="font-size:0.7rem; margin-top:5px; opacity:0.6;">Refreshing...</div>
             </div>
         </div>`;
     }
@@ -602,8 +606,6 @@ function renderArena(){
              </div>
          </div>`;
      }).join('');
-     
-     // 🛠️ v16.39: Inject YT HTML into 3rd column
      con.innerHTML = html + `</div></div><div class="chart-panel"><div class="chart-grid"></div>${chartBarsHTML}</div>${ytHTML}</div>`;
 }
 
@@ -622,7 +624,7 @@ function openModal(k){
     document.getElementById('val2').textContent = c.strategy; 
     document.getElementById('val3').textContent = c.sop; 
     
-    // 🛠️ v16.39 Modal YT Button Logic
+    // 🛠️ v16.41 Modal YT Button (Uses Fallback if needed)
     const ytBtn = document.getElementById('yt_container');
     const ytLink = document.getElementById('btn_yt');
     if (configData.ytUrl && configData.ytUrl.length > 5) {

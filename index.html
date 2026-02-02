@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT CAGE : RELOADED v16.35 (Stable + YT)</title>
+<title>PROJECT CAGE : RELOADED v16.36 (B31 YT Link)</title>
 <style>
-    /* CSS 全局設定 (保持 v16.34 穩定版樣式) */
+    /* CSS 全局設定 (保持 v16.35 穩定版樣式) */
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
         --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; 
@@ -83,7 +83,7 @@
     .deck-wrapper { overflow-x: auto; padding-bottom: 25px; padding-top: 5px; }
     .deck-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; min-width: 0; } 
     
-    /* Card (Neon Glow Restored) */
+    /* Card */
     .micro-card { 
         background: linear-gradient(145deg, #25252a, #121214);
         border: 2px solid #333; 
@@ -99,7 +99,6 @@
         box-shadow: 0 5px 15px rgba(0,0,0,0.5); 
     }
     .micro-card:hover { transform: translateY(-6px); z-index: 10; }
-    
     .mc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding: 0 4px; z-index: 2; }
     .mc-code { font-size: 0.9rem; font-weight: 900; color: #fff; opacity: 0.9; font-family: 'Arial Black'; } 
     .mc-target { font-size: 0.65rem; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); padding: 1px 4px; border-radius: 4px; color: #aaa; font-family: 'Courier New'; }
@@ -335,7 +334,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT CAGE', meta: 'v16.35' };
+let configData = { title: 'PROJECT CAGE', meta: 'v16.36', ytUrl: '' }; // Added global ytUrl
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -360,6 +359,15 @@ async function init() {
 
 function parseSheetData(text){
   const rows = text.split('\n').map(r=>r.trim()); 
+  
+  // 🛠️ v16.36 New Feature: Read Global YT Link from Row 31 (Index 30), Column B (Index 1)
+  if (rows[30]) {
+      const cols = rows[30].split('\t');
+      if (cols[1] && cols[1].includes('http')) {
+          configData.ytUrl = cols[1].trim();
+      }
+  }
+
   let currentGroup = '未分類', mode = 'CARDS'; 
   rows.forEach(row => {
     if(!row) return;
@@ -375,7 +383,6 @@ function parseSheetData(text){
         let currentRaw = c[6] || '0';
         let investedRaw = c[13] || '0';
         let sharesRaw = c[11] || '0'; 
-        let ytUrl = c[14] ? c[14].trim() : ''; 
         
         let isUSD = false;
         if (budgetRaw.includes('NT')) { isUSD = false; }
@@ -389,14 +396,12 @@ function parseSheetData(text){
             current: parseFloat(currentRaw.replace(/[NT$US,\s]/g, '')) || 0,
             invested: parseFloat(investedRaw.replace(/[NT$US,\s]/g, '')) || 0,
             shares: sharesRaw,
-            ytUrl: ytUrl,
             media: imgUrl ? `<img src="${imgUrl}" class="mc-media">` : defaultIcons['C01'],
             strategy: c[7] || '-', sop: c[8] || '-', imgUrl: imgUrl
         };
     } else if(c[0].startsWith('P')){
         if(!portfolios[currentGroup]) portfolios[currentGroup] = [];
         let rawInv = c[9] ? c[9].trim() : '0';
-        
         let displayInv = rawInv;
         let isUSD_P = false;
         if (rawInv.includes('NT')) { isUSD_P = false; }
@@ -536,10 +541,11 @@ function openModal(k){
     document.getElementById('val2').textContent = c.strategy; 
     document.getElementById('val3').textContent = c.sop; 
     
+    // 🛠️ v16.36 Global YT Button Logic
     const ytBtn = document.getElementById('yt_container');
     const ytLink = document.getElementById('btn_yt');
-    if (c.ytUrl && c.ytUrl.length > 5) {
-        ytLink.href = c.ytUrl;
+    if (configData.ytUrl && configData.ytUrl.length > 5) {
+        ytLink.href = configData.ytUrl; // Use Global URL
         ytBtn.style.display = 'block';
     } else {
         ytBtn.style.display = 'none';
@@ -554,10 +560,19 @@ function openStrategyModal(k) {
     document.getElementById('mCode').textContent = s.code; 
     document.getElementById('mSkill').textContent = s.name; 
     document.getElementById('val1').textContent = s.budget; 
-    document.getElementById('val_invested').textContent = s.invested; // Corrected variable
+    document.getElementById('val_invested').textContent = s.invested; 
     
-    document.getElementById('row_shares').style.display = 'none'; // Hide
-    document.getElementById('yt_container').style.display = 'none'; 
+    document.getElementById('row_shares').style.display = 'none'; 
+    
+    // 🛠️ v16.36 Global YT Button for Strategies too
+    const ytBtn = document.getElementById('yt_container');
+    const ytLink = document.getElementById('btn_yt');
+    if (configData.ytUrl && configData.ytUrl.length > 5) {
+        ytLink.href = configData.ytUrl;
+        ytBtn.style.display = 'block';
+    } else {
+        ytBtn.style.display = 'none';
+    }
 
     let displayStrategy = s.highlight;
     let displaySOP = s.explain;

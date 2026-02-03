@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT CAGE : RELOADED v16.57 (Visitor Count)</title>
+<title>PROJECT CAGE : RELOADED v16.58 (Floor Logic)</title>
 <style>
-    /* CSS 全局設定 (保持 v16.47 樣式) */
+    /* CSS 全局設定 (保持 v16.57 樣式) */
     :root {
         --bg: #050505; --card: #0a0a0c; --bar: #1a1a1e; --text: #e0e0e0; --mute: #888;
         --tw: #ff2a2a; --us: #00d2ff; --yield: #00ff6a; --ber: #ff9100; --trap: #bd00ff; 
@@ -293,9 +293,13 @@
 
     #debug-panel { display: none; background: #000; border: 2px solid #0f0; color: #0f0; font-family: 'Courier New'; padding: 15px; height: 400px; overflow-y: scroll; margin: 20px 0; font-size: 0.85rem; }
 
-    /* 🛠️ Calculator Styles (Reskinned) */
+    /* 🛠️ Calculator Styles (v16.56 Mobile Fix) */
     .calc-container { margin-top: 20px; padding: 20px; background: linear-gradient(160deg, #1a1a1e 0%, #0a0a0c 100%); border: 1px solid #333; border-radius: 10px; }
-    .calc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+    
+    /* 🛠️ Use dedicated classes to avoid override issues */
+    .calc-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+    .calc-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+    
     .calc-card { background: #050505; border: 1px solid #333; padding: 15px; border-radius: 8px; position: relative; }
     .calc-card.blue { border-left: 4px solid var(--us); }
     .calc-card.indigo { border-left: 4px solid #6366f1; }
@@ -311,8 +315,9 @@
     .badge-buy { background: rgba(0, 255, 106, 0.1); color: var(--yield); border: 1px solid var(--yield); }
     .badge-sell { background: rgba(255, 42, 42, 0.1); color: var(--tw); border: 1px solid var(--tw); }
     
-    @media(max-width: 800px) {
-        .calc-grid { grid-template-columns: 1fr; }
+    @media(max-width: 900px) {
+        /* 🛠️ Force 1 column on mobile for calculator */
+        .calc-grid-3, .calc-grid-2 { grid-template-columns: 1fr !important; }
     }
 </style>
 </head>
@@ -364,7 +369,7 @@
   
   <div class="section-title">III. TACTICAL CALCULATOR (戰術計算機)</div>
   <div class="calc-container">
-      <div class="calc-grid">
+      <div class="calc-grid-3">
           <div class="calc-card blue">
               <div style="color:var(--us); font-weight:bold; margin-bottom:10px;">1. 初始總資產</div>
               <input type="number" id="calc_initialWealth" value="10000000" class="calc-input">
@@ -389,7 +394,7 @@
           </div>
       </div>
 
-      <div class="calc-grid" id="calc_resultsGrid" style="grid-template-columns: 1fr 1fr;">
+      <div class="calc-grid-2" id="calc_resultsGrid">
           <div class="calc-card" id="calc_mindlessCard" style="border-top: 3px solid var(--tw);">
               <div style="color:var(--tw); font-weight:900; margin-bottom:5px;">4. 比例平衡 (RATIO)</div>
               <div style="font-size:0.8rem; color:#666; margin-bottom:10px;">強制回歸設定比例</div>
@@ -440,6 +445,12 @@
 </div>
 
 <script>
+// 🛠️ v16.58: Helper function for FLOOR Logic
+function floorDec(num, precision = 0) {
+    const factor = Math.pow(10, precision);
+    return Math.floor(num * factor) / factor;
+}
+
 // Default Video
 const DEFAULT_YT = 'https://www.youtube.com/watch?v=7rY3QaVQrzo';
 
@@ -462,7 +473,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT CAGE', meta: 'v16.57', ytUrl: '' }; 
+let configData = { title: 'PROJECT CAGE', meta: 'v16.58', ytUrl: '' }; 
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -592,7 +603,10 @@ function parseSheetData(text){
             code: c[0], name: c[1], deck: deck, 
             sheetROI: parseFloat(sheetROI), sheetInvested: displayInv,
             budget: c[5] || '-', invested: displayInv, 
-            highlight: highlight, explain: explain 
+            highlight: highlight, explain: explain,
+            // 🛠️ v16.58: Store raw invested number
+            investedVal: parseFloat(cleanVal) || 0,
+            isUSD: isStrategyUSD
         };
         portfolios[currentGroup].push(sObj); strategiesData[c[0]] = sObj;
     } else if (mode === 'STRATEGIES' && c[0] && !c[0].startsWith('P') && c.length < 5) {
@@ -604,10 +618,28 @@ function parseSheetData(text){
   });
 }
 
+// 🛠️ v16.58: Floor Logic for HUD (Big Numbers)
 function formatCompact(num, isUSD = false) {
-    if (Math.abs(num) >= 100000000) { return (num / 100000000).toFixed(2) + '億'; } 
-    else if (Math.abs(num) >= 10000) { return (num / 10000).toFixed(0) + '萬'; }
-    return num.toLocaleString(undefined, {maximumFractionDigits: 0});
+    if (Math.abs(num) >= 100000000) { 
+        return floorDec(num / 100000000, 2) + '億'; 
+    } else if (Math.abs(num) >= 10000) { 
+        return Math.floor(num / 10000) + '萬'; // Floor to integer for cleanliness
+    }
+    return Math.floor(num).toLocaleString(undefined, {maximumFractionDigits: 0});
+}
+
+// 🛠️ v16.58: Wan Unit Formatter for Battle Arena (Floor Logic)
+function formatBattleAmount(num, isUSD) {
+    if (isUSD) {
+        return 'USD$ ' + Math.floor(num).toLocaleString();
+    }
+    // TWD: Use 'Wan' for large numbers, Floor to 1 decimal
+    if (num >= 10000) {
+        let val = floorDec(num / 10000, 1);
+        return 'NT$ ' + val + '萬';
+    } else {
+        return 'NT$ ' + Math.floor(num).toLocaleString();
+    }
 }
 
 function formatCurrencyString(str) { return str; }
@@ -652,12 +684,11 @@ function renderArena(){
     const con = document.getElementById('arenaContainer'); con.innerHTML = ''; 
     let allS = [];
     Object.keys(portfolios).forEach(g => portfolios[g].forEach(p => {
-        const roiNum = p.sheetROI; 
-        let cls = roiNum >= 50 ? 'color-gold' : roiNum >= 0 ? 'color-profit' : roiNum <= -50 ? 'color-dead' : 'color-loss';
-        let sign = roiNum >= 0 ? '+' : '';
-        allS.push({ code: p.code, name: p.name, roiNum: roiNum, roiStr: roiNum.toFixed(2), cls: cls, sign: sign, rawDeck: p.deck, invested: p.invested });
+        // 🛠️ v16.58: Use Floor Logic for Sheet ROI too? No, usually calc() handles it dynamically.
+        // But for sorting, keep precision. For display, use floor.
+        allS.push(p);
     }));
-    allS.sort((a, b) => b.roiNum - a.roiNum); 
+    allS.sort((a, b) => b.sheetROI - a.sheetROI); 
     
     let ytHTML = '';
     const ytId = getYoutubeId(configData.ytUrl);
@@ -683,22 +714,34 @@ function renderArena(){
 
     let html = `<div class="arena-dashboard-v15"><div class="leaderboard-panel"><div class="lb-header"><span class="title">LIVE BATTLE</span><span class="lbl-inv">已投入金額</span><span class="lbl-roi">報酬率</span></div><div class="lb-list">`;
     allS.forEach((s, i) => {
-        const deck = s.rawDeck.map(code => { const card = cardsData[code]; return card?.imgUrl ? `<img src="${fixDriveUrl(card.imgUrl)}" class="lb-card-icon">` : `<div class="lb-card-icon" style="background:#222;font-size:8px;">${code}</div>`; }).join('');
-        html += `<div class="lb-row rank-${i+1}" onclick="openStrategyModal('${s.code}')"><span class="lb-rank">#${i+1}</span><div class="lb-info"><div class="lb-name">${s.name}</div><div class="lb-code">${s.code}</div></div><div class="lb-deck">${deck}</div><div class="lb-invested">${formatCurrencyString(s.invested)}</div><span class="lb-val ${s.cls}">${s.sign}${s.roiStr}%</span></div>`;
+        const deck = s.deck.map(code => { const card = cardsData[code]; return card?.imgUrl ? `<img src="${fixDriveUrl(card.imgUrl)}" class="lb-card-icon">` : `<div class="lb-card-icon" style="background:#222;font-size:8px;">${code}</div>`; }).join('');
+        // 🛠️ v16.58: Use formatBattleAmount
+        let investedDisplay = formatBattleAmount(s.investedVal, s.isUSD);
+        
+        let cls = s.sheetROI >= 50 ? 'color-gold' : s.sheetROI >= 0 ? 'color-profit' : s.sheetROI <= -50 ? 'color-dead' : 'color-loss';
+        let sign = s.sheetROI >= 0 ? '+' : '';
+        
+        // 🛠️ v16.58: ROI Floor to 1 decimal
+        let roiDisplay = floorDec(s.sheetROI, 1).toFixed(1);
+        
+        html += `<div class="lb-row rank-${i+1}" onclick="openStrategyModal('${s.code}')"><span class="lb-rank">#${i+1}</span><div class="lb-info"><div class="lb-name">${s.name}</div><div class="lb-code">${s.code}</div></div><div class="lb-deck">${deck}</div><div class="lb-invested">${investedDisplay}</div><span class="lb-val ${cls}">${sign}${roiDisplay}%</span></div>`;
     });
     
-    let maxR = Math.max(...allS.map(x => Math.abs(x.roiNum)), 5);
+    let maxR = Math.max(...allS.map(x => Math.abs(x.sheetROI)), 5);
     const chartBarsHTML = allS.slice(0, 13).map((s, i) => {
-         let isPos = s.roiNum >= 0;
-         let h = Math.min((Math.abs(s.roiNum) / maxR * 45), 45);
-         if (h < 1 && h > 0.01) h = 1; else if (s.roiNum === 0) h = 0.2; 
+         let isPos = s.sheetROI >= 0;
+         let h = Math.min((Math.abs(s.sheetROI) / maxR * 45), 45);
+         if (h < 1 && h > 0.01) h = 1; else if (s.sheetROI === 0) h = 0.2; 
          let barClass = isPos ? 'bar-pos' : 'bar-neg';
          let valClass = isPos ? 'val-pos' : 'val-neg';
          let delay = i * 0.05;
+         let sign = s.sheetROI >= 0 ? '+' : '';
+         // 🛠️ v16.58: ROI Floor to 1 decimal
+         let roiDisplay = floorDec(s.sheetROI, 1).toFixed(1);
          return `<div class="bar-wrapper">
              <div class="bar-label-tech">${s.code}</div>
              <div class="bar-fill-tech ${barClass}" style="height:${h}%; animation-delay:${delay}s;">
-                 <span class="bar-val-tech ${valClass}">${s.sign}${s.roiStr}%</span>
+                 <span class="bar-val-tech ${valClass}">${sign}${roiDisplay}%</span>
              </div>
          </div>`;
      }).join('');
@@ -707,7 +750,7 @@ function renderArena(){
 
 function renderCards(){ const con=document.getElementById('cardContainer'); con.innerHTML=''; Object.values(cardsData).forEach(c=>{ con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')"><div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div><div class="mc-image-container">${c.media}</div><div class="mc-footer"><div class="mc-chn-name">${c.rpg||''}</div><div class="mc-eng-name">${c.skill}</div><div class="mc-cost-badge">$${(c.budget/10000).toFixed(0)}萬</div></div></div>`; });}
 function renderEvents(){ const con = document.getElementById('eventContainer'); con.innerHTML = eventsData.slice(0, 2).map(e => `<div class="event-card${e.isUrgent?' emergency':''}"><div class="event-header"><span class="event-date">${e.date}</span><span class="event-status">${e.status}</span></div><div class="event-content">${e.content}</div></div>`).join(''); }
-function renderFooter() { const con = document.getElementById('footerContainer'); /* Counter is separate */ }
+function renderFooter() { const con = document.getElementById('footerContainer'); con.innerHTML = `<div class="refresh-btn" onclick="init()">↻ REFRESH DATA</div>`; }
 
 function openModal(k){ 
     const c=cardsData[k]; 
@@ -797,8 +840,9 @@ function initCalculator() {
         betaDisplay: document.getElementById('calc_betaDisplay')
     };
 
-    const fmtMoney = (val) => new Intl.NumberFormat('zh-TW', { maximumFractionDigits: 0 }).format(Math.round(val));
-    const fmtPct = (val) => (val * 100).toFixed(1) + '%';
+    // 🛠️ v16.58: Floor Logic for Calculator
+    const fmtMoney = (val) => new Intl.NumberFormat('zh-TW', { maximumFractionDigits: 0 }).format(Math.floor(val));
+    const fmtPct = (val) => floorDec(val * 100, 1).toFixed(1) + '%';
 
     function calculate() {
         const initialWealth = parseFloat(inputs.initialWealth.value) || 0;

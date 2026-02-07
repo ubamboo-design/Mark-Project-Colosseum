@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v16.87</title>
+<title>PROJECT COLOSSEUM v16.89 (True Visit)</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -338,7 +338,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">PROJECT COLOSSEUM</h1>
-      <div class="meta-info" id="pageMeta">v16.86 (Round K)</div>
+      <div class="meta-info" id="pageMeta">v16.89 (True Visit)</div>
   </div>
 </header>
 
@@ -509,7 +509,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.86', ytUrl: '' }; 
+let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.89', ytUrl: '' }; 
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -538,46 +538,55 @@ async function init() {
     trackLiveActivity();
 }
 
-// 🛠️ v16.77: Real Traffic Velocity (Activity-Based)
+// 🛠️ v16.89: True Visitor Tracking Logic
 function trackLiveActivity() {
-    const liveEl = document.getElementById('liveUsers');
-    const visitEl = document.getElementById('visitorCount');
-    let lastCount = 0;
+    // 1. Define Endpoints
+    const API_UP = 'https://api.counterapi.dev/v1/mark_investment_dashboard/visits/up';
+    const API_READ = 'https://api.counterapi.dev/v1/mark_investment_dashboard/visits';
     
-    function fetchCount() {
-        fetch('https://api.counterapi.dev/v1/mark_investment_dashboard/visits/up')
+    let lastCount = 0;
+
+    // 2. "Hit" Function (Executes ONCE on load)
+    function registerVisit() {
+        fetch(API_UP)
             .then(res => res.json())
             .then(data => {
-                const currentCount = data.count;
-                visitEl.innerText = `[ ${currentCount.toLocaleString()} ]`;
-                
-                // Calculate Velocity (Activity)
-                // If it's the first fetch, we don't have a delta, so default to 1 (You)
-                if (lastCount === 0) {
-                    lastCount = currentCount;
-                    liveEl.innerText = "1"; // You are here
-                } else {
-                    const delta = currentCount - lastCount;
-                    // Live Users = You (1) + New Arrivals (Delta)
-                    // If no new arrivals, it stays 1 (Truthful)
-                    const liveEstimate = 1 + delta;
-                    liveEl.innerText = liveEstimate;
-                    
-                    // Update baseline for next check
-                    lastCount = currentCount;
-                }
+                lastCount = data.count; // Sync baseline
+                document.getElementById('visitorCount').innerText = `[ ${data.count.toLocaleString()} ]`;
+                // On load, you are the 1 user
+                document.getElementById('liveUsers').innerText = "1";
             })
             .catch(err => {
-                console.warn('Counter API Error');
-                visitEl.innerText = '[ OFFLINE ]';
+                console.warn('Counter API Error (Hit)');
+                document.getElementById('visitorCount').innerText = '[ OFFLINE ]';
             });
     }
 
-    // Initial Fetch
-    fetchCount();
-    
-    // Poll every 10 seconds to check for new activity
-    setInterval(fetchCount, 10000);
+    // 3. "Poll" Function (Executes periodically)
+    function pollActivity() {
+        fetch(API_READ) // <--- READ ONLY (No increment)
+            .then(res => res.json())
+            .then(data => {
+                const current = data.count;
+                document.getElementById('visitorCount').innerText = `[ ${current.toLocaleString()} ]`;
+                
+                // Calculate Velocity
+                if (lastCount > 0) {
+                    const delta = current - lastCount;
+                    // Live Users = You (1) + New Arrivals (delta)
+                    const live = 1 + delta;
+                    document.getElementById('liveUsers').innerText = live;
+                    
+                    // Update baseline for next interval
+                    lastCount = current;
+                }
+            })
+            .catch(err => console.warn('Counter API Error (Poll)'));
+    }
+
+    // 4. Init Sequence
+    registerVisit(); // +1 only once
+    setInterval(pollActivity, 10000); // Check every 10s (no +1)
 }
 
 function parseSheetData(text){

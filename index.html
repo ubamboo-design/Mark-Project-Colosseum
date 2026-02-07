@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v16.86</title>
+<title>PROJECT COLOSSEUM v16.87</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -911,7 +911,7 @@ function initCalculator() {
         betaDisplay: document.getElementById('calc_betaDisplay')
     };
 
-    // 🛠️ v16.86: Round to Thousands Logic
+    // 🛠️ v16.86: Round to Thousands Logic (Clean Numbers)
     const fmtMoney = (val) => {
         const rounded = Math.round(val / 1000) * 1000;
         return new Intl.NumberFormat('zh-TW', { maximumFractionDigits: 0 }).format(rounded);
@@ -1031,13 +1031,11 @@ function initCalculator() {
                     smartAction00670L = injectionVal;
                     smartActionCash = 0; 
                 } else {
-                    // Bull (Profit): 🛠️ v16.84 NEW LOGIC -> Buy STOCK Gaps
+                    // Bull (Profit): Buy STOCK Gaps (Aggressive)
                     const smartTotalWealth = simTotalWealth + injectionVal;
-                    // Calculate ideal targets for stocks
                     const ideal00662 = smartTotalWealth * (alloc00662 / 100);
                     const ideal00670L = smartTotalWealth * (alloc00670L / 100);
                     
-                    // Calc gaps
                     const g00662 = Math.max(0, ideal00662 - sim00662);
                     const g00670L = Math.max(0, ideal00670L - sim00670L);
                     const totalG = g00662 + g00670L;

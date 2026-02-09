@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v16.96 (Hidden Cards)</title>
+<title>PROJECT COLOSSEUM v16.97 (Arena Only)</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -340,7 +340,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">PROJECT COLOSSEUM</h1>
-      <div class="meta-info" id="pageMeta">v16.96 (Hidden Cards)</div>
+      <div class="meta-info" id="pageMeta">v16.97 (Arena Only)</div>
   </div>
 </header>
 
@@ -378,6 +378,7 @@
 
   <div class="section-title">I. LIVE BATTLE (投資競技場)</div>
   <div class="arena-container" id="arenaContainer"></div>
+  
   <div class="section-title">III. TACTICAL CALCULATOR (戰術計算機)</div>
   <div class="calc-container">
       <div class="calc-grid-3">
@@ -509,7 +510,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.96', ytUrl: '' }; 
+let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.97', ytUrl: '' }; 
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -1079,27 +1080,32 @@ function initCalculator() {
                     // Bear (Loss): Buy QLD Aggressively
                     smartAction00670L = injectionVal;
                     smartActionCash = 0; 
+                    smartAction00662 = 0;
                 } else {
-                    // Bull (Profit): Buy STOCK Gaps (Aggressive)
+                    // Bull (Profit): 🛠️ v16.84 NEW LOGIC -> Buy STOCK Gaps
                     const smartTotalWealth = simTotalWealth + injectionVal;
+                    // Calculate ideal targets for stocks
                     const ideal00662 = smartTotalWealth * (alloc00662 / 100);
                     const ideal00670L = smartTotalWealth * (alloc00670L / 100);
                     
+                    // Calc gaps
                     const g00662 = Math.max(0, ideal00662 - sim00662);
                     const g00670L = Math.max(0, ideal00670L - sim00670L);
                     const totalG = g00662 + g00670L;
                     
                     if (totalG > 0) {
+                        // Distribute injection proportionally to stock gaps
                         smartAction00662 = injectionVal * (g00662 / totalG);
                         smartAction00670L = injectionVal * (g00670L / totalG);
                     } else {
+                        // No stock gaps (both above target), distribute by base ratio (5:2)
                         const stockRatioTotal = raw00662 + raw00670L;
                         if(stockRatioTotal > 0) {
                             smartAction00662 = injectionVal * (raw00662 / stockRatioTotal);
                             smartAction00670L = injectionVal * (raw00670L / stockRatioTotal);
                         }
                     }
-                    smartActionCash = 0; 
+                    smartActionCash = 0; // Don't buy bond
                 }
             } else {
                 // Pure Rebalancing Survival Mode
@@ -1108,13 +1114,13 @@ function initCalculator() {
                     let dripAmount = simTotalWealth * 0.02; 
                     if (dripAmount > simCash) dripAmount = simCash;
                     smartAction00670L = dripAmount;
-                    smartActionCash = -dripAmount; 
+                    smartActionCash = -dripAmount; // Sell Bond
                 } else {
                     // Bull (Profit): Sell Half Profit QLD -> Buy 00865B
                     let harvestAmount = profit00670L / 2;
                     if (harvestAmount < 0) harvestAmount = 0;
                     smartAction00670L = -harvestAmount;
-                    smartActionCash = harvestAmount; 
+                    smartActionCash = harvestAmount; // Buy Bond
                 }
             }
             

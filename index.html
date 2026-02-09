@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v16.95</title>
+<title>PROJECT COLOSSEUM v16.96 (Hidden Cards)</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -340,7 +340,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">PROJECT COLOSSEUM</h1>
-      <div class="meta-info" id="pageMeta">v16.95 (USD Precision)</div>
+      <div class="meta-info" id="pageMeta">v16.96 (Hidden Cards)</div>
   </div>
 </header>
 
@@ -378,9 +378,6 @@
 
   <div class="section-title">I. LIVE BATTLE (投資競技場)</div>
   <div class="arena-container" id="arenaContainer"></div>
-  <div class="section-title">II. SKILL CARDS (七大技能卡牌)</div>
-  <div class="deck-wrapper"><div class="deck-grid" id="cardContainer"></div></div>
-  
   <div class="section-title">III. TACTICAL CALCULATOR (戰術計算機)</div>
   <div class="calc-container">
       <div class="calc-grid-3">
@@ -512,7 +509,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.95', ytUrl: '' }; 
+let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.96', ytUrl: '' }; 
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };

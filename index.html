@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v16.94</title>
+<title>PROJECT COLOSSEUM v16.95</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -340,7 +340,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">PROJECT COLOSSEUM</h1>
-      <div class="meta-info" id="pageMeta">v16.94 (Layout Tweak)</div>
+      <div class="meta-info" id="pageMeta">v16.95 (USD Precision)</div>
   </div>
 </header>
 
@@ -356,7 +356,10 @@
               <div class="pl-block"><div class="sub-label">損益</div><div><span class="pl-val" id="plTW_val">...</span><span class="pl-pct" id="plTW_pct">...</span></div></div>
           </div>
           <div class="hud-screen green">
-              <div class="hud-title">USD 戰情</div>
+              <div class="hud-title">
+                  USD 戰情
+                  <span id="usdExRate" style="font-size:0.7rem; color:#aaa; display:block; font-weight:normal; margin-top:2px; font-family:'Courier New'">Ex: --</span>
+              </div>
               <div class="data-group">
                   <div class="hud-row"><span class="lbl"><span class="desktop-lbl">TOTAL INVESTED</span><span class="mobile-lbl">投</span></span><span class="val" id="investedUS">...</span></div>
               </div>
@@ -509,7 +512,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.94', ytUrl: '' }; 
+let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.95', ytUrl: '' }; 
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -749,13 +752,18 @@ function renderDashboard(){
   document.getElementById('plTW_val').className = `pl-val ${sTW.cls}`;
   document.getElementById('plTW_pct').textContent = `(${sTW.sign}${sTW.roi}%)`;
 
-  // Calculate USD Stats (ROI based on Invested)
+  // 🛠️ v16.95: Calculate USD Stats with Precision
   const sUS = calc(investedUS, assetUS);
-  document.getElementById('investedUS').textContent = '$' + formatCompact(investedUS);
-  document.getElementById('assetUS').textContent = '$' + formatCompact(assetUS);
-  document.getElementById('plUS_val').textContent = (sUS.diff >=0 ? '+' : '') + formatCompact(sUS.diff);
+  const fmtUSD = (val) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+
+  document.getElementById('investedUS').textContent = '$' + fmtUSD(investedUS);
+  document.getElementById('assetUS').textContent = '$' + fmtUSD(assetUS);
+  document.getElementById('plUS_val').textContent = (sUS.diff >=0 ? '+' : '') + fmtUSD(sUS.diff);
   document.getElementById('plUS_val').className = `pl-val ${sUS.cls}`;
   document.getElementById('plUS_pct').textContent = `(${sUS.sign}${sUS.roi}%)`;
+  
+  // 🛠️ v16.95: Update Ex Rate Display
+  document.getElementById('usdExRate').innerText = `Ex: ${currentRate}`;
 
   // Total Asset (Gold Circle)
   const totalAssetTWD = assetTW + (assetUS * currentRate);

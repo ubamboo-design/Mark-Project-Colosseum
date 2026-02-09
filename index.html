@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v16.92 (Layout Fix)</title>
+<title>PROJECT COLOSSEUM v16.93</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -150,6 +150,7 @@
     }
     .lb-header { background: linear-gradient(90deg, #1a1a1e, #050505); padding: 10px 15px; border-bottom: 1px solid #444; font-family: 'Arial Black', sans-serif; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; font-size: 0.9rem; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
     .lb-header .title { flex-grow: 1; }
+    /* 🛠️ v16.93: Header width adjusted for '盈虧金額' */
     .lb-header .lbl-inv { width: 140px; text-align: right; color: #ccc; font-size: 0.75rem; padding-right: 15px; }
     .lb-header .lbl-roi { min-width: 75px; text-align: right; color: #ccc; font-size: 0.75rem; }
     .lb-list { flex-grow: 1; overflow-y: visible; padding: 2px 0; }
@@ -338,7 +339,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">PROJECT COLOSSEUM</h1>
-      <div class="meta-info" id="pageMeta">v16.92 (Layout Fix)</div>
+      <div class="meta-info" id="pageMeta">v16.93 (Profit Battle)</div>
   </div>
 </header>
 
@@ -507,7 +508,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.92', ytUrl: '' }; 
+let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.93', ytUrl: '' }; 
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -705,13 +706,13 @@ function formatCompact(num, isUSD = false) {
 function formatBattleAmount(num, isUSD) {
     const prefix = isUSD ? 'USD$ ' : 'NT$ ';
     
-    if (num >= 10000) {
+    if (Math.abs(num) >= 10000) {
         // Floor to 1 decimal place
-        let val = floorDec(num / 10000, 1);
+        let val = floorDec(Math.abs(num) / 10000, 1);
         return prefix + val + '萬';
     } else {
         // Integer floor for small numbers
-        return prefix + Math.floor(num).toLocaleString();
+        return prefix + Math.floor(Math.abs(num)).toLocaleString();
     }
 }
 
@@ -797,15 +798,33 @@ function renderArena(){
         </div>`;
     }
 
-    let html = `<div class="arena-dashboard-v15"><div class="leaderboard-panel"><div class="lb-header"><span class="title">LIVE BATTLE</span><span class="lbl-inv">已投入金額</span><span class="lbl-roi">報酬率</span></div><div class="lb-list">`;
+    // 🛠️ v16.93: Header updated to '盈虧金額'
+    let html = `<div class="arena-dashboard-v15"><div class="leaderboard-panel"><div class="lb-header"><span class="title">LIVE BATTLE</span><span class="lbl-inv">盈虧金額</span><span class="lbl-roi">報酬率</span></div><div class="lb-list">`;
     allS.forEach((s, i) => {
         const deck = s.deck.map(code => { const card = cardsData[code]; return card?.imgUrl ? `<img src="${fixDriveUrl(card.imgUrl)}" class="lb-card-icon">` : `<div class="lb-card-icon" style="background:#222;font-size:8px;">${code}</div>`; }).join('');
-        let investedDisplay = formatBattleAmount(s.investedVal, s.isUSD);
+        
+        // 🛠️ v16.93: Dynamic Profit Calculation
+        let currentSum = 0;
+        let investedSum = 0;
+        s.deck.forEach(cardCode => {
+            const c = cardsData[cardCode];
+            if(c) {
+                currentSum += c.current;
+                investedSum += c.invested;
+            }
+        });
+        let profitVal = currentSum - investedSum;
+        let profitSign = profitVal >= 0 ? '+' : '-';
+        let profitDisplay = formatBattleAmount(Math.abs(profitVal), s.isUSD);
+        let profitClass = profitVal >= 0 ? 'color-profit' : 'color-loss'; // Red for profit in TW style (or standard green/red based on CSS vars)
+        
+        // Note: CSS .color-profit uses var(--red) which is #ff2a2a (Red for Up)
+        
         let cls = s.sheetROI >= 50 ? 'color-gold' : s.sheetROI >= 0 ? 'color-profit' : s.sheetROI <= -50 ? 'color-dead' : 'color-loss';
         let sign = s.sheetROI >= 0 ? '+' : '';
         let roiDisplay = floorDec(s.sheetROI, 1).toFixed(1);
         
-        html += `<div class="lb-row rank-${i+1}" onclick="openStrategyModal('${s.code}')"><span class="lb-rank">#${i+1}</span><div class="lb-info"><div class="lb-name">${s.name}</div><div class="lb-code">${s.code}</div></div><div class="lb-deck">${deck}</div><div class="lb-invested">${investedDisplay}</div><span class="lb-val ${cls}">${sign}${roiDisplay}%</span></div>`;
+        html += `<div class="lb-row rank-${i+1}" onclick="openStrategyModal('${s.code}')"><span class="lb-rank">#${i+1}</span><div class="lb-info"><div class="lb-name">${s.name}</div><div class="lb-code">${s.code}</div></div><div class="lb-deck">${deck}</div><div class="lb-invested ${profitClass}">${profitSign}${profitDisplay}</div><span class="lb-val ${cls}">${sign}${roiDisplay}%</span></div>`;
     });
     
     let maxR = Math.max(...allS.map(x => Math.abs(x.sheetROI)), 5);

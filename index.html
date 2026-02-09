@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v16.89 (True Visit)</title>
+<title>PROJECT COLOSSEUM v16.91 (Real Invested HUD)</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -338,7 +338,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">PROJECT COLOSSEUM</h1>
-      <div class="meta-info" id="pageMeta">v16.89 (True Visit)</div>
+      <div class="meta-info" id="pageMeta">v16.91 (Real Invested HUD)</div>
   </div>
 </header>
 
@@ -348,8 +348,7 @@
           <div class="hud-screen cyan">
               <div class="hud-title">TWD 戰情</div>
               <div class="data-group">
-                  <div class="hud-row"><span class="lbl"><span class="desktop-lbl">預算</span><span class="mobile-lbl">預</span></span><span class="val" id="budgetTW">...</span></div>
-                  <div class="hud-row"><span class="lbl"><span class="desktop-lbl">已投</span><span class="mobile-lbl">投</span></span><span class="val" id="investedTW">...</span></div>
+                  <div class="hud-row"><span class="lbl"><span class="desktop-lbl">總投入成本</span><span class="mobile-lbl">投</span></span><span class="val" id="investedTW">...</span></div>
               </div>
               <div class="data-group"><div class="sub-label">現值</div><div class="main-val c-cyan" id="assetTW">...</div></div>
               <div class="pl-block"><div class="sub-label">損益</div><div><span class="pl-val" id="plTW_val">...</span><span class="pl-pct" id="plTW_pct">...</span></div></div>
@@ -357,8 +356,7 @@
           <div class="hud-screen green">
               <div class="hud-title">USD 戰情</div>
               <div class="data-group">
-                  <div class="hud-row"><span class="lbl"><span class="desktop-lbl">BUDGET</span><span class="mobile-lbl">預</span></span><span class="val" id="budgetUS">...</span></div>
-                  <div class="hud-row"><span class="lbl"><span class="desktop-lbl">INVESTED</span><span class="mobile-lbl">投</span></span><span class="val" id="investedUS">...</span></div>
+                  <div class="hud-row"><span class="lbl"><span class="desktop-lbl">TOTAL INVESTED</span><span class="mobile-lbl">投</span></span><span class="val" id="investedUS">...</span></div>
               </div>
               <div class="data-group"><div class="sub-label">現值</div><div class="main-val c-green" id="assetUS">...</div></div>
               <div class="pl-block"><div class="sub-label">損益</div><div><span class="pl-val" id="plUS_val">...</span><span class="pl-pct" id="plUS_pct">...</span></div></div>
@@ -509,7 +507,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.89', ytUrl: '' }; 
+let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.91', ytUrl: '' }; 
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -621,7 +619,8 @@ function parseSheetData(text){
     if(c[0].startsWith('C')) {
         let budgetRaw = c[5] || '0';
         let currentRaw = c[6] || '0';
-        let investedRaw = c[13] || '0';
+        // 🛠️ v16.91: Ensure Invested uses Column N (Index 13)
+        let investedRaw = c[13] || '0'; 
         let sharesRaw = c[11] || '0'; 
         let ytUrl = c[30] ? c[30].trim() : ''; 
         
@@ -726,29 +725,41 @@ function calc(cost, cur){
 }
 
 function renderDashboard(){
-  let budgetTW=0, investedTW=0, assetTW=0;
-  let budgetUS=0, investedUS=0, assetUS=0;
+  // 🛠️ v16.91: Logic updated to track INVESTED CAPITAL instead of BUDGET
+  let investedTW=0, assetTW=0;
+  let investedUS=0, assetUS=0;
+  
   Object.values(cardsData).forEach(c => {
-      if(c.isUSD) { budgetUS += c.budget; investedUS += c.invested; assetUS += c.current; } 
-      else { budgetTW += c.budget; investedTW += c.invested; assetTW += c.current; }
+      if(c.isUSD) { 
+          investedUS += c.invested; 
+          assetUS += c.current; 
+      } else { 
+          investedTW += c.invested; 
+          assetTW += c.current; 
+      }
   });
-  const sTW = calc(budgetTW, assetTW);
-  document.getElementById('budgetTW').textContent = formatCompact(budgetTW);
+
+  // Calculate TWD Stats (ROI based on Invested)
+  const sTW = calc(investedTW, assetTW);
   document.getElementById('investedTW').textContent = formatCompact(investedTW);
   document.getElementById('assetTW').textContent = formatCompact(assetTW);
   document.getElementById('plTW_val').textContent = (sTW.diff >=0 ? '+' : '') + formatCompact(sTW.diff);
   document.getElementById('plTW_val').className = `pl-val ${sTW.cls}`;
   document.getElementById('plTW_pct').textContent = `(${sTW.sign}${sTW.roi}%)`;
-  const sUS = calc(budgetUS, assetUS);
-  document.getElementById('budgetUS').textContent = '$' + formatCompact(budgetUS);
+
+  // Calculate USD Stats (ROI based on Invested)
+  const sUS = calc(investedUS, assetUS);
   document.getElementById('investedUS').textContent = '$' + formatCompact(investedUS);
   document.getElementById('assetUS').textContent = '$' + formatCompact(assetUS);
   document.getElementById('plUS_val').textContent = (sUS.diff >=0 ? '+' : '') + formatCompact(sUS.diff);
   document.getElementById('plUS_val').className = `pl-val ${sUS.cls}`;
   document.getElementById('plUS_pct').textContent = `(${sUS.sign}${sUS.roi}%)`;
+
+  // Total Asset (Gold Circle)
   const totalAssetTWD = assetTW + (assetUS * currentRate);
-  const totalBudgetTWD = budgetTW + (budgetUS * currentRate);
-  const sTotal = calc(totalBudgetTWD, totalAssetTWD);
+  const totalInvestedTWD = investedTW + (investedUS * currentRate); // Compare against Total Invested
+  const sTotal = calc(totalInvestedTWD, totalAssetTWD);
+  
   const cur = document.getElementById('totalAsset');
   cur.textContent = formatCompact(totalAssetTWD);
   cur.style.color = sTotal.roi >= 0 ? '#fff' : '#ffaaaa';
@@ -973,7 +984,7 @@ function initCalculator() {
             const alloc00670L = (raw00670L / totalParts) * 100;
             const allocCash = (rawCash / totalParts) * 100;
             
-            const betaVal = ((raw00662 * 1) + (raw00670L * 2)) / totalParts;
+            const betaVal = ((sim00662 * 1) + (sim00670L * 2)) / simTotalWealth;
             outputs.betaDisplay.innerHTML = `β: ${betaVal.toFixed(2)}`;
 
             // Simulated Ratios

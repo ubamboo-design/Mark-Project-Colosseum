@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v16.93</title>
+<title>PROJECT COLOSSEUM v16.94</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -150,8 +150,8 @@
     }
     .lb-header { background: linear-gradient(90deg, #1a1a1e, #050505); padding: 10px 15px; border-bottom: 1px solid #444; font-family: 'Arial Black', sans-serif; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; font-size: 0.9rem; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
     .lb-header .title { flex-grow: 1; }
-    /* 🛠️ v16.93: Header width adjusted for '盈虧金額' */
-    .lb-header .lbl-inv { width: 140px; text-align: right; color: #ccc; font-size: 0.75rem; padding-right: 15px; }
+    /* 🛠️ v16.94: Padding-right adjusted from 15px to 2px for visual shift */
+    .lb-header .lbl-inv { width: 140px; text-align: right; color: #ccc; font-size: 0.75rem; padding-right: 2px; }
     .lb-header .lbl-roi { min-width: 75px; text-align: right; color: #ccc; font-size: 0.75rem; }
     .lb-list { flex-grow: 1; overflow-y: visible; padding: 2px 0; }
     .lb-row { display: flex; align-items: center; padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.2s ease; cursor: pointer; }
@@ -162,7 +162,8 @@
     .lb-code { font-size: 0.7rem; color: #888; font-family: 'Courier New'; }
     .lb-deck { flex-grow: 1; display: flex; gap: 5px; align-items: center; justify-content: flex-start; overflow: hidden; }
     .lb-card-icon { width: 26px; height: 26px; object-fit: contain; }
-    .lb-invested { width: 140px; text-align: right; font-family: 'Courier New', monospace; font-size: 0.85rem; color: #bbb; font-weight: bold; padding-right: 15px; white-space: nowrap; }
+    /* 🛠️ v16.94: Padding-right adjusted from 15px to 2px */
+    .lb-invested { width: 140px; text-align: right; font-family: 'Courier New', monospace; font-size: 0.85rem; color: #bbb; font-weight: bold; padding-right: 2px; white-space: nowrap; }
     .lb-val { font-family: 'Courier New', monospace; font-weight: 900; font-size: 1rem; text-align: right; min-width: 75px; margin-left: auto; white-space: nowrap; }
     .lb-row.rank-1 .lb-rank { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
     .lb-row.rank-1 .lb-name { color: var(--gold); }
@@ -339,7 +340,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">PROJECT COLOSSEUM</h1>
-      <div class="meta-info" id="pageMeta">v16.93 (Profit Battle)</div>
+      <div class="meta-info" id="pageMeta">v16.94 (Layout Tweak)</div>
   </div>
 </header>
 
@@ -508,7 +509,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.93', ytUrl: '' }; 
+let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.94', ytUrl: '' }; 
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };

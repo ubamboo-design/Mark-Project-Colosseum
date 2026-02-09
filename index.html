@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v16.97 (Arena Only)</title>
+<title>PROJECT COLOSSEUM v16.97</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -379,7 +379,7 @@
   <div class="section-title">I. LIVE BATTLE (投資競技場)</div>
   <div class="arena-container" id="arenaContainer"></div>
   
-  <div class="section-title">III. TACTICAL CALCULATOR (戰術計算機)</div>
+  <div class="section-title">II. TACTICAL CALCULATOR (戰術計算機)</div>
   <div class="calc-container">
       <div class="calc-grid-3">
           <div class="calc-card blue">
@@ -459,7 +459,7 @@
       </div>
   </div>
 
-  <div class="section-title">IV. EVENT LOG (事件簿)</div>
+  <div class="section-title">III. EVENT LOG (事件簿)</div>
   <div class="event-list" id="eventContainer"></div>
   
   <div class="footer-grid" id="footerContainer">
@@ -929,7 +929,14 @@ function openStrategyModal(k) {
 
 function closeModal(){document.getElementById('cardModal').style.display='none'}
 function renderHeader() { const img = document.getElementById('pageLogo'); if (logoUrl) { img.src = logoUrl; img.style.display = 'block'; } document.getElementById('pageTitle').textContent = configData.title; document.getElementById('pageMeta').textContent = configData.meta; }
-function renderAll(){ renderHeader(); renderDashboard(); renderCards(); renderEvents(); renderArena(); renderFooter(); }
+function renderAll(){ 
+    renderHeader(); 
+    renderDashboard(); 
+    // renderCards(); // 🛠️ v16.97: Skill Cards Hidden
+    renderEvents(); 
+    renderArena(); 
+    renderFooter(); 
+}
 
 // 🛠️ Calculator Logic (Encapsulated)
 function initCalculator() {
@@ -1080,7 +1087,6 @@ function initCalculator() {
                     // Bear (Loss): Buy QLD Aggressively
                     smartAction00670L = injectionVal;
                     smartActionCash = 0; 
-                    smartAction00662 = 0;
                 } else {
                     // Bull (Profit): 🛠️ v16.84 NEW LOGIC -> Buy STOCK Gaps
                     const smartTotalWealth = simTotalWealth + injectionVal;
@@ -1105,7 +1111,7 @@ function initCalculator() {
                             smartAction00670L = injectionVal * (raw00670L / stockRatioTotal);
                         }
                     }
-                    smartActionCash = 0; // Don't buy bond
+                    smartActionCash = 0; 
                 }
             } else {
                 // Pure Rebalancing Survival Mode
@@ -1114,13 +1120,13 @@ function initCalculator() {
                     let dripAmount = simTotalWealth * 0.02; 
                     if (dripAmount > simCash) dripAmount = simCash;
                     smartAction00670L = dripAmount;
-                    smartActionCash = -dripAmount; // Sell Bond
+                    smartActionCash = -dripAmount; 
                 } else {
                     // Bull (Profit): Sell Half Profit QLD -> Buy 00865B
                     let harvestAmount = profit00670L / 2;
                     if (harvestAmount < 0) harvestAmount = 0;
                     smartAction00670L = -harvestAmount;
-                    smartActionCash = harvestAmount; // Buy Bond
+                    smartActionCash = harvestAmount; 
                 }
             }
             

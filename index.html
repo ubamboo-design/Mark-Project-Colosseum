@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v16.97</title>
+<title>PROJECT COLOSSEUM v17.01</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -340,7 +340,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">PROJECT COLOSSEUM</h1>
-      <div class="meta-info" id="pageMeta">v16.97 (Arena Only)</div>
+      <div class="meta-info" id="pageMeta">v17.01 (Text Update)</div>
   </div>
 </header>
 
@@ -383,23 +383,17 @@
   <div class="calc-container">
       <div class="calc-grid-3">
           <div class="calc-card blue">
-              <div style="color:var(--us); font-weight:bold; margin-bottom:10px;">1. 本金 (ORIGINAL PRINCIPAL)</div>
-              <div style="margin-bottom:5px; font-size:0.7rem; color:#666;">輸入您的「原始本金」</div>
+              <div style="color:var(--us); font-weight:bold; margin-bottom:10px;">1. 總本金 (TOTAL PRINCIPAL)</div>
+              <div style="margin-bottom:5px; font-size:0.7rem; color:#666;">輸入您的「總投入本金」</div>
               <div style="display:flex; flex-direction:column; gap:5px;">
-                  <div style="display:flex; justify-content:space-between; align-items:center;">
-                      <span class="calc-label" style="width:50px;">00662</span>
-                      <input type="number" id="calc_hold00662" value="2000000" class="calc-input" style="flex:1;">
-                  </div>
-                  <div style="display:flex; justify-content:space-between; align-items:center;">
-                      <span class="calc-label" style="width:50px;">00670L</span>
-                      <input type="number" id="calc_hold00670L" value="2000000" class="calc-input" style="flex:1;">
-                  </div>
-                  <div style="display:flex; justify-content:space-between; align-items:center;">
-                      <span class="calc-label" style="width:50px; color:var(--yield);">00865B</span>
-                      <input type="number" id="calc_hold00865B" value="2000000" class="calc-input" style="flex:1; border-color:var(--yield); color:var(--yield);">
+                  <input type="number" id="calc_total_principal" value="10000000" class="calc-input" style="font-size: 1.4rem; padding: 10px;">
+                  <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-top:5px; font-family:var(--font-num); font-weight:bold; padding: 0 5px;">
+                      <span style="color:#aaa;">00662: <span id="disp_hold00662">...</span></span>
+                      <span style="color:#aaa;">00670L: <span id="disp_hold00670L">...</span></span>
+                      <span style="color:var(--yield);">00865B: <span id="disp_hold00865B">...</span></span>
                   </div>
               </div>
-              <div style="margin-top:10px;">
+              <div style="margin-top:15px;">
                   <span class="calc-label" style="color:var(--yield);">🔥 動態加碼 (Injection)</span>
                   <div style="display:flex; align-items:center; gap:5px;">
                       <input type="number" id="calc_injection" value="100000" class="calc-input" style="border-color:var(--yield); color:var(--yield); opacity:0.5; pointer-events:none;">
@@ -424,8 +418,7 @@
               <div style="display:flex; gap:5px;">
                   <div><span class="calc-label">00662 %</span><input type="number" id="calc_perf00662" value="0" class="calc-input" style="color:var(--tw);"></div>
                   <div><span class="calc-label">00670L %</span><input type="number" id="calc_perf00670L" value="0" class="calc-input" style="color:var(--tw);"></div>
-                  <div><span class="calc-label" style="color:var(--yield)">00865B %</span><input type="number" id="calc_perf00865B" value="0" class="calc-input" style="color:var(--yield); border-color:var(--yield);"></div>
-              </div>
+                  </div>
           </div>
       </div>
 
@@ -510,7 +503,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT COLOSSEUM', meta: 'v16.97', ytUrl: '' }; 
+let configData = { title: 'PROJECT COLOSSEUM', meta: 'v17.01', ytUrl: '' }; 
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -940,21 +933,23 @@ function renderAll(){
 
 // 🛠️ Calculator Logic (Encapsulated)
 function initCalculator() {
+    // 🛠️ v16.98: Update Inputs Map to use Total Principal
     const inputs = {
-        hold00662: document.getElementById('calc_hold00662'),
-        hold00670L: document.getElementById('calc_hold00670L'),
-        holdCash: document.getElementById('calc_hold00865B'),
+        totalPrincipal: document.getElementById('calc_total_principal'),
         alloc00662: document.getElementById('calc_alloc00662'),
         alloc00670L: document.getElementById('calc_alloc00670L'),
         allocCash: document.getElementById('calc_alloc00865B'),
         perf00662: document.getElementById('calc_perf00662'),
         perf00670L: document.getElementById('calc_perf00670L'),
-        perfCash: document.getElementById('calc_perf00865B'),
+        // 🛠️ v16.99: removed perfCash input binding as it's deleted from HTML
         injection: document.getElementById('calc_injection'), 
         useInjection: document.getElementById('calc_useInjection') 
     };
 
     const outputs = {
+        disp00662: document.getElementById('disp_hold00662'),
+        disp00670L: document.getElementById('disp_hold00670L'),
+        disp00865B: document.getElementById('disp_hold00865B'),
         mindlessBody: document.getElementById('calc_mindlessBody'),
         mindlessTotal: document.getElementById('calc_mindlessTotal'),
         mindlessLabel: document.getElementById('calc_mindlessLabel'),
@@ -988,15 +983,28 @@ function initCalculator() {
 
     function calculate() {
         try {
-            // Inputs: Original Principal
-            const principal00662 = parseFloat(inputs.hold00662.value) || 0;
-            const principal00670L = parseFloat(inputs.hold00670L.value) || 0;
-            const principalCash = parseFloat(inputs.holdCash.value) || 0; 
+            // 🛠️ v16.98: Auto Allocate Principal based on Ratios
+            const raw00662 = parseFloat(inputs.alloc00662.value) || 0;
+            const raw00670L = parseFloat(inputs.alloc00670L.value) || 0;
+            const rawCash = parseFloat(inputs.allocCash.value) || 0;
             
+            let totalParts = raw00662 + raw00670L + rawCash;
+            if (totalParts === 0) totalParts = 1;
+            
+            const totalPrincipal = parseFloat(inputs.totalPrincipal.value) || 0;
+            const principal00662 = totalPrincipal * (raw00662 / totalParts);
+            const principal00670L = totalPrincipal * (raw00670L / totalParts);
+            const principalCash = totalPrincipal * (rawCash / totalParts);
+
+            // Display allocated amounts to user
+            outputs.disp00662.innerText = Math.round(principal00662).toLocaleString();
+            outputs.disp00670L.innerText = Math.round(principal00670L).toLocaleString();
+            outputs.disp00865B.innerText = Math.round(principalCash).toLocaleString();
+
             // Performance (P/L %)
             const perf00662 = parseFloat(inputs.perf00662.value) || 0;
             const perf00670L = parseFloat(inputs.perf00670L.value) || 0;
-            const perfCash = parseFloat(inputs.perfCash.value) || 0; 
+            const perfCash = 0; // 🛠️ v16.99: Removed Bond simulation input, fixed to 0
             
             // 🛠️ 1. Simulate Current Market Value
             const sim00662 = principal00662 * (1 + perf00662 / 100);
@@ -1009,18 +1017,12 @@ function initCalculator() {
             const isInjectionMode = inputs.useInjection.checked;
             const injectionVal = isInjectionMode ? injectionInputVal : 0;
             
-            // Allocations
-            const raw00662 = parseFloat(inputs.alloc00662.value) || 0;
-            const raw00670L = parseFloat(inputs.alloc00670L.value) || 0;
-            const rawCash = parseFloat(inputs.allocCash.value) || 0;
-            
-            // Ratios
-            let totalParts = raw00662 + raw00670L + rawCash;
-            if (totalParts === 0) totalParts = 1;
+            // Allocations (%)
             const alloc00662 = (raw00662 / totalParts) * 100;
             const alloc00670L = (raw00670L / totalParts) * 100;
             const allocCash = (rawCash / totalParts) * 100;
             
+            // Beta is calculated based on simulated values
             const betaVal = ((sim00662 * 1) + (sim00670L * 2)) / simTotalWealth;
             outputs.betaDisplay.innerHTML = `β: ${betaVal.toFixed(2)}`;
 
@@ -1088,23 +1090,19 @@ function initCalculator() {
                     smartAction00670L = injectionVal;
                     smartActionCash = 0; 
                 } else {
-                    // Bull (Profit): 🛠️ v16.84 NEW LOGIC -> Buy STOCK Gaps
+                    // Bull (Profit): Buy STOCK Gaps (Aggressive)
                     const smartTotalWealth = simTotalWealth + injectionVal;
-                    // Calculate ideal targets for stocks
                     const ideal00662 = smartTotalWealth * (alloc00662 / 100);
                     const ideal00670L = smartTotalWealth * (alloc00670L / 100);
                     
-                    // Calc gaps
                     const g00662 = Math.max(0, ideal00662 - sim00662);
                     const g00670L = Math.max(0, ideal00670L - sim00670L);
                     const totalG = g00662 + g00670L;
                     
                     if (totalG > 0) {
-                        // Distribute injection proportionally to stock gaps
                         smartAction00662 = injectionVal * (g00662 / totalG);
                         smartAction00670L = injectionVal * (g00670L / totalG);
                     } else {
-                        // No stock gaps (both above target), distribute by base ratio (5:2)
                         const stockRatioTotal = raw00662 + raw00670L;
                         if(stockRatioTotal > 0) {
                             smartAction00662 = injectionVal * (raw00662 / stockRatioTotal);
@@ -1122,8 +1120,8 @@ function initCalculator() {
                     smartAction00670L = dripAmount;
                     smartActionCash = -dripAmount; 
                 } else {
-                    // Bull (Profit): Sell Half Profit QLD -> Buy 00865B
-                    let harvestAmount = profit00670L / 2;
+                    // Bull (Profit): 🛠️ v17.00 CHANGE: Sell 30% Profit QLD -> Buy 00865B
+                    let harvestAmount = profit00670L * 0.3; // Changed from / 2 (50%) to * 0.3 (30%)
                     if (harvestAmount < 0) harvestAmount = 0;
                     smartAction00670L = -harvestAmount;
                     smartActionCash = harvestAmount; 
@@ -1209,7 +1207,7 @@ function initCalculator() {
             let statusText = isBull ? "🐂 牛市 (Bull)" : "🐻 熊市 (Bear)";
             let strategyText = isInjectionMode 
                 ? (isBull ? "注資補股 (Stock)" : "注資抄底 (QLD)") 
-                : (isBull ? "獲利收割 (Harvest)" : "滴灌救命 (2% Drip)");
+                : (isBull ? "獲利收割 30% (Harvest)" : "滴灌救命 (2% Drip)"); // 🛠️ v17.01: Updated text
             
             outputs.smartAssets.innerHTML = `
                 <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#888; margin-top:5px; border-top:1px dashed #333; padding-top:5px;">

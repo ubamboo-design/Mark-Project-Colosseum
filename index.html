@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v17.01</title>
+<title>PROJECT COLOSSEUM v17.02</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -128,7 +128,6 @@
     /* Arena */
     .arena-container { width: 100%; }
     
-    /* 🛠️ v16.54 Fix: 420px | 1fr (Wide) | 340px (Fixed) */
     .arena-dashboard-v15 { 
         display: grid; 
         grid-template-columns: 420px 1fr 340px; 
@@ -150,7 +149,6 @@
     }
     .lb-header { background: linear-gradient(90deg, #1a1a1e, #050505); padding: 10px 15px; border-bottom: 1px solid #444; font-family: 'Arial Black', sans-serif; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; font-size: 0.9rem; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
     .lb-header .title { flex-grow: 1; }
-    /* 🛠️ v16.94: Padding-right adjusted from 15px to 2px for visual shift */
     .lb-header .lbl-inv { width: 140px; text-align: right; color: #ccc; font-size: 0.75rem; padding-right: 2px; }
     .lb-header .lbl-roi { min-width: 75px; text-align: right; color: #ccc; font-size: 0.75rem; }
     .lb-list { flex-grow: 1; overflow-y: visible; padding: 2px 0; }
@@ -162,7 +160,6 @@
     .lb-code { font-size: 0.7rem; color: #888; font-family: 'Courier New'; }
     .lb-deck { flex-grow: 1; display: flex; gap: 5px; align-items: center; justify-content: flex-start; overflow: hidden; }
     .lb-card-icon { width: 26px; height: 26px; object-fit: contain; }
-    /* 🛠️ v16.94: Padding-right adjusted from 15px to 2px */
     .lb-invested { width: 140px; text-align: right; font-family: 'Courier New', monospace; font-size: 0.85rem; color: #bbb; font-weight: bold; padding-right: 2px; white-space: nowrap; }
     .lb-val { font-family: 'Courier New', monospace; font-weight: 900; font-size: 1rem; text-align: right; min-width: 75px; margin-left: auto; white-space: nowrap; }
     .lb-row.rank-1 .lb-rank { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
@@ -214,7 +211,7 @@
         align-items: center;
         cursor: pointer;
         transition: transform 0.3s;
-        height: 100%; /* 🛠️ Stretch height */
+        height: 100%; 
         min-height: 400px; 
     }
     .yt-panel:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.9), 0 0 20px rgba(255, 0, 0, 0.2); }
@@ -249,7 +246,6 @@
         .pl-val { font-size: 0.85rem; }
         .pl-pct { font-size: 0.6rem; display: block; margin-left: 0; margin-top: -2px; }
         .sub-label { font-size: 0.6rem; opacity: 0.7; }
-        /* 🛠️ Mobile: Stack columns vertically */
         .arena-dashboard-v15 { grid-template-columns: 1fr; height: auto; gap: 15px; } 
         .leaderboard-panel { height: auto; } 
         .chart-panel { height: 350px; }
@@ -259,7 +255,6 @@
         .desktop-lbl { display: none; }
         .mobile-lbl { display: inline; }
         
-        /* 🛠️ v16.55 Mobile Grid Fix */
         @media (max-width: 600px) {
             .deck-grid {
                 grid-template-columns: repeat(2, 1fr) !important;
@@ -292,33 +287,6 @@
     .yt-btn:hover { background: linear-gradient(90deg, #ff3333, #e60000); box-shadow: 0 0 20px rgba(255,0,0,0.8); transform: translateY(-2px); }
 
     #debug-panel { display: none; background: #000; border: 2px solid #0f0; color: #0f0; font-family: 'Courier New'; padding: 15px; height: 400px; overflow-y: scroll; margin: 20px 0; font-size: 0.85rem; }
-
-    /* 🛠️ Calculator Styles (v16.56 Mobile Fix) */
-    .calc-container { margin-top: 20px; padding: 20px; background: linear-gradient(160deg, #1a1a1e 0%, #0a0a0c 100%); border: 1px solid #333; border-radius: 10px; }
-    
-    /* 🛠️ Use dedicated classes to avoid override issues */
-    .calc-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-    .calc-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-    
-    .calc-card { background: #050505; border: 1px solid #333; padding: 15px; border-radius: 8px; position: relative; }
-    .calc-card.blue { border-left: 4px solid var(--us); }
-    .calc-card.indigo { border-left: 4px solid #6366f1; }
-    .calc-card.red { border-left: 4px solid var(--tw); }
-    .calc-card.green { border-left: 4px solid var(--yield); }
-    .calc-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; font-weight: bold; }
-    .calc-input { width: 100%; background: #111; border: 1px solid #444; color: #fff; padding: 8px; border-radius: 4px; font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; font-weight: bold; text-align: center; transition: all .3s; }
-    .calc-input:focus { border-color: var(--cyan); outline: none; box-shadow: 0 0 10px rgba(0,247,255,0.2); }
-    .calc-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    .calc-table th { color: #666; text-align: left; padding: 5px; border-bottom: 1px solid #333; font-size: 0.7rem; }
-    .calc-table td { color: #ccc; padding: 8px 5px; border-bottom: 1px solid #222; }
-    .calc-badge { padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
-    .badge-buy { background: rgba(0, 255, 106, 0.1); color: var(--yield); border: 1px solid var(--yield); }
-    .badge-sell { background: rgba(255, 42, 42, 0.1); color: var(--tw); border: 1px solid var(--tw); }
-    
-    @media(max-width: 900px) {
-        /* 🛠️ Force 1 column on mobile for calculator */
-        .calc-grid-3, .calc-grid-2 { grid-template-columns: 1fr !important; }
-    }
 </style>
 </head>
 <body>
@@ -340,7 +308,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">PROJECT COLOSSEUM</h1>
-      <div class="meta-info" id="pageMeta">v17.01 (Text Update)</div>
+      <div class="meta-info" id="pageMeta">v17.02 (Update)</div>
   </div>
 </header>
 
@@ -378,81 +346,8 @@
 
   <div class="section-title">I. LIVE BATTLE (投資競技場)</div>
   <div class="arena-container" id="arenaContainer"></div>
-  
-  <div class="section-title">II. TACTICAL CALCULATOR (再平衡計算機)</div>
-  <div class="calc-container">
-      <div class="calc-grid-3">
-          <div class="calc-card blue">
-              <div style="color:var(--us); font-weight:bold; margin-bottom:10px;">1. 總本金 (TOTAL PRINCIPAL)</div>
-              <div style="margin-bottom:5px; font-size:0.7rem; color:#666;">輸入您的「總投入本金」</div>
-              <div style="display:flex; flex-direction:column; gap:5px;">
-                  <input type="number" id="calc_total_principal" value="10000000" class="calc-input" style="font-size: 1.4rem; padding: 10px;">
-                  <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-top:5px; font-family:var(--font-num); font-weight:bold; padding: 0 5px;">
-                      <span style="color:#aaa;">00662: <span id="disp_hold00662">...</span></span>
-                      <span style="color:#aaa;">00670L: <span id="disp_hold00670L">...</span></span>
-                      <span style="color:var(--yield);">00865B: <span id="disp_hold00865B">...</span></span>
-                  </div>
-              </div>
-              <div style="margin-top:15px;">
-                  <span class="calc-label" style="color:var(--yield);">🔥 動態加碼 (Injection)</span>
-                  <div style="display:flex; align-items:center; gap:5px;">
-                      <input type="number" id="calc_injection" value="100000" class="calc-input" style="border-color:var(--yield); color:var(--yield); opacity:0.5; pointer-events:none;">
-                      <input type="checkbox" id="calc_useInjection" style="width:20px; height:20px; accent-color:var(--yield); cursor:pointer;">
-                  </div>
-              </div>
-          </div>
-          <div class="calc-card indigo">
-              <div style="color:#6366f1; font-weight:bold; margin-bottom:10px;">
-                  2. 期望比例 (RATIO)
-                  <div id="calc_betaDisplay" style="float:right; background:#000; color:#0ff; padding:2px 6px; border-radius:4px; border:1px solid #0ff; font-size:0.7rem;">β: 0.9</div>
-              </div>
-              <div style="display:flex; gap:5px;">
-                  <div><span class="calc-label">00662</span><input type="number" id="calc_alloc00662" value="5" class="calc-input"></div>
-                  <div><span class="calc-label">00670L</span><input type="number" id="calc_alloc00670L" value="2" class="calc-input"></div>
-                  <div><span class="calc-label" style="color:var(--yield)">00865B</span><input type="number" id="calc_alloc00865B" value="3" class="calc-input" style="color:var(--yield); border-color:var(--yield);"></div>
-              </div>
-          </div>
-          <div class="calc-card red">
-              <div style="color:var(--tw); font-weight:bold; margin-bottom:10px;">3. 模擬走勢 (SIMULATION %)</div>
-              <div style="margin-bottom:5px; font-size:0.7rem; color:#666;">輸入預測漲跌幅 (+/-)</div>
-              <div style="display:flex; gap:5px;">
-                  <div><span class="calc-label">00662 %</span><input type="number" id="calc_perf00662" value="0" class="calc-input" style="color:var(--tw);"></div>
-                  <div><span class="calc-label">00670L %</span><input type="number" id="calc_perf00670L" value="0" class="calc-input" style="color:var(--tw);"></div>
-                  </div>
-          </div>
-      </div>
 
-      <div class="calc-grid-2" id="calc_resultsGrid">
-          <div class="calc-card" id="calc_mindlessCard" style="border-top: 3px solid var(--tw);">
-              <div style="color:var(--tw); font-weight:900; margin-bottom:5px;">4. 比例平衡 (RATIO)</div>
-              <div style="font-size:0.8rem; color:#666; margin-bottom:10px;">基於試算後的總值重分配</div>
-              <table class="calc-table">
-                  <thead><tr><th>ASSET</th><th>SIMULATED</th><th style="text-align:center">ACTION</th><th style="text-align:right">TARGET</th></tr></thead>
-                  <tbody id="calc_mindlessBody"></tbody>
-              </table>
-              <div id="calc_mindlessAssets"></div>
-              <div style="margin-top:10px; text-align:center; font-size:0.8rem; color:#888;">
-                  <span id="calc_mindlessLabel">00865B 消耗 (CONSUMPTION)</span>: 
-                  <span id="calc_mindlessTotal" style="color:var(--tw); font-weight:bold;">--</span>
-              </div>
-          </div>
-          <div class="calc-card" id="calc_smartCard" style="border-top: 3px solid var(--yield);">
-              <div style="color:var(--yield); font-weight:900; margin-bottom:5px;">5. 聰明平衡 (CLEC)</div>
-              <div style="font-size:0.8rem; color:#666; margin-bottom:10px;">James 生存模式 (Survival)</div>
-              <table class="calc-table">
-                  <thead><tr><th>ASSET</th><th>SIMULATED</th><th style="text-align:center">ACTION</th><th style="text-align:right">FINAL</th></tr></thead>
-                  <tbody id="calc_smartBody"></tbody>
-              </table>
-              <div id="calc_smartAssets"></div>
-              <div style="margin-top:10px; text-align:center; font-size:0.8rem; color:#888;">
-                  <span id="calc_smartLabel">00865B 消耗 (CONSUMPTION)</span>: 
-                  <span id="calc_smartTotal" style="color:var(--yield); font-weight:bold;">--</span>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <div class="section-title">III. EVENT LOG (事件簿)</div>
+  <div class="section-title">II. EVENT LOG (事件簿)</div>
   <div class="event-list" id="eventContainer"></div>
   
   <div class="footer-grid" id="footerContainer">
@@ -475,7 +370,6 @@
 </div>
 
 <script>
-// 🛠️ v16.58: Helper function for FLOOR Logic
 function floorDec(num, precision = 0) {
     const factor = Math.pow(10, precision);
     return Math.floor(num * factor) / factor;
@@ -503,7 +397,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT COLOSSEUM', meta: 'v17.01', ytUrl: '' }; 
+let configData = { title: 'PROJECT COLOSSEUM', meta: 'v17.02', ytUrl: '' }; 
 let logoUrl = ''; 
 let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
@@ -525,29 +419,21 @@ async function init() {
         renderAll();
     } catch(e) { console.error('Sheet Loading Failed'); }
     
-    // Initialize Calculator Logic
-    initCalculator();
-    
-    // 🛠️ v16.77: Start Velocity Tracking
     trackLiveActivity();
 }
 
-// 🛠️ v16.89: True Visitor Tracking Logic
 function trackLiveActivity() {
-    // 1. Define Endpoints
     const API_UP = 'https://api.counterapi.dev/v1/mark_investment_dashboard/visits/up';
     const API_READ = 'https://api.counterapi.dev/v1/mark_investment_dashboard/visits';
     
     let lastCount = 0;
 
-    // 2. "Hit" Function (Executes ONCE on load)
     function registerVisit() {
         fetch(API_UP)
             .then(res => res.json())
             .then(data => {
-                lastCount = data.count; // Sync baseline
+                lastCount = data.count; 
                 document.getElementById('visitorCount').innerText = `[ ${data.count.toLocaleString()} ]`;
-                // On load, you are the 1 user
                 document.getElementById('liveUsers').innerText = "1";
             })
             .catch(err => {
@@ -556,31 +442,25 @@ function trackLiveActivity() {
             });
     }
 
-    // 3. "Poll" Function (Executes periodically)
     function pollActivity() {
-        fetch(API_READ) // <--- READ ONLY (No increment)
+        fetch(API_READ) 
             .then(res => res.json())
             .then(data => {
                 const current = data.count;
                 document.getElementById('visitorCount').innerText = `[ ${current.toLocaleString()} ]`;
                 
-                // Calculate Velocity
                 if (lastCount > 0) {
                     const delta = current - lastCount;
-                    // Live Users = You (1) + New Arrivals (delta)
                     const live = 1 + delta;
                     document.getElementById('liveUsers').innerText = live;
-                    
-                    // Update baseline for next interval
                     lastCount = current;
                 }
             })
             .catch(err => console.warn('Counter API Error (Poll)'));
     }
 
-    // 4. Init Sequence
-    registerVisit(); // +1 only once
-    setInterval(pollActivity, 10000); // Check every 10s (no +1)
+    registerVisit();
+    setInterval(pollActivity, 10000);
 }
 
 function parseSheetData(text){
@@ -615,7 +495,6 @@ function parseSheetData(text){
     if(c[0].startsWith('C')) {
         let budgetRaw = c[5] || '0';
         let currentRaw = c[6] || '0';
-        // 🛠️ v16.91: Ensure Invested uses Column N (Index 13)
         let investedRaw = c[13] || '0'; 
         let sharesRaw = c[11] || '0'; 
         let ytUrl = c[30] ? c[30].trim() : ''; 
@@ -624,10 +503,11 @@ function parseSheetData(text){
         let type = c[1] ? c[1].toLowerCase() : '';
         let code = c[0] || '';
 
-        if (budgetRaw.includes('NT')) { isUSD = false; }
+        // 修正：加入了 現金 / cash / 類現金 的判斷，確保被正確歸類於 TWD 戰情中
+        if (budgetRaw.toUpperCase().includes('NT')) { isUSD = false; }
         else if (code.startsWith('00')) { isUSD = false; }
-        else if (type.includes('tw') || type.includes('yield') || type.includes('ber')) { isUSD = false; }
-        else if (budgetRaw.includes('$')) { isUSD = true; }
+        else if (type.includes('tw') || type.includes('yield') || type.includes('ber') || type.includes('cash') || type.includes('現金') || type.includes('類現金')) { isUSD = false; }
+        else if (budgetRaw.includes('$') || budgetRaw.toUpperCase().includes('US')) { isUSD = true; }
         else { isUSD = true; }
         
         let imgUrl = fixDriveUrl(c[9] ? c[9].trim() : '');
@@ -673,7 +553,6 @@ function parseSheetData(text){
             sheetROI: parseFloat(sheetROI), sheetInvested: displayInv,
             budget: c[5] || '-', invested: displayInv, 
             highlight: highlight, explain: explain,
-            // 🛠️ v16.58: Store raw invested number
             investedVal: parseFloat(cleanVal) || 0,
             isUSD: isStrategyUSD
         };
@@ -687,31 +566,24 @@ function parseSheetData(text){
   });
 }
 
-// 🛠️ v16.58: Floor Logic for HUD (Big Numbers)
 function formatCompact(num, isUSD = false) {
     if (Math.abs(num) >= 100000000) { 
         return floorDec(num / 100000000, 2) + '億'; 
     } else if (Math.abs(num) >= 10000) { 
-        return Math.floor(num / 10000) + '萬'; // Floor to integer for cleanliness
+        return Math.floor(num / 10000) + '萬';
     }
     return Math.floor(num).toLocaleString(undefined, {maximumFractionDigits: 0});
 }
 
-// 🛠️ v16.60: Unified Wan Unit Logic (USD & TWD)
 function formatBattleAmount(num, isUSD) {
     const prefix = isUSD ? 'USD$ ' : 'NT$ ';
-    
     if (Math.abs(num) >= 10000) {
-        // Floor to 1 decimal place
         let val = floorDec(Math.abs(num) / 10000, 1);
         return prefix + val + '萬';
     } else {
-        // Integer floor for small numbers
         return prefix + Math.floor(Math.abs(num)).toLocaleString();
     }
 }
-
-function formatCurrencyString(str) { return str; }
 
 function calc(cost, cur){
   if(!cost) return {roi:0, arrow:'-', cls:'', diff: 0, sign: ''};
@@ -721,7 +593,6 @@ function calc(cost, cur){
 }
 
 function renderDashboard(){
-  // 🛠️ v16.91: Logic updated to track INVESTED CAPITAL instead of BUDGET
   let investedTW=0, assetTW=0;
   let investedUS=0, assetUS=0;
   
@@ -735,7 +606,6 @@ function renderDashboard(){
       }
   });
 
-  // Calculate TWD Stats (ROI based on Invested)
   const sTW = calc(investedTW, assetTW);
   document.getElementById('investedTW').textContent = formatCompact(investedTW);
   document.getElementById('assetTW').textContent = formatCompact(assetTW);
@@ -743,7 +613,6 @@ function renderDashboard(){
   document.getElementById('plTW_val').className = `pl-val ${sTW.cls}`;
   document.getElementById('plTW_pct').textContent = `(${sTW.sign}${sTW.roi}%)`;
 
-  // 🛠️ v16.95: Calculate USD Stats with Precision
   const sUS = calc(investedUS, assetUS);
   const fmtUSD = (val) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
 
@@ -753,12 +622,10 @@ function renderDashboard(){
   document.getElementById('plUS_val').className = `pl-val ${sUS.cls}`;
   document.getElementById('plUS_pct').textContent = `(${sUS.sign}${sUS.roi}%)`;
   
-  // 🛠️ v16.95: Update Ex Rate Display
   document.getElementById('usdExRate').innerText = `Ex: ${currentRate}`;
 
-  // Total Asset (Gold Circle)
   const totalAssetTWD = assetTW + (assetUS * currentRate);
-  const totalInvestedTWD = investedTW + (investedUS * currentRate); // Compare against Total Invested
+  const totalInvestedTWD = investedTW + (investedUS * currentRate);
   const sTotal = calc(totalInvestedTWD, totalAssetTWD);
   
   const cur = document.getElementById('totalAsset');
@@ -770,8 +637,6 @@ function renderArena(){
     const con = document.getElementById('arenaContainer'); con.innerHTML = ''; 
     let allS = [];
     Object.keys(portfolios).forEach(g => portfolios[g].forEach(p => {
-        // 🛠️ v16.58: Use Floor Logic for Sheet ROI too? No, usually calc() handles it dynamically.
-        // But for sorting, keep precision. For display, use floor.
         allS.push(p);
     }));
     allS.sort((a, b) => b.sheetROI - a.sheetROI); 
@@ -798,12 +663,10 @@ function renderArena(){
         </div>`;
     }
 
-    // 🛠️ v16.93: Header updated to '盈虧金額'
     let html = `<div class="arena-dashboard-v15"><div class="leaderboard-panel"><div class="lb-header"><span class="title">LIVE BATTLE</span><span class="lbl-inv">盈虧金額</span><span class="lbl-roi">報酬率</span></div><div class="lb-list">`;
     allS.forEach((s, i) => {
         const deck = s.deck.map(code => { const card = cardsData[code]; return card?.imgUrl ? `<img src="${fixDriveUrl(card.imgUrl)}" class="lb-card-icon">` : `<div class="lb-card-icon" style="background:#222;font-size:8px;">${code}</div>`; }).join('');
         
-        // 🛠️ v16.93: Dynamic Profit Calculation
         let currentSum = 0;
         let investedSum = 0;
         s.deck.forEach(cardCode => {
@@ -816,9 +679,7 @@ function renderArena(){
         let profitVal = currentSum - investedSum;
         let profitSign = profitVal >= 0 ? '+' : '-';
         let profitDisplay = formatBattleAmount(Math.abs(profitVal), s.isUSD);
-        let profitClass = profitVal >= 0 ? 'color-profit' : 'color-loss'; // Red for profit in TW style (or standard green/red based on CSS vars)
-        
-        // Note: CSS .color-profit uses var(--red) which is #ff2a2a (Red for Up)
+        let profitClass = profitVal >= 0 ? 'color-profit' : 'color-loss'; 
         
         let cls = s.sheetROI >= 50 ? 'color-gold' : s.sheetROI >= 0 ? 'color-profit' : s.sheetROI <= -50 ? 'color-dead' : 'color-loss';
         let sign = s.sheetROI >= 0 ? '+' : '';
@@ -847,14 +708,9 @@ function renderArena(){
      con.innerHTML = html + `</div></div><div class="chart-panel"><div class="chart-grid"></div>${chartBarsHTML}</div>${ytHTML}</div>`;
 }
 
-function renderCards(){ const con=document.getElementById('cardContainer'); con.innerHTML=''; Object.values(cardsData).forEach(c=>{ con.innerHTML+=`<div class="micro-card ${c.type}" onclick="openModal('${c.code}')"><div class="mc-header"><span class="mc-code">${c.code}</span><span class="mc-target">${c.target}</span></div><div class="mc-image-container">${c.media}</div><div class="mc-footer"><div class="mc-chn-name">${c.rpg||''}</div><div class="mc-eng-name">${c.skill}</div><div class="mc-cost-badge">$${(c.budget/10000).toFixed(0)}萬</div></div></div>`; });}
 function renderEvents(){ const con = document.getElementById('eventContainer'); con.innerHTML = eventsData.slice(0, 2).map(e => `<div class="event-card${e.isUrgent?' emergency':''}"><div class="event-header"><span class="event-date">${e.date}</span><span class="event-status">${e.status}</span></div><div class="event-content">${e.content}</div></div>`).join(''); }
 
-// 🛠️ v16.61: renderFooter NO LONGER overwrites HTML, it only handles functionality
-// We remove the innerHTML setting from here to protect the counter
-function renderFooter() { 
-    // Logic moved to static HTML or specific update functions
-}
+function renderFooter() { }
 
 function openModal(k){ 
     const c=cardsData[k]; 
@@ -864,7 +720,6 @@ function openModal(k){
     document.getElementById('val_invested').textContent = `${c.isUSD?'US$':'NT$'} ${c.invested.toLocaleString()}`; 
     document.getElementById('val_shares').textContent = c.shares;
     
-    // 🛠️ v16.92: Fix - Force block display so value appears below label
     const rowShares = document.getElementById('row_shares');
     rowShares.style.display = 'block'; 
     
@@ -925,311 +780,12 @@ function renderHeader() { const img = document.getElementById('pageLogo'); if (l
 function renderAll(){ 
     renderHeader(); 
     renderDashboard(); 
-    // renderCards(); // 🛠️ v16.97: Skill Cards Hidden
     renderEvents(); 
     renderArena(); 
     renderFooter(); 
-}
-
-// 🛠️ Calculator Logic (Encapsulated)
-function initCalculator() {
-    // 🛠️ v16.98: Update Inputs Map to use Total Principal
-    const inputs = {
-        totalPrincipal: document.getElementById('calc_total_principal'),
-        alloc00662: document.getElementById('calc_alloc00662'),
-        alloc00670L: document.getElementById('calc_alloc00670L'),
-        allocCash: document.getElementById('calc_alloc00865B'),
-        perf00662: document.getElementById('calc_perf00662'),
-        perf00670L: document.getElementById('calc_perf00670L'),
-        // 🛠️ v16.99: removed perfCash input binding as it's deleted from HTML
-        injection: document.getElementById('calc_injection'), 
-        useInjection: document.getElementById('calc_useInjection') 
-    };
-
-    const outputs = {
-        disp00662: document.getElementById('disp_hold00662'),
-        disp00670L: document.getElementById('disp_hold00670L'),
-        disp00865B: document.getElementById('disp_hold00865B'),
-        mindlessBody: document.getElementById('calc_mindlessBody'),
-        mindlessTotal: document.getElementById('calc_mindlessTotal'),
-        mindlessLabel: document.getElementById('calc_mindlessLabel'),
-        mindlessAssets: document.getElementById('calc_mindlessAssets'),
-        smartBody: document.getElementById('calc_smartBody'),
-        smartTotal: document.getElementById('calc_smartTotal'),
-        smartCard: document.getElementById('calc_smartCard'),
-        smartAssets: document.getElementById('calc_smartAssets'),
-        smartLabel: document.getElementById('calc_smartLabel'),
-        mindlessCard: document.getElementById('calc_mindlessCard'),
-        betaDisplay: document.getElementById('calc_betaDisplay')
-    };
-
-    // 🛠️ v16.86: Round to Thousands Logic (Clean Numbers)
-    const fmtMoney = (val) => {
-        const rounded = Math.round(val / 1000) * 1000;
-        return new Intl.NumberFormat('zh-TW', { maximumFractionDigits: 0 }).format(rounded);
-    }
-    const fmtPct = (val) => floorDec(val * 100, 1).toFixed(1) + '%';
-    
-    inputs.useInjection.addEventListener('change', (e) => {
-        if(e.target.checked) {
-            inputs.injection.style.opacity = '1';
-            inputs.injection.style.pointerEvents = 'auto';
-        } else {
-            inputs.injection.style.opacity = '0.5';
-            inputs.injection.style.pointerEvents = 'none';
-        }
-        calculate();
-    });
-
-    function calculate() {
-        try {
-            // 🛠️ v16.98: Auto Allocate Principal based on Ratios
-            const raw00662 = parseFloat(inputs.alloc00662.value) || 0;
-            const raw00670L = parseFloat(inputs.alloc00670L.value) || 0;
-            const rawCash = parseFloat(inputs.allocCash.value) || 0;
-            
-            let totalParts = raw00662 + raw00670L + rawCash;
-            if (totalParts === 0) totalParts = 1;
-            
-            const totalPrincipal = parseFloat(inputs.totalPrincipal.value) || 0;
-            const principal00662 = totalPrincipal * (raw00662 / totalParts);
-            const principal00670L = totalPrincipal * (raw00670L / totalParts);
-            const principalCash = totalPrincipal * (rawCash / totalParts);
-
-            // Display allocated amounts to user
-            outputs.disp00662.innerText = Math.round(principal00662).toLocaleString();
-            outputs.disp00670L.innerText = Math.round(principal00670L).toLocaleString();
-            outputs.disp00865B.innerText = Math.round(principalCash).toLocaleString();
-
-            // Performance (P/L %)
-            const perf00662 = parseFloat(inputs.perf00662.value) || 0;
-            const perf00670L = parseFloat(inputs.perf00670L.value) || 0;
-            const perfCash = 0; // 🛠️ v16.99: Removed Bond simulation input, fixed to 0
-            
-            // 🛠️ 1. Simulate Current Market Value
-            const sim00662 = principal00662 * (1 + perf00662 / 100);
-            const sim00670L = principal00670L * (1 + perf00670L / 100);
-            const simCash = principalCash * (1 + perfCash / 100);
-            const simTotalWealth = sim00662 + sim00670L + simCash;
-
-            // Injection
-            const injectionInputVal = parseFloat(inputs.injection.value) || 0;
-            const isInjectionMode = inputs.useInjection.checked;
-            const injectionVal = isInjectionMode ? injectionInputVal : 0;
-            
-            // Allocations (%)
-            const alloc00662 = (raw00662 / totalParts) * 100;
-            const alloc00670L = (raw00670L / totalParts) * 100;
-            const allocCash = (rawCash / totalParts) * 100;
-            
-            // Beta is calculated based on simulated values
-            const betaVal = ((sim00662 * 1) + (sim00670L * 2)) / simTotalWealth;
-            outputs.betaDisplay.innerHTML = `β: ${betaVal.toFixed(2)}`;
-
-            // Simulated Ratios
-            const simTotalForRatio = simTotalWealth;
-            const sim00662Ratio = simTotalForRatio > 0 ? sim00662 / simTotalForRatio : 0;
-            const sim00670LRatio = simTotalForRatio > 0 ? sim00670L / simTotalForRatio : 0;
-            const simCashRatio = simTotalForRatio > 0 ? simCash / simTotalForRatio : 0;
-
-            // --- 🧠 1. Mindless Rebalancing ---
-            const mindlessTotalWealth = simTotalWealth + injectionVal;
-            const target00662 = mindlessTotalWealth * (alloc00662 / 100);
-            const target00670L = mindlessTotalWealth * (alloc00670L / 100);
-            const targetCash = mindlessTotalWealth * (allocCash / 100);
-
-            let action00662, action00670L, actionCash;
-            let final00662, final00670L, finalCash, finalTotal;
-
-            if (!isInjectionMode) {
-                 action00662 = target00662 - sim00662;
-                 action00670L = target00670L - sim00670L;
-                 actionCash = targetCash - simCash; 
-                 
-                 final00662 = target00662;
-                 final00670L = target00670L;
-                 finalCash = targetCash;
-                 finalTotal = mindlessTotalWealth;
-            } else {
-                 const gap00662 = Math.max(0, target00662 - sim00662);
-                 const gap00670L = Math.max(0, target00670L - sim00670L);
-                 const totalGap = gap00662 + gap00670L;
-                 
-                 if (totalGap > 0) {
-                     action00662 = injectionVal * (gap00662 / totalGap);
-                     action00670L = injectionVal * (gap00670L / totalGap);
-                 } else {
-                     const stockRatioTotal = raw00662 + raw00670L;
-                     if(stockRatioTotal > 0) {
-                         action00662 = injectionVal * (raw00662 / stockRatioTotal);
-                         action00670L = injectionVal * (raw00670L / stockRatioTotal);
-                     }
-                 }
-                 actionCash = 0; 
-                 
-                 final00662 = sim00662 + action00662;
-                 final00670L = sim00670L + action00670L;
-                 finalCash = simCash; 
-                 finalTotal = final00662 + final00670L + finalCash;
-            }
-
-            // --- 🧠 2. Smart Logic (James Survival) ---
-            let smartAction00662, smartAction00670L, smartActionCash, smartFinalTotal;
-            
-            const profit00670L = sim00670L - principal00670L;
-            const isBull = profit00670L > 0; 
-
-            smartAction00662 = 0;
-            smartAction00670L = 0;
-            smartActionCash = 0;
-
-            if (isInjectionMode) {
-                // Dynamic Survival Mode
-                if (!isBull) {
-                    // Bear (Loss): Buy QLD Aggressively
-                    smartAction00670L = injectionVal;
-                    smartActionCash = 0; 
-                } else {
-                    // Bull (Profit): Buy STOCK Gaps (Aggressive)
-                    const smartTotalWealth = simTotalWealth + injectionVal;
-                    const ideal00662 = smartTotalWealth * (alloc00662 / 100);
-                    const ideal00670L = smartTotalWealth * (alloc00670L / 100);
-                    
-                    const g00662 = Math.max(0, ideal00662 - sim00662);
-                    const g00670L = Math.max(0, ideal00670L - sim00670L);
-                    const totalG = g00662 + g00670L;
-                    
-                    if (totalG > 0) {
-                        smartAction00662 = injectionVal * (g00662 / totalG);
-                        smartAction00670L = injectionVal * (g00670L / totalG);
-                    } else {
-                        const stockRatioTotal = raw00662 + raw00670L;
-                        if(stockRatioTotal > 0) {
-                            smartAction00662 = injectionVal * (raw00662 / stockRatioTotal);
-                            smartAction00670L = injectionVal * (raw00670L / stockRatioTotal);
-                        }
-                    }
-                    smartActionCash = 0; 
-                }
-            } else {
-                // Pure Rebalancing Survival Mode
-                if (!isBull) {
-                    // Bear (Loss): Sell 00865B (2% Total Wealth) -> Buy QLD
-                    let dripAmount = simTotalWealth * 0.02; 
-                    if (dripAmount > simCash) dripAmount = simCash;
-                    smartAction00670L = dripAmount;
-                    smartActionCash = -dripAmount; 
-                } else {
-                    // Bull (Profit): 🛠️ v17.00 CHANGE: Sell 30% Profit QLD -> Buy 00865B
-                    let harvestAmount = profit00670L * 0.3; // Changed from / 2 (50%) to * 0.3 (30%)
-                    if (harvestAmount < 0) harvestAmount = 0;
-                    smartAction00670L = -harvestAmount;
-                    smartActionCash = harvestAmount; 
-                }
-            }
-            
-            const smartFinal00662 = sim00662 + smartAction00662;
-            const smartFinal00670L = sim00670L + smartAction00670L;
-            const smartFinalCash = simCash + smartActionCash + (isInjectionMode ? 0 : 0); 
-            
-            smartFinalTotal = smartFinal00662 + smartFinal00670L + smartFinalCash;
-    
-            // UI Updates
-            if(isInjectionMode) {
-                 outputs.mindlessLabel.innerText = "外部注資 (INJECTION USED)";
-                 outputs.mindlessTotal.style.color = "var(--yield)";
-                 outputs.smartLabel.innerText = "外部注資 (INJECTION USED)";
-                 outputs.smartTotal.style.color = "var(--yield)";
-            } else {
-                 outputs.mindlessLabel.innerText = "00865B 消耗 (CONSUMPTION)"; 
-                 outputs.smartLabel.innerText = "00865B 消耗 (CONSUMPTION)"; 
-                 outputs.mindlessTotal.style.color = "var(--tw)"; 
-                 outputs.smartTotal.style.color = "var(--yield)"; 
-            }
-            
-            // Mindless Table
-            outputs.mindlessBody.innerHTML = `
-                <tr>
-                    <td>00662</td>
-                    <td>${fmtMoney(sim00662)} <span style="font-size:0.75rem; color:#888;">(${fmtPct(sim00662Ratio)})</span></td>
-                    <td style="text-align:center;"><span class="calc-badge ${action00662>=0?'badge-buy':'badge-sell'}">${action00662>=0?'+':''}${fmtMoney(action00662)}</span></td>
-                    <td style="text-align:right;">${fmtMoney(final00662)} <span style="font-size:0.75rem; color:#888;">(${fmtPct(final00662/finalTotal)})</span></td>
-                </tr>
-                <tr>
-                    <td>00670L</td>
-                    <td>${fmtMoney(sim00670L)} <span style="font-size:0.75rem; color:#888;">(${fmtPct(sim00670LRatio)})</span></td>
-                    <td style="text-align:center;"><span class="calc-badge ${action00670L>=0?'badge-buy':'badge-sell'}">${action00670L>=0?'+':''}${fmtMoney(action00670L)}</span></td>
-                    <td style="text-align:right;">${fmtMoney(final00670L)} <span style="font-size:0.75rem; color:#888;">(${fmtPct(final00670L/finalTotal)})</span></td>
-                </tr>
-                <tr>
-                    <td>00865B</td>
-                    <td>${fmtMoney(simCash)} <span style="font-size:0.75rem; color:#888;">(${fmtPct(simCashRatio)})</span></td>
-                    <td style="text-align:center;"><span class="calc-badge ${actionCash>=0?'badge-buy':'badge-sell'}" style="${isInjectionMode?'opacity:0.3':''}">${actionCash==0?'-':(actionCash>0?'+':'')+fmtMoney(actionCash)}</span></td>
-                    <td style="text-align:right;">${fmtMoney(finalCash)} <span style="font-size:0.75rem; color:#888;">(${fmtPct(finalCash/finalTotal)})</span></td>
-                </tr>
-            `;
-            outputs.mindlessAssets.innerHTML = `
-                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#888; margin-top:5px; border-top:1px dashed #333; padding-top:5px;">
-                    <span>Sim Total: ${fmtMoney(simTotalWealth)}</span>
-                    <span>Final: ${fmtMoney(finalTotal)}</span>
-                </div>
-            `;
-            outputs.mindlessTotal.innerText = isInjectionMode ? fmtMoney(injectionVal) : fmtMoney(Math.abs(actionCash));
-    
-            // Smart Table
-            const qqqBadge = smartAction00662 > 0 ? `<span class="calc-badge badge-buy">🔥 +${fmtMoney(smartAction00662)}</span>` : (smartAction00662 < 0 ? `<span class="calc-badge badge-sell">${fmtMoney(smartAction00662)}</span>` : '-');
-            const qldBadge = smartAction00670L > 0 ? `<span class="calc-badge badge-buy">🔥 +${fmtMoney(smartAction00670L)}</span>` : (smartAction00670L < 0 ? `<span class="calc-badge badge-sell">${fmtMoney(smartAction00670L)}</span>` : '-');
-            const cashBadge = smartActionCash > 0 ? `<span class="calc-badge badge-buy" style="border-color:var(--yield); color:var(--yield);">+${fmtMoney(smartActionCash)}</span>` : (smartActionCash < 0 ? `<span class="calc-badge badge-sell" style="border-color:var(--tw); color:var(--tw);">${fmtMoney(smartActionCash)}</span>` : '-');
-
-            const smartTotalCalc = smartFinal00662 + smartFinal00670L + smartFinalCash;
-            
-            outputs.smartBody.innerHTML = `
-                <tr>
-                    <td>00662</td>
-                    <td>${fmtMoney(sim00662)} <span style="font-size:0.75rem; color:#888;">(${fmtPct(sim00662Ratio)})</span></td>
-                    <td style="text-align:center;">${qqqBadge}</td>
-                    <td style="text-align:right;">${fmtMoney(smartFinal00662)} <span style="font-size:0.75rem; color:#888;">(${fmtPct(smartFinal00662/smartTotalCalc)})</span></td>
-                </tr>
-                <tr>
-                    <td>00670L</td>
-                    <td>${fmtMoney(sim00670L)} <span style="font-size:0.75rem; color:#888;">(${fmtPct(sim00670LRatio)})</span></td>
-                    <td style="text-align:center;">${qldBadge}</td>
-                    <td style="text-align:right;">${fmtMoney(smartFinal00670L)} <span style="font-size:0.75rem; color:#888;">(${fmtPct(smartFinal00670L/smartTotalCalc)})</span></td>
-                </tr>
-                <tr>
-                    <td>00865B</td>
-                    <td>${fmtMoney(simCash)} <span style="font-size:0.75rem; color:#888;">(${fmtPct(simCashRatio)})</span></td>
-                    <td style="text-align:center;">${cashBadge}</td>
-                    <td style="text-align:right;">${fmtMoney(smartFinalCash)} <span style="font-size:0.75rem; color:#888;">(${fmtPct(smartFinalCash/smartTotalCalc)})</span></td>
-                </tr>
-            `;
-            
-            let statusText = isBull ? "🐂 牛市 (Bull)" : "🐻 熊市 (Bear)";
-            let strategyText = isInjectionMode 
-                ? (isBull ? "注資補股 (Stock)" : "注資抄底 (QLD)") 
-                : (isBull ? "獲利收割 30% (Harvest)" : "滴灌救命 (2% Drip)"); // 🛠️ v17.01: Updated text
-            
-            outputs.smartAssets.innerHTML = `
-                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#888; margin-top:5px; border-top:1px dashed #333; padding-top:5px;">
-                    <span>${statusText}</span>
-                    <span style="color:${isBull?'var(--yield)':'var(--tw)'}; font-weight:bold;">${strategyText}</span>
-                </div>
-            `;
-            outputs.smartTotal.innerText = isInjectionMode ? fmtMoney(injectionVal) : fmtMoney(Math.abs(smartActionCash));
-        } catch (e) {
-            console.error("Calculator Error:", e);
-        }
-    }
-
-    Object.values(inputs).forEach(input => {
-        if(input) input.addEventListener('input', calculate);
-    });
-    // 🛠️ v16.70: Force initial calculation
-    setTimeout(calculate, 100);
 }
 
 init();
 </script>
 </body>
 </html>
-

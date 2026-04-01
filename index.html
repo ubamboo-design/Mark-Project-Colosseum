@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v17.02</title>
+<title>PROJECT COLOSSEUM v17.03</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -42,7 +42,6 @@
 
     /* Dashboard Wrapper */
     .dashboard-wrapper { margin-top: 20px; padding: 15px; background: linear-gradient(160deg, #3a3a45 0%, #1a1a1e 60%, #0a0a0c 100%); border-top: 1px solid rgba(255, 255, 255, 0.25); border-left: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 2px solid rgba(0, 0, 0, 0.8); border-right: 1px solid rgba(0, 0, 0, 0.5); border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1); position: relative; }
-    .dashboard-wrapper::before, .dashboard-wrapper::after { display: none; }
     .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 8px; background: #000; padding: 5px; border-radius: 4px; box-shadow: inset 0 0 10px #000; } 
 
     /* HUD Screen */
@@ -73,61 +72,14 @@
     .pl-val { font-family: var(--font-num); font-size: 1.3rem; font-weight: bold; white-space: nowrap; }
     .pl-pct { font-size: 0.9rem; margin-left: 3px; opacity: 0.8; font-family: var(--font-num); }
     .total-val { font-family: var(--font-num); font-size: 3.5rem; font-weight: 700; color: #fff; text-shadow: 0 0 20px rgba(255,204,0,0.8); margin: 0; position: relative; z-index: 2; line-height: 1.1; white-space: nowrap; }
-    .total-sub { font-family: 'Segoe UI'; font-size: 1rem; color: var(--hud-gold); letter-spacing: 2px; text-transform: uppercase; font-weight: bold; text-shadow: 0 0 5px var(--hud-gold); position: relative; z-index: 2; }
     .c-cyan { color: var(--hud-cyan); }
     .c-green { color: var(--hud-green); }
 
     .section-title { font-size: 1rem; border-left: 3px solid var(--gold); padding-left: 10px; margin: 25px 0 10px; text-transform: uppercase; font-weight: 900; color: #fff; display: flex; align-items: center; letter-spacing: 2px; }
     .section-title::after { content: ''; flex-grow: 1; height: 1px; background: #333; margin-left: 15px; }
-    .deck-wrapper { overflow-x: auto; padding-bottom: 25px; padding-top: 5px; }
-    .deck-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; min-width: 0; } 
-    
-    /* Card */
-    .micro-card { 
-        background: linear-gradient(145deg, #25252a, #121214);
-        border: 2px solid #333; 
-        border-radius: 12px; 
-        padding: 8px; 
-        transition: all .3s; 
-        cursor: pointer; 
-        display: flex; 
-        flex-direction: column; 
-        min-height: 200px; 
-        position: relative; 
-        overflow: hidden; 
-        box-shadow: 0 5px 15px rgba(0,0,0,0.5); 
-    }
-    .micro-card:hover { transform: translateY(-6px); z-index: 10; }
-    .mc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding: 0 4px; z-index: 2; }
-    .mc-code { font-size: 0.9rem; font-weight: 900; color: #fff; opacity: 0.9; font-family: 'Arial Black'; } 
-    .mc-target { font-size: 0.65rem; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); padding: 1px 4px; border-radius: 4px; color: #aaa; font-family: 'Courier New'; }
-    .mc-image-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; margin: 2px 0 6px; z-index: 2; }
-    .mc-media { width: 56px; height: 56px; object-fit: contain; transition: all .4s; }
-    .micro-card:hover .mc-media { transform: scale(1.15); }
-    .mc-footer { text-align: center; margin-top: auto; z-index: 2; padding: 0 2px; }
-    .mc-chn-name { font-size: 0.9rem; font-weight: 900; color: #fff; margin-bottom: 2px; text-shadow: 0 2px 8px rgba(0,0,0,1); letter-spacing: 0.5px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .mc-eng-name { font-size: 0.65rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
-    .mc-cost-badge { display: inline-block; margin-top: 1px; padding: 1px 8px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 0.75rem; color: #aaa; background: rgba(0,0,0,0.8); }
-    
-    .type-tw { border-color: var(--tw) !important; box-shadow: 0 0 15px rgba(255, 42, 42, 0.2); } 
-    .type-tw:hover { box-shadow: 0 0 25px rgba(255, 42, 42, 0.5); }
-    .type-tw img.mc-media { filter: drop-shadow(0 0 8px var(--tw)); }
-    .type-us { border-color: var(--us) !important; box-shadow: 0 0 15px rgba(0, 210, 255, 0.2); } 
-    .type-us:hover { box-shadow: 0 0 25px rgba(0, 210, 255, 0.5); }
-    .type-us img.mc-media { filter: drop-shadow(0 0 8px var(--us)); }
-    .type-yield { border-color: var(--yield) !important; box-shadow: 0 0 15px rgba(0, 255, 106, 0.2); } 
-    .type-yield:hover { box-shadow: 0 0 25px rgba(0, 255, 106, 0.5); }
-    .type-yield img.mc-media { filter: drop-shadow(0 0 8px var(--yield)); }
-    .type-ber { border-color: var(--ber) !important; box-shadow: 0 0 15px rgba(255, 145, 0, 0.2); } 
-    .type-ber:hover { box-shadow: 0 0 25px rgba(255, 145, 0, 0.5); }
-    .type-ber img.mc-media { filter: drop-shadow(0 0 8px var(--ber)); }
-    .type-trap { border-color: var(--trap) !important; box-shadow: 0 0 15px rgba(189, 0, 255, 0.2); } 
-    .type-trap:hover { box-shadow: 0 0 25px rgba(189, 0, 255, 0.5); }
-    .type-trap img.mc-media { filter: drop-shadow(0 0 8px var(--trap)); }
 
     /* Arena */
     .arena-container { width: 100%; }
-    
     .arena-dashboard-v15 { 
         display: grid; 
         grid-template-columns: 420px 1fr 340px; 
@@ -251,16 +203,8 @@
         .chart-panel { height: 350px; }
         .yt-panel { min-height: 250px; }
         .lb-invested, .lbl-inv, .lbl-roi { display: none !important; }
-        .deck-grid { grid-template-columns: repeat(4, 1fr); }
         .desktop-lbl { display: none; }
         .mobile-lbl { display: inline; }
-        
-        @media (max-width: 600px) {
-            .deck-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 6px;
-            }
-        }
     }
     @media(min-width: 901px) { .mobile-lbl { display: none; } }
     
@@ -281,12 +225,11 @@
     .color-profit { color: var(--red)!important; text-shadow: 0 0 5px rgba(255,42,42,0.4); }
     .color-loss { color: var(--green)!important; text-shadow: 0 0 5px rgba(0,255,106,0.4); }
     .color-gold { color: var(--gold)!important; text-shadow: 0 0 10px rgba(255,215,0,0.6); } 
-    .color-dead { color: var(--dark-purple)!important; text-shadow: 0 0 10px rgba(148,0,211,0.6); }
+    .color-dead { color: var(--trap)!important; text-shadow: 0 0 10px rgba(189,0,255,0.6); }
     
     .yt-btn { display: inline-block; margin-top: 15px; padding: 10px 20px; background: linear-gradient(90deg, #ff0000, #cc0000); color: #fff; text-decoration: none; font-family: 'Orbitron', sans-serif; font-weight: bold; border-radius: 4px; border: 1px solid #ff4d4d; box-shadow: 0 0 10px rgba(255,0,0,0.5); transition: all 0.3s; text-align: center; width: 100%; cursor: pointer; }
     .yt-btn:hover { background: linear-gradient(90deg, #ff3333, #e60000); box-shadow: 0 0 20px rgba(255,0,0,0.8); transform: translateY(-2px); }
 
-    #debug-panel { display: none; background: #000; border: 2px solid #0f0; color: #0f0; font-family: 'Courier New'; padding: 15px; height: 400px; overflow-y: scroll; margin: 20px 0; font-size: 0.85rem; }
 </style>
 </head>
 <body>
@@ -308,7 +251,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">PROJECT COLOSSEUM</h1>
-      <div class="meta-info" id="pageMeta">v17.02 (Update)</div>
+      <div class="meta-info" id="pageMeta">v17.03 (Optimized)</div>
   </div>
 </header>
 
@@ -338,7 +281,10 @@
               <div class="orb-glow"></div><div class="orb-ring"></div>
               <div class="hud-title" style="margin-bottom:5px;">總合資產</div>
               <div class="total-val" id="totalAsset">...</div>
-              <div class="total-sub">綜合表現</div>
+              <div style="position: relative; z-index: 2; margin-top: 5px; font-family: var(--font-num); font-weight: bold; display: flex; align-items: baseline; justify-content: center; gap: 6px;">
+                  <span id="totalPL_val" style="font-size: 1.3rem;">...</span>
+                  <span id="totalPL_pct" style="font-size: 0.95rem; opacity: 0.9;">...</span>
+              </div>
               <div style="position:absolute; bottom:5px; right:10px; color:#666; font-size:0.6rem; z-index:2; font-family:var(--font-num)" id="rateInfo">LOADING...</div>
           </div>
       </div>
@@ -375,7 +321,6 @@ function floorDec(num, precision = 0) {
     return Math.floor(num * factor) / factor;
 }
 
-// Default Video
 const DEFAULT_YT = 'https://www.youtube.com/watch?v=7rY3QaVQrzo';
 
 function fixDriveUrl(url) {
@@ -397,28 +342,33 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT COLOSSEUM', meta: 'v17.02', ytUrl: '' }; 
+let configData = { title: 'PROJECT COLOSSEUM', meta: 'v17.03', ytUrl: '' }; 
 let logoUrl = ''; 
-let isFallback = false;
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
-
-function toggleDebug() { const panel = document.getElementById('debug-panel'); panel.style.display = panel.style.display === 'block' ? 'none' : 'block'; }
-function uiLog(msg, type = 'info') { const panel = document.getElementById('debug-panel'); panel.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>`; panel.scrollTop = panel.scrollHeight; }
 
 async function init() {
     cardsData = {}; portfolios = {}; strategiesData = {}; eventsData = []; lawsData = [];
-    try {
-        const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-        const rateData = await rateRes.json();
-        if(rateData?.rates?.TWD) { currentRate = rateData.rates.TWD; document.getElementById('rateInfo').textContent = `USD/TWD: ${currentRate}`; }
-    } catch (e) { console.warn('匯率 API 失敗'); }
-    try {
-        const sheetRes = await fetch(GOOGLE_SHEET_URL + `&t=${Date.now()}`);
-        const sheetText = await sheetRes.text();
-        parseSheetData(sheetText);
-        renderAll();
-    } catch(e) { console.error('Sheet Loading Failed'); }
     
+    // 🚀 優化 1：API 請求平行化 (大幅減少等待時間)
+    const fetchRate = fetch('https://api.exchangerate-api.com/v4/latest/USD')
+        .then(res => res.json())
+        .then(data => {
+            if(data?.rates?.TWD) { 
+                currentRate = data.rates.TWD; 
+                document.getElementById('rateInfo').textContent = `USD/TWD: ${currentRate}`; 
+            }
+        })
+        .catch(e => console.warn('匯率 API 失敗'));
+
+    const fetchSheet = fetch(GOOGLE_SHEET_URL + `&t=${Date.now()}`)
+        .then(res => res.text())
+        .then(text => parseSheetData(text))
+        .catch(e => console.error('Sheet Loading Failed'));
+
+    // 同時等待兩者完成
+    await Promise.all([fetchRate, fetchSheet]);
+    
+    renderAll();
     trackLiveActivity();
 }
 
@@ -503,7 +453,6 @@ function parseSheetData(text){
         let type = c[1] ? c[1].toLowerCase() : '';
         let code = c[0] || '';
 
-        // 修正：加入了 現金 / cash / 類現金 的判斷，確保被正確歸類於 TWD 戰情中
         if (budgetRaw.toUpperCase().includes('NT')) { isUSD = false; }
         else if (code.startsWith('00')) { isUSD = false; }
         else if (type.includes('tw') || type.includes('yield') || type.includes('ber') || type.includes('cash') || type.includes('現金') || type.includes('類現金')) { isUSD = false; }
@@ -566,7 +515,7 @@ function parseSheetData(text){
   });
 }
 
-function formatCompact(num, isUSD = false) {
+function formatCompact(num) {
     if (Math.abs(num) >= 100000000) { 
         return floorDec(num / 100000000, 2) + '億'; 
     } else if (Math.abs(num) >= 10000) { 
@@ -631,6 +580,14 @@ function renderDashboard(){
   const cur = document.getElementById('totalAsset');
   cur.textContent = formatCompact(totalAssetTWD);
   cur.style.color = sTotal.roi >= 0 ? '#fff' : '#ffaaaa';
+
+  // 🚀 將換算好的台幣盈虧金額與 % 數塞入畫面，並自動套用顏色
+  const tVal = document.getElementById('totalPL_val');
+  const tPct = document.getElementById('totalPL_pct');
+  tVal.textContent = (sTotal.diff >= 0 ? '+' : '') + formatCompact(sTotal.diff);
+  tPct.textContent = `(${sTotal.sign}${sTotal.roi}%)`;
+  tVal.className = sTotal.cls;
+  tPct.className = sTotal.cls;
 }
 
 function renderArena(){
@@ -663,9 +620,12 @@ function renderArena(){
         </div>`;
     }
 
-    let html = `<div class="arena-dashboard-v15"><div class="leaderboard-panel"><div class="lb-header"><span class="title">LIVE BATTLE</span><span class="lbl-inv">盈虧金額</span><span class="lbl-roi">報酬率</span></div><div class="lb-list">`;
-    allS.forEach((s, i) => {
-        const deck = s.deck.map(code => { const card = cardsData[code]; return card?.imgUrl ? `<img src="${fixDriveUrl(card.imgUrl)}" class="lb-card-icon">` : `<div class="lb-card-icon" style="background:#222;font-size:8px;">${code}</div>`; }).join('');
+    // 🚀 優化 2：陣列 map() 渲染，取代原本字串拼貼
+    const rowsHTML = allS.map((s, i) => {
+        const deck = s.deck.map(code => { 
+            const card = cardsData[code]; 
+            return card?.imgUrl ? `<img src="${fixDriveUrl(card.imgUrl)}" class="lb-card-icon">` : `<div class="lb-card-icon" style="background:#222;font-size:8px;">${code}</div>`; 
+        }).join('');
         
         let currentSum = 0;
         let investedSum = 0;
@@ -676,6 +636,7 @@ function renderArena(){
                 investedSum += c.invested;
             }
         });
+        
         let profitVal = currentSum - investedSum;
         let profitSign = profitVal >= 0 ? '+' : '-';
         let profitDisplay = formatBattleAmount(Math.abs(profitVal), s.isUSD);
@@ -685,8 +646,8 @@ function renderArena(){
         let sign = s.sheetROI >= 0 ? '+' : '';
         let roiDisplay = floorDec(s.sheetROI, 1).toFixed(1);
         
-        html += `<div class="lb-row rank-${i+1}" onclick="openStrategyModal('${s.code}')"><span class="lb-rank">#${i+1}</span><div class="lb-info"><div class="lb-name">${s.name}</div><div class="lb-code">${s.code}</div></div><div class="lb-deck">${deck}</div><div class="lb-invested ${profitClass}">${profitSign}${profitDisplay}</div><span class="lb-val ${cls}">${sign}${roiDisplay}%</span></div>`;
-    });
+        return `<div class="lb-row rank-${i+1}" onclick="openStrategyModal('${s.code}')"><span class="lb-rank">#${i+1}</span><div class="lb-info"><div class="lb-name">${s.name}</div><div class="lb-code">${s.code}</div></div><div class="lb-deck">${deck}</div><div class="lb-invested ${profitClass}">${profitSign}${profitDisplay}</div><span class="lb-val ${cls}">${sign}${roiDisplay}%</span></div>`;
+    }).join('');
     
     let maxR = Math.max(...allS.map(x => Math.abs(x.sheetROI)), 5);
     const chartBarsHTML = allS.slice(0, 13).map((s, i) => {
@@ -705,39 +666,11 @@ function renderArena(){
              </div>
          </div>`;
      }).join('');
-     con.innerHTML = html + `</div></div><div class="chart-panel"><div class="chart-grid"></div>${chartBarsHTML}</div>${ytHTML}</div>`;
+     
+     con.innerHTML = `<div class="arena-dashboard-v15"><div class="leaderboard-panel"><div class="lb-header"><span class="title">LIVE BATTLE</span><span class="lbl-inv">盈虧金額</span><span class="lbl-roi">報酬率</span></div><div class="lb-list">${rowsHTML}</div></div><div class="chart-panel"><div class="chart-grid"></div>${chartBarsHTML}</div>${ytHTML}</div>`;
 }
 
 function renderEvents(){ const con = document.getElementById('eventContainer'); con.innerHTML = eventsData.slice(0, 2).map(e => `<div class="event-card${e.isUrgent?' emergency':''}"><div class="event-header"><span class="event-date">${e.date}</span><span class="event-status">${e.status}</span></div><div class="event-content">${e.content}</div></div>`).join(''); }
-
-function renderFooter() { }
-
-function openModal(k){ 
-    const c=cardsData[k]; 
-    document.getElementById('mCode').textContent=c.code; 
-    document.getElementById('mSkill').textContent=c.skill; 
-    document.getElementById('val1').textContent = `${c.isUSD?'US$':'NT$'} ${c.budget.toLocaleString()}`; 
-    document.getElementById('val_invested').textContent = `${c.isUSD?'US$':'NT$'} ${c.invested.toLocaleString()}`; 
-    document.getElementById('val_shares').textContent = c.shares;
-    
-    const rowShares = document.getElementById('row_shares');
-    rowShares.style.display = 'block'; 
-    
-    document.getElementById('val2').textContent = c.strategy; 
-    document.getElementById('val3').textContent = c.sop; 
-    
-    const ytBtn = document.getElementById('yt_container');
-    const ytLink = document.getElementById('btn_yt');
-    if (configData.ytUrl && configData.ytUrl.length > 5) {
-        ytLink.href = configData.ytUrl; 
-        ytBtn.style.display = 'block';
-    } else {
-        ytBtn.style.display = 'none';
-    }
-
-    document.getElementById('cardModal').style.display='flex'; 
-    document.getElementById('cardModal').classList.add('modal-active'); 
-}
 
 function openStrategyModal(k) { 
     const s = strategiesData[k]; 
@@ -782,7 +715,6 @@ function renderAll(){
     renderDashboard(); 
     renderEvents(); 
     renderArena(); 
-    renderFooter(); 
 }
 
 init();

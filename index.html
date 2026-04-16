@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v17.04</title>
+<title>PROJECT COLOSSEUM v17.05</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -56,7 +56,6 @@
     .hud-screen.green::before { border-color: rgba(0, 255, 76, 0.5); border-bottom: none; clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 70%, 90% 100%, 10% 100%, 10% 70%, 0 70%); }
     .hud-screen.green .hud-title { color: var(--hud-green); text-shadow: 0 0 15px var(--hud-green); border-bottom: 2px solid var(--hud-green); box-shadow: 0 2px 10px rgba(0,255,76,0.3); }
     
-    /* 新增：QQQI 紫色面板 */
     .hud-screen.purple { background-color: rgba(30, 0, 40, 0.9); border: 1px solid rgba(189, 0, 255, 0.2); }
     .hud-screen.purple::before { border-color: rgba(189, 0, 255, 0.5); border-bottom: none; clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 70%, 90% 100%, 10% 100%, 10% 70%, 0 70%); }
     .hud-screen.purple .hud-title { color: var(--trap); text-shadow: 0 0 15px var(--trap); border-bottom: 2px solid var(--trap); box-shadow: 0 2px 10px rgba(189,0,255,0.3); }
@@ -209,9 +208,11 @@
     .event-content { color: #fff; font-size: 1.15rem; line-height: 1.5; letter-spacing: 0.5px; }
 
     @media(max-width: 900px) {
-        .dash-grid { grid-template-columns: 1fr 1fr; gap: 8px; } /* 手機改為 2x2 佈局 */
-        .hud-screen.purple { grid-column: span 2; } /* QQQI 面板橫跨兩欄 */
-        .hud-screen.gold { grid-column: span 2; } /* 總合資產橫跨兩欄 */
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .hud-screen.cyan { order: 1; grid-column: 1 / 2; }    /* 行1，左：TWD */
+        .hud-screen.green { order: 2; grid-column: 2 / 3; }   /* 行1，右：USD */
+        .hud-screen.purple { order: 3; grid-column: span 2; } /* 行2，滿版：QQQI */
+        .hud-screen.gold { order: 4; grid-column: span 2; }   /* 行3，滿版：總合 */
         
         .hud-screen { padding: 10px 2px; min-height: 150px; justify-content: flex-start; }
         .hud-screen::before { inset: 3px; }
@@ -281,13 +282,14 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">PROJECT COLOSSEUM</h1>
-      <div class="meta-info" id="pageMeta">v17.04 (Optimized)</div>
+      <div class="meta-info" id="pageMeta">v17.05 (Optimized)</div>
   </div>
 </header>
 
 <div class="container">
   <div class="dashboard-wrapper">
       <div class="dash-grid">
+          
           <div class="hud-screen cyan">
               <div class="hud-title">TWD 戰情</div>
               <div class="data-group">
@@ -297,6 +299,21 @@
               <div class="pl-block"><div class="sub-label">損益</div><div><span class="pl-val" id="plTW_val">...</span><span class="pl-pct" id="plTW_pct">...</span></div></div>
           </div>
           
+          <div class="hud-screen purple">
+              <div class="hud-title">
+                  QQQI 息收戰情
+                  <span id="qqqiExRate" style="font-size:0.7rem; color:#aaa; display:block; font-weight:normal; margin-top:2px; font-family:'Courier New'">TWD 計價 | Ex: --</span>
+              </div>
+              <div class="data-group">
+                  <div class="hud-row"><span class="lbl"><span class="desktop-lbl">累計股息</span><span class="mobile-lbl">息</span></span><span class="val c-purple" id="qqqiDivCum">...</span></div>
+                  <div class="hud-row"><span class="lbl"><span class="desktop-lbl">30% 退稅</span><span class="mobile-lbl">稅</span></span><span class="val c-purple" id="qqqiTaxRef">...</span></div>
+              </div>
+              <div class="pl-block" style="border-top:none; margin-top:auto;">
+                  <div class="sub-label">總入帳</div>
+                  <div class="main-val c-purple" id="qqqiDivTotal" style="font-size: 2rem;">...</div>
+              </div>
+          </div>
+
           <div class="hud-screen green">
               <div class="hud-title">
                   USD 戰情
@@ -307,18 +324,6 @@
               </div>
               <div class="data-group"><div class="sub-label">現值</div><div class="main-val c-green" id="assetUS">...</div></div>
               <div class="pl-block"><div class="sub-label">損益</div><div><span class="pl-val" id="plUS_val">...</span><span class="pl-pct" id="plUS_pct">...</span></div></div>
-          </div>
-
-          <div class="hud-screen purple">
-              <div class="hud-title">QQQI 息收戰情</div>
-              <div class="data-group">
-                  <div class="hud-row"><span class="lbl"><span class="desktop-lbl">累計股息</span><span class="mobile-lbl">息</span></span><span class="val c-purple" id="qqqiDivCum">...</span></div>
-                  <div class="hud-row"><span class="lbl"><span class="desktop-lbl">30% 退稅</span><span class="mobile-lbl">稅</span></span><span class="val c-purple" id="qqqiTaxRef">...</span></div>
-              </div>
-              <div class="pl-block" style="border-top:none; margin-top:auto;">
-                  <div class="sub-label">總入帳</div>
-                  <div class="main-val c-purple" id="qqqiDivTotal" style="font-size: 2rem;">...</div>
-              </div>
           </div>
 
           <div class="hud-screen gold">
@@ -386,7 +391,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT COLOSSEUM', meta: 'v17.04', ytUrl: '' }; 
+let configData = { title: 'PROJECT COLOSSEUM', meta: 'v17.05', ytUrl: '' }; 
 let logoUrl = ''; 
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
 
@@ -625,7 +630,9 @@ function renderDashboard(){
   document.getElementById('plUS_val').className = `pl-val ${sUS.cls}`;
   document.getElementById('plUS_pct').textContent = `(${sUS.sign}${sUS.roi}%)`;
   
+  // 動態更新美金匯率至各面板
   document.getElementById('usdExRate').innerText = `Ex: ${currentRate}`;
+  document.getElementById('qqqiExRate').innerText = `TWD 計價 | Ex: ${currentRate}`;
 
   // 渲染 QQQI 紫色面板數值
   document.getElementById('qqqiDivCum').textContent = qDivCum.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<title>PROJECT COLOSSEUM v17.05</title>
+<title>PROJECT COLOSSEUM v17.06</title>
 <style>
     /* CSS 全局設定 */
     :root {
@@ -282,7 +282,7 @@
   <img id="pageLogo" src="" alt="Logo">
   <div class="header-text">
       <h1 id="pageTitle">PROJECT COLOSSEUM</h1>
-      <div class="meta-info" id="pageMeta">v17.05 (Optimized)</div>
+      <div class="meta-info" id="pageMeta">v17.06 (Optimized)</div>
   </div>
 </header>
 
@@ -391,7 +391,7 @@ const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc
 
 let currentRate = 32.5;
 let cardsData = {}, portfolios = {}, strategiesData = {}, eventsData = [], lawsData = [];
-let configData = { title: 'PROJECT COLOSSEUM', meta: 'v17.05', ytUrl: '' }; 
+let configData = { title: 'PROJECT COLOSSEUM', meta: 'v17.06', ytUrl: '' }; 
 let logoUrl = ''; 
 const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" fill="none"/></svg>` };
 
@@ -494,16 +494,29 @@ function parseSheetData(text){
         let investedRaw = c[13] || '0'; 
         let sharesRaw = c[11] || '0'; 
         let ytUrl = c[30] ? c[30].trim() : ''; 
-        
-        let isUSD = false;
-        let type = c[1] ? c[1].toLowerCase() : '';
         let code = c[0] || '';
+        
+        // 嚴密匯率與幣別判定機制 (修復幣別錯亂 Bug)
+        let isUSD = false;
+        let budgetStr = budgetRaw.toUpperCase();
+        let strategyStr = (c[7] || '').toUpperCase(); // 擷取標的代號如 0050, QQQI, BTC
 
-        if (budgetRaw.toUpperCase().includes('NT')) { isUSD = false; }
-        else if (code.startsWith('00')) { isUSD = false; }
-        else if (type.includes('tw') || type.includes('yield') || type.includes('ber') || type.includes('cash') || type.includes('現金') || type.includes('類現金')) { isUSD = false; }
-        else if (budgetRaw.includes('$') || budgetRaw.toUpperCase().includes('US')) { isUSD = true; }
-        else { isUSD = true; }
+        // 1. 先用字串前綴判斷基礎底色
+        if (budgetStr.includes('NT')) {
+            isUSD = false;
+        } else if (budgetStr.includes('$') || budgetStr.includes('US')) {
+            isUSD = true;
+        }
+
+        // 2. 標的名稱終極防呆 (強制覆蓋，避免空值擊穿)
+        // 只要是台股代號(00開頭)、或是明確設定為台幣資產的BTC，強制設為 TWD
+        if (strategyStr.startsWith('00') || strategyStr.includes('BTC')) {
+            isUSD = false;
+        }
+        // 只要是美股代號清單，強制設為 USD
+        if (strategyStr.includes('QQQ') || strategyStr.includes('QLD') || strategyStr.includes('IAU')) {
+            isUSD = true;
+        }
         
         let imgUrl = fixDriveUrl(c[9] ? c[9].trim() : '');
         cardsData[c[0]] = {
@@ -514,7 +527,7 @@ function parseSheetData(text){
             invested: parseFloat(investedRaw.replace(/[NT$US,\s]/g, '')) || 0,
             shares: sharesRaw,
             
-            // 擷取 QQQI 相關的股息與退稅欄位 (Column O, P, Q)
+            // 擷取 QQQI 相關的股息與退稅欄位
             divCum: parseFloat((c[14] || '0').replace(/[NT$US,\s]/g, '')) || 0,
             taxRefund: parseFloat((c[15] || '0').replace(/[NT$US,\s]/g, '')) || 0,
             divTotal: parseFloat((c[16] || '0').replace(/[NT$US,\s]/g, '')) || 0,
@@ -606,7 +619,7 @@ function renderDashboard(){
           investedTW += c.invested; 
           assetTW += c.current; 
       }
-      // 聚合 QQQI 的息收戰情資料
+      
       if (c.strategy && c.strategy.toUpperCase() === 'QQQI') {
           qDivCum += c.divCum || 0;
           qTaxRef += c.taxRefund || 0;
@@ -630,11 +643,9 @@ function renderDashboard(){
   document.getElementById('plUS_val').className = `pl-val ${sUS.cls}`;
   document.getElementById('plUS_pct').textContent = `(${sUS.sign}${sUS.roi}%)`;
   
-  // 動態更新美金匯率至各面板
   document.getElementById('usdExRate').innerText = `Ex: ${currentRate}`;
   document.getElementById('qqqiExRate').innerText = `TWD 計價 | Ex: ${currentRate}`;
 
-  // 渲染 QQQI 紫色面板數值
   document.getElementById('qqqiDivCum').textContent = qDivCum.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
   document.getElementById('qqqiTaxRef').textContent = qTaxRef.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
   document.getElementById('qqqiDivTotal').textContent = qDivTot.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});

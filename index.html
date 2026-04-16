@@ -186,6 +186,62 @@
         border-radius: 8px;
     }
 
+    /* Event Log (事件簿) 專屬樣式 */
+    .event-list { 
+        display: flex; 
+        flex-direction: column; 
+        gap: 12px; 
+        padding-top: 5px;
+    }
+    .event-card { 
+        background: linear-gradient(90deg, rgba(0, 20, 30, 0.8), rgba(0, 5, 10, 0.9)); 
+        border-left: 4px solid var(--cyan); 
+        padding: 12px 18px; 
+        border-radius: 4px; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.6); 
+        transition: transform 0.2s; 
+    }
+    .event-card:hover { 
+        transform: translateX(5px); 
+        background: linear-gradient(90deg, rgba(0, 30, 45, 0.9), rgba(0, 10, 15, 1)); 
+        box-shadow: 0 5px 15px rgba(0, 247, 255, 0.1);
+    }
+    .event-card.emergency { 
+        border-left-color: var(--emergency); 
+        background: linear-gradient(90deg, rgba(40, 0, 0, 0.8), rgba(10, 0, 0, 0.9)); 
+    }
+    .event-header { 
+        display: flex; 
+        gap: 15px; 
+        align-items: baseline; 
+        margin-bottom: 8px; 
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.15); 
+        padding-bottom: 6px; 
+    }
+    .event-date { 
+        color: var(--gold); 
+        font-family: var(--font-num); 
+        font-size: 1.2rem; 
+        font-weight: bold; 
+        letter-spacing: 1px; 
+        text-shadow: 0 0 5px rgba(255, 215, 0, 0.3); 
+    }
+    .event-status { 
+        color: var(--cyan); 
+        font-size: 1rem; 
+        font-weight: bold; 
+    }
+    .event-card.emergency .event-status {
+        color: var(--emergency);
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    }
+    .event-content { 
+        color: #fff; 
+        font-size: 1.15rem; 
+        line-height: 1.5; 
+        letter-spacing: 0.5px; 
+    }
+
     @media(max-width: 900px) {
         .dash-grid { grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
         .hud-screen { padding: 10px 2px; min-height: 150px; justify-content: flex-start; }
@@ -205,6 +261,12 @@
         .lb-invested, .lbl-inv, .lbl-roi { display: none !important; }
         .desktop-lbl { display: none; }
         .mobile-lbl { display: inline; }
+        
+        /* 手機版事件簿微調 */
+        .event-card { padding: 10px 12px; }
+        .event-date { font-size: 1.05rem; }
+        .event-status { font-size: 0.9rem; }
+        .event-content { font-size: 1.05rem; }
     }
     @media(min-width: 901px) { .mobile-lbl { display: none; } }
     
@@ -581,7 +643,6 @@ function renderDashboard(){
   cur.textContent = formatCompact(totalAssetTWD);
   cur.style.color = sTotal.roi >= 0 ? '#fff' : '#ffaaaa';
 
-  // 🚀 將換算好的台幣盈虧金額與 % 數塞入畫面，並自動套用顏色
   const tVal = document.getElementById('totalPL_val');
   const tPct = document.getElementById('totalPL_pct');
   tVal.textContent = (sTotal.diff >= 0 ? '+' : '') + formatCompact(sTotal.diff);
@@ -620,7 +681,6 @@ function renderArena(){
         </div>`;
     }
 
-    // 🚀 優化 2：陣列 map() 渲染，取代原本字串拼貼
     const rowsHTML = allS.map((s, i) => {
         const deck = s.deck.map(code => { 
             const card = cardsData[code]; 

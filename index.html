@@ -142,10 +142,12 @@
     }
     .chart-panel::before { content: 'ASSET ALLOCATION & PROFIT (TREEMAP)'; position: absolute; top: -10px; left: 15px; background: #000; padding: 0 10px; font-family: 'Arial Black'; color: rgba(0, 247, 255, 0.6); font-size: 0.8rem; letter-spacing: 1px; z-index: 2; border: 1px solid rgba(0, 247, 255, 0.3); border-radius: 3px; }
     .treemap-container { position: relative; width: 100%; height: 100%; border-radius: 6px; overflow: hidden; border: 1px solid #222; margin-top: 10px; }
-    .tm-node { position: absolute; border: 1px solid rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.2s, z-index 0s; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); overflow: hidden; }
+    .tm-node { position: absolute; border: 1px solid rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.2s, z-index 0s; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); overflow: hidden; padding: 2px; }
     .tm-node:hover { transform: scale(1.02); z-index: 10; box-shadow: 0 0 20px rgba(0,0,0,1); border: 1px solid #fff; }
-    .tm-label { font-family: 'Arial Black'; font-size: 0.85rem; color: #fff; text-shadow: 1px 1px 2px #000; margin-bottom: 2px; }
-    .tm-val { font-family: var(--font-num); font-size: 1.1rem; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000; }
+    
+    /* 更新字體樣式以適應長名稱 */
+    .tm-label { font-family: 'Arial Black'; font-size: 0.85rem; color: #fff; text-shadow: 1px 1px 2px #000; margin-bottom: 2px; text-align: center; line-height: 1.1; padding: 0 4px; }
+    .tm-val { font-family: var(--font-num); font-size: 1.1rem; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000; text-align: center; }
     
     /* YouTube Panel */
     .yt-panel {
@@ -729,8 +731,8 @@ function renderArena(){
             if(cardsData[c]) { curSum += cardsData[c].current; invSum += cardsData[c].invested; }
         });
         let rate = s.isUSD ? currentRate : 1;
-        // Map everything to TWD for relative area sizing
-        tmData.push({ code: s.code, val: curSum * rate, profit: (curSum - invSum) * rate });
+        // 這裡我們將 name: s.name 推入陣列中，以供後續標籤使用
+        tmData.push({ code: s.code, name: s.name, val: curSum * rate, profit: (curSum - invSum) * rate });
     });
     
     // Filter out 0 value assets and sort by size (largest first)
@@ -746,8 +748,9 @@ function renderArena(){
             let r = d.profit >= 0 ? (maxP > 0 ? d.profit / maxP : 0) : (minP < 0 ? d.profit / minP : 0);
             let bg = d.profit >= 0 ? `rgba(255, 42, 42, ${0.3 + 0.7 * r})` : `rgba(0, 255, 106, ${0.3 + 0.7 * r})`;
             
+            // 這裡將原本的 ${d.code} 替換成了 ${d.name}
             return `<div class="tm-node" style="left:${x}%; top:${y}%; width:${w}%; height:${h}%; background:${bg};" onclick="openStrategyModal('${d.code}')">
-                        <div class="tm-label">${d.code}</div>
+                        <div class="tm-label">${d.name}</div>
                         <div class="tm-val">${d.profit >= 0 ? '+' : ''}${formatCompact(d.profit)}</div>
                     </div>`;
         }

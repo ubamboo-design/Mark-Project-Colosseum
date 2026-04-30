@@ -397,16 +397,28 @@ const defaultIcons = { 'C01': `<svg class="mc-media" viewBox="0 0 64 64" xmlns="
 
 async function init() {
     cardsData = {}; portfolios = {}; strategiesData = {}; eventsData = []; lawsData = [];
-    
+
     const fetchRate = fetch('https://api.exchangerate-api.com/v4/latest/USD')
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error('API Rate Limit or Network Error');
+            return res.json();
+        })
         .then(data => {
             if(data?.rates?.TWD) { 
                 currentRate = data.rates.TWD; 
-                document.getElementById('rateInfo').textContent = `USD/TWD: ${currentRate}`; 
+                const rateEl = document.getElementById('rateInfo');
+                rateEl.textContent = `USD/TWD: ${currentRate}`;
+                rateEl.style.color = '#666';
+                rateEl.style.textShadow = 'none';
             }
         })
-        .catch(e => console.warn('匯率 API 失敗'));
+        .catch(e => {
+            console.warn('匯率 API 失敗，啟用備用匯率 32.5:', e);
+            const rateEl = document.getElementById('rateInfo');
+            rateEl.textContent = `USD/TWD: ${currentRate} (OFFLINE)`;
+            rateEl.style.color = 'var(--emergency)';
+            rateEl.style.textShadow = '0 0 5px rgba(255, 0, 0, 0.8)';
+        });
 
     const fetchSheet = fetch(GOOGLE_SHEET_URL + `&t=${Date.now()}`)
         .then(res => res.text())
@@ -456,7 +468,7 @@ function trackLiveActivity() {
     }
 
     registerVisit();
-    setInterval(pollActivity, 10000);
+    setInterval(pollActivity, 60000);
 }
 
 function parseSheetData(text){

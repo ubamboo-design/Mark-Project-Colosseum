@@ -611,18 +611,23 @@ function renderDashboard(){
   let qDivCum = 0, qTaxRef = 0, qDivTot = 0;
   
   Object.values(cardsData).forEach(c => {
-      if(c.isUSD) { 
-          investedUS += c.invested; 
-          assetUS += c.current; 
-      } else { 
-          investedTW += c.invested; 
-          assetTW += c.current; 
-      }
+      let cardCurrent = c.current;
       
+      // [新增邏輯] 將 QQQI 股息納入整體計算
       if (c.strategy && c.strategy.toUpperCase() === 'QQQI') {
           qDivCum += c.divCum || 0;
           qTaxRef += c.taxRefund || 0;
           qDivTot += c.divTotal || 0;
+          
+          cardCurrent += c.divTotal || 0; // 將股息加入該卡片的現值中
+      }
+
+      if(c.isUSD) { 
+          investedUS += c.invested; 
+          assetUS += cardCurrent; 
+      } else { 
+          investedTW += c.invested; 
+          assetTW += cardCurrent; 
       }
   });
 
@@ -669,8 +674,27 @@ function renderArena(){
     const con = document.getElementById('arenaContainer'); con.innerHTML = ''; 
     let allS = [];
     Object.keys(portfolios).forEach(g => portfolios[g].forEach(p => {
+        // [新增邏輯] 在排序前，動態計算包含 QQQI 股息的現值並覆寫 ROI
+        let curSum = 0, invSum = 0, divSum = 0;
+        p.deck.forEach(cardCode => {
+            const c = cardsData[cardCode];
+            if (c) {
+                curSum += c.current;
+                invSum += c.invested;
+                if (c.strategy && c.strategy.toUpperCase() === 'QQQI') {
+                    divSum += c.divTotal || 0;
+                }
+            }
+        });
+        
+        // 若有收到股息且有投入成本，重新計算該組合的真實含息 ROI
+        if (divSum > 0 && invSum > 0) {
+            p.sheetROI = ((curSum + divSum - invSum) / invSum) * 100;
+        }
         allS.push(p);
     }));
+    
+    // 依據含息後的新 ROI 重新排名
     allS.sort((a, b) => b.sheetROI - a.sheetROI); 
     
     let ytHTML = '';
@@ -703,14 +727,20 @@ function renderArena(){
         
         let currentSum = 0;
         let investedSum = 0;
+        let divSum = 0;
+        
         s.deck.forEach(cardCode => {
             const c = cardsData[cardCode];
             if(c) {
                 currentSum += c.current;
                 investedSum += c.invested;
+                if (c.strategy && c.strategy.toUpperCase() === 'QQQI') {
+                    divSum += c.divTotal || 0;
+                }
             }
         });
         
+        currentSum += divSum; // 列表盈虧金額併入股息計算
         let profitVal = currentSum - investedSum;
         let profitSign = profitVal >= 0 ? '+' : '-';
         let profitDisplay = formatBattleAmount(Math.abs(profitVal), s.isUSD);
@@ -726,12 +756,20 @@ function renderArena(){
     // Treemap Algorithm Implementation (Slice and Dice)
     let tmData = [];
     allS.forEach(s => {
-        let curSum = 0, invSum = 0; 
-        s.deck.forEach(c => { 
-            if(cardsData[c]) { curSum += cardsData[c].current; invSum += cardsData[c].invested; }
+        let curSum = 0, invSum = 0, divSum = 0; 
+        s.deck.forEach(cCode => { 
+            const c = cardsData[cCode];
+            if(c) { 
+                curSum += c.current; 
+                invSum += c.invested; 
+                if (c.strategy && c.strategy.toUpperCase() === 'QQQI') {
+                    divSum += c.divTotal || 0;
+                }
+            }
         });
+        curSum += divSum; // 面積與利潤計算併入股息
         let rate = s.isUSD ? currentRate : 1;
-        // 這裡我們將 name: s.name 推入陣列中，以供後續標籤使用
+        
         tmData.push({ code: s.code, name: s.name, val: curSum * rate, profit: (curSum - invSum) * rate });
     });
     
@@ -748,7 +786,6 @@ function renderArena(){
             let r = d.profit >= 0 ? (maxP > 0 ? d.profit / maxP : 0) : (minP < 0 ? d.profit / minP : 0);
             let bg = d.profit >= 0 ? `rgba(255, 42, 42, ${0.3 + 0.7 * r})` : `rgba(0, 255, 106, ${0.3 + 0.7 * r})`;
             
-            // 這裡將原本的 ${d.code} 替換成了 ${d.name}
             return `<div class="tm-node" style="left:${x}%; top:${y}%; width:${w}%; height:${h}%; background:${bg};" onclick="openStrategyModal('${d.code}')">
                         <div class="tm-label">${d.name}</div>
                         <div class="tm-val">${d.profit >= 0 ? '+' : ''}${formatCompact(d.profit)}</div>

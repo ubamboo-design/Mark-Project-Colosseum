@@ -613,13 +613,12 @@ function renderDashboard(){
   Object.values(cardsData).forEach(c => {
       let cardCurrent = c.current;
       
-      // [新增邏輯] 將 QQQI 股息納入整體計算
       if (c.strategy && c.strategy.toUpperCase() === 'QQQI') {
           qDivCum += c.divCum || 0;
           qTaxRef += c.taxRefund || 0;
           qDivTot += c.divTotal || 0;
           
-          cardCurrent += c.divTotal || 0; // 將股息加入該卡片的現值中
+          cardCurrent += c.divTotal || 0; 
       }
 
       if(c.isUSD) { 
@@ -674,7 +673,6 @@ function renderArena(){
     const con = document.getElementById('arenaContainer'); con.innerHTML = ''; 
     let allS = [];
     Object.keys(portfolios).forEach(g => portfolios[g].forEach(p => {
-        // [新增邏輯] 在排序前，動態計算包含 QQQI 股息的現值並覆寫 ROI
         let curSum = 0, invSum = 0, divSum = 0;
         p.deck.forEach(cardCode => {
             const c = cardsData[cardCode];
@@ -687,14 +685,12 @@ function renderArena(){
             }
         });
         
-        // 若有收到股息且有投入成本，重新計算該組合的真實含息 ROI
         if (divSum > 0 && invSum > 0) {
             p.sheetROI = ((curSum + divSum - invSum) / invSum) * 100;
         }
         allS.push(p);
     }));
     
-    // 依據含息後的新 ROI 重新排名
     allS.sort((a, b) => b.sheetROI - a.sheetROI); 
     
     let ytHTML = '';
@@ -740,7 +736,7 @@ function renderArena(){
             }
         });
         
-        currentSum += divSum; // 列表盈虧金額併入股息計算
+        currentSum += divSum; 
         let profitVal = currentSum - investedSum;
         let profitSign = profitVal >= 0 ? '+' : '-';
         let profitDisplay = formatBattleAmount(Math.abs(profitVal), s.isUSD);
@@ -754,7 +750,8 @@ function renderArena(){
     }).join('');
     
     // Treemap Algorithm Implementation (Slice and Dice)
-    let tmData = [];
+    let aggregatedMap = {};
+    
     allS.forEach(s => {
         let curSum = 0, invSum = 0, divSum = 0; 
         s.deck.forEach(cCode => { 
@@ -770,13 +767,36 @@ function renderArena(){
         curSum += divSum; // 面積與利潤計算併入股息
         let rate = s.isUSD ? currentRate : 1;
         
-        tmData.push({ code: s.code, name: s.name, val: curSum * rate, profit: (curSum - invSum) * rate });
+        // [新增邏輯] 判斷名稱若包含 0050，統一歸類為 '0050'
+        let displayName = s.name;
+        if (displayName.includes('0050')) {
+            displayName = '0050';
+        }
+        
+        if (!aggregatedMap[displayName]) {
+            aggregatedMap[displayName] = { 
+                code: s.code, // 點擊卡片時觸發第一個抓到的代號
+                name: displayName, 
+                val: 0, 
+                profit: 0 
+            };
+        }
+        
+        aggregatedMap[displayName].val += (curSum * rate);
+        aggregatedMap[displayName].profit += ((curSum - invSum) * rate);
     });
+    
+    // 將 Object 轉換回 Array
+    let tmData = Object.values(aggregatedMap);
     
     // Filter out 0 value assets and sort by size (largest first)
     tmData = tmData.filter(d => d.val > 0).sort((a, b) => b.val - a.val);
-    let maxP = Math.max(...tmData.map(d => d.profit));
-    let minP = Math.min(...tmData.map(d => d.profit));
+    
+    let maxP = 0, minP = 0;
+    if(tmData.length > 0) {
+        maxP = Math.max(...tmData.map(d => d.profit));
+        minP = Math.min(...tmData.map(d => d.profit));
+    }
 
     function buildTM(items, x, y, w, h, isH) {
         if(!items.length) return '';

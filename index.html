@@ -742,11 +742,20 @@ function buildDonutChart(data) {
         }
     });
 
+    let formatDonutVal = (num) => {
+        let absNum = Math.abs(num);
+        if (absNum >= 100000000) return floorDec(absNum / 100000000, 2) + '億';
+        if (absNum >= 10000) return floorDec(absNum / 10000, 1) + '萬';
+        return Math.floor(absNum).toLocaleString();
+    };
+
     labelData.forEach(l => {
         let d = l.d;
         let pctStr = (d.val / totalVal * 100).toFixed(1) + '%';
-        let roiStr = d.inv > 0 ? ((d.profit / d.inv) * 100).toFixed(1) + '%' : 'N/A';
-        let sign = d.profit >= 0 ? '+' : '';
+        
+        let absProfit = Math.abs(d.profit);
+        let roiStr = d.inv > 0 ? ((absProfit / d.inv) * 100).toFixed(1) + '%' : 'N/A';
+        let sign = d.profit >= 0 ? '+' : '-';
         let profitColor = d.profit >= 0 ? '#ff4d4d' : '#00ff6a';
 
         // 繪製科技感引導折線
@@ -768,8 +777,8 @@ function buildDonutChart(data) {
         svgLabels += `
             <text x="${textX}" y="${l.y}" text-anchor="${textAnchor}" dominant-baseline="middle" font-family="'Segoe UI', sans-serif" class="svg-text-shadow">
                 <tspan x="${textX}" dy="-1.2em" font-family="'Arial Black'" font-size="14" fill="#fff">${d.name} <tspan fill="#ffd700">${pctStr}</tspan></tspan>
-                <tspan x="${textX}" dy="1.4em" font-size="12" fill="#ccc">總額: ${formatCompact(d.val)}</tspan>
-                <tspan x="${textX}" dy="1.4em" font-size="12" font-weight="bold" fill="${profitColor}">獲利: ${sign}${formatCompact(Math.abs(d.profit))} (${sign}${roiStr})</tspan>
+                <tspan x="${textX}" dy="1.4em" font-size="12" fill="#ccc">總額: ${formatDonutVal(d.val)}</tspan>
+                <tspan x="${textX}" dy="1.4em" font-size="12" font-weight="bold" fill="${profitColor}">獲利: ${sign}${formatDonutVal(absProfit)} (${sign}${roiStr})</tspan>
             </text>
         `;
     });

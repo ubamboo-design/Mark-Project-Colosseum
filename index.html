@@ -40,7 +40,7 @@
     @keyframes blink { 0% { opacity: 0.4; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.4; transform: scale(0.9); } }
     @media(max-width: 900px) { .hud-status-badge { top: 10px; right: 10px; padding: 4px 8px; font-size: 0.75rem; gap: 10px; } .header-text { margin-top: 25px; } }
 
-    /* Dashboard Wrapper - Updated to 3 columns */
+    /* Dashboard Wrapper */
     .dashboard-wrapper { margin-top: 20px; padding: 15px; background: linear-gradient(160deg, #3a3a45 0%, #1a1a1e 60%, #0a0a0c 100%); border-top: 1px solid rgba(255, 255, 255, 0.25); border-left: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 2px solid rgba(0, 0, 0, 0.8); border-right: 1px solid rgba(0, 0, 0, 0.5); border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1); position: relative; }
     .dash-grid { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 12px; background: #000; padding: 5px; border-radius: 4px; box-shadow: inset 0 0 10px #000; } 
 
@@ -66,9 +66,7 @@
     .orb-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; background: radial-gradient(circle, rgba(255,204,0,0.3) 0%, rgba(255,100,0,0.1) 40%, transparent 70%); border-radius: 50%; filter: blur(20px); animation: pulse 4s infinite alternate; z-index: 0; }
     .orb-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(0deg); width: 220px; height: 220px; border: 1px solid rgba(255, 204, 0, 0.3); border-radius: 50%; box-shadow: 0 0 20px rgba(255, 204, 0, 0.2); z-index: 0; animation: spin 20s linear infinite; }
     .orb-ring::before { content: ''; position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; background: var(--hud-gold); box-shadow: 0 0 10px var(--hud-gold); border-radius: 50%; }
-    @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } }
-    @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-
+    
     .hud-title { font-family: 'Segoe UI', sans-serif; font-weight: 700; font-size: 1.2rem; text-align: center; margin-bottom: 10px; position: relative; z-index: 2; letter-spacing: 1px; padding-bottom: 5px; white-space: nowrap; }
     .data-group { margin-bottom: 10px; position: relative; z-index: 2; width: 100%; }
     .hud-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.1); padding: 4px 0; font-size: 0.85rem; font-family: 'Segoe UI', sans-serif; }
@@ -88,7 +86,7 @@
     .section-title { font-size: 1rem; border-left: 3px solid var(--gold); padding-left: 10px; margin: 25px 0 10px; text-transform: uppercase; font-weight: 900; color: #fff; display: flex; align-items: center; letter-spacing: 2px; }
     .section-title::after { content: ''; flex-grow: 1; height: 1px; background: #333; margin-left: 15px; }
 
-    /* Arena & Treemap */
+    /* Arena & Donut Chart */
     .arena-container { width: 100%; }
     .arena-dashboard-v15 { 
         display: grid; 
@@ -127,7 +125,7 @@
     .lb-row.rank-1 .lb-rank { color: var(--gold); text-shadow: 0 0 10px var(--gold); }
     .lb-row.rank-1 .lb-name { color: var(--gold); }
 
-    /* Treemap Chart Panel */
+    /* Donut Chart Specific Styles */
     .chart-panel { 
         background: rgba(0, 5, 10, 0.8); 
         border-top: 1px solid rgba(0, 247, 255, 0.4);
@@ -140,14 +138,12 @@
         box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 30px rgba(0, 247, 255, 0.1);
         min-height: 400px;
     }
-    .chart-panel::before { content: 'ASSET ALLOCATION & PROFIT (TREEMAP)'; position: absolute; top: -10px; left: 15px; background: #000; padding: 0 10px; font-family: 'Arial Black'; color: rgba(0, 247, 255, 0.6); font-size: 0.8rem; letter-spacing: 1px; z-index: 2; border: 1px solid rgba(0, 247, 255, 0.3); border-radius: 3px; }
-    .treemap-container { position: relative; width: 100%; height: 100%; border-radius: 6px; overflow: hidden; border: 1px solid #222; margin-top: 10px; }
-    .tm-node { position: absolute; border: 1px solid rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.2s, z-index 0s; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); overflow: hidden; padding: 2px; }
-    .tm-node:hover { transform: scale(1.02); z-index: 10; box-shadow: 0 0 20px rgba(0,0,0,1); border: 1px solid #fff; }
+    .chart-panel::before { content: 'PORTFOLIO ALLOCATION & PROFIT (DONUT)'; position: absolute; top: -10px; left: 15px; background: #000; padding: 0 10px; font-family: 'Arial Black'; color: rgba(0, 247, 255, 0.6); font-size: 0.8rem; letter-spacing: 1px; z-index: 2; border: 1px solid rgba(0, 247, 255, 0.3); border-radius: 3px; }
     
-    /* 更新字體樣式以適應長名稱 */
-    .tm-label { font-family: 'Arial Black'; font-size: 0.85rem; color: #fff; text-shadow: 1px 1px 2px #000; margin-bottom: 2px; text-align: center; line-height: 1.1; padding: 0 4px; }
-    .tm-val { font-family: var(--font-num); font-size: 1.1rem; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000; text-align: center; }
+    .donut-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; margin-top: 10px; }
+    .donut-slice { cursor: pointer; transition: transform 0.2s, filter 0.2s; transform-origin: 0 0; }
+    .donut-slice:hover { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(255,255,255,0.4)); z-index: 10; }
+    .svg-text-shadow { text-shadow: 1px 1px 3px #000, -1px -1px 3px #000, 0 0 8px #000; pointer-events: none; }
     
     /* YouTube Panel */
     .yt-panel {
@@ -669,6 +665,84 @@ function renderDashboard(){
   tPct.className = sTotal.cls;
 }
 
+// ============================================
+// Donut Chart SVG Generator
+// ============================================
+function buildDonutChart(data) {
+    if (!data.length) return '';
+    let totalVal = data.reduce((sum, d) => sum + d.val, 0);
+    let maxP = Math.max(...data.map(d => d.profit));
+    let minP = Math.min(...data.map(d => d.profit));
+
+    let svgPaths = '';
+    let svgLabels = '';
+    let startAngle = -Math.PI / 2; // 從 12 點鐘方向開始畫
+
+    const R = 150; // 外圈半徑
+    const r = 90;  // 內圈半徑 (挖空部分)
+    const labelR = 210; // 文字標籤半徑
+
+    data.forEach(d => {
+        let sliceAngle = (d.val / totalVal) * 2 * Math.PI;
+        
+        // 防呆: 如果只有一筆資料 100%，SVG Arc 會失效，所以略縮 0.001 弧度
+        if (sliceAngle > 1.999 * Math.PI) {
+            sliceAngle = 1.999 * Math.PI;
+        }
+
+        let endAngle = startAngle + sliceAngle;
+        let largeArc = sliceAngle > Math.PI ? 1 : 0;
+
+        // 計算外圈與內圈的起終點座標
+        let x1 = Math.cos(startAngle) * R, y1 = Math.sin(startAngle) * R;
+        let x2 = Math.cos(endAngle) * R,   y2 = Math.sin(endAngle) * R;
+        let ix1 = Math.cos(startAngle) * r, iy1 = Math.sin(startAngle) * r;
+        let ix2 = Math.cos(endAngle) * r,   iy2 = Math.sin(endAngle) * r;
+
+        // SVG Donut Path
+        let pathD = `M ${x1} ${y1} A ${R} ${R} 0 ${largeArc} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${r} ${r} 0 ${largeArc} 0 ${ix1} ${iy1} Z`;
+
+        // 計算顏色：依據獲利貢獻深淺 (Red: Profit, Green: Loss)
+        let pratio = d.profit >= 0 ? (maxP > 0 ? d.profit / maxP : 0) : (minP < 0 ? d.profit / minP : 0);
+        let fill = d.profit >= 0 ? `rgba(255, 42, 42, ${0.4 + 0.6 * pratio})` : `rgba(0, 255, 106, ${0.4 + 0.6 * pratio})`;
+
+        svgPaths += `<path d="${pathD}" fill="${fill}" stroke="#1a1a1e" stroke-width="2" class="donut-slice" onclick="openStrategyModal('${d.code}')"/>`;
+
+        // 標籤位置計算
+        let midAngle = startAngle + sliceAngle / 2;
+        let lx = Math.cos(midAngle) * labelR;
+        let ly = Math.sin(midAngle) * labelR;
+
+        // 字串準備
+        let pctStr = (d.val / totalVal * 100).toFixed(1) + '%';
+        let roiStr = d.inv > 0 ? ((d.profit / d.inv) * 100).toFixed(1) + '%' : 'N/A';
+        let sign = d.profit >= 0 ? '+' : '';
+        let profitColor = d.profit >= 0 ? '#ff4d4d' : '#00ff6a';
+
+        // 將豐富的文字標籤使用 <text> 直接植入 SVG，確保比例縮放時不會錯位
+        svgLabels += `
+            <text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-family="'Segoe UI', sans-serif" class="svg-text-shadow">
+                <tspan x="${lx}" dy="-1.2em" font-family="'Arial Black'" font-size="16" fill="#fff">${d.name} <tspan fill="#ffd700">${pctStr}</tspan></tspan>
+                <tspan x="${lx}" dy="1.4em" font-size="12" fill="#ccc">總額: ${formatCompact(d.val)}</tspan>
+                <tspan x="${lx}" dy="1.4em" font-size="13" font-weight="bold" fill="${profitColor}">獲利: ${sign}${formatCompact(Math.abs(d.profit))} (${sign}${roiStr})</tspan>
+            </text>
+        `;
+
+        startAngle = endAngle; // 下一個版塊的起點
+    });
+
+    return `
+        <div class="donut-container">
+            <svg viewBox="-300 -250 600 500" width="100%" height="100%" style="overflow: visible;">
+                ${svgPaths}
+                ${svgLabels}
+                <!-- 內圈裝飾線 -->
+                <circle cx="0" cy="0" r="75" fill="none" stroke="rgba(255,204,0,0.2)" stroke-width="1"/>
+            </svg>
+        </div>
+    `;
+}
+
 function renderArena(){
     const con = document.getElementById('arenaContainer'); con.innerHTML = ''; 
     let allS = [];
@@ -749,7 +823,9 @@ function renderArena(){
         return `<div class="lb-row rank-${i+1}" onclick="openStrategyModal('${s.code}')"><span class="lb-rank">#${i+1}</span><div class="lb-info"><div class="lb-name">${s.name}</div><div class="lb-code">${s.code}</div></div><div class="lb-deck">${deck}</div><div class="lb-invested ${profitClass}">${profitSign}${profitDisplay}</div><span class="lb-val ${cls}">${sign}${roiDisplay}%</span></div>`;
     }).join('');
     
-    // Treemap Algorithm Implementation (Slice and Dice)
+    // ============================================
+    // Donut Chart Data Aggregation (新增黃金與比特幣合併)
+    // ============================================
     let aggregatedMap = {};
     
     allS.forEach(s => {
@@ -767,63 +843,34 @@ function renderArena(){
         curSum += divSum; // 面積與利潤計算併入股息
         let rate = s.isUSD ? currentRate : 1;
         
-        // [新增邏輯] 判斷名稱若包含 0050，統一歸類為 '0050'
         let displayName = s.name;
+        // 1. 合併 0050
         if (displayName.includes('0050')) {
             displayName = '0050';
+        } 
+        // 2. 合併黃金與比特幣為「其他」
+        else if (displayName.includes('黃金') || displayName.includes('比特幣')) {
+            displayName = '其他';
         }
         
         if (!aggregatedMap[displayName]) {
             aggregatedMap[displayName] = { 
-                code: s.code, // 點擊卡片時觸發第一個抓到的代號
+                code: s.code, // 點擊時對應的觸發代號
                 name: displayName, 
                 val: 0, 
+                inv: 0,      // 紀錄總成本以便後續計算合併後的 ROI
                 profit: 0 
             };
         }
         
         aggregatedMap[displayName].val += (curSum * rate);
+        aggregatedMap[displayName].inv += (invSum * rate);
         aggregatedMap[displayName].profit += ((curSum - invSum) * rate);
     });
     
-    // 將 Object 轉換回 Array
-    let tmData = Object.values(aggregatedMap);
+    let pieData = Object.values(aggregatedMap).filter(d => d.val > 0).sort((a, b) => b.val - a.val);
     
-    // Filter out 0 value assets and sort by size (largest first)
-    tmData = tmData.filter(d => d.val > 0).sort((a, b) => b.val - a.val);
-    
-    let maxP = 0, minP = 0;
-    if(tmData.length > 0) {
-        maxP = Math.max(...tmData.map(d => d.profit));
-        minP = Math.min(...tmData.map(d => d.profit));
-    }
-
-    function buildTM(items, x, y, w, h, isH) {
-        if(!items.length) return '';
-        if(items.length === 1) {
-            let d = items[0];
-            // Calculate opacity based on absolute profit contribution
-            let r = d.profit >= 0 ? (maxP > 0 ? d.profit / maxP : 0) : (minP < 0 ? d.profit / minP : 0);
-            let bg = d.profit >= 0 ? `rgba(255, 42, 42, ${0.3 + 0.7 * r})` : `rgba(0, 255, 106, ${0.3 + 0.7 * r})`;
-            
-            return `<div class="tm-node" style="left:${x}%; top:${y}%; width:${w}%; height:${h}%; background:${bg};" onclick="openStrategyModal('${d.code}')">
-                        <div class="tm-label">${d.name}</div>
-                        <div class="tm-val">${d.profit >= 0 ? '+' : ''}${formatCompact(d.profit)}</div>
-                    </div>`;
-        }
-        let tot = items.reduce((sum, i) => sum + i.val, 0);
-        let frac = items[0].val / tot;
-        
-        if(isH) { 
-            let w1 = w * frac; 
-            return buildTM([items[0]], x, y, w1, h, !isH) + buildTM(items.slice(1), x + w1, y, w - w1, h, !isH); 
-        } else { 
-            let h1 = h * frac; 
-            return buildTM([items[0]], x, y, w, h1, !isH) + buildTM(items.slice(1), x, y + h1, w, h - h1, !isH); 
-        }
-    }
-    
-    const chartHTML = `<div class="chart-panel"><div class="treemap-container">${buildTM(tmData, 0, 0, 100, 100, true)}</div></div>`;
+    const chartHTML = `<div class="chart-panel">${buildDonutChart(pieData)}</div>`;
      
     con.innerHTML = `<div class="arena-dashboard-v15"><div class="leaderboard-panel"><div class="lb-header"><span class="title">LIVE BATTLE</span><span class="lbl-inv">盈虧金額</span><span class="lbl-roi">報酬率</span></div><div class="lb-list">${rowsHTML}</div></div>${chartHTML}${ytHTML}</div>`;
 }

@@ -1,0 +1,929 @@
+/* ============================================================
+   PROJECT COLISEUM — components.css
+   All component styles for the HUD dashboard
+   Dark cyberpunk aesthetic, readable and clean
+   ============================================================ */
+
+/* =========================================================
+   1. HEADER
+   Flex layout, logo (50px), H1 title, meta subtitle, compact
+   ========================================================= */
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  position: relative;
+  z-index: 10;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.header-logo {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.header-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.header-title {
+  font-family: var(--font-tech);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.header-subtitle {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--mute);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   2. HUD STATUS BADGE
+   Fixed position top-right, "SYSTEM ONLINE" dot
+   ========================================================= */
+.hud-status {
+  position: fixed;
+  top: var(--space-md);
+  right: var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 6px 14px;
+  background: rgba(10, 10, 12, 0.92);
+  border: 1px solid rgba(0, 255, 76, 0.2);
+  border-radius: var(--radius-md);
+  z-index: 100;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.hud-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--hud-green);
+  box-shadow: 0 0 8px rgba(0, 255, 76, 0.5);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.hud-status-label {
+  font-family: var(--font-tech);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--hud-green);
+}
+
+/* =========================================================
+   3. DASHBOARD WRAPPER & DASH GRID
+   3-column grid (1fr 1fr 1.2fr) with gradient background
+   ========================================================= */
+.dashboard-wrapper {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr;
+  gap: var(--space-lg);
+  padding: var(--space-md) 0;
+}
+
+.dash-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Gradient panel backgrounds */
+.dash-panel {
+  background: linear-gradient(135deg, var(--card) 0%, rgba(10, 10, 12, 0.85) 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* =========================================================
+   4. HUD SCREENS
+   .hud-screen with cyan/green/gold variants,
+   CRT scanline overlay, corner brackets
+   ========================================================= */
+.hud-screen {
+  position: relative;
+  background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, var(--card) 100%);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  overflow: hidden;
+  min-height: 100px;
+}
+
+/* Subtle CRT scanline overlay */
+.hud-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Corner bracket decorations */
+.hud-screen::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 16px;
+  height: 16px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.5;
+}
+
+/* Bottom-right corner bracket */
+.hud-screen .hud-corner-br {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 16px;
+  height: 16px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.4;
+}
+
+/* --- HUD Screen Variants --- */
+
+/* Cyan variant */
+.hud-screen--cyan {
+  border: 1px solid rgba(0, 234, 255, 0.15);
+  box-shadow: inset 0 0 30px rgba(0, 234, 255, 0.03), 0 2px 12px rgba(0, 234, 255, 0.05);
+}
+.hud-screen--cyan::before { border-color: var(--hud-cyan); }
+.hud-screen--cyan .hud-corner-br { border-color: var(--hud-cyan); }
+
+/* Gold variant — simplified: subtle gold border glow only */
+.hud-screen--gold {
+  border: 1px solid rgba(255, 204, 0, 0.2);
+  box-shadow: inset 0 0 20px rgba(255, 204, 0, 0.02), 0 0 15px rgba(255, 204, 0, 0.08);
+}
+.hud-screen--gold::before { border-color: var(--hud-gold); }
+.hud-screen--gold .hud-corner-br { border-color: var(--hud-gold); }
+
+/* Green variant */
+.hud-screen--green {
+  border: 1px solid rgba(0, 255, 76, 0.15);
+  box-shadow: inset 0 0 30px rgba(0, 255, 76, 0.03), 0 2px 12px rgba(0, 255, 76, 0.05);
+}
+.hud-screen--green::before { border-color: var(--hud-green); }
+.hud-screen--green .hud-corner-br { border-color: var(--hud-green); }
+
+/* Purple variant */
+.hud-screen--purple {
+  border: 1px solid rgba(212, 85, 255, 0.15);
+  box-shadow: inset 0 0 30px rgba(212, 85, 255, 0.03), 0 2px 12px rgba(212, 85, 255, 0.05);
+}
+.hud-screen--purple::before { border-color: var(--hud-purple); }
+.hud-screen--purple .hud-corner-br { border-color: var(--hud-purple); }
+
+/* =========================================================
+   5. TOTAL VALUE DISPLAY (.total-val)
+   Large number display inside HUD screens
+   ========================================================= */
+.total-val {
+  font-family: var(--font-num);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.total-val .currency-symbol {
+  font-size: 22px;
+  font-weight: 500;
+  opacity: 0.7;
+  margin-right: 2px;
+}
+
+.total-val .decimal {
+  font-size: 22px;
+  font-weight: 500;
+  opacity: 0.6;
+}
+
+.total-label {
+  font-family: var(--font-tech);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--mute);
+  text-transform: uppercase;
+  margin-top: var(--space-xs);
+}
+
+/* =========================================================
+   6. SECTION TITLES
+   Gold left border + following line
+   ========================================================= */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  font-family: var(--font-tech);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+  position: relative;
+  padding-left: var(--space-sm);
+  border-left: 2px solid var(--gold);
+}
+
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.3), transparent);
+  margin-left: var(--space-sm);
+}
+
+/* =========================================================
+   7. ARENA DASHBOARD
+   3-column grid (420px 1fr 340px → single column on mobile)
+   ========================================================= */
+.arena-dashboard {
+  display: grid;
+  grid-template-columns: 420px 1fr 340px;
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+.arena-panel {
+  background: linear-gradient(135deg, var(--card) 0%, rgba(10, 10, 12, 0.85) 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* =========================================================
+   8. LEADERBOARD PANEL
+   ========================================================= */
+.leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.leaderboard-entry {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.02);
+  transition: background 0.2s ease;
+}
+
+.leaderboard-entry:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.leaderboard-rank {
+  font-family: var(--font-num);
+  font-size: 14px;
+  font-weight: 700;
+  width: 24px;
+  text-align: center;
+  color: var(--mute);
+}
+
+.leaderboard-rank--top3 {
+  color: var(--gold);
+}
+
+.leaderboard-name {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  flex: 1;
+  color: var(--text);
+}
+
+.leaderboard-value {
+  font-family: var(--font-num);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--hud-cyan);
+}
+
+.leaderboard-change {
+  font-family: var(--font-num);
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 48px;
+  text-align: right;
+}
+
+/* =========================================================
+   9. DONUT CHART CONTAINER & SVG
+   ========================================================= */
+.donut-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.donut-chart {
+  width: 140px;
+  height: 140px;
+  position: relative;
+}
+
+.donut-chart svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.donut-chart .donut-bg {
+  fill: none;
+  stroke: var(--bar);
+  stroke-width: 12;
+}
+
+.donut-chart .donut-segment {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.donut-center-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-center-value {
+  font-family: var(--font-num);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.donut-center-sub {
+  font-family: var(--font-tech);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--mute);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.donut-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-md);
+  justify-content: center;
+}
+
+.donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--mute);
+}
+
+.donut-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.donut-legend-value {
+  font-family: var(--font-num);
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* =========================================================
+   10. YT PANEL — SIMPLE TEXT LINK CARD
+   No thumbnail, no play button, no hover scale
+   ========================================================= */
+.yt-link-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(255, 42, 42, 0.04);
+  border: 1px solid rgba(255, 42, 42, 0.1);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.yt-link-card:hover {
+  background: rgba(255, 42, 42, 0.08);
+  border-color: rgba(255, 42, 42, 0.2);
+}
+
+.yt-link-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--red);
+}
+
+.yt-link-text {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+}
+
+.yt-link-arrow {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--mute);
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   11. EVENT TIMELINE
+   Colored node dots (cyan=buy, purple=dividend,
+   gold=sell, red=emergency)
+   ========================================================= */
+.event-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  padding-left: var(--space-lg);
+}
+
+/* Vertical line */
+.event-timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--bar);
+}
+
+.event-item {
+  position: relative;
+  padding: var(--space-sm) 0 var(--space-sm) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Node dot */
+.event-item::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--space-lg) + 3px);
+  top: 14px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid;
+  background: var(--card);
+  z-index: 1;
+}
+
+/* Node color variants */
+.event-item--buy::before       { border-color: var(--cyan);  background: color-mix(in srgb, var(--cyan) 30%, var(--card)); }
+.event-item--dividend::before  { border-color: var(--hud-purple); background: color-mix(in srgb, var(--hud-purple) 30%, var(--card)); }
+.event-item--sell::before      { border-color: var(--gold);  background: color-mix(in srgb, var(--gold) 30%, var(--card)); }
+.event-item--emergency::before { border-color: var(--red);   background: color-mix(in srgb, var(--red) 30%, var(--card)); }
+
+.event-date {
+  font-family: var(--font-tech);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--mute);
+  text-transform: uppercase;
+}
+
+.event-title {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.event-desc {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--mute);
+  line-height: 1.4;
+}
+
+.event-amount {
+  font-family: var(--font-num);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   12. MODAL OVERLAY
+   Glassmorphism backdrop
+   ========================================================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: var(--space-lg);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.modal-overlay--open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.03);
+  transform: translateY(8px);
+  transition: transform 0.25s ease;
+  position: relative;
+}
+
+.modal-overlay--open .modal-content {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+  font-family: var(--font-tech);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.modal-close {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  color: var(--mute);
+  font-size: 16px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.modal-close:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+}
+
+.modal-body {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+/* =========================================================
+   13. REFRESH BUTTON
+   ========================================================= */
+.refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  font-family: var(--font-tech);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mute);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+  color: var(--text);
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.1);
+}
+
+.refresh-btn:active {
+  transform: scale(0.97);
+}
+
+.refresh-btn-icon {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.4s ease;
+}
+
+.refresh-btn:hover .refresh-btn-icon {
+  transform: rotate(180deg);
+}
+
+/* Bottom refresh bar */
+.refresh-bar {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-lg) 0 var(--space-xl);
+}
+
+/* =========================================================
+   14. LOADING SHIMMER SKELETON (.loading-shimmer)
+   ========================================================= */
+.loading-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: var(--bar);
+  border-radius: var(--radius-sm);
+  min-height: 16px;
+}
+
+.loading-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.035) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Shimmer variants */
+.loading-shimmer--text  { height: 14px; width: 60%; margin-bottom: var(--space-sm); }
+.loading-shimmer--title { height: 20px; width: 40%; margin-bottom: var(--space-md); }
+.loading-shimmer--block { height: 80px; width: 100%; margin-bottom: var(--space-md); }
+.loading-shimmer--circle { width: 40px; height: 40px; border-radius: 50%; }
+
+/* =========================================================
+   15. DATA ERROR STATE (.data-error)
+   ========================================================= */
+.data-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--red);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.data-error-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--red);
+  opacity: 0.7;
+}
+
+.data-error-message {
+  font-weight: 500;
+}
+
+.data-error-retry {
+  font-family: var(--font-tech);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mute);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.data-error-retry:hover {
+  color: var(--text);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.data-error--empty {
+  color: var(--mute);
+}
+
+/* =========================================================
+   16. MISC HELPERS
+   ========================================================= */
+/* Fade in animation for panels */
+.dash-panel, .hud-screen, .arena-panel {
+  animation: fade-in 0.4s ease forwards;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================================
+   TABLET (max-width: 1200px)
+   ========================================================= */
+@media (max-width: 1200px) {
+  .dash-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .arena-dashboard {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* =========================================================
+   MOBILE (max-width: 900px)
+   ========================================================= */
+@media (max-width: 900px) {
+  .dashboard-wrapper {
+    padding: var(--space-md);
+  }
+
+  .dash-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .arena-dashboard {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .header {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .header-title {
+    font-size: 15px;
+  }
+
+  .total-val {
+    font-size: 28px;
+  }
+
+  .hud-status {
+    top: var(--space-sm);
+    right: var(--space-md);
+    padding: 4px 10px;
+  }
+
+  .hud-status-label {
+    font-size: 9px;
+  }
+
+  .donut-chart {
+    width: 110px;
+    height: 110px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE (max-width: 600px)
+   ========================================================= */
+@media (max-width: 600px) {
+  .header-logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .header-title {
+    font-size: 13px;
+  }
+
+  .header-subtitle {
+    font-size: 9px;
+  }
+
+  .total-val {
+    font-size: 24px;
+  }
+
+  .total-val .currency-symbol,
+  .total-val .decimal {
+    font-size: 16px;
+  }
+
+  .dash-panel,
+  .hud-screen,
+  .arena-panel {
+    padding: var(--space-md);
+  }
+
+  .section-title {
+    font-size: 10px;
+  }
+
+  .hud-status {
+    padding: 3px 8px;
+  }
+
+  .hud-status-label {
+    font-size: 8px;
+  }
+
+  .hud-status-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .modal-content {
+    padding: var(--space-lg);
+  }
+
+  .leaderboard-entry {
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .donut-chart {
+    width: 90px;
+    height: 90px;
+  }
+
+  .event-timeline {
+    padding-left: var(--space-md);
+  }
+
+  .event-item {
+    padding-left: var(--space-sm);
+  }
+}

@@ -390,6 +390,13 @@ export function buildDonutChart(data, currentRate) {
   });
 
   // ── Assemble final SVG ───────────────────────────────────────────────
+  // Compute aggregate profit for center display
+  const totalProfit = data.reduce((sum, d) => sum + d.profit, 0);
+  const profitSign = totalProfit >= 0 ? '+' : '';
+  const profitColor = totalProfit >= 0 ? '#00ff6a' : '#ff4d4d';
+  const centerTotal = formatDonutVal(totalVal);
+  const centerProfit = profitSign + formatDonutVal(Math.abs(totalProfit));
+
   return `
 <div class="donut-container">
   <svg viewBox="-380 -280 760 560" width="100%" height="100%" style="overflow: visible;">
@@ -398,6 +405,15 @@ export function buildDonutChart(data, currentRate) {
     <!-- 內圈科技感裝飾線 -->
     <circle cx="0" cy="0" r="75" fill="none" stroke="rgba(255,204,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
     <circle cx="0" cy="0" r="85" fill="none" stroke="rgba(0,247,255,0.1)" stroke-width="1"/>
+    <!-- Donut 中心數字 (T2-5) -->
+    <text x="0" y="-8" text-anchor="middle" dominant-baseline="central"
+      font-family="'Rajdhani', sans-serif" font-size="26" font-weight="700" fill="#fff">
+      ${centerTotal}
+    </text>
+    <text x="0" y="24" text-anchor="middle" dominant-baseline="central"
+      font-family="'Rajdhani', sans-serif" font-size="16" font-weight="700" fill="${profitColor}">
+      ${centerProfit}
+    </text>
   </svg>
 </div>`;
 }

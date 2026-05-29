@@ -527,11 +527,44 @@ header h1 {
 .lb-region-us    { background: var(--hud-green);  box-shadow: 0 0 6px var(--hud-green); }
 .lb-region-qqqi  { background: var(--hud-purple); box-shadow: 0 0 6px var(--hud-purple); }
 .lb-region-other { background: var(--hud-gold);   box-shadow: 0 0 6px var(--hud-gold); }
-.lb-rank { width: 26px; font-weight: 900; color: #555; font-family: var(--font-mono); font-size: 0.82rem; text-align: center; }
-.lb-row.rank-1 .lb-rank { color: var(--gold); text-shadow: 0 0 8px var(--gold); }
+.lb-rank {
+  width: 26px; height: 26px; min-width: 26px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-family: var(--font-mono);
+  font-size: 0.78rem; color: #555;
+  background: rgba(255,255,255,0.04);
+  transition: all 0.2s;
+}
+.lb-row.rank-1 .lb-rank {
+  color: #000; background: var(--gold);
+  box-shadow: 0 0 10px var(--gold), 0 0 20px rgba(255,215,0,0.3);
+}
+.lb-row.rank-2 .lb-rank {
+  color: #000; background: #c0c0c0;
+  box-shadow: 0 0 8px rgba(192,192,192,0.3);
+}
+.lb-row.rank-3 .lb-rank {
+  color: #000; background: #cd7f32;
+  box-shadow: 0 0 8px rgba(205,127,50,0.3);
+}
+.lb-row.rank-1 .lb-name { color: var(--gold); }
+/* Row fade: top rows brighter, bottom rows darker */
+.lb-row.rank-1 { background: radial-gradient(ellipse at 10% 50%, rgba(255,215,0,0.10) 0%, transparent 60%); }
+.lb-row.rank-2 { background: radial-gradient(ellipse at 10% 50%, rgba(192,192,192,0.05) 0%, transparent 50%); }
+.lb-row.rank-3 { background: radial-gradient(ellipse at 10% 50%, rgba(205,127,50,0.04) 0%, transparent 50%); }
+/* ROI bar: thin colored bar under the value */
+.lb-val { position: relative; display: inline-flex; align-items: center; gap: 4px; }
+.lb-val::after {
+  content: ''; display: inline-block;
+  width: 28px; height: 3px; border-radius: 2px; flex-shrink: 0;
+}
+.lb-val.color-profit::after { background: var(--green); box-shadow: 0 0 4px var(--green); }
+.lb-val.color-loss::after   { background: var(--red);   box-shadow: 0 0 4px var(--red); }
+.lb-val.color-gold::after   { background: var(--gold);  box-shadow: 0 0 4px var(--gold); }
+.lb-val.color-dead::after   { background: #ff4444;      box-shadow: 0 0 4px #ff4444; }
 .lb-info { width: 150px; padding: 0 8px; display: flex; flex-direction: column; flex-shrink: 0; }
 .lb-name { color: #e0e0e0; font-weight: 700; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.lb-row.rank-1 .lb-name { color: var(--gold); }
 .lb-code { font-size: 0.65rem; color: #888; font-family: var(--font-mono); }
 .lb-deck { flex-grow: 1; display: flex; gap: 4px; align-items: center; overflow: hidden; }
 .lb-card-icon { width: 24px; height: 24px; object-fit: contain; border-radius: 2px; }

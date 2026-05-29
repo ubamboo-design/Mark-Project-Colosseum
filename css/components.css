@@ -95,10 +95,10 @@ header h1 {
 }
 
 /* =========================================================
-   TABLET / MOBILE RESPONSIVE (≤ 900px)
+   MOBILE RESPONSIVE (≤ 900px)
    ========================================================= */
 @media(max-width:900px) {
-  /* HUD grid: 3col → 1col */
+  /* HUD grid: 4col → 1col */
   .dash-grid {
     grid-template-columns: 1fr;
     gap: 8px;
@@ -108,32 +108,10 @@ header h1 {
     padding: 14px 12px;
   }
   .hud-screen.gold {
-    padding: 18px 12px;
-  }
-  .hud-title {
-      font-size: 1rem;
+      padding: 18px 12px;
     }
-    .hud-row {
-      font-size: 0.92rem;
-      padding: 4px 0;
-    }
-    .hud-row .val {
-      font-size: 1rem;
-    }
-    .pl-val {
-      font-size: 1.3rem;
-    }
-    .pl-pct {
-      font-size: 0.9rem;
-    }
-  .total-val {
-    font-size: 2.2rem;
-  }
-  .nested-qqqi {
-    padding: 6px;
-  }
 
-  /* Arena: 3col → 1col */
+    /* Arena: 3col → 1col */
   .arena-dashboard-v15 {
     grid-template-columns: 1fr;
     gap: 10px;
@@ -151,13 +129,9 @@ header h1 {
   .donut-container {
     min-height: 240px;
   }
-
-  /* Leaderboard scrollable */
   .leaderboard-panel {
     overflow-x: auto;
   }
-
-  /* Events */
   .event-list {
     padding-left: 24px;
     margin-left: 8px;
@@ -165,29 +139,15 @@ header h1 {
   .event-card {
     padding: 10px;
   }
-  .event-date {
-    font-size: 0.88rem;
-  }
-
-  /* Sections */
   .section-title {
-      font-size: 1rem;
-      margin: 16px 0 8px;
-    }
-
-  /* Modal */
+    margin: 16px 0 8px;
+  }
   .modal-content {
     padding: 16px;
     width: 95%;
   }
-  .m-code {
-    font-size: 1rem;
-  }
-
-  /* Refresh */
   .refresh-btn {
     padding: 10px 20px;
-    font-size: 0.85rem;
   }
 }
 
@@ -201,11 +161,7 @@ header h1 {
     gap: 6px;
   }
   header h1 {
-      font-size: 0.9rem;
-      letter-spacing: 2px;
-    }
-  .meta-info {
-    font-size: 0.62rem;
+    letter-spacing: 2px;
   }
   #pageLogo {
     height: 32px;
@@ -225,26 +181,6 @@ header h1 {
   .hud-screen::before {
     inset: 4px;
   }
-  .hud-title {
-      font-size: 0.9rem;
-      margin-bottom: 6px;
-    }
-    .hud-row {
-      font-size: 0.88rem;
-      padding: 3px 0;
-    }
-    .hud-row .val {
-      font-size: 0.92rem;
-    }
-    .pl-val {
-      font-size: 1.15rem;
-    }
-    .pl-pct {
-      font-size: 0.85rem;
-    }
-  .total-val {
-    font-size: 1.8rem;
-  }
   .hud-status-badge {
     position: static;
     margin-bottom: 6px;
@@ -255,12 +191,8 @@ header h1 {
     padding: 0 6px;
   }
   .section-title {
-      font-size: 0.85rem;
-      padding-left: 6px;
-      margin: 12px 0 6px;
-    }
-  .nested-qqqi .hud-title-sub {
-    font-size: 0.7rem;
+    padding-left: 6px;
+    margin: 12px 0 6px;
   }
   .arena-dashboard-v15 {
     gap: 8px;
@@ -288,9 +220,6 @@ header h1 {
     width: 10px;
     height: 10px;
   }
-  .event-date {
-    font-size: 0.8rem;
-  }
 }
 
 /* =========================================================
@@ -315,7 +244,7 @@ header h1 {
 }
 .dash-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1.2fr;
+  grid-template-columns: 1.1fr 1.1fr 1fr 1.5fr;
   gap: 12px;
   background: #000; padding: 4px; border-radius: 4px;
 }
@@ -385,9 +314,29 @@ header h1 {
   opacity: 0.35; pointer-events: none;
 }
 
+/* Variant: Purple (QQQI) */
+.hud-screen.purple {
+  background: rgba(28, 0, 42, 0.9);
+  border: 1px solid rgba(189, 0, 255, 0.18);
+}
+.hud-screen.purple::before {
+  border-color: rgba(189, 0, 255, 0.35);
+  border-bottom: none;
+  clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 70%, 90% 100%, 10% 100%, 10% 70%, 0 70%);
+}
+.hud-screen.purple .hud-title {
+  color: var(--hud-purple);
+  border-bottom: 2px solid var(--hud-purple);
+  box-shadow: 0 2px 8px rgba(189,0,255,0.2);
+}
+.hud-screen.purple .pl-val {
+  color: var(--hud-purple);
+}
+
 /* HUD Title */
 .hud-title {
-  font-family: var(--font-tech); font-weight: 700; font-size: 1.2rem;
+  font-family: var(--font-tech); font-weight: 700;
+  font-size: clamp(14px, 1.5vw, 22px);
   text-align: center; margin-bottom: 10px; position: relative; z-index: 2;
   letter-spacing: 1px; padding-bottom: 4px; white-space: nowrap;
 }
@@ -399,10 +348,13 @@ header h1 {
 .hud-row {
   display: flex; justify-content: space-between; align-items: center;
   border-bottom: 1px dashed rgba(255,255,255,0.08);
-  padding: 5px 0; font-size: 1.1rem;
+  padding: 5px 0;
 }
 .hud-row .lbl { color: #666; font-weight: 600; flex-shrink: 0; margin-right: 6px; }
-.hud-row .val { color: #ddd; font-family: var(--font-num); font-weight: 700; letter-spacing: 0.3px; white-space: nowrap; font-size: 1.2rem; }
+.hud-row .val {
+  color: #ddd; font-family: var(--font-num); font-weight: 700;
+  letter-spacing: 0.3px; white-space: nowrap; font-size: clamp(15px, 1.8vw, 26px);
+}
 
 /* Visual Hierarchy: currency prefix subdued, number prominent, unit small */
 .hud-row .val .fx,
@@ -427,9 +379,6 @@ header h1 {
   opacity: 0.55;
   margin-left: 1px;
 }
-.total-val .num {
-  font-size: 1.1em;
-}
 
 /* P&L Block */
 .pl-block {
@@ -437,22 +386,32 @@ header h1 {
   padding-top: 6px; margin-top: auto; width: 100%;
   text-align: right; position: relative; z-index: 2;
 }
-.pl-val { font-family: var(--font-num); font-size: 1.6rem; font-weight: 700; white-space: nowrap; }
-.pl-pct { font-size: 1.05rem; margin-left: 6px; opacity: 0.8; font-family: var(--font-num); }
+.pl-val { font-family: var(--font-num); font-weight: 700; white-space: nowrap; font-size: clamp(16px, 2vw, 30px); }
+.pl-pct { margin-left: 6px; opacity: 0.8; font-family: var(--font-num); font-size: clamp(13px, 1.4vw, 21px); }
 
-/* Total Asset */
+/* Total Asset — center aligned for gold panel */
 .total-val {
-  font-family: var(--font-num); font-size: 3rem; font-weight: 700;
+  font-family: var(--font-num); font-weight: 700;
+  font-size: clamp(28px, 4vw, 52px);
   color: #fff; margin: 0; position: relative; z-index: 2;
   line-height: 1.1; white-space: nowrap;
 }
+.total-val .num {
+  font-size: 1.1em;
+}
 
-/* Nested QQQI Panel */
-.nested-qqqi {
-  margin-top: auto; padding: 8px;
-  background: rgba(189, 0, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 4px; position: relative; z-index: 2;
+/* Gold panel P&L stays center */
+.hud-screen.gold .pl-block {
+  text-align: center;
+}
+#totalPL_val {
+  font-size: clamp(16px, 2vw, 28px);
+  font-family: var(--font-num);
+  font-weight: 700;
+}
+#totalPL_pct {
+  font-size: clamp(13px, 1.4vw, 20px);
+  font-family: var(--font-num);
 }
 
 /* =========================================================
@@ -496,13 +455,6 @@ header h1 {
   100% { background-position: -200% 0; }
 }
 
-.hud-title-sub {
-  font-size: 0.75rem; color: var(--trap);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  padding-bottom: 2px; margin-bottom: 4px;
-  display: flex; justify-content: space-between; font-weight: 700;
-}
-
 /* Color Utilities */
 .c-cyan { color: var(--hud-cyan); }
 .c-green { color: var(--hud-green); }
@@ -517,7 +469,7 @@ header h1 {
    7. SECTION TITLES
    ========================================================= */
 .section-title {
-  font-size: 1.05rem; border-left: 3px solid var(--gold);
+  font-size: clamp(13px, 1.3vw, 20px); border-left: 3px solid var(--gold);
   padding-left: 10px; margin: 22px 0 10px; text-transform: uppercase;
   font-weight: 900; color: #fff;
   display: flex; align-items: center; letter-spacing: 2px;

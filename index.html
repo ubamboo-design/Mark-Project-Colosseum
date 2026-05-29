@@ -43,6 +43,8 @@
 
   <div class="dashboard-wrapper">
     <div class="dash-grid">
+
+      <!-- ─── 1. TWD (Cyan) ─────────────────────────────── -->
       <div class="hud-screen cyan">
         <div class="hud-title">台股資產</div>
         <div class="data-group">
@@ -54,6 +56,7 @@
         </div>
       </div>
 
+      <!-- ─── 2. USD (Green) ────────────────────────────── -->
       <div class="hud-screen green">
         <div class="hud-title">美股資產</div>
         <div class="data-group">
@@ -61,29 +64,34 @@
           <div class="hud-row"><span class="lbl">市值</span><span class="val" id="assetUS">...</span></div>
           <div class="hud-row"><span class="lbl">匯率</span><span class="val" id="usdExRate">...</span></div>
         </div>
-        <div class="pl-block" style="border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:10px; margin-bottom:10px;">
+        <div class="pl-block">
           <div><span class="pl-val" id="plUS_val">...</span><span class="pl-pct" id="plUS_pct">...</span></div>
-        </div>
-        <div class="nested-qqqi">
-          <div class="hud-title-sub">
-            <span>QQQI 股息專區</span>
-            <span id="qqqiExRate" style="font-size:0.7rem; color:#888; font-weight:normal; font-family:'Courier New'">Ex: --</span>
-          </div>
-          <div class="hud-row" style="border:none; padding:2px 0;"><span class="lbl" style="font-size:0.75rem;">累計股息</span><span class="val c-purple" id="qqqiDivCum">...</span></div>
-          <div class="hud-row" style="border:none; padding:2px 0;"><span class="lbl" style="font-size:0.75rem;">30% 退稅</span><span class="val c-purple" id="qqqiTaxRef">...</span></div>
-          <div class="hud-row" style="border-top:1px dashed rgba(189,0,255,0.3); margin-top:5px; padding-top:5px;"><span class="lbl" style="color:var(--text)">總入帳</span><span class="val c-purple" id="qqqiDivTotal" style="font-size:1.1rem;">...</span></div>
         </div>
       </div>
 
+      <!-- ─── 3. QQQI (Purple) ──────────────────────────── -->
+      <div class="hud-screen purple">
+        <div class="hud-title">QQQI 股息</div>
+        <div class="data-group">
+          <div class="hud-row"><span class="lbl">累計股息</span><span class="val" id="qqqiDivCum">...</span></div>
+          <div class="hud-row"><span class="lbl">30% 退稅</span><span class="val" id="qqqiTaxRef">...</span></div>
+        </div>
+        <div class="pl-block">
+          <div><span class="pl-val" id="qqqiDivTotal">...</span><span class="pl-pct" id="qqqiExRate"></span></div>
+        </div>
+      </div>
+
+      <!-- ─── 4. Total (Gold, wider) ────────────────────── -->
       <div class="hud-screen gold">
         <div class="hud-title">總合資產</div>
         <div class="total-val" id="totalAsset">...</div>
         <div style="position:relative; z-index:2; margin-top:5px; font-family:var(--font-num); font-weight:bold; display:flex; align-items:baseline; justify-content:center; gap:6px;">
-          <span id="totalPL_val" style="font-size:1.3rem;">...</span>
-          <span id="totalPL_pct" style="font-size:0.95rem; opacity:0.9;">...</span>
-        </div>
+                  <span id="totalPL_val"></span>
+                  <span id="totalPL_pct" style="opacity:0.9;"></span>
+                </div>
         <div style="position:absolute; bottom:5px; right:10px; color:#666; font-size:0.6rem; z-index:2; font-family:var(--font-num)" id="rateInfo">LOADING...</div>
       </div>
+
     </div>
   </div>
 

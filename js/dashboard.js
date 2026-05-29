@@ -85,7 +85,7 @@ export function renderDashboard(cards, currentRate) {
   );
   setText(
     'assetTW',
-    pf.assetTW > 0 ? formatCompact(pf.assetTW) : '...'
+    pf.assetTW > 0 ? 'NT$ ' + formatCompact(pf.assetTW) : '...'
   );
 
   const twPL = calc(pf.investedTW, pf.assetTW);
@@ -111,7 +111,7 @@ export function renderDashboard(cards, currentRate) {
   );
   setText(
     'assetUS',
-    pf.assetUS > 0 ? formatCompact(pf.assetUS) : '...'
+    pf.assetUS > 0 ? 'USD$ ' + formatCompact(pf.assetUS) : '...'
   );
 
   const usPL = calc(pf.investedUS, pf.assetUS);
@@ -140,23 +140,17 @@ export function renderDashboard(cards, currentRate) {
 
   // ── QQQI Dividend Panel (Purple, nested in US) ────────────────────────
 
-  setText('qqqiDivCum', qqqi.divCum > 0 ? formatCompact(qqqi.divCum) : '...');
-  setText(
-    'qqqiTaxRef',
-    qqqi.taxRefund > 0 ? formatCompact(qqqi.taxRefund) : '...'
-  );
-  setText(
-    'qqqiDivTotal',
-    qqqi.divTotal > 0 ? formatCompact(qqqi.divTotal) : '...'
-  );
+  setText('qqqiDivCum', qqqi.divCum > 0 ? 'NT$ ' + formatCompact(qqqi.divCum, 0) : '...');
+  setText('qqqiTaxRef', qqqi.taxRefund > 0 ? 'NT$ ' + formatCompact(qqqi.taxRefund, 0) : '...');
+  setText('qqqiDivTotal', qqqi.divTotal > 0 ? 'NT$ ' + formatCompact(qqqi.divTotal, 0) : '...');
 
   // ── Total Panel (Gold) ────────────────────────────────────────────────
 
   const totalEl = document.getElementById('totalAsset');
   if (totalEl && pf.totalAssetTWD > 0) {
-    animateValue(totalEl, pf.totalAssetTWD, 800, (v) => formatCompact(v));
+    animateValue(totalEl, pf.totalAssetTWD, 800, (v) => 'NT$ ' + formatCompact(v));
   } else {
-    setText('totalAsset', pf.totalAssetTWD > 0 ? formatCompact(pf.totalAssetTWD) : '...');
+    setText('totalAsset', pf.totalAssetTWD > 0 ? 'NT$ ' + formatCompact(pf.totalAssetTWD) : '...');
   }
 
   const totalPL = calc(pf.totalInvestedTWD, pf.totalAssetTWD);

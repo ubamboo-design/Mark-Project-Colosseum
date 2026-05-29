@@ -253,25 +253,36 @@ export function aggregatePortfolio(cards, currentRate) {
 // =============================================================================
 
 /**
- * Format a number in Taiwanese compact notation.
+ * Format a number in Taiwanese compact notation with configurable decimal precision.
  *
- * - >= 100,000,000  → "X.XX億"   (hundred millions → yi)
- * - >= 10,000       → "X萬"      (ten-thousands → wan)
- * - else            → locale string with 0 fraction digits
+ * - >= 100,000,000  → "X.XX億"   (hundred millions, always 2 decimals)
+ * - >= 10,000       → "X.X萬"    (ten-thousands, 1 decimal by default)
+ * - else            → locale string (always integer)
  *
- * @param {number} num - The number to format.
+ * The precision parameter controls decimal places in the "萬" range.
+ * When precision > 0 the function uses round-half-away-from-zero (toFixed semantic)
+ * instead of floor, so display arithmetic is verifiable.
+ *
+ * @param {number}  num       - The number to format.
+ * @param {number}  [precision=1] - Decimal places for 萬 values (0 = floor, same as before).
  * @returns {string}
  */
-export function formatCompact(num) {
-  if (Math.abs(num) >= 100_000_000) {
-    return floorDec(num / 100_000_000, 2) + '億';
+export function formatCompact(num, precision = 1) {
+  const abs = Math.abs(num);
+  if (abs >= 100_000_000) {
+    // 億: always 2 decimals
+    const val = (num / 100_000_000).toFixed(2);
+    return val + '億';
   }
-  if (Math.abs(num) >= 10_000) {
-    return Math.floor(num / 10_000) + '萬';
+  if (abs >= 10_000) {
+    // 萬: configurable precision
+    const val = (num / 10_000).toFixed(precision);
+    // Trim trailing zeros after decimal when precision > 0
+    // e.g. "41.0" → "41.0" (keep one decimal for consistency)
+    return val + '萬';
   }
-  return Math.floor(num).toLocaleString(undefined, {
-    maximumFractionDigits: 0,
-  });
+  // Below 10_000: locale integer
+  return Math.round(num).toLocaleString('en-US');
 }
 
 // =============================================================================

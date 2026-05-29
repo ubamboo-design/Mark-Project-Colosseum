@@ -131,11 +131,11 @@ export function buildLeaderboardHTML(allStrategies, cardsData) {
 }
 
 // =============================================================================
-// Battle Summary Card (replaces YT Panel — T2-1)
+// Battle Summary Card — Top 3 Profit + Top 3 ROI
 // =============================================================================
 
 /**
- * Build a battle summary card showing champion, worst performer, and stats.
+ * Build a battle summary card showing top 3 by profit amount and top 3 by ROI.
  * YT link is downsized to a small footer element.
  *
  * @param {Object[]} sortedStrategies - Strategies sorted by ROI descending (enriched).
@@ -148,14 +148,12 @@ export function buildBattleSummary(sortedStrategies, configData) {
     return '<div class="battle-summary"><div class="bs-header">BATTLE SUMMARY</div><div class="bs-empty">NO DATA</div></div>';
   }
 
-  // Champion = sorted[0], worst = sorted[count-1]
-  const champ = sortedStrategies[0];
-  const worst = sortedStrategies[count - 1];
+  // Top 3 by profit amount (profitVal = currency amount including sign)
+  const byProfit = [...sortedStrategies].sort((a, b) => (b.profitVal || 0) - (a.profitVal || 0));
+  const top3Profit = byProfit.slice(0, 3);
 
-  const champRoi = (champ.roi != null ? champ.roi : 0);
-  const worstRoi = (worst.roi != null ? worst.roi : 0);
-  const champSign = champRoi >= 0 ? '+' : '';
-  const worstSign = worstRoi >= 0 ? '+' : '';
+  // Top 3 by ROI (already sortedStrategies is by ROI desc)
+  const top3ROI = sortedStrategies.slice(0, 3);
 
   // Count profit/loss
   let profitCount = 0, lossCount = 0;
@@ -164,30 +162,43 @@ export function buildBattleSummary(sortedStrategies, configData) {
     if (roi >= 0) profitCount++; else lossCount++;
   });
 
-  const champName = escapeHtml(champ.name || '');
-  const worstName = escapeHtml(worst.name || '');
-  const champCode = escapeHtml(champ.code || '');
-  const worstCode = escapeHtml(worst.code || '');
+  // Helper: build a ranked item row
+  function rankRow(s, rank, type) {
+    const name = escapeHtml(s.name || '');
+    const code = escapeHtml(s.code || '');
+    const roi = s.roi != null ? s.roi : 0;
+    const roiSign = roi >= 0 ? '+' : '';
+    const roiDisplay = roiSign + floorDec(Math.abs(roi), 1).toFixed(1) + '%';
+    const pv = s.profitVal || 0;
+    const pvSign = pv >= 0 ? '+' : '';
+    const pvDisplay = pvSign + formatBattleAmount(Math.abs(pv), s.isUSD);  // Fixed: use formatBattleAmount which handles currency prefixes
+    const pvClass = pv >= 0 ? 'color-profit' : 'color-loss';
+
+    return `<div class="bs-item" onclick="window.openStrategyModal && window.openStrategyModal('${code}')">
+      <span class="bs-rank bs-rank-${rank}">${rank}</span>
+      <span class="bs-rank-name">${name}</span>
+      <span class="bs-rank-val ${type === 'profit' ? pvClass : (roi >= 0 ? 'color-profit' : 'color-loss')}">${type === 'profit' ? pvDisplay : roiDisplay}</span>
+    </div>`;
+  }
+
+  const profitRows = top3Profit.map((s, i) => rankRow(s, i + 1, 'profit')).join('');
+  const roiRows = top3ROI.map((s, i) => rankRow(s, i + 1, 'roi')).join('');
 
   // YT link (small)
   const ytUrl = (configData && configData.ytUrl) || DEFAULT_YT;
   const escapedUrl = escapeHtml(ytUrl);
 
   return `<div class="battle-summary">
-  <div class="bs-header">⚔ BATTLE SUMMARY</div>
+  <div class="bs-header">⚔ TOP PERFORMERS</div>
   <div class="bs-body">
-    <div class="bs-champion">
-      <div class="bs-tag champ-tag">🏆 CHAMPION</div>
-      <div class="bs-name">${champName}</div>
-      <div class="bs-code">${champCode}</div>
-      <div class="bs-roi profit">${champSign}${floorDec(Math.abs(champRoi), 1).toFixed(1)}%</div>
+    <div class="bs-section">
+      <div class="bs-sectitle profit-title">💰 獲利金額</div>
+      ${profitRows}
     </div>
     <div class="bs-divider"></div>
-    <div class="bs-worst">
-      <div class="bs-tag worst-tag">⚠ LAST</div>
-      <div class="bs-name">${worstName}</div>
-      <div class="bs-code">${worstCode}</div>
-      <div class="bs-roi ${worstRoi >= 0 ? 'profit' : 'loss'}">${worstSign}${floorDec(Math.abs(worstRoi), 1).toFixed(1)}%</div>
+    <div class="bs-section">
+      <div class="bs-sectitle roi-title">📈 報酬率</div>
+      ${roiRows}
     </div>
     <div class="bs-divider"></div>
     <div class="bs-stats">
@@ -229,6 +240,12 @@ export function buildDonutChart(data, currentRate) {
   const R = 130;           // outer radius
   const r = 65;            // inner radius (donut hole)
 
+  // Distinct color palette for each strategy (not gradient — T2-5b)
+  const PALETTE = [
+    '#00eaff', '#ffd700', '#d455ff', '#ff6b6b',
+    '#4ecdc4', '#ff8c42', '#95e1d3', '#ffb3b3',
+  ];
+
   // ── Aggregate data ─────────────────────────────────────────────────────
   const totalVal = data.reduce((sum, d) => sum + d.val, 0);
   if (totalVal <= 0) {
@@ -237,9 +254,6 @@ export function buildDonutChart(data, currentRate) {
 
   // Staggered entrance animation: each slice fades in sequentially
   let sliceIndex = 0;
-
-  const maxP = data.reduce((m, d) => Math.max(m, d.profit), 0);
-  const minP = data.reduce((m, d) => Math.min(m, d.profit), 0);
 
   // ── Build segments + legend data ───────────────────────────────────────
   const legendItems = [];
@@ -269,20 +283,9 @@ export function buildDonutChart(data, currentRate) {
     // SVG path for the donut segment
     const pathD = `M ${x1} ${y1} A ${R} ${R} 0 ${largeArc} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${r} ${r} 0 ${largeArc} 0 ${ix1} ${iy1} Z`;
 
-    // Profit ratio for color intensity (0..1)
-    const pratio =
-      d.profit >= 0
-        ? maxP > 0
-          ? d.profit / maxP
-          : 0
-        : minP < 0
-          ? d.profit / minP
-          : 0;
-    // Colour: green tint for profit, red tint for loss (finance convention)
-    const fill =
-      d.profit >= 0
-        ? `rgba(0, 255, 106, ${0.4 + 0.6 * pratio})`
-        : `rgba(255, 42, 42, ${0.4 + 0.6 * (Math.abs(pratio))})`;
+    // Distinct color per strategy (palette cycles if >8 strategies)
+    const colorIndex = sliceIndex % PALETTE.length;
+    const fill = PALETTE[colorIndex];
 
     // Segment is clickable
     const code = escapeHtml(d.code || '');
@@ -292,15 +295,12 @@ export function buildDonutChart(data, currentRate) {
 
     // ── Short inline percentage label ──────────────────────────────────
     const pctStr = ((d.val / totalVal) * 100).toFixed(1) + '%';
-    // Place label at midpoint between outer and inner radius
-    const labelR = R - 15 /* offset inward from outer edge */;
     const lx = Math.cos(midAngle) * (r + (R - r) * 0.65);
     const ly = Math.sin(midAngle) * (r + (R - r) * 0.65);
     // Only show label if slice is big enough (> 6%)
     if ((d.val / totalVal) >= 0.06) {
       svgPaths += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central"
-        font-family="'Rajdhani',sans-serif" font-size="13" font-weight="700"
-        fill="${d.profit >= 0 ? '#003300' : '#330000'}"
+        font-family="'Rajdhani',sans-serif" font-size="13" font-weight="700" fill="#fff"
         class="donut-reveal" style="animation-delay:${animDelay + 0.15}s;pointer-events:none;">
         ${pctStr}
       </text>`;

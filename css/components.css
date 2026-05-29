@@ -117,7 +117,7 @@ header h1 {
     gap: 10px;
   }
   .chart-panel,
-  .yt-panel {
+  .battle-summary {
     min-height: auto;
     padding: 14px;
   }
@@ -571,52 +571,58 @@ header h1 {
 /* SVG text shadow utility (applied from JS) */
 
 /* =========================================================
-   11. YT LINK CARD (simplified, no thumbnail)
+   11. BATTLE SUMMARY CARD (replaces YT panel — T2-1)
    ========================================================= */
-.yt-panel {
-  background: linear-gradient(160deg, #25252d 0%, #121214 100%);
-  border-top: 1px solid rgba(255,255,255,0.15);
-  border-left: 1px solid rgba(255,255,255,0.08);
+.battle-summary {
+  background: linear-gradient(160deg, #1a1a24 0%, #0f0f14 100%);
+  border-top: 1px solid rgba(255,215,0,0.15);
+  border-left: 1px solid rgba(255,215,0,0.08);
   border-bottom: 2px solid rgba(0,0,0,0.5);
   border-right: 1px solid rgba(0,0,0,0.3);
   border-radius: 8px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-  padding: 20px;
+  padding: 16px;
   display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
-  cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
   min-height: 380px;
 }
-.yt-panel:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.8), 0 0 12px rgba(255,0,0,0.12);
+.bs-header {
+  font-family: var(--font-tech); font-weight: 700;
+  font-size: clamp(13px, 1.2vw, 18px);
+  color: var(--gold); letter-spacing: 2px;
+  text-align: center; padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,215,0,0.2);
+  margin-bottom: 12px;
 }
-.yt-panel .yt-header {
-  font-family: 'Arial Black'; color: #fff; margin-bottom: 8px;
-  font-size: 0.82rem; letter-spacing: 0.5px;
-  width: 100%; text-align: left; opacity: 0.7;
+.bs-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+.bs-champion, .bs-worst {
+  text-align: center; padding: 8px 0;
 }
-.yt-panel .play-icon {
-  width: 44px; height: 44px; background: rgba(0,0,0,0.6);
-  border-radius: 50%; display: flex; justify-content: center;
-  align-items: center; color: #fff; font-size: 20px;
-  border: 2px solid var(--red); margin: 10px 0;
+.bs-tag { font-family: var(--font-tech); font-size: 0.7rem; letter-spacing: 1px; margin-bottom: 4px; }
+.champ-tag { color: var(--gold); }
+.worst-tag { color: #888; }
+.bs-name { font-size: clamp(14px, 1.3vw, 20px); font-weight: 700; color: #fff; }
+.bs-code { font-size: 0.7rem; color: #666; font-family: var(--font-mono); }
+.bs-roi { font-family: var(--font-num); font-weight: 900; font-size: clamp(20px, 2vw, 32px); margin-top: 2px; }
+.bs-roi.profit { color: var(--green); }
+.bs-roi.loss { color: var(--red); }
+.bs-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 4px 0; }
+.bs-stats { text-align: center; font-size: clamp(12px, 1vw, 16px); padding: 8px 0 4px; font-family: var(--font-num); font-weight: 700; }
+.bs-stat-profit { color: var(--green); }
+.bs-stat-loss { color: var(--red); }
+.bs-stat-sep { color: #444; margin: 0 8px; }
+.bs-stat-total { color: #666; margin-left: 4px; font-weight: 400; }
+.bs-yt-footer {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 0 2px; border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: 8px; opacity: 0.6; transition: opacity 0.2s;
 }
-.yt-panel .yt-url-text {
-  font-family: var(--font-mono); font-size: 0.7rem; color: #888;
-  word-break: break-all; text-align: center; max-width: 90%;
+.bs-yt-footer:hover { opacity: 1; }
+.bs-yt-icon {
+  width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+  background: rgba(255,0,0,0.15); border-radius: 50%; font-size: 10px; color: #ff3333;
 }
-.yt-panel .yt-footer {
-  margin-top: 8px; font-size: 0.75rem; color: #888;
-  width: 100%; text-align: center; font-family: var(--font-mono); font-weight: 700;
-}
-.yt-panel .yt-no-signal {
-  width: 100%; display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
-  background: repeating-linear-gradient(0deg, #111 0px, #111 2px, #222 3px);
-  color: #555; font-family: var(--font-mono); font-weight: 700;
-  text-align: center; border-radius: 6px; padding: 30px 10px;
-}
+.bs-yt-label { font-family: var(--font-num); font-size: 0.7rem; color: #888; font-weight: 700; letter-spacing: 0.5px; }
+.bs-empty { text-align: center; color: #555; padding: 40px 0; font-family: var(--font-num); }
 
 /* =========================================================
    12. EVENT TIMELINE
@@ -762,7 +768,7 @@ header h1 {
   .arena-dashboard-v15 {
     grid-template-columns: 1fr 1fr;
   }
-  .yt-panel { min-height: auto; }
+  .battle-summary { min-height: auto; }
 }
 @media(max-width: 900px) {
   .dash-grid { grid-template-columns: 1fr; }
@@ -775,12 +781,12 @@ header h1 {
   .nested-qqqi { padding: 6px; }
   .lb-info { width: 100px; }
   .lb-invested { width: 80px; font-size: 0.72rem; }
-  .lb-val { font-size: 0.78rem; min-width: 50px; }
   .leaderboard-panel { min-height: auto; }
   .chart-panel { min-height: 300px; }
-  .yt-panel { min-height: auto; padding: 16px; }
+  .battle-summary { min-height: auto; }
   .section-title { font-size: 0.85rem; margin: 15px 0 8px; }
 }
+
 @media(max-width: 600px) {
   header h1 { font-size: 0.85rem; letter-spacing: 1px; }
   .meta-info { font-size: 0.6rem; }
@@ -794,6 +800,7 @@ header h1 {
   .lb-row.rank-1 {
     box-shadow: inset 0 0 8px rgba(255,215,0,0.04);
   }
+  .battle-summary { min-height: auto; }
 }
 
 /* =========================================================

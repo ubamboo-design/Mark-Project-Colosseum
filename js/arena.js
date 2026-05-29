@@ -18,7 +18,7 @@ import {
   formatCompact,
   calc,
 } from './engine.js';
-import { fixDriveUrl, getYoutubeId } from './parser.js';
+import { fixDriveUrl } from './parser.js';
 import { CONFIG_DEFAULTS, DEFAULT_YT } from './config.js';
 
 // =============================================================================
@@ -128,42 +128,75 @@ export function buildLeaderboardHTML(allStrategies, cardsData) {
 }
 
 // =============================================================================
-// YouTube Panel Builder (downgraded to simple text link)
+// Battle Summary Card (replaces YT Panel — T2-1)
 // =============================================================================
 
 /**
- * Build a simple YouTube link card HTML.
+ * Build a battle summary card showing champion, worst performer, and stats.
+ * YT link is downsized to a small footer element.
  *
- * No thumbnail is rendered — just a text link with a ▶ play icon.
- * Clicking opens the YouTube URL in a new tab.
- *
- * @param {Object} configData - Configuration data with ytUrl field.
- * @returns {string} HTML string for the YT link card.
+ * @param {Object[]} sortedStrategies - Strategies sorted by ROI descending (enriched).
+ * @param {Object}   configData - Configuration with ytUrl.
+ * @returns {string} HTML string for the battle-summary panel.
  */
-export function buildYTPanel(configData) {
-  const ytUrl = (configData && configData.ytUrl) || DEFAULT_YT;
-  const ytId = getYoutubeId(ytUrl);
-
-  if (!ytId) {
-    // No valid YouTube URL — show NO SIGNAL state
-    return `<div class="yt-panel" style="cursor:default;">
-  <div class="yt-header">馬克投資。玩的就是真實</div>
-  <div class="yt-no-signal" style="text-align:center;padding:40px 0;">
-    <div style="font-size:30px; margin-bottom:10px;">⚡</div>
-    <div style="color:#555;font-family:var(--font-num);">NO SIGNAL</div>
-    <div style="font-size:0.7rem; margin-top:5px; opacity:0.6;color:#888;">Refreshing...</div>
-  </div>
-</div>`;
+export function buildBattleSummary(sortedStrategies, configData) {
+  const count = sortedStrategies.length;
+  if (count === 0) {
+    return '<div class="battle-summary"><div class="bs-header">BATTLE SUMMARY</div><div class="bs-empty">NO DATA</div></div>';
   }
 
+  // Champion = sorted[0], worst = sorted[count-1]
+  const champ = sortedStrategies[0];
+  const worst = sortedStrategies[count - 1];
+
+  const champRoi = (champ.roi != null ? champ.roi : 0);
+  const worstRoi = (worst.roi != null ? worst.roi : 0);
+  const champSign = champRoi >= 0 ? '+' : '';
+  const worstSign = worstRoi >= 0 ? '+' : '';
+
+  // Count profit/loss
+  let profitCount = 0, lossCount = 0;
+  sortedStrategies.forEach(s => {
+    const roi = s.roi != null ? s.roi : 0;
+    if (roi >= 0) profitCount++; else lossCount++;
+  });
+
+  const champName = escapeHtml(champ.name || '');
+  const worstName = escapeHtml(worst.name || '');
+  const champCode = escapeHtml(champ.code || '');
+  const worstCode = escapeHtml(worst.code || '');
+
+  // YT link (small)
+  const ytUrl = (configData && configData.ytUrl) || DEFAULT_YT;
   const escapedUrl = escapeHtml(ytUrl);
 
-  return `<div class="yt-panel" onclick="window.open('${escapedUrl}', '_blank')" style="cursor:pointer;">
-  <div class="yt-header">馬克投資。玩的就是真實</div>
-  <div class="yt-text-link" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;width:100%;gap:10px;">
-    <div style="font-size:48px;width:64px;height:64px;display:flex;align-items:center;justify-content:center;background:rgba(255,0,0,0.15);border-radius:50%;border:2px solid rgba(255,0,0,0.3);color:#ff3333;">▶</div>
-    <div style="color:#aaa;font-size:0.85rem;font-family:var(--font-num);text-align:center;word-break:break-all;padding:0 10px;">${escapedUrl}</div>
-    <div style="color:#666;font-size:0.75rem;font-family:var(--font-num);margin-top:4px;">點擊觀看影片</div>
+  return `<div class="battle-summary">
+  <div class="bs-header">⚔ BATTLE SUMMARY</div>
+  <div class="bs-body">
+    <div class="bs-champion">
+      <div class="bs-tag champ-tag">🏆 CHAMPION</div>
+      <div class="bs-name">${champName}</div>
+      <div class="bs-code">${champCode}</div>
+      <div class="bs-roi profit">${champSign}${floorDec(Math.abs(champRoi), 1).toFixed(1)}%</div>
+    </div>
+    <div class="bs-divider"></div>
+    <div class="bs-worst">
+      <div class="bs-tag worst-tag">⚠ LAST</div>
+      <div class="bs-name">${worstName}</div>
+      <div class="bs-code">${worstCode}</div>
+      <div class="bs-roi ${worstRoi >= 0 ? 'profit' : 'loss'}">${worstSign}${floorDec(Math.abs(worstRoi), 1).toFixed(1)}%</div>
+    </div>
+    <div class="bs-divider"></div>
+    <div class="bs-stats">
+      <span class="bs-stat-profit">▲ ${profitCount} 賺</span>
+      <span class="bs-stat-sep">|</span>
+      <span class="bs-stat-loss">▼ ${lossCount} 賠</span>
+      <span class="bs-stat-total">／ ${count} 策略</span>
+    </div>
+  </div>
+  <div class="bs-yt-footer" onclick="window.open('${escapedUrl}', '_blank')" style="cursor:pointer;">
+    <span class="bs-yt-icon">▶</span>
+    <span class="bs-yt-label">最新影片</span>
   </div>
 </div>`;
 }
@@ -466,8 +499,8 @@ export function renderArena(portfolios, cardsData, configData, currentRate) {
   // ── 6. Build donut chart HTML ────────────────────────────────────────────
   const chartHTML = `<div class="chart-panel">${buildDonutChart(pieData, currentRate)}</div>`;
 
-  // ── 7. Build YouTube link card HTML ──────────────────────────────────────
-  const ytHTML = buildYTPanel(configData);
+  // ── 7. Build battle summary card (T2-1 replaces YT panel) ─────────────────
+  const summaryHTML = buildBattleSummary(sorted, configData);
 
   // ── 8. Insert into container ─────────────────────────────────────────────
   container.innerHTML = `<div class="arena-dashboard-v15">
@@ -480,6 +513,6 @@ export function renderArena(portfolios, cardsData, configData, currentRate) {
     <div class="lb-list">${rowsHTML}</div>
   </div>
   ${chartHTML}
-  ${ytHTML}
+  ${summaryHTML}
 </div>`;
 }

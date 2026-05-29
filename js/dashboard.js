@@ -65,6 +65,12 @@ export function renderHeader(logoUrl, configData) {
  * @param {number}                  currentRate - USD/TWD exchange rate.
  */
 export function renderDashboard(cards, currentRate) {
+  // Remove loading shimmer overlay once data arrives
+  const dashGrid = document.querySelector('.dash-grid');
+  if (dashGrid) dashGrid.classList.remove('dash-grid-loading');
+  const overlay = document.querySelector('.loading-overlay');
+  if (overlay) overlay.remove();
+
   // Aggregate portfolio-level figures (TWD, USD, Total)
   const pf = aggregatePortfolio(cards, currentRate);
 
@@ -244,51 +250,17 @@ export function showDashboardLoading() {
   const dashGrid = document.querySelector('.dash-grid');
   if (!dashGrid) return;
 
-  const shimmer =
-    'style="background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px;"';
+  // Add shimmer skeleton class to all value cells — preserves DOM IDs
+  // so renderDashboard() can still find and update them when data arrives.
+  dashGrid.classList.add('dash-grid-loading');
 
-  dashGrid.innerHTML =
-    // Cyan placeholder
-    '<div class="hud-screen cyan" style="min-height: 220px;">' +
-    '<div class="hud-title" style="color: var(--hud-cyan);">TWD 戰情</div>' +
-    '<div ' +
-    shimmer +
-    ' style="height: 16px; width: 60%; margin: 10px auto;"></div>' +
-    '<div ' +
-    shimmer +
-    ' style="height: 40px; width: 40%; margin: 15px auto;"></div>' +
-    '<div ' +
-    shimmer +
-    ' style="height: 20px; width: 50%; margin: 10px auto;"></div>' +
-    '</div>' +
-    // Green placeholder
-    '<div class="hud-screen green" style="min-height: 220px;">' +
-    '<div class="hud-title" style="color: var(--hud-green);">USD 戰情</div>' +
-    '<div ' +
-    shimmer +
-    ' style="height: 16px; width: 60%; margin: 10px auto;"></div>' +
-    '<div ' +
-    shimmer +
-    ' style="height: 40px; width: 40%; margin: 15px auto;"></div>' +
-    '<div ' +
-    shimmer +
-    ' style="height: 20px; width: 50%; margin: 10px auto;"></div>' +
-    '<div ' +
-    shimmer +
-    ' style="height: 60px; width: 80%; margin: 10px auto;"></div>' +
-    '</div>' +
-    // Gold placeholder (no orb glow/ring)
-    '<div class="hud-screen gold" style="min-height: 220px; display: flex; flex-direction: column; align-items: center; justify-content: center;">' +
-    '<div ' +
-    shimmer +
-    ' style="height: 20px; width: 40%; margin-bottom: 10px;"></div>' +
-    '<div ' +
-    shimmer +
-    ' style="height: 60px; width: 50%;"></div>' +
-    '<div ' +
-    shimmer +
-    ' style="height: 20px; width: 30%; margin-top: 10px;"></div>' +
-    '</div>';
+  // Add a translucent overlay to visually signal loading state
+  const wrapper = dashGrid.closest('.dashboard-wrapper');
+  if (wrapper && !wrapper.querySelector('.loading-overlay')) {
+    const overlay = document.createElement('div');
+    overlay.className = 'loading-overlay';
+    wrapper.appendChild(overlay);
+  }
 }
 
 // =============================================================================

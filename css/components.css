@@ -222,6 +222,48 @@ header h1 {
   border: 1px dashed rgba(189, 0, 255, 0.3);
   border-radius: 4px; position: relative; z-index: 2;
 }
+
+/* =========================================================
+   LOADING SHIMMER SKELETON (preserves DOM IDs)
+   ========================================================= */
+.dash-grid-loading .val,
+.dash-grid-loading .pl-val,
+.dash-grid-loading .pl-pct,
+.dash-grid-loading .total-val {
+  position: relative;
+  display: inline-block;
+  min-width: 60px;
+  color: transparent !important;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.02) 25%,
+    rgba(255,255,255,0.07) 50%,
+    rgba(255,255,255,0.02) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: 4px;
+  line-height: 1.4;
+  pointer-events: none;
+}
+.dash-grid-loading .total-val {
+  min-width: 120px;
+}
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.15);
+  z-index: 10;
+  pointer-events: none;
+}
+.dashboard-wrapper {
+  position: relative;
+}
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 .hud-title-sub {
   font-size: 0.75rem; color: var(--trap);
   border-bottom: 1px solid rgba(189,0,255,0.25);

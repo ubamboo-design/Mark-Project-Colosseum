@@ -521,6 +521,12 @@ header h1 {
   transition: background 0.15s; cursor: pointer;
 }
 .lb-row:hover { background: rgba(255,255,255,0.04); }
+/* Region color bar (T2-3) — maps to HUD panel colors */
+.lb-region { width: 4px; min-height: 32px; border-radius: 2px; flex-shrink: 0; margin-right: 6px; }
+.lb-region-tw    { background: var(--hud-cyan);   box-shadow: 0 0 6px var(--hud-cyan); }
+.lb-region-us    { background: var(--hud-green);  box-shadow: 0 0 6px var(--hud-green); }
+.lb-region-qqqi  { background: var(--hud-purple); box-shadow: 0 0 6px var(--hud-purple); }
+.lb-region-other { background: var(--hud-gold);   box-shadow: 0 0 6px var(--hud-gold); }
 .lb-rank { width: 26px; font-weight: 900; color: #555; font-family: var(--font-mono); font-size: 0.82rem; text-align: center; }
 .lb-row.rank-1 .lb-rank { color: var(--gold); text-shadow: 0 0 8px var(--gold); }
 .lb-info { width: 150px; padding: 0 8px; display: flex; flex-direction: column; flex-shrink: 0; }

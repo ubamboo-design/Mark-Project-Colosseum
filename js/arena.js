@@ -111,9 +111,12 @@ export function buildLeaderboardHTML(allStrategies, cardsData) {
       const codeEscaped = escapeHtml(s.code || '');
 
       // Expose openStrategyModal on window — the parent page defines it
+      const region = s._region || 'other';
+
       const clickHandler = `window.openStrategyModal && window.openStrategyModal('${codeEscaped}')`;
 
       return `<div class="lb-row rank-${rank}" onclick="${clickHandler}">
+  <div class="lb-region lb-region-${region}"></div>
   <span class="lb-rank">#${rank}</span>
   <div class="lb-info">
     <div class="lb-name">${nameEscaped}</div>
@@ -423,12 +426,25 @@ export function renderArena(portfolios, cardsData, configData, currentRate) {
   const container = document.getElementById('arenaContainer');
   if (!container) return;
 
-  // ── 1. Flatten all strategies from all groups ────────────────────────────
+  // ── 1. Flatten all strategies from all groups with region tagging ───────
   const allStrategyObjects = [];
+  const regionMap = {
+    '台股組': 'tw',   '台灣組': 'tw',   '台股': 'tw',
+    '美股組': 'us',   '美國組': 'us',   '美股': 'us',
+  };
+  function detectRegion(groupName, code) {
+    const lower = (groupName || '').trim();
+    if (regionMap[lower]) return regionMap[lower];
+    if (/QQQI/i.test(code)) return 'qqqi';
+    return 'other';
+  }
   if (portfolios) {
-    Object.values(portfolios).forEach((group) => {
+    Object.entries(portfolios).forEach(([groupName, group]) => {
       if (Array.isArray(group)) {
-        group.forEach((s) => allStrategyObjects.push(s));
+        group.forEach((s) => {
+          s._region = detectRegion(groupName, s.code);
+          allStrategyObjects.push(s);
+        });
       }
     });
   }

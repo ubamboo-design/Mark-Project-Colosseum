@@ -2,10 +2,8 @@
    PROJECT COLISEUM — main.css
    Core reset, custom properties, typography, utilities
    Dark cyberpunk/HUD aesthetic
+   (Google Fonts loaded via <link> in index.html)
    ============================================================ */
-
-/* ---------- Google Fonts Import ---------- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap');
 
 /* ---------- CSS Reset ---------- */
 *, *::before, *::after {
@@ -124,13 +122,15 @@ body {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--text);
-  background-color: var(--bg);
+  background-color: #000;
   background-image:
-    linear-gradient(rgba(255,255,255,var(--grid-opacity)) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,var(--grid-opacity)) 1px, transparent 1px);
-  background-size: var(--grid-size) var(--grid-size);
-  background-position: center center;
+    linear-gradient(rgba(0, 20, 30, 0.9), rgba(0, 5, 10, 1)),
+    linear-gradient(0deg, transparent 24%, rgba(0,255,255,.05) 25%, rgba(0,255,255,.05) 26%, transparent 27%, transparent 74%, rgba(0,255,255,.05) 75%, rgba(0,255,255,.05) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(0,255,255,.05) 25%, rgba(0,255,255,.05) 26%, transparent 27%, transparent 74%, rgba(0,255,255,.05) 75%, rgba(0,255,255,.05) 76%, transparent 77%, transparent);
+  background-size: 100% 100%, 50px 50px, 50px 50px;
   overflow-x: hidden;
+  padding-bottom: 30px;
+  overscroll-behavior-y: contain;
 }
 
 /* Subtle vignette overlay via pseudo-element */

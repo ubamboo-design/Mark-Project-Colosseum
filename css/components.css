@@ -111,21 +111,21 @@ header h1 {
     padding: 18px 12px;
   }
   .hud-title {
-    font-size: 0.95rem;
-  }
-  .hud-row {
-    font-size: 0.88rem;
-    padding: 3px 0;
-  }
-  .hud-row .val {
-    font-size: 0.92rem;
-  }
-  .pl-val {
-    font-size: 1.2rem;
-  }
-  .pl-pct {
-    font-size: 0.88rem;
-  }
+      font-size: 1rem;
+    }
+    .hud-row {
+      font-size: 0.92rem;
+      padding: 4px 0;
+    }
+    .hud-row .val {
+      font-size: 1rem;
+    }
+    .pl-val {
+      font-size: 1.3rem;
+    }
+    .pl-pct {
+      font-size: 0.9rem;
+    }
   .total-val {
     font-size: 2.2rem;
   }
@@ -171,9 +171,9 @@ header h1 {
 
   /* Sections */
   .section-title {
-    font-size: 0.92rem;
-    margin: 16px 0 8px;
-  }
+      font-size: 1rem;
+      margin: 16px 0 8px;
+    }
 
   /* Modal */
   .modal-content {
@@ -201,9 +201,9 @@ header h1 {
     gap: 6px;
   }
   header h1 {
-    font-size: 0.85rem;
-    letter-spacing: 2px;
-  }
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+    }
   .meta-info {
     font-size: 0.62rem;
   }
@@ -226,22 +226,22 @@ header h1 {
     inset: 4px;
   }
   .hud-title {
-    font-size: 0.85rem;
-    margin-bottom: 6px;
-  }
-  .hud-row {
-    font-size: 0.82rem;
-    padding: 2px 0;
-  }
-  .hud-row .val {
-    font-size: 0.85rem;
-  }
-  .pl-val {
-    font-size: 1.05rem;
-  }
-  .pl-pct {
-    font-size: 0.8rem;
-  }
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+    .hud-row {
+      font-size: 0.88rem;
+      padding: 3px 0;
+    }
+    .hud-row .val {
+      font-size: 0.92rem;
+    }
+    .pl-val {
+      font-size: 1.15rem;
+    }
+    .pl-pct {
+      font-size: 0.85rem;
+    }
   .total-val {
     font-size: 1.8rem;
   }
@@ -255,10 +255,10 @@ header h1 {
     padding: 0 6px;
   }
   .section-title {
-    font-size: 0.82rem;
-    padding-left: 6px;
-    margin: 12px 0 6px;
-  }
+      font-size: 0.85rem;
+      padding-left: 6px;
+      margin: 12px 0 6px;
+    }
   .nested-qqqi .hud-title-sub {
     font-size: 0.7rem;
   }
@@ -387,8 +387,8 @@ header h1 {
 
 /* HUD Title */
 .hud-title {
-  font-family: var(--font-tech); font-weight: 700; font-size: 1.05rem;
-  text-align: center; margin-bottom: 8px; position: relative; z-index: 2;
+  font-family: var(--font-tech); font-weight: 700; font-size: 1.2rem;
+  text-align: center; margin-bottom: 10px; position: relative; z-index: 2;
   letter-spacing: 1px; padding-bottom: 4px; white-space: nowrap;
 }
 
@@ -399,10 +399,10 @@ header h1 {
 .hud-row {
   display: flex; justify-content: space-between; align-items: center;
   border-bottom: 1px dashed rgba(255,255,255,0.08);
-  padding: 4px 0; font-size: 0.95rem;
+  padding: 5px 0; font-size: 1.1rem;
 }
-.hud-row .lbl { color: #666; font-weight: 600; flex-shrink: 0; margin-right: 4px; font-size: 0.82rem; }
-.hud-row .val { color: #ddd; font-family: var(--font-num); font-weight: 700; letter-spacing: 0.3px; white-space: nowrap; font-size: 1rem; }
+.hud-row .lbl { color: #666; font-weight: 600; flex-shrink: 0; margin-right: 6px; }
+.hud-row .val { color: #ddd; font-family: var(--font-num); font-weight: 700; letter-spacing: 0.3px; white-space: nowrap; font-size: 1.2rem; }
 
 /* Visual Hierarchy: currency prefix subdued, number prominent, unit small */
 .hud-row .val .fx,
@@ -437,8 +437,8 @@ header h1 {
   padding-top: 6px; margin-top: auto; width: 100%;
   text-align: right; position: relative; z-index: 2;
 }
-.pl-val { font-family: var(--font-num); font-size: 1.35rem; font-weight: 700; white-space: nowrap; }
-.pl-pct { font-size: 0.95rem; margin-left: 4px; opacity: 0.8; font-family: var(--font-num); }
+.pl-val { font-family: var(--font-num); font-size: 1.6rem; font-weight: 700; white-space: nowrap; }
+.pl-pct { font-size: 1.05rem; margin-left: 6px; opacity: 0.8; font-family: var(--font-num); }
 
 /* Total Asset */
 .total-val {

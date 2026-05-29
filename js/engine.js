@@ -417,12 +417,12 @@ export function animateValue(el, endVal, duration = 800, formatter) {
     const eased = easeOutExpo(progress);
     const current = startVal + (endVal - startVal) * eased;
 
-    el.textContent = formatter ? formatter(current) : Math.floor(current).toLocaleString();
+    el.innerHTML = formatter ? formatter(current) : Math.floor(current).toLocaleString();
 
     if (progress < 1) {
       requestAnimationFrame(step);
     } else {
-      el.textContent = formatter ? formatter(endVal) : Math.floor(endVal).toLocaleString();
+      el.innerHTML = formatter ? formatter(endVal) : Math.floor(endVal).toLocaleString();
     }
   }
 

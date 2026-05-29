@@ -349,6 +349,12 @@ header h1 {
   border-bottom: 2px solid var(--hud-cyan);
   box-shadow: 0 2px 8px rgba(0,234,255,0.25);
 }
+.hud-screen.cyan .data-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
 /* Variant: Green (US) */
 .hud-screen.green {
@@ -395,14 +401,41 @@ header h1 {
   border-bottom: 1px dashed rgba(255,255,255,0.08);
   padding: 4px 0; font-size: 0.95rem;
 }
-.hud-row .lbl { color: #888; font-weight: 700; flex-shrink: 0; margin-right: 4px; }
-.hud-row .val { color: #ccc; font-family: var(--font-num); font-weight: 700; letter-spacing: 0.3px; white-space: nowrap; font-size: 1rem; }
+.hud-row .lbl { color: #666; font-weight: 600; flex-shrink: 0; margin-right: 4px; font-size: 0.82rem; }
+.hud-row .val { color: #ddd; font-family: var(--font-num); font-weight: 700; letter-spacing: 0.3px; white-space: nowrap; font-size: 1rem; }
+
+/* Visual Hierarchy: currency prefix subdued, number prominent, unit small */
+.hud-row .val .fx,
+.total-val .fx,
+.pl-val .fx {
+  font-size: 0.7em;
+  font-weight: 400;
+  opacity: 0.65;
+  letter-spacing: 0.5px;
+  margin-right: 2px;
+}
+.hud-row .val .num,
+.total-val .num,
+.pl-val .num {
+  font-weight: 700;
+}
+.hud-row .val .unit,
+.total-val .unit,
+.pl-val .unit {
+  font-size: 0.65em;
+  font-weight: 400;
+  opacity: 0.55;
+  margin-left: 1px;
+}
+.total-val .num {
+  font-size: 1.1em;
+}
 
 /* P&L Block */
 .pl-block {
   border-top: 1px solid rgba(255,255,255,0.08);
   padding-top: 6px; margin-top: auto; width: 100%;
-  text-align: center; position: relative; z-index: 2;
+  text-align: right; position: relative; z-index: 2;
 }
 .pl-val { font-family: var(--font-num); font-size: 1.35rem; font-weight: 700; white-space: nowrap; }
 .pl-pct { font-size: 0.95rem; margin-left: 4px; opacity: 0.8; font-family: var(--font-num); }
@@ -417,8 +450,8 @@ header h1 {
 /* Nested QQQI Panel */
 .nested-qqqi {
   margin-top: auto; padding: 8px;
-  background: rgba(189, 0, 255, 0.06);
-  border: 1px dashed rgba(189, 0, 255, 0.3);
+  background: rgba(189, 0, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 4px; position: relative; z-index: 2;
 }
 
@@ -465,7 +498,7 @@ header h1 {
 
 .hud-title-sub {
   font-size: 0.75rem; color: var(--trap);
-  border-bottom: 1px solid rgba(189,0,255,0.25);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   padding-bottom: 2px; margin-bottom: 4px;
   display: flex; justify-content: space-between; font-weight: 700;
 }

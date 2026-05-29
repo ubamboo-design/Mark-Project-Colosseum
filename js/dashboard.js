@@ -59,6 +59,59 @@ export function renderHeader(logoUrl, configData) {
 // =============================================================================
 
 /**
+ * Wrap a formatCompact string (e.g. "838.0萬", "4,432") into HTML spans
+ * separating the numeric value from the "萬"/"億" unit suffix.
+ *
+ * @param {string} str - Formatted number string from formatCompact.
+ * @returns {string} HTML with <span class="num"> and <span class="unit">.
+ */
+function wrapNumHtml(str) {
+  const m = str.match(/^(.+?)([億萬])$/);
+  if (m) {
+    return '<span class="num">' + m[1] + '</span><span class="unit">' + m[2] + '</span>';
+  }
+  return '<span class="num">' + str + '</span>';
+}
+
+/**
+ * Build a HUD value HTML string with visual hierarchy.
+ * Renders as: [sign]<span class="fx">NT$/USD$</span> <span class="num">838.0</span><span class="unit">萬</span>
+ *
+ * @param {string} currency - "NT$" or "USD$".
+ * @param {string} formatted - Formatted value from formatCompact.
+ * @param {string} [sign=""] - "+" or empty.
+ * @returns {string} HTML string safe for innerHTML.
+ */
+function valHtml(currency, formatted, sign) {
+  return (sign || '') +
+    '<span class="fx">' + currency + '</span> ' +
+    wrapNumHtml(formatted);
+}
+
+/**
+ * Set innerHTML on an element by ID, optionally applying a CSS class.
+ *
+ * Supports two call signatures:
+ *   setHtml(id, html)
+ *   setHtml(id, className, html)
+ *
+ * @param {string} id   - Element ID.
+ * @param {string} [cls] - Optional CSS class name to set.
+ * @param {string} html  - HTML content to set.
+ */
+function setHtml(id, cls, html) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  // Two-argument form: setHtml(id, html)
+  if (html === undefined) {
+    html = cls;
+    cls = undefined;
+  }
+  if (cls) el.className = cls;
+  el.innerHTML = html;
+}
+
+/**
  * Compute all HUD panel values via engine functions and update the DOM.
  *
  * @param {Object<string, Object>} cards       - Map of cardCode → CardData.
@@ -79,22 +132,22 @@ export function renderDashboard(cards, currentRate) {
 
   // ── TW Panel (Cyan) ───────────────────────────────────────────────────
 
-  setText(
+  setHtml(
     'investedTW',
-    pf.investedTW > 0 ? 'NT$ ' + formatCompact(pf.investedTW) : '...'
+    pf.investedTW > 0 ? valHtml('NT$', formatCompact(pf.investedTW)) : '...'
   );
-  setText(
+  setHtml(
     'assetTW',
-    pf.assetTW > 0 ? 'NT$ ' + formatCompact(pf.assetTW) : '...'
+    pf.assetTW > 0 ? valHtml('NT$', formatCompact(pf.assetTW)) : '...'
   );
 
   const twPL = calc(pf.investedTW, pf.assetTW);
-  setText(
+  setHtml(
     'plTW_val',
     twPL.cls,
     twPL.diff !== 0
-      ? twPL.sign + 'NT$ ' + formatCompact(twPL.diff)
-      : 'NT$ 0'
+      ? valHtml('NT$', formatCompact(twPL.diff), twPL.sign)
+      : valHtml('NT$', '0')
   );
   setText(
     'plTW_pct',
@@ -105,22 +158,22 @@ export function renderDashboard(cards, currentRate) {
 
   // ── US Panel (Green) ──────────────────────────────────────────────────
 
-  setText(
+  setHtml(
     'investedUS',
-    pf.investedUS > 0 ? 'USD$ ' + formatCompact(pf.investedUS) : '...'
+    pf.investedUS > 0 ? valHtml('USD$', formatCompact(pf.investedUS)) : '...'
   );
-  setText(
+  setHtml(
     'assetUS',
-    pf.assetUS > 0 ? 'USD$ ' + formatCompact(pf.assetUS) : '...'
+    pf.assetUS > 0 ? valHtml('USD$', formatCompact(pf.assetUS)) : '...'
   );
 
   const usPL = calc(pf.investedUS, pf.assetUS);
-  setText(
+  setHtml(
     'plUS_val',
     usPL.cls,
     usPL.diff !== 0
-      ? usPL.sign + 'USD$ ' + formatCompact(usPL.diff)
-      : 'USD$ 0'
+      ? valHtml('USD$', formatCompact(usPL.diff), usPL.sign)
+      : valHtml('USD$', '0')
   );
   setText(
     'plUS_pct',
@@ -140,29 +193,29 @@ export function renderDashboard(cards, currentRate) {
 
   // ── QQQI Dividend Panel (Purple, nested in US) ────────────────────────
 
-  setText('qqqiDivCum', qqqi.divCum > 0 ? 'NT$ ' + formatCompact(qqqi.divCum, 0) : '...');
-  setText('qqqiTaxRef', qqqi.taxRefund > 0 ? 'NT$ ' + formatCompact(qqqi.taxRefund, 0) : '...');
-  setText('qqqiDivTotal', qqqi.divTotal > 0 ? 'NT$ ' + formatCompact(qqqi.divTotal, 0) : '...');
+  setHtml('qqqiDivCum', qqqi.divCum > 0 ? valHtml('NT$', formatCompact(qqqi.divCum, 0)) : '...');
+  setHtml('qqqiTaxRef', qqqi.taxRefund > 0 ? valHtml('NT$', formatCompact(qqqi.taxRefund, 0)) : '...');
+  setHtml('qqqiDivTotal', qqqi.divTotal > 0 ? valHtml('NT$', formatCompact(qqqi.divTotal, 0)) : '...');
 
   // ── Total Panel (Gold) ────────────────────────────────────────────────
 
   const totalEl = document.getElementById('totalAsset');
   if (totalEl && pf.totalAssetTWD > 0) {
-    animateValue(totalEl, pf.totalAssetTWD, 800, (v) => 'NT$ ' + formatCompact(v));
+    animateValue(totalEl, pf.totalAssetTWD, 800, (v) => valHtml('NT$', formatCompact(v)));
   } else {
-    setText('totalAsset', pf.totalAssetTWD > 0 ? 'NT$ ' + formatCompact(pf.totalAssetTWD) : '...');
+    setHtml('totalAsset', pf.totalAssetTWD > 0 ? valHtml('NT$', formatCompact(pf.totalAssetTWD)) : '...');
   }
 
   const totalPL = calc(pf.totalInvestedTWD, pf.totalAssetTWD);
 
   const totalPLEl = document.getElementById('totalPL_val');
   if (totalPLEl && totalPL.diff !== 0) {
-    animateValue(totalPLEl, totalPL.diff, 800, (v) => totalPL.sign + 'NT$ ' + formatCompact(Math.abs(v)));
+    animateValue(totalPLEl, totalPL.diff, 800, (v) => valHtml('NT$', formatCompact(Math.abs(v)), totalPL.sign));
     totalPLEl.className = totalPL.cls;
   } else {
-    setText('totalPL_val', totalPL.cls, totalPL.diff !== 0
-      ? totalPL.sign + 'NT$ ' + formatCompact(Math.abs(totalPL.diff))
-      : 'NT$ 0');
+    setHtml('totalPL_val', totalPL.cls, totalPL.diff !== 0
+      ? valHtml('NT$', formatCompact(Math.abs(totalPL.diff)), totalPL.sign)
+      : valHtml('NT$', '0'));
   }
 
   setText(

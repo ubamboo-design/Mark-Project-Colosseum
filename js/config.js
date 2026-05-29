@@ -34,14 +34,14 @@ export const COLORS = {
   /** Profit / positive return */
   profit: {
     strong: '#ffd700',   // gold — top performer
-    normal: '#ff2a2a',   // red — positive but moderate
+    normal: '#00ff6a',   // green — profit (finance convention)
     cssVar: 'var(--gold)',
   },
   /** Loss / negative return */
   loss: {
-    normal: '#00ff6a',   // green — negative return (inverted finance palette)
+    normal: '#ff2a2a',   // red — loss (finance convention)
     severe: '#bd00ff',   // purple / trap — deep loss
-    cssVar: 'var(--green)',
+    cssVar: 'var(--red)',
   },
   /** Strategy-type colour mapping */
   byStrategy: {

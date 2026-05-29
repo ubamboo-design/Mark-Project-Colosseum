@@ -236,7 +236,7 @@ export function buildDonutChart(data, currentRate) {
     // SVG path for the donut segment
     const pathD = `M ${x1} ${y1} A ${R} ${R} 0 ${largeArc} 1 ${x2} ${y2} L ${ix2} ${iy2} A ${r} ${r} 0 ${largeArc} 0 ${ix1} ${iy1} Z`;
 
-    // Colour — red tint for profit, green tint for loss
+    // Profit ratio for color intensity (0..1)
     const pratio =
       d.profit >= 0
         ? maxP > 0
@@ -245,10 +245,11 @@ export function buildDonutChart(data, currentRate) {
         : minP < 0
           ? d.profit / minP
           : 0;
+    // Colour: green tint for profit, red tint for loss (finance convention)
     const fill =
       d.profit >= 0
-        ? `rgba(255, 42, 42, ${0.4 + 0.6 * pratio})`
-        : `rgba(0, 255, 106, ${0.4 + 0.6 * (Math.abs(pratio))})`;
+        ? `rgba(0, 255, 106, ${0.4 + 0.6 * pratio})`
+        : `rgba(255, 42, 42, ${0.4 + 0.6 * (Math.abs(pratio))})`;
 
     // Segment is clickable — calls openStrategyModal(code) exposed on window
     const code = escapeHtml(d.code || '');
@@ -326,7 +327,7 @@ export function buildDonutChart(data, currentRate) {
         ? ((absProfit / d.inv) * 100).toFixed(1) + '%'
         : 'N/A';
     const sign = d.profit >= 0 ? '+' : '-';
-    const profitColor = d.profit >= 0 ? '#ff4d4d' : '#00ff6a';
+    const profitColor = d.profit >= 0 ? '#00ff6a' : '#ff4d4d';
 
     // Polyline connector: from outer edge → midpoint → text anchor
     const px1 = l.ax;

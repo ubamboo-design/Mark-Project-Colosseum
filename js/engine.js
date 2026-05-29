@@ -370,6 +370,55 @@ export function formatUSD(val) {
 }
 
 // =============================================================================
+// DOM Animation: Count-Up Effect
+// =============================================================================
+
+/**
+ * Animate an element's textContent from its current numeric value to a target
+ * value using an easeOutExpo curve over the specified duration.
+ *
+ * Works with elements already displaying numbers (e.g. "1,234萬" or "567").
+ * Parses numbers by stripping non-numeric chars except '.' and '-'.
+ *
+ * @param {HTMLElement} el        - Target DOM element.
+ * @param {number}      endVal    - Target numeric value.
+ * @param {number}      [duration=800] - Animation duration in ms.
+ * @param {function}    [formatter]    - Optional (val: number) => string formatter.
+ */
+export function animateValue(el, endVal, duration = 800, formatter) {
+  if (!el) return;
+
+  const raw = el.textContent || '0';
+  const parsed = parseFloat(raw.replace(/[^0-9.\-]/g, ''));
+  const startVal = isNaN(parsed) ? 0 : parsed;
+
+  if (startVal === endVal) return;
+
+  const startTime = performance.now();
+
+  function easeOutExpo(t) {
+    return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  }
+
+  function step(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = easeOutExpo(progress);
+    const current = startVal + (endVal - startVal) * eased;
+
+    el.textContent = formatter ? formatter(current) : Math.floor(current).toLocaleString();
+
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      el.textContent = formatter ? formatter(endVal) : Math.floor(endVal).toLocaleString();
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+// =============================================================================
 // QQQI Dividend Aggregation (convenience)
 // =============================================================================
 

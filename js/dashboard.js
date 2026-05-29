@@ -13,6 +13,7 @@ import {
   formatCompact,
   formatUSD,
   calc,
+  animateValue,
 } from './engine.js';
 import { CONFIG_DEFAULTS } from './config.js';
 
@@ -145,19 +146,25 @@ export function renderDashboard(cards, currentRate) {
 
   // ── Total Panel (Gold) ────────────────────────────────────────────────
 
-  setText(
-    'totalAsset',
-    pf.totalAssetTWD > 0 ? formatCompact(pf.totalAssetTWD) : '...'
-  );
+  const totalEl = document.getElementById('totalAsset');
+  if (totalEl && pf.totalAssetTWD > 0) {
+    animateValue(totalEl, pf.totalAssetTWD, 800, (v) => formatCompact(v));
+  } else {
+    setText('totalAsset', pf.totalAssetTWD > 0 ? formatCompact(pf.totalAssetTWD) : '...');
+  }
 
   const totalPL = calc(pf.totalInvestedTWD, pf.totalAssetTWD);
-  setText(
-    'totalPL_val',
-    totalPL.cls,
-    totalPL.diff !== 0
-      ? totalPL.sign + 'NT$ ' + formatCompact(totalPL.diff)
-      : 'NT$ 0'
-  );
+
+  const totalPLEl = document.getElementById('totalPL_val');
+  if (totalPLEl && totalPL.diff !== 0) {
+    animateValue(totalPLEl, totalPL.diff, 800, (v) => totalPL.sign + 'NT$ ' + formatCompact(Math.abs(v)));
+    totalPLEl.className = totalPL.cls;
+  } else {
+    setText('totalPL_val', totalPL.cls, totalPL.diff !== 0
+      ? totalPL.sign + 'NT$ ' + formatCompact(Math.abs(totalPL.diff))
+      : 'NT$ 0');
+  }
+
   setText(
     'totalPL_pct',
     totalPL.roi !== '0' || pf.totalInvestedTWD > 0

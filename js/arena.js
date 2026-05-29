@@ -201,6 +201,9 @@ export function buildDonutChart(data, currentRate) {
     return '<div class="donut-container"><div style="text-align:center;color:#555;padding:40px;font-family:var(--font-num);">NO VALUE</div></div>';
   }
 
+  // Staggered entrance animation: each slice fades in sequentially
+  let sliceIndex = 0;
+
   const maxP = data.reduce((m, d) => Math.max(m, d.profit), 0);
   const minP = data.reduce((m, d) => Math.min(m, d.profit), 0);
 
@@ -249,7 +252,9 @@ export function buildDonutChart(data, currentRate) {
 
     // Segment is clickable — calls openStrategyModal(code) exposed on window
     const code = escapeHtml(d.code || '');
-    svgPaths += `<path d="${pathD}" fill="${fill}" stroke="#1a1a1e" stroke-width="2" class="donut-slice" onclick="window.openStrategyModal && window.openStrategyModal('${code}')"/>`;
+    const animDelay = sliceIndex * 0.08;
+    sliceIndex++;
+    svgPaths += `<path d="${pathD}" fill="${fill}" stroke="#1a1a1e" stroke-width="2" class="donut-slice donut-reveal" style="animation-delay:${animDelay}s" onclick="window.openStrategyModal && window.openStrategyModal('${code}')"/>`;
 
     // Compute label anchor point
     const isRight = Math.cos(midAngle) >= 0;

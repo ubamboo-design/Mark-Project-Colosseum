@@ -257,6 +257,11 @@ header h1 {
   display: flex; flex-direction: column;
   min-height: 200px; overflow: hidden;
   box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+  transition: all 0.3s ease, box-shadow 0.4s ease;
+}
+.hud-screen:hover {
+  transform: scale(1.02);
+  z-index: 5;
 }
 .hud-screen::before {
   content: ''; position: absolute; inset: 8px;
@@ -277,6 +282,10 @@ header h1 {
   color: var(--hud-cyan);
   border-bottom: 2px solid var(--hud-cyan);
   box-shadow: 0 2px 8px rgba(0,234,255,0.25);
+}
+.hud-screen.cyan:hover {
+  border-color: rgba(0, 234, 255, 0.5);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 24px rgba(0,234,255,0.25), 0 0 48px rgba(0,234,255,0.08);
 }
 .hud-screen.cyan .data-group {
   flex: 1;
@@ -300,12 +309,20 @@ header h1 {
   border-bottom: 2px solid var(--hud-green);
   box-shadow: 0 2px 8px rgba(0,255,76,0.25);
 }
+.hud-screen.green:hover {
+  border-color: rgba(0, 255, 76, 0.5);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 24px rgba(0,255,76,0.25), 0 0 48px rgba(0,255,76,0.08);
+}
 
 /* Variant: Gold (Total) — simplified, no orb glow/ring */
 .hud-screen.gold {
   background: #080500;
   border: 1px solid rgba(255, 204, 0, 0.25);
   justify-content: center; align-items: center;
+}
+.hud-screen.gold:hover {
+  border-color: rgba(255, 204, 0, 0.6);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 32px rgba(255,204,0,0.3), 0 0 60px rgba(255,204,0,0.1);
 }
 .hud-screen.gold::after {
   content: ''; position: absolute; inset: 10px;
@@ -328,6 +345,10 @@ header h1 {
   color: var(--hud-purple);
   border-bottom: 2px solid var(--hud-purple);
   box-shadow: 0 2px 8px rgba(189,0,255,0.2);
+}
+.hud-screen.purple:hover {
+  border-color: rgba(189, 0, 255, 0.5);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 24px rgba(189,0,255,0.25), 0 0 48px rgba(189,0,255,0.08);
 }
 .hud-screen.purple .pl-val {
   color: var(--hud-purple);
@@ -403,6 +424,15 @@ header h1 {
 /* Gold panel P&L stays center */
 .hud-screen.gold .pl-block {
   text-align: center;
+}
+/* Value update pulse animation (T3-3) */
+.hud-updated {
+  animation: hudPulse 0.6s ease-out;
+}
+@keyframes hudPulse {
+  0% { opacity: 0.5; filter: brightness(0.5); }
+  30% { opacity: 1; filter: brightness(1.6); }
+  100% { opacity: 1; filter: brightness(1); }
 }
 #totalPL_val {
   font-size: clamp(16px, 2vw, 28px);
@@ -482,7 +512,24 @@ header h1 {
 /* =========================================================
    8. ARENA DASHBOARD (3-column layout)
    ========================================================= */
-.arena-container { width: 100%; }
+.arena-container { width: 100%; position: relative; overflow: hidden; }
+/* CRT scanline effect (T3-1) — subtle moving line */
+.arena-container::after {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 255, 255, 0.015) 2px,
+    rgba(0, 255, 255, 0.015) 4px
+  );
+  pointer-events: none; z-index: 1;
+  animation: scanlineMove 8s linear infinite;
+}
+@keyframes scanlineMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
 .arena-dashboard-v15 {
   display: grid;
   grid-template-columns: 380px 1fr 300px;

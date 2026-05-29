@@ -18,11 +18,14 @@ import {
 import { CONFIG_DEFAULTS } from './config.js';
 
 // =============================================================================
-// Internal State
+// Internal State & Helpers
 // =============================================================================
 
 /** @type {'live'|'cached'} */
 let _cacheMode = 'live';
+
+/** @type {Map<string, string>} Previous values for change detection (T3-3) */
+const _prevValues = new Map();
 
 // =============================================================================
 // Header Rendering
@@ -108,6 +111,15 @@ function setHtml(id, cls, html) {
     cls = undefined;
   }
   if (cls) el.className = cls;
+  // Change detection (T3-3) — pulse on value update
+  const prev = _prevValues.get(id);
+  if (prev !== undefined && prev !== html && prev !== '...') {
+    el.classList.remove('hud-updated');
+    // Force reflow then add class to restart animation
+    void el.offsetWidth;
+    el.classList.add('hud-updated');
+  }
+  _prevValues.set(id, html);
   el.innerHTML = html;
 }
 
@@ -338,6 +350,14 @@ function setText(id, cls, text) {
   if (cls) {
     el.className = cls;
   }
+  // Change detection (T3-3) — pulse on value update
+  const prev = _prevValues.get('text:' + id);
+  if (prev !== undefined && prev !== text && prev !== '...') {
+    el.classList.remove('hud-updated');
+    void el.offsetWidth;
+    el.classList.add('hud-updated');
+  }
+  _prevValues.set('text:' + id, text);
   el.textContent = text;
 }
 

@@ -89,9 +89,208 @@ header h1 {
 }
 
 @media(max-width:900px) {
-  .hud-status-badge { top: 8px; right: 8px; padding: 3px 6px; font-size: 0.65rem; gap: 8px; }
+  .hud-status-badge { top: 8px; right: 8px; padding: 3px 6px; font-size: 0.75rem; gap: 8px; }
   .header-text { margin-top: 20px; }
   header h1 { font-size: 1rem; }
+}
+
+/* =========================================================
+   TABLET / MOBILE RESPONSIVE (≤ 900px)
+   ========================================================= */
+@media(max-width:900px) {
+  /* HUD grid: 3col → 1col */
+  .dash-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .hud-screen {
+    min-height: auto;
+    padding: 14px 12px;
+  }
+  .hud-screen.gold {
+    padding: 18px 12px;
+  }
+  .hud-title {
+    font-size: 0.95rem;
+  }
+  .hud-row {
+    font-size: 0.88rem;
+    padding: 3px 0;
+  }
+  .hud-row .val {
+    font-size: 0.92rem;
+  }
+  .pl-val {
+    font-size: 1.2rem;
+  }
+  .pl-pct {
+    font-size: 0.88rem;
+  }
+  .total-val {
+    font-size: 2.2rem;
+  }
+  .nested-qqqi {
+    padding: 6px;
+  }
+
+  /* Arena: 3col → 1col */
+  .arena-dashboard-v15 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .chart-panel,
+  .yt-panel {
+    min-height: auto;
+    padding: 14px;
+  }
+  .chart-panel::before {
+    font-size: 0.6rem;
+    top: -8px;
+    left: 8px;
+  }
+  .donut-container {
+    min-height: 240px;
+  }
+
+  /* Leaderboard scrollable */
+  .leaderboard-panel {
+    overflow-x: auto;
+  }
+
+  /* Events */
+  .event-list {
+    padding-left: 24px;
+    margin-left: 8px;
+  }
+  .event-card {
+    padding: 10px;
+  }
+  .event-date {
+    font-size: 0.88rem;
+  }
+
+  /* Sections */
+  .section-title {
+    font-size: 0.92rem;
+    margin: 16px 0 8px;
+  }
+
+  /* Modal */
+  .modal-content {
+    padding: 16px;
+    width: 95%;
+  }
+  .m-code {
+    font-size: 1rem;
+  }
+
+  /* Refresh */
+  .refresh-btn {
+    padding: 10px 20px;
+    font-size: 0.85rem;
+  }
+}
+
+/* =========================================================
+   SMALL PHONE (≤ 600px)
+   ========================================================= */
+@media(max-width:600px) {
+  header {
+    flex-direction: column;
+    padding: 10px 10px 6px;
+    gap: 6px;
+  }
+  header h1 {
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+  }
+  .meta-info {
+    font-size: 0.62rem;
+  }
+  #pageLogo {
+    height: 32px;
+  }
+  .dashboard-wrapper {
+    margin-top: 10px;
+    padding: 6px;
+    border-radius: 4px;
+  }
+  .dash-grid {
+    gap: 6px;
+    padding: 3px;
+  }
+  .hud-screen {
+    padding: 10px 10px;
+  }
+  .hud-screen::before {
+    inset: 4px;
+  }
+  .hud-title {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+  .hud-row {
+    font-size: 0.82rem;
+    padding: 2px 0;
+  }
+  .hud-row .val {
+    font-size: 0.85rem;
+  }
+  .pl-val {
+    font-size: 1.05rem;
+  }
+  .pl-pct {
+    font-size: 0.8rem;
+  }
+  .total-val {
+    font-size: 1.8rem;
+  }
+  .hud-status-badge {
+    position: static;
+    margin-bottom: 6px;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+  }
+  .container {
+    padding: 0 6px;
+  }
+  .section-title {
+    font-size: 0.82rem;
+    padding-left: 6px;
+    margin: 12px 0 6px;
+  }
+  .nested-qqqi .hud-title-sub {
+    font-size: 0.7rem;
+  }
+  .arena-dashboard-v15 {
+    gap: 8px;
+  }
+  .lb-row {
+    padding: 4px 6px;
+  }
+  .lb-name {
+    font-size: 0.72rem;
+  }
+  .lb-invested {
+    font-size: 0.7rem;
+    width: 80px;
+  }
+  .lb-val {
+    font-size: 0.78rem;
+    min-width: 50px;
+  }
+  .event-list {
+    padding-left: 18px;
+    margin-left: 4px;
+  }
+  .event-card::before {
+    left: -26px;
+    width: 10px;
+    height: 10px;
+  }
+  .event-date {
+    font-size: 0.8rem;
+  }
 }
 
 /* =========================================================
@@ -182,7 +381,7 @@ header h1 {
 
 /* HUD Title */
 .hud-title {
-  font-family: var(--font-tech); font-weight: 700; font-size: 1rem;
+  font-family: var(--font-tech); font-weight: 700; font-size: 1.05rem;
   text-align: center; margin-bottom: 8px; position: relative; z-index: 2;
   letter-spacing: 1px; padding-bottom: 4px; white-space: nowrap;
 }
@@ -194,10 +393,10 @@ header h1 {
 .hud-row {
   display: flex; justify-content: space-between; align-items: center;
   border-bottom: 1px dashed rgba(255,255,255,0.08);
-  padding: 3px 0; font-size: 0.82rem;
+  padding: 4px 0; font-size: 0.95rem;
 }
 .hud-row .lbl { color: #888; font-weight: 700; flex-shrink: 0; margin-right: 4px; }
-.hud-row .val { color: #ccc; font-family: var(--font-num); font-weight: 700; letter-spacing: 0.3px; white-space: nowrap; }
+.hud-row .val { color: #ccc; font-family: var(--font-num); font-weight: 700; letter-spacing: 0.3px; white-space: nowrap; font-size: 1rem; }
 
 /* P&L Block */
 .pl-block {
@@ -205,8 +404,8 @@ header h1 {
   padding-top: 6px; margin-top: auto; width: 100%;
   text-align: center; position: relative; z-index: 2;
 }
-.pl-val { font-family: var(--font-num); font-size: 1.2rem; font-weight: 700; white-space: nowrap; }
-.pl-pct { font-size: 0.85rem; margin-left: 2px; opacity: 0.8; font-family: var(--font-num); }
+.pl-val { font-family: var(--font-num); font-size: 1.35rem; font-weight: 700; white-space: nowrap; }
+.pl-pct { font-size: 0.95rem; margin-left: 4px; opacity: 0.8; font-family: var(--font-num); }
 
 /* Total Asset */
 .total-val {
@@ -285,7 +484,7 @@ header h1 {
    7. SECTION TITLES
    ========================================================= */
 .section-title {
-  font-size: 0.95rem; border-left: 3px solid var(--gold);
+  font-size: 1.05rem; border-left: 3px solid var(--gold);
   padding-left: 10px; margin: 22px 0 10px; text-transform: uppercase;
   font-weight: 900; color: #fff;
   display: flex; align-items: center; letter-spacing: 2px;

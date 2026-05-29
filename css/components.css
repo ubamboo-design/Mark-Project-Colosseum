@@ -129,6 +129,8 @@ header h1 {
   .donut-container {
     min-height: 240px;
   }
+  .donut-legend { flex: 0 0 140px; font-size: 0.7rem; }
+  .dl-profit { min-width: 36px; }
   .leaderboard-panel {
     overflow-x: auto;
   }
@@ -646,13 +648,45 @@ header h1 {
   font-size: 0.7rem; letter-spacing: 1px; z-index: 2;
   border: 1px solid rgba(0,247,255,0.25); border-radius: 3px;
 }
+/* Donut wrapper: SVG on left, legend on right */
+.donut-wrapper {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; height: 100%;
+  margin-top: 8px;
+}
 .donut-container {
-  width: 100%; height: 100%; display: flex;
-  align-items: center; justify-content: center;
-  position: relative; margin-top: 8px;
+  flex: 1; min-width: 0;
+  display: flex; align-items: center; justify-content: center;
 }
 .donut-slice { cursor: pointer; transition: transform 0.15s, filter 0.15s; transform-origin: 0 0; }
 .donut-slice:hover { transform: scale(1.04); filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
+/* Donut legend panel (replaces radial labels) */
+.donut-legend {
+  flex: 0 0 180px; max-height: 320px; overflow-y: auto;
+  padding: 8px 4px 8px 8px;
+  border-left: 1px solid rgba(255,255,255,0.06);
+}
+.dl-header {
+  font-family: var(--font-tech); font-size: 0.65rem;
+  color: #888; letter-spacing: 1px; margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.dl-item {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 4px; cursor: pointer;
+  border-radius: 3px; transition: background 0.15s;
+  font-size: 0.75rem;
+}
+.dl-item:hover { background: rgba(255,255,255,0.05); }
+.dl-dot {
+  flex-shrink: 0; width: 8px; height: 8px;
+  border-radius: 50%;
+}
+.dl-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #ccc; font-weight: 600; }
+.dl-pct { color: #888; font-family: var(--font-num); font-weight: 700; min-width: 38px; text-align: right; }
+.dl-profit { font-family: var(--font-num); font-weight: 700; min-width: 48px; text-align: right; }
+.dl-profit.profit { color: var(--green); }
+.dl-profit.loss { color: var(--red); }
 
 /* SVG text shadow utility (applied from JS) */
 
@@ -912,7 +946,8 @@ header h1 {
   /* Donut panel mobile */
   .chart-panel { min-height: 260px; padding: 8px; }
   .chart-panel::before { font-size: 0.5rem; top: -6px; left: 6px; }
-  .donut-container { min-height: 200px; }
+  .donut-wrapper { flex-direction: column; gap: 4px; }
+  .donut-container { min-height: 180px; }
   /* Event timeline */
   .event-list { padding-left: 18px; margin-left: 6px; }
   .event-card { padding: 8px; margin-bottom: 14px; }

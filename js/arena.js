@@ -228,8 +228,6 @@ export function buildDonutChart(data, currentRate) {
   // ── SVG constants ──────────────────────────────────────────────────────
   const R = 130;           // outer radius
   const r = 65;            // inner radius (donut hole)
-  const labelR = 200;      // radius for label anchor points
-  const textR = 240;       // radius for text end points
 
   // ── Aggregate data ─────────────────────────────────────────────────────
   const totalVal = data.reduce((sum, d) => sum + d.val, 0);
@@ -243,10 +241,9 @@ export function buildDonutChart(data, currentRate) {
   const maxP = data.reduce((m, d) => Math.max(m, d.profit), 0);
   const minP = data.reduce((m, d) => Math.min(m, d.profit), 0);
 
-  // ── Label data accumulator ─────────────────────────────────────────────
-  const labelData = [];
+  // ── Build segments + legend data ───────────────────────────────────────
+  const legendItems = [];
   let svgPaths = '';
-  let svgLabels = '';
   let startAngle = -Math.PI / 2; // start at top (12 o'clock)
 
   data.forEach((d) => {
@@ -287,110 +284,63 @@ export function buildDonutChart(data, currentRate) {
         ? `rgba(0, 255, 106, ${0.4 + 0.6 * pratio})`
         : `rgba(255, 42, 42, ${0.4 + 0.6 * (Math.abs(pratio))})`;
 
-    // Segment is clickable — calls openStrategyModal(code) exposed on window
+    // Segment is clickable
     const code = escapeHtml(d.code || '');
     const animDelay = sliceIndex * 0.08;
     sliceIndex++;
     svgPaths += `<path d="${pathD}" fill="${fill}" stroke="#1a1a1e" stroke-width="2" class="donut-slice donut-reveal" style="animation-delay:${animDelay}s" onclick="window.openStrategyModal && window.openStrategyModal('${code}')"/>`;
 
-    // Compute label anchor point
-    const isRight = Math.cos(midAngle) >= 0;
-    labelData.push({
-      d: d,
-      midAngle: midAngle,
-      ax: Math.cos(midAngle) * R,
-      ay: Math.sin(midAngle) * R,
-      isRight: isRight,
-      y: Math.sin(midAngle) * labelR,
-      xSign: isRight ? 1 : -1,
+    // ── Short inline percentage label ──────────────────────────────────
+    const pctStr = ((d.val / totalVal) * 100).toFixed(1) + '%';
+    // Place label at midpoint between outer and inner radius
+    const labelR = R - 15 /* offset inward from outer edge */;
+    const lx = Math.cos(midAngle) * (r + (R - r) * 0.65);
+    const ly = Math.sin(midAngle) * (r + (R - r) * 0.65);
+    // Only show label if slice is big enough (> 6%)
+    if ((d.val / totalVal) >= 0.06) {
+      svgPaths += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central"
+        font-family="'Rajdhani',sans-serif" font-size="13" font-weight="700"
+        fill="${d.profit >= 0 ? '#003300' : '#330000'}"
+        class="donut-reveal" style="animation-delay:${animDelay + 0.15}s;pointer-events:none;">
+        ${pctStr}
+      </text>`;
+    }
+
+    // ── Collect legend data ────────────────────────────────────────────
+    const absProfit = Math.abs(d.profit);
+    const roiPct = d.inv > 0 ? ((absProfit / d.inv) * 100).toFixed(1) + '%' : 'N/A';
+    const sign = d.profit >= 0 ? '+' : '-';
+
+    legendItems.push({
+      code: code,
+      name: escapeHtml(d.name || ''),
+      fill: fill,
+      pct: pctStr,
+      profit: sign + formatDonutVal(absProfit),
+      roi: sign + roiPct,
+      isProfit: d.profit >= 0,
     });
 
     startAngle = endAngle;
   });
 
-  // ── Anti-collision label layout (cumulative offset accumulation) ─────
-  const MIN_Y_SPACE = 65;
-
-  // Process left-side and right-side labels separately
-  const leftLabels = labelData
-    .filter((l) => !l.isRight)
-    .sort((a, b) => a.y - b.y);
-  const rightLabels = labelData
-    .filter((l) => l.isRight)
-    .sort((a, b) => a.y - b.y);
-
-  /** Apply cumulative offset anti-collision to a group of labels. */
-  function resolveCollisions(group) {
-    if (group.length < 2) return;
-
-    // Sort by y position ascending
-    group.sort((a, b) => a.y - b.y);
-
-    // First pass: push overlapping labels down
-    for (let i = 1; i < group.length; i++) {
-      const minAllowed = group[i - 1].y + MIN_Y_SPACE;
-      if (group[i].y < minAllowed) {
-        group[i].y = minAllowed;
-      }
-    }
-
-    // Second pass (reverse): pull overlapping labels up
-    for (let i = group.length - 2; i >= 0; i--) {
-      const maxAllowed = group[i + 1].y - MIN_Y_SPACE;
-      if (group[i].y > maxAllowed) {
-        group[i].y = maxAllowed;
-      }
-    }
-
-    // Clamp to [-250, 250] boundary
-    for (const l of group) {
-      if (l.y < -250) l.y = -250;
-      if (l.y > 250) l.y = 250;
-    }
-  }
-
-  resolveCollisions(leftLabels);
-  resolveCollisions(rightLabels);
-
-  // ── Generate label lines and text ─────────────────────────────────────
-  labelData.forEach((l) => {
-    const d = l.d;
-    const pctStr = ((d.val / totalVal) * 100).toFixed(1) + '%';
-
-    const absProfit = Math.abs(d.profit);
-    const roiStr =
-      d.inv > 0
-        ? ((absProfit / d.inv) * 100).toFixed(1) + '%'
-        : 'N/A';
-    const sign = d.profit >= 0 ? '+' : '-';
-    const profitColor = d.profit >= 0 ? '#00ff6a' : '#ff4d4d';
-
-    // Polyline connector: from outer edge → midpoint → text anchor
-    const px1 = l.ax;
-    const py1 = l.ay;
-    const px2 = Math.cos(l.midAngle) * (R + 15);
-    const py2 = Math.sin(l.midAngle) * (R + 15);
-    const px3 = l.xSign * (textR - 10);
-    const py3 = l.y;
-
-    const polyline = `<polyline points="${px1},${py1} ${px2},${py2} ${px3},${py3}" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>`;
-    const dot = `<circle cx="${px3}" cy="${py3}" r="2" fill="rgba(255,255,255,0.8)" />`;
-    svgPaths += polyline + dot;
-
-    const textAnchor = l.isRight ? 'start' : 'end';
-    const textX = l.xSign * textR;
-    const nameEscaped = escapeHtml(d.name || '');
-
-    svgLabels += `
-<text x="${textX}" y="${l.y}" text-anchor="${textAnchor}" dominant-baseline="middle" font-family="'Segoe UI', sans-serif" class="svg-text-shadow">
-  <tspan x="${textX}" dy="-1.2em" font-family="'Arial Black'" font-size="14" fill="#fff">${nameEscaped} <tspan fill="#ffd700">${pctStr}</tspan></tspan>
-  <tspan x="${textX}" dy="1.4em" font-size="12" fill="#ccc">總額: ${formatDonutVal(d.val)}</tspan>
-  <tspan x="${textX}" dy="1.4em" font-size="12" font-weight="bold" fill="${profitColor}">獲利: ${sign}${formatDonutVal(absProfit)} (${sign}${roiStr})</tspan>
-</text>`;
+  // ── Build legend HTML ──────────────────────────────────────────────────
+  // Sort legend: profit items first, then by percentage descending
+  legendItems.sort((a, b) => {
+    if (a.isProfit !== b.isProfit) return a.isProfit ? -1 : 1;
+    return parseFloat(b.pct) - parseFloat(a.pct);
   });
 
+  const legendHTML = legendItems.map(item =>
+    `<div class="dl-item" onclick="window.openStrategyModal && window.openStrategyModal('${item.code}')">
+      <span class="dl-dot" style="background:${item.fill};box-shadow:0 0 4px ${item.fill};"></span>
+      <span class="dl-name">${item.name}</span>
+      <span class="dl-pct">${item.pct}</span>
+      <span class="dl-profit ${item.isProfit ? 'profit' : 'loss'}">${item.profit}</span>
+    </div>`
+  ).join('');
+
   // ── Assemble final SVG ───────────────────────────────────────────────
-  // Compute aggregate profit for center display
   const totalProfit = data.reduce((sum, d) => sum + d.profit, 0);
   const profitSign = totalProfit >= 0 ? '+' : '';
   const profitColor = totalProfit >= 0 ? '#00ff6a' : '#ff4d4d';
@@ -398,23 +348,28 @@ export function buildDonutChart(data, currentRate) {
   const centerProfit = profitSign + formatDonutVal(Math.abs(totalProfit));
 
   return `
-<div class="donut-container">
-  <svg viewBox="-380 -280 760 560" width="100%" height="100%" style="overflow: visible;">
-    ${svgPaths}
-    ${svgLabels}
-    <!-- 內圈科技感裝飾線 -->
-    <circle cx="0" cy="0" r="75" fill="none" stroke="rgba(255,204,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
-    <circle cx="0" cy="0" r="85" fill="none" stroke="rgba(0,247,255,0.1)" stroke-width="1"/>
-    <!-- Donut 中心數字 (T2-5) -->
-    <text x="0" y="-8" text-anchor="middle" dominant-baseline="central"
-      font-family="'Rajdhani', sans-serif" font-size="26" font-weight="700" fill="#fff">
-      ${centerTotal}
-    </text>
-    <text x="0" y="24" text-anchor="middle" dominant-baseline="central"
-      font-family="'Rajdhani', sans-serif" font-size="16" font-weight="700" fill="${profitColor}">
-      ${centerProfit}
-    </text>
-  </svg>
+<div class="donut-wrapper">
+  <div class="donut-container">
+    <svg viewBox="-160 -160 320 320" width="100%" height="100%" style="overflow: visible;">
+      ${svgPaths}
+      <!-- 內圈科技感裝飾線 -->
+      <circle cx="0" cy="0" r="73" fill="none" stroke="rgba(255,204,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
+      <circle cx="0" cy="0" r="82" fill="none" stroke="rgba(0,247,255,0.1)" stroke-width="1"/>
+      <!-- Donut 中心數字 (T2-5) -->
+      <text x="0" y="-8" text-anchor="middle" dominant-baseline="central"
+        font-family="'Rajdhani', sans-serif" font-size="24" font-weight="700" fill="#fff">
+        ${centerTotal}
+      </text>
+      <text x="0" y="22" text-anchor="middle" dominant-baseline="central"
+        font-family="'Rajdhani', sans-serif" font-size="14" font-weight="700" fill="${profitColor}">
+        ${centerProfit}
+      </text>
+    </svg>
+  </div>
+  <div class="donut-legend">
+    <div class="dl-header">分配佔比</div>
+    ${legendHTML}
+  </div>
 </div>`;
 }
 

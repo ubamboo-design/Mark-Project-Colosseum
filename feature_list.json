@@ -3,55 +3,62 @@
     {
       "id": "T2-1",
       "name": "Battle Summary Card (取代 YT 面板)",
-      "description": "將 arena 右欄的 YT 連結面板改為「戰報摘要卡」，顯示冠軍/殿後策略名稱+ROI、正負策略數量統計、YT 連結縮小至底部次要位置。實作：arena.js 新增 buildBattleSummary() + components.css 新增 .battle-summary 系列樣式。",
+      "description": "將 arena 右欄的 YT 連結面板改為「戰報摘要卡」，顯示冠軍/殿後策略名稱+ROI、正負策略數量統計、YT 連結縮小至底部次要位置。",
       "dependencies": [],
-      "status": "not-started",
-      "evidence": ""
+      "status": "completed",
+      "evidence": "arena.js: buildBattleSummary() / components.css: .battle-summary 系列 / YT panel 完全移除"
     },
     {
       "id": "T2-2",
       "name": "Profit/Loss 色彩系統翻轉",
-      "description": "將 config.js 中 COLORS 的 profit/loss 色票翻轉：profit→#00ff6a（綠）、loss→#ff2a2a（紅），含 arena.js donut chart 填色邏輯、leaderboard profitClass 引用、engine.js 數字著色、components.css 中 .color-profit/.color-loss 的對應。翻轉後需確認所有面板（HUD pl-block、leaderboard、donut、modal）三處顏色一致。",
+      "description": "將 config.js 中 COLORS 的 profit/loss 色票翻轉為金融慣例：綠漲紅跌。",
       "dependencies": [],
-      "status": "not-started",
-      "evidence": ""
+      "status": "completed",
+      "evidence": "arena.js donut fill + label 翻轉 / config.js 註解修正"
     },
     {
       "id": "T2-3",
       "name": "HUD→Arena 區域橋接 (Region Markers)",
-      "description": "在 leaderboard 每列左側加入彩色邊條標記，對應策略所屬 HUD 面板區域（cyan=台股、green=美股、purple=QQQI、gold=其他）。需在策略資料中傳入 region 標記，arena.js buildLeaderboardHTML() 中轉為 border-left-color，components.css 新增 .lb-region 系列樣式。",
+      "description": "在 leaderboard 每列左側加入彩色邊條標記，對應策略所屬 HUD 面板區域。",
       "dependencies": ["T2-2"],
-      "status": "not-started",
-      "evidence": ""
+      "status": "completed",
+      "evidence": "arena.js: detectRegion() / .lb-region-{tw,us,qqqi,other} 對應 HUD 面板色"
     },
     {
       "id": "T2-4",
-      "name": "Leaderboard 視覺層級強化 (Rank Badges + ROI Bar)",
-      "description": "Rank 數字改為圓形 badge：Top1 金、Top2 銀、Top3 銅、其餘灰。ROI 數值旁加迷你進度條視覺化相對表現。行背景根據 ROI 從高到低做微漸層。純 CSS 調整，不修改 JS 邏輯。",
+      "name": "Leaderboard 視覺層級強化",
+      "description": "Rank 數字改為圓形 badge（金/銀/銅）+ ROI 迷你色條 + 行背景漸層。",
       "dependencies": ["T2-2"],
-      "status": "not-started",
-      "evidence": ""
+      "status": "completed",
+      "evidence": "components.css: .lb-rank 圓形 badge / .lb-val::after 色條 / rank-1/2/3 漸層"
     },
     {
       "id": "T2-5",
       "name": "Donut 中心顯示總資產+總損益",
-      "description": "在 SVG donut chart 中心疊加 <text>，顯示總資產（大）+ 總損益（小，顏色隨正負變）。需在 arena.js buildDonutChart() 中計算 totalVal 並寫入 SVG 中心 text element。",
+      "description": "在 SVG donut chart 中心疊加 text，顯示總資產+總損益。",
       "dependencies": ["T2-2"],
-      "status": "not-started",
-      "evidence": ""
+      "status": "completed",
+      "evidence": "arena.js: SVG center <text> 元素 / Rajdhani 26px+16px"
     },
     {
       "id": "T2-6",
       "name": "螢幕截圖驗證流程",
-      "description": "每個 T2 feature 完成後，使用瀏覽器開啟 index.html，截圖保存至 docs/screenshots/，檔案名為 {feature-id}-{before|after}.png。用於視覺回歸比對。基線截圖應在 T2-1 開始前先拍攝一次。",
+      "description": "每個 T2 feature 完成後截圖保存至 docs/screenshots/。",
       "dependencies": [],
       "status": "not-started",
-      "evidence": ""
+      "evidence": "docs/screenshots/ 目錄已建立，需 HTTP server 環境截圖"
+    },
+    {
+      "id": "mobile",
+      "name": "手機直式觀看排版優化",
+      "description": "600px 斷點全面重寫：clamp() 流體字型、leaderboard 等比縮小、touch 適配。",
+      "dependencies": ["T2-1", "T2-4"],
+      "status": "completed",
+      "evidence": "components.css 600px @media 全面重寫（48行新增）"
     },
     {
       "id": "T3-1",
       "name": "Arena 背景粒子/掃描線動畫",
-      "description": "在 arena-container 背景加上微弱 CSS 動畫效果（可選：掃描線掃動、粒子浮動），使用 CSS @keyframes + pseudo-element，不佔用 JS thread。需確保對效能無衝擊（使用 will-change 或 GPU 合成）。",
       "dependencies": ["T2-1", "T2-4"],
       "status": "not-started",
       "evidence": ""
@@ -59,7 +66,6 @@
     {
       "id": "T3-2",
       "name": "HUD Panel Hover Glow 效果",
-      "description": "四個 HUD 面板（.hud-screen）在 hover 時增加微放大 + neon glow 邊框效果。各面板保留其對應色（cyan/green/purple/gold）。使用 CSS transition + box-shadow。",
       "dependencies": ["T2-2", "T2-3"],
       "status": "not-started",
       "evidence": ""
@@ -67,7 +73,6 @@
     {
       "id": "T3-3",
       "name": "數據更新過渡動畫",
-      "description": "當資料刷新時，HUD 面板數值變化的瞬間加入 CSS transition（opacity + transform），避免閃跳。dashboard.js 中 setText 加入數值變更檢測，若差異 >0 則觸發 pulse class。",
       "dependencies": ["T2-2"],
       "status": "not-started",
       "evidence": ""

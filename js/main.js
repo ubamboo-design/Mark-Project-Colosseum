@@ -13,6 +13,7 @@ import { renderHeader, renderDashboard, renderCacheStatus, showDashboardError, s
 import { renderArena } from './arena.js';
 import { renderEvents } from './events.js';
 import { openStrategyModal, closeModal } from './modal.js';
+import { trackVisitor } from './visitor.js';
 
 // =============================================================================
 // Global State
@@ -187,7 +188,8 @@ window.init = async function init() {
     // Fetch rate and data in parallel
     await Promise.all([
         fetchExchangeRate(),
-        loadData()
+        loadData(),
+        trackVisitor()
     ]);
 
     if (indicator) {

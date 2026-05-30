@@ -1127,35 +1127,43 @@ header h1 {
   font-family: var(--font-num); font-weight: 600;
 }
 
-/* ── CLEC Grid ── */
-.clec-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 6px; margin-top: 16px; padding-top: 16px;
+/* ── CLEC 433 Frame ── */
+.clec-frame {
+  margin-top: 16px; padding-top: 16px;
   border-top: 1px solid #1a1a1a;
 }
-.clec-item {
+.clec-frame-title {
+  font-family: var(--font-tech); font-size: clamp(10px, 0.9vw, 13px);
+  color: #666; letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.clec-frame-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.clec-fitem {
   background: #0a0a0c; border-radius: 8px;
   padding: clamp(8px, 1vw, 14px); text-align: center;
   border: 1px solid #1a1a1a;
 }
-.clec-item .letter {
+.clec-fitem.dim { opacity: 0.5; }
+.clec-fitem .fi-letter {
   font-size: clamp(16px, 1.5vw, 20px); font-weight: 700;
   font-family: var(--font-tech); margin-bottom: 1px;
 }
-.clec-item .label {
+.clec-fitem .fi-label {
+  color: #e0e0e0; font-size: clamp(11px, 0.9vw, 13px); font-weight: 600;
+  margin-bottom: 2px;
+}
+.clec-fitem .fi-desc {
   color: #666; font-size: clamp(9px, 0.7vw, 10px);
-  text-transform: uppercase; letter-spacing: 0.5px;
-  margin-bottom: 3px;
+  font-family: var(--font-mono);
 }
-.clec-item .alloc {
-  color: #e0e0e0; font-size: clamp(13px, 1.1vw, 16px);
-  font-family: var(--font-num); font-weight: 700;
+.clec-frame-note {
+  text-align: center; margin-top: 10px;
+  color: #555; font-size: clamp(9px, 0.7vw, 11px);
+  font-style: italic;
 }
-.clec-item .subtxt {
-  color: #555; font-size: clamp(8px, 0.6vw, 10px);
-  margin-top: 1px;
-}
-.clec-item.active { border-color: #333; background: #111; }
 
 /* ── Footer ── */
 .clec-foot {
@@ -1169,14 +1177,14 @@ header h1 {
 /* ── CLEC Mobile ── */
 @media(max-width: 900px) {
   .clec-legend { flex-direction: column; gap: 6px; }
-  .clec-grid { grid-template-columns: repeat(2, 1fr); }
+  .clec-frame-grid { grid-template-columns: repeat(2, 1fr); }
   .clec-bar-container { height: 40px; }
   .clec-card { padding: 14px; }
 }
 @media(max-width: 600px) {
   .clec-bar-container { height: 36px; }
   .clec-legend-item { padding: 10px; }
-  .clec-grid { gap: 4px; }
-  .clec-item { padding: 8px 4px; }
+  .clec-frame-grid { gap: 4px; }
+  .clec-fitem { padding: 8px 4px; }
   .clec-header { flex-direction: column; align-items: flex-start; gap: 8px; }
 }

@@ -1155,3 +1155,158 @@ header h1 {
   .clec-header { flex-direction: column; align-items: flex-start; gap: 8px; }
   .clec-foot { flex-direction: column; gap: 6px; text-align: center; }
 }
+
+/* =========================================================
+   20. COMMENTS / GUESTBOOK SECTION
+   ========================================================= */
+.comment-section {
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-top: 6px;
+}
+
+/* ── Form ── */
+.cmt-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.cmt-form-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.cmt-input {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.cmt-input:focus {
+  border-color: var(--hud-cyan);
+  box-shadow: 0 0 8px rgba(0,234,255,0.12);
+}
+.cmt-name-input {
+  width: 130px;
+  flex-shrink: 0;
+}
+.cmt-textarea {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  resize: vertical;
+  min-height: 44px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.cmt-textarea:focus {
+  border-color: var(--hud-cyan);
+  box-shadow: 0 0 8px rgba(0,234,255,0.12);
+}
+.cmt-textarea::placeholder,
+.cmt-input::placeholder {
+  color: #555;
+}
+.cmt-send-btn {
+  padding: 8px 20px;
+  background: rgba(0, 234, 255, 0.10);
+  border: 1px solid var(--hud-cyan);
+  border-radius: 6px;
+  color: var(--hud-cyan);
+  font-family: var(--font-tech);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.cmt-send-btn:hover {
+  background: rgba(0, 234, 255, 0.20);
+  box-shadow: 0 0 12px rgba(0,234,255,0.15);
+}
+.cmt-send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Comment List ── */
+.cmt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+.cmt-empty {
+  text-align: center;
+  color: #555;
+  padding: 30px 0;
+  font-family: var(--font-num);
+  font-size: 0.9rem;
+}
+.cmt-item {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 6px;
+  padding: 12px 14px;
+  transition: background 0.15s;
+}
+.cmt-item:hover {
+  background: rgba(255,255,255,0.04);
+}
+.cmt-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.cmt-name {
+  font-family: var(--font-tech);
+  font-size: 0.72rem;
+  letter-spacing: 0.5px;
+  color: var(--hud-cyan);
+  text-transform: uppercase;
+}
+.cmt-time {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: #555;
+}
+.cmt-body {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: #ccc;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* ── Mobile ── */
+@media(max-width: 600px) {
+  .comment-section {
+    padding: 12px;
+  }
+  .cmt-name-input {
+    width: 100px;
+  }
+  .cmt-send-btn {
+    padding: 8px 14px;
+    font-size: 0.7rem;
+  }
+  .cmt-body {
+    font-size: 0.8rem;
+  }
+}

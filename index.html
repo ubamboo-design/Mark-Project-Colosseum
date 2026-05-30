@@ -186,6 +186,20 @@
   <div class="section-title">III. EVENT LOG (事件簿)</div>
   <div class="event-list" id="eventContainer"></div>
 
+  <div class="section-title">IV. GUESTBOOK (留言板)</div>
+  <div class="comment-section">
+    <form class="cmt-form" id="commentForm">
+      <div class="cmt-form-row">
+        <input type="text" id="commentName" class="cmt-input cmt-name-input" placeholder="稱呼（選填）" maxlength="30">
+        <textarea id="commentInput" class="cmt-textarea" placeholder="寫下你想說的話… Ctrl+Enter 快速送出" maxlength="500" rows="2"></textarea>
+        <button type="button" id="commentSend" class="cmt-send-btn">SEND</button>
+      </div>
+    </form>
+    <div class="cmt-list" id="commentList">
+      <div class="cmt-empty">載入留言中…</div>
+    </div>
+  </div>
+
   <div class="footer-grid">
     <div class="refresh-btn" onclick="init()">↻ REFRESH DATA</div>
   </div>

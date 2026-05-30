@@ -307,5 +307,32 @@ export function trackOnline() {
 //     .setMimeType(ContentService.MimeType.JSON);
 // }
 //
+// ── EXTENSION: Comment actions ─────────────────────────────
+//
+// Add these cases to the doGet function's if/else chain:
+//
+//   if (action === 'addcomment') {
+//     const name = e?.parameter?.name || '匿名';
+//     const message = e?.parameter?.message;
+//     if (!message) return json({ error: 'message required' });
+//
+//     const comments = JSON.parse(props.getProperty('COMMENTS') || '[]');
+//     comments.push({
+//       id: 'c_' + Date.now().toString(36),
+//       name: name.slice(0, 30),
+//       message: message.slice(0, 500),
+//       timestamp: Date.now()
+//     });
+//     // Keep last 200
+//     const trimmed = comments.slice(-200);
+//     props.setProperty('COMMENTS', JSON.stringify(trimmed));
+//     return json({ ok: true });
+//   }
+//
+//   if (action === 'getcomments') {
+//     const comments = JSON.parse(props.getProperty('COMMENTS') || '[]');
+//     return json({ comments: comments.reverse() });
+//   }
+//
 // ──── End Code.gs ──────────────────────────────────────────────
 // =============================================================================

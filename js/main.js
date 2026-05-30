@@ -14,6 +14,7 @@ import { renderArena } from './arena.js';
 import { renderEvents } from './events.js';
 import { openStrategyModal, closeModal } from './modal.js';
 import { trackVisitor, trackOnline } from './visitor.js';
+import { initComments } from './comments.js';
 
 // =============================================================================
 // Global State
@@ -194,6 +195,9 @@ window.init = async function init() {
 
     // Start concurrent online tracking (heartbeat loop)
     trackOnline();
+
+    // Load comments
+    initComments();
 
     if (indicator) {
         if (text) text.textContent = 'SYNC COMPLETE';

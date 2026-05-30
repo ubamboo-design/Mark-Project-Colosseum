@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLEC 資產配置 — 2026.05.30</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f1117;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, sans-serif;
+  }
+  .card {
+    background: #181b24;
+    border-radius: 20px;
+    padding: 40px 48px;
+    width: 780px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    border: 1px solid #2a2e3a;
+  }
+  .header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 36px;
+  }
+  .title h1 {
+    color: #e8eaed;
+    font-size: 22px; font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .title .sub {
+    color: #9aa0ab;
+    font-size: 13px; font-weight: 400;
+    margin-top: 4px;
+    letter-spacing: 0.2px;
+  }
+  .badge {
+    background: #222736;
+    color: #7f8699;
+    font-size: 12px; font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #2e3343;
+  }
+  .total-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #252a36;
+  }
+  .total-label {
+    color: #9aa0ab;
+    font-size: 14px; font-weight: 500;
+  }
+  .total-value {
+    color: #e8eaed;
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .total-value span {
+    color: #7f8699;
+    font-size: 16px; font-weight: 500;
+    margin-left: 4px;
+  }
+
+  /* ── Stacked Bar ── */
+  .bar-container {
+    position: relative;
+    height: 64px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 32px;
+    background: #1e232f;
+  }
+  .bar-segment {
+    height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700;
+    letter-spacing: 0.2px;
+    transition: filter 0.2s;
+    position: relative;
+    min-width: 0;
+  }
+  .bar-segment:hover { filter: brightness(1.15); }
+  .bar-segment .pct {
+    color: rgba(255,255,255,0.95);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    white-space: nowrap;
+  }
+  .bar-segment.s00662 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .bar-segment.sqld   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+  .bar-segment.scash  { background: linear-gradient(135deg, #34d399, #10b981); }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex; gap: 8px;
+    margin-bottom: 28px;
+  }
+  .legend-item {
+    flex: 1;
+    background: #1e232f;
+    border-radius: 12px;
+    padding: 16px 20px;
+    border: 1px solid #252a36;
+    transition: border-color 0.2s;
+  }
+  .legend-item:hover { border-color: #3b4055; }
+  .legend-item .dot-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 6px;
+  }
+  .dot {
+    width: 12px; height: 12px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .dot.d00662 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .dot.dqld   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+  .dot.dcash  { background: linear-gradient(135deg, #34d399, #10b981); }
+  .legend-item .name {
+    color: #e8eaed;
+    font-size: 15px; font-weight: 600;
+  }
+  .legend-item .tag {
+    color: #7f8699;
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .legend-item .value-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-top: 4px;
+  }
+  .legend-item .amount {
+    color: #c4c9d4;
+    font-size: 18px; font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .legend-item .pct-lg {
+    color: #9aa0ab;
+    font-size: 14px; font-weight: 500;
+  }
+
+  /* ── CLEC Categories ── */
+  .clec-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #252a36;
+  }
+  .clec-item {
+    background: #1a1f2b;
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    border: 1px solid #252a36;
+  }
+  .clec-item .letter {
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .clec-item .label {
+    color: #7f8699;
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+  }
+  .clec-item .alloc {
+    color: #e8eaed;
+    font-size: 16px; font-weight: 700;
+  }
+  .clec-item .subtxt {
+    color: #5a6072;
+    font-size: 10px;
+    margin-top: 2px;
+  }
+  .clec-item.active { border-color: #3b4055; background: #202636; }
+
+  /* ── Footer ── */
+  .footer {
+    display: flex; justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #252a36;
+    color: #5a6072;
+    font-size: 11px;
+  }
+  .footer a { color: #5a6b9e; text-decoration: none; }
+  .footer a:hover { color: #7f92c9; }
+</style>
+</head>
+<body>
+<div class="card">
+  <!-- Header -->
+  <div class="header">
+    <div class="title">
+      <h1>📊 CLEC 資產配置</h1>
+      <div class="sub">Mark Portfolio · 2026-05-30</div>
+    </div>
+    <div class="badge">CLEC James 比例模型</div>
+  </div>
+
+  <!-- Total -->
+  <div class="total-row">
+    <span class="total-label">投資組合總值</span>
+    <span class="total-value">1,532.6 <span>萬 TWD</span></span>
+  </div>
+
+  <!-- Stacked Bar -->
+  <div class="bar-container">
+    <div class="bar-segment s00662" style="width:51.5%">
+      <span class="pct">51.5%</span>
+    </div>
+    <div class="bar-segment sqld" style="width:22.4%">
+      <span class="pct">22.4%</span>
+    </div>
+    <div class="bar-segment scash" style="width:26.1%">
+      <span class="pct">26.1%</span>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="dot-row">
+        <div class="dot d00662"></div>
+        <span class="name">00662</span>
+        <span class="tag">E · 市值型</span>
+      </div>
+      <div class="value-row">
+        <span class="amount">789.3 萬</span>
+        <span class="pct-lg">51.5%</span>
+      </div>
+    </div>
+    <div class="legend-item">
+      <div class="dot-row">
+        <div class="dot dqld"></div>
+        <span class="name">QLD</span>
+        <span class="tag">L · 2x 槓桿</span>
+      </div>
+      <div class="value-row">
+        <span class="amount">343.3 萬</span>
+        <span class="pct-lg">22.4%</span>
+      </div>
+    </div>
+    <div class="legend-item">
+      <div class="dot-row">
+        <div class="dot dcash"></div>
+        <span class="name">現金</span>
+        <span class="tag">C · 活存</span>
+      </div>
+      <div class="value-row">
+        <span class="amount">400.0 萬</span>
+        <span class="pct-lg">26.1%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLEC Framework -->
+  <div class="clec-grid">
+    <div class="clec-item active">
+      <div class="letter" style="color:#34d399">C</div>
+      <div class="label">Cash</div>
+      <div class="alloc">400.0 萬</div>
+      <div class="subtxt">26.1%</div>
+    </div>
+    <div class="clec-item active">
+      <div class="letter" style="color:#3b82f6">L</div>
+      <div class="label">Leveraged</div>
+      <div class="alloc">343.3 萬</div>
+      <div class="subtxt">QLD · 22.4%</div>
+    </div>
+    <div class="clec-item active">
+      <div class="letter" style="color:#f59e0b">E</div>
+      <div class="label">Equity</div>
+      <div class="alloc">789.3 萬</div>
+      <div class="subtxt">00662 · 51.5%</div>
+    </div>
+    <div class="clec-item">
+      <div class="letter" style="color:#5a6072">C</div>
+      <div class="label">Commodity</div>
+      <div class="alloc" style="color:#5a6072">—</div>
+      <div class="subtxt">未配置</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>公式：現金 400萬 ÷ 26.1% = 總值 1,532.6 萬</span>
+    <span>
+      00662:QLD ≈ <strong style="color:#c4c9d4;">7:3</strong>
+      &nbsp;·&nbsp;
+      <a href="#">CLEC Framework</a>
+    </span>
+  </div>
+</div>
+</body>
+</html>

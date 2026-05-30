@@ -47,3 +47,27 @@
 
 - T3-1 ~ T3-3 尚未開始
 - T2-6 (screenshots) 需 HTTP server 環境
+
+### 2026-05-30 — CLEC 資產配置長條圖（CLEC-1）
+
+**Active Feature:** CLEC-1
+
+#### What's Done
+
+- [x] 產出 clec-allocation.html：100% 堆疊長條圖
+  - 00662 (金黃) 51.5% / QLD (藍) 22.4% / 現金 (綠) 26.1%
+  - 三色 legend 卡（含金額 + %）
+  - CLEC 四格框架（C-L-E-C，Commodity 標示未配置）
+  - Footer 含驗算公式 + 7:3 比例標示
+
+#### Verification Evidence
+
+- Console 0 errors ✓
+- 長條圖比例精確：51.5% + 22.4% + 26.1% = 100.0% ✓
+- 無 inline style 殘留 ✓
+- 無第三方 runtime 依賴 ✓
+
+#### Notes
+
+- 獨立頁面，不影響主 index.html
+- 後續可考慮整合進 dashboard 作為一個 panel

@@ -76,6 +76,14 @@
       "dependencies": ["T2-2"],
       "status": "not-started",
       "evidence": ""
+    },
+    {
+      "id": "CLEC-1",
+      "name": "CLEC 資產配置長條圖",
+      "description": "新增獨立頁面 clec-allocation.html，以 100% 堆疊長條圖呈現 00662(51.5%) / QLD(22.4%) / 現金400萬(26.1%) 的 CLEC James 資產配置。不含 runtime 依賴、純靜態 HTML/CSS。",
+      "dependencies": [],
+      "status": "completed",
+      "evidence": "clec-allocation.html — 三色漸層長條圖 + legend 卡 + CLEC 四格框架 + footer 驗算公式"
     }
   ]
 }

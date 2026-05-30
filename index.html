@@ -101,6 +101,102 @@
   <div class="section-title">II. EVENT LOG (事件簿)</div>
   <div class="event-list" id="eventContainer"></div>
 
+  <div class="section-title">III. ASSET ALLOCATION (CLEC)</div>
+  <div class="clec-card">
+    <div class="clec-header">
+      <div>
+        <div class="clec-title">📊 CLEC 資產配置</div>
+        <div class="clec-sub">Mark Portfolio · 2026-05-30</div>
+      </div>
+      <div class="clec-badge">CLEC James 比例模型</div>
+    </div>
+
+    <div class="clec-total">
+      <span class="clec-total-label">投資組合總值</span>
+      <span class="clec-total-value">1,532.6 <small>萬 TWD</small></span>
+    </div>
+
+    <div class="clec-bar-container">
+      <div class="clec-bar-segment s00662" style="width:51.5%">
+        <span class="pct">51.5%</span>
+      </div>
+      <div class="clec-bar-segment sqld" style="width:22.4%">
+        <span class="pct">22.4%</span>
+      </div>
+      <div class="clec-bar-segment scash" style="width:26.1%">
+        <span class="pct">26.1%</span>
+      </div>
+    </div>
+
+    <div class="clec-legend">
+      <div class="clec-legend-item">
+        <div class="dot-row">
+          <div class="dot d00662"></div>
+          <span class="name">00662</span>
+          <span class="tag">E · 市值型</span>
+        </div>
+        <div class="value-row">
+          <span class="amount">789.3 萬</span>
+          <span class="pct-lg">51.5%</span>
+        </div>
+      </div>
+      <div class="clec-legend-item">
+        <div class="dot-row">
+          <div class="dot dqld"></div>
+          <span class="name">QLD</span>
+          <span class="tag">L · 2x 槓桿</span>
+        </div>
+        <div class="value-row">
+          <span class="amount">343.3 萬</span>
+          <span class="pct-lg">22.4%</span>
+        </div>
+      </div>
+      <div class="clec-legend-item">
+        <div class="dot-row">
+          <div class="dot dcash"></div>
+          <span class="name">現金</span>
+          <span class="tag">C · 活存</span>
+        </div>
+        <div class="value-row">
+          <span class="amount">400.0 萬</span>
+          <span class="pct-lg">26.1%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="clec-grid">
+      <div class="clec-item active">
+        <div class="letter" style="color:#22c55e">C</div>
+        <div class="label">Cash</div>
+        <div class="alloc">400.0 萬</div>
+        <div class="subtxt">26.1%</div>
+      </div>
+      <div class="clec-item active">
+        <div class="letter" style="color:#3b82f6">L</div>
+        <div class="label">Leveraged</div>
+        <div class="alloc">343.3 萬</div>
+        <div class="subtxt">QLD · 22.4%</div>
+      </div>
+      <div class="clec-item active">
+        <div class="letter" style="color:#f59e0b">E</div>
+        <div class="label">Equity</div>
+        <div class="alloc">789.3 萬</div>
+        <div class="subtxt">00662 · 51.5%</div>
+      </div>
+      <div class="clec-item">
+        <div class="letter" style="color:#555">C</div>
+        <div class="label">Commodity</div>
+        <div class="alloc" style="color:#555">—</div>
+        <div class="subtxt">未配置</div>
+      </div>
+    </div>
+
+    <div class="clec-foot">
+      <span>公式：現金 400 萬 ÷ 26.1% = 總值 1,532.6 萬</span>
+      <span>00662:QLD ≈ <strong>7:3</strong> &nbsp;·&nbsp; CLEC Framework</span>
+    </div>
+  </div>
+
   <div class="footer-grid">
     <div class="refresh-btn" onclick="init()">↻ REFRESH DATA</div>
   </div>

@@ -1012,3 +1012,171 @@ header h1 {
     background: radial-gradient(ellipse at 10% 50%, rgba(255,215,0,0.14) 0%, transparent 60%);
   }
 }
+
+/* =========================================================
+   20. CLEC ASSET ALLOCATION
+   ========================================================= */
+.clec-card {
+  background: var(--card);
+  border: 1px solid #222;
+  border-radius: var(--radius-lg);
+  padding: clamp(16px, 2.5vw, 32px) clamp(16px, 3vw, 36px);
+  margin-bottom: 16px;
+}
+.clec-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 28px;
+}
+.clec-title {
+  font-family: var(--font-tech); font-size: clamp(12px, 1.5vw, 18px);
+  color: #fff; letter-spacing: 1px;
+}
+.clec-sub {
+  color: var(--mute); font-size: clamp(10px, 1vw, 13px);
+  margin-top: 4px;
+}
+.clec-badge {
+  background: #111; color: #888;
+  font-size: clamp(9px, 0.8vw, 11px); font-weight: 500;
+  padding: 4px 12px; border-radius: 20px;
+  border: 1px solid #2a2a2a;
+  font-family: var(--font-mono);
+}
+
+/* ── Total Row ── */
+.clec-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 24px; padding-bottom: 16px;
+  border-bottom: 1px solid #1a1a1a;
+}
+.clec-total-label { color: var(--mute); font-size: 13px; }
+.clec-total-value {
+  color: var(--gold); font-size: clamp(20px, 2.5vw, 28px);
+  font-family: var(--font-num); font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.clec-total-value small {
+  color: #666; font-size: clamp(12px, 1.2vw, 15px);
+  font-family: var(--font-body); font-weight: 400;
+  margin-left: 3px;
+}
+
+/* ── Stacked Bar ── */
+.clec-bar-container {
+  position: relative; height: 48px;
+  border-radius: 10px; overflow: hidden;
+  display: flex; margin-bottom: 24px;
+  background: #111;
+}
+.clec-bar-segment {
+  height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(11px, 1vw, 14px); font-weight: 700;
+  letter-spacing: 0.3px; transition: filter 0.2s;
+  position: relative; min-width: 0;
+  font-family: var(--font-num);
+}
+.clec-bar-segment:hover { filter: brightness(1.15); }
+.clec-bar-segment .pct {
+  color: rgba(255,255,255,0.95);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  white-space: nowrap;
+}
+.clec-bar-segment.s00662 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.clec-bar-segment.sqld   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+.clec-bar-segment.scash  { background: linear-gradient(135deg, #22c55e, #16a34a); }
+
+/* ── Legend ── */
+.clec-legend {
+  display: flex; gap: 8px; margin-bottom: 24px;
+}
+.clec-legend-item {
+  flex: 1; background: #0d0d0f;
+  border-radius: 10px; padding: clamp(10px, 1.2vw, 16px);
+  border: 1px solid #1a1a1a;
+  transition: border-color 0.2s;
+}
+.clec-legend-item:hover { border-color: #333; }
+.clec-legend-item .dot-row {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+}
+.clec-legend-item .dot {
+  width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
+}
+.clec-legend-item .dot.d00662 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.clec-legend-item .dot.dqld   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+.clec-legend-item .dot.dcash  { background: linear-gradient(135deg, #22c55e, #16a34a); }
+.clec-legend-item .name {
+  color: #e0e0e0; font-size: clamp(12px, 1vw, 14px); font-weight: 600;
+}
+.clec-legend-item .tag {
+  color: #666; font-size: clamp(9px, 0.7vw, 10px);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  font-family: var(--font-mono);
+}
+.clec-legend-item .value-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-top: 6px;
+}
+.clec-legend-item .amount {
+  color: #ccc; font-size: clamp(14px, 1.2vw, 17px);
+  font-family: var(--font-num); font-weight: 700;
+}
+.clec-legend-item .pct-lg {
+  color: #888; font-size: clamp(11px, 0.9vw, 13px);
+  font-family: var(--font-num); font-weight: 600;
+}
+
+/* ── CLEC Grid ── */
+.clec-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 6px; margin-top: 16px; padding-top: 16px;
+  border-top: 1px solid #1a1a1a;
+}
+.clec-item {
+  background: #0a0a0c; border-radius: 8px;
+  padding: clamp(8px, 1vw, 14px); text-align: center;
+  border: 1px solid #1a1a1a;
+}
+.clec-item .letter {
+  font-size: clamp(16px, 1.5vw, 20px); font-weight: 700;
+  font-family: var(--font-tech); margin-bottom: 1px;
+}
+.clec-item .label {
+  color: #666; font-size: clamp(9px, 0.7vw, 10px);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+.clec-item .alloc {
+  color: #e0e0e0; font-size: clamp(13px, 1.1vw, 16px);
+  font-family: var(--font-num); font-weight: 700;
+}
+.clec-item .subtxt {
+  color: #555; font-size: clamp(8px, 0.6vw, 10px);
+  margin-top: 1px;
+}
+.clec-item.active { border-color: #333; background: #111; }
+
+/* ── Footer ── */
+.clec-foot {
+  display: flex; justify-content: space-between;
+  margin-top: 20px; padding-top: 14px;
+  border-top: 1px solid #1a1a1a;
+  color: #555; font-size: clamp(9px, 0.8vw, 11px);
+}
+.clec-foot strong { color: #999; }
+
+/* ── CLEC Mobile ── */
+@media(max-width: 900px) {
+  .clec-legend { flex-direction: column; gap: 6px; }
+  .clec-grid { grid-template-columns: repeat(2, 1fr); }
+  .clec-bar-container { height: 40px; }
+  .clec-card { padding: 14px; }
+}
+@media(max-width: 600px) {
+  .clec-bar-container { height: 36px; }
+  .clec-legend-item { padding: 10px; }
+  .clec-grid { gap: 4px; }
+  .clec-item { padding: 8px 4px; }
+  .clec-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+}

@@ -72,7 +72,33 @@
 - 獨立頁面，不影響主 index.html
 - 後續可考慮整合進 dashboard 作為一個 panel
 
-### 2026-05-30 — Donut 縮小 + 中心字體放大
+### 2026-05-30 — CLEC 整合至主頁面（CLEC-1 integration）
+
+**Active Feature:** CLEC-1 (整合)
+
+#### What's Done
+
+- [x] CLEC 配置長條圖整合至 index.html 主頁面，新增 section III. ASSET ALLOCATION (CLEC)
+- [x] components.css 新增 section 20 (.clec-*) 完整樣式，遵循網站深色 HUD 風格
+- [x] 使用網站 CSS 變數（--font-tech/--font-num/--card/--gold）維持一致性
+- [x] 響應式設計：900px/600px 斷點（legend 縱向堆疊、grid 2列）
+- [x] 原獨立 clec-allocation.html 保留
+
+#### Files Modified
+
+- `index.html` — 新增 III. ASSET ALLOCATION 區段（~80 行結構化 DOM）
+- `css/components.css` — 新增 section 20 CLEC 樣式（~160 行）
+- `feature_list.json` — CLEC-1 description 更新
+
+#### Verification Evidence
+
+- DOM ID 雙向驗證：✅ 通過（零 missing）
+- 無破壞現有功能：所有 HUD/SVG/modal ID 未更動
+- 無新增第三方依賴：純 class-based CSS
+
+#### Notes
+
+- 使用者指出 clec-allocation.html 未配置在主頁面（獨立頁面），現已整合
 
 **T2-5 Refinement:** 使用者反饋圓餅圖太大壓迫到 portfolio 字體
 

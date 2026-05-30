@@ -101,6 +101,29 @@ async function postCommentToServer(name, message) {
   }
 }
 
+// ── Notify local webhook (Hermes notification relay) ──
+// When a comment is submitted, also ping the local webhook server
+// so Hermes can forward it to the user via Telegram.
+const LOCAL_WEBHOOK_URL = 'http://127.0.0.1:18521';
+
+async function notifyLocalWebhook(name, message) {
+  try {
+    await fetch(LOCAL_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: name,
+        message: message,
+        timestamp: Date.now(),
+        page: 'Project Colosseum'
+      }),
+      signal: AbortSignal.timeout(2000)  // 2s timeout — don't block the UI
+    });
+  } catch (_) {
+    // Webhook not running — silent fail
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════
 //  Rendering
 // ═══════════════════════════════════════════════════════════════
@@ -158,6 +181,9 @@ function setupSubmitHandler() {
     // Always save locally (as primary storage or as fallback)
     const comments = addLocalComment(name, msg);
     renderComments(comments);
+
+    // Notify Hermes via local webhook (non-blocking)
+    notifyLocalWebhook(name, msg);
 
     input.value = '';
     sendBtn.disabled = false;

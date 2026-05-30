@@ -1,0 +1,291 @@
+/* ============================================================
+   PROJECT COLISEUM — themes.css
+   Theme variable overrides for the theme-switching system
+   Loaded AFTER main.css; uses html.theme-{name} class selectors
+   ============================================================ */
+
+/* ───────────────────────────────────────────────
+   THEME: Linear Dark
+   Inspired by Linear.app — ultra-minimal dark-mode,
+   indigo-violet accent, precision engineering feel
+   ─────────────────────────────────────────────── */
+html.theme-linear-dark {
+  /* Background & Surface */
+  --bg: #08090a;
+  --card: #0f1011;
+  --bar: #191a1b;
+
+  /* Text */
+  --text: #f7f8f8;
+  --mute: #8a8f98;
+
+  /* Brand / Thematic Colors */
+  --tw: #7170ff;
+  --us: #5e6ad2;
+  --yield: #27a644;
+  --ber: #828fff;
+  --trap: #a78bfa;
+  --gold: #f7f8f8;
+  --red: #ff5b5b;
+  --green: #10b981;
+  --cyan: #7170ff;
+
+  /* HUD Colors — replaced by Linear's indigo-violet palette */
+  --hud-cyan: #5e6ad2;
+  --hud-green: #27a644;
+  --hud-gold: #f7f8f8;
+  --hud-purple: #a78bfa;
+
+  /* Emergency */
+  --emergency: #ff5b5b;
+
+  /* Fonts — Linear uses Inter for everything */
+  --font-tech: 'Inter', sans-serif;
+  --font-num: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', Courier, monospace;
+}
+
+/* ───────────────────────────────────────────────
+   THEME: Sentry Purple
+   Inspired by Sentry — deep purple-black backgrounds,
+   warm purple spectrum, lime-green accent
+   ─────────────────────────────────────────────── */
+html.theme-sentry-purple {
+  /* Background & Surface */
+  --bg: #150f23;
+  --card: #1f1633;
+  --bar: #362d59;
+
+  /* Text */
+  --text: #ffffff;
+  --mute: #e5e7eb;
+
+  /* Brand / Thematic Colors */
+  --tw: #6a5fc1;
+  --us: #79628c;
+  --yield: #27a644;
+  --ber: #c2ef4e;
+  --trap: #d455ff;
+  --gold: #c2ef4e;
+  --red: #ff5b5b;
+  --green: #27a644;
+  --cyan: #6a5fc1;
+
+  /* HUD Colors */
+  --hud-cyan: #6a5fc1;
+  --hud-green: #27a644;
+  --hud-gold: #c2ef4e;
+  --hud-purple: #d455ff;
+
+  /* Emergency */
+  --emergency: #ff5b5b;
+
+  /* Fonts — Rubik primary, JetBrains Mono for numbers */
+  --font-tech: 'Rubik', sans-serif;
+  --font-num: 'Rajdhani', 'JetBrains Mono', sans-serif;
+  --font-body: 'Rubik', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', Courier, monospace;
+}
+
+/* ───────────────────────────────────────────────
+   THEME: OLED Noir
+   True black background (#000000) with ultra-minimal
+   monochrome palette — maximum contrast, minimal glow
+   ─────────────────────────────────────────────── */
+html.theme-oled-noir {
+  /* Background & Surface */
+  --bg: #000000;
+  --card: #050505;
+  --bar: #111111;
+
+  /* Text */
+  --text: #e0e0e0;
+  --mute: #555555;
+
+  /* Brand / Thematic Colors */
+  --tw: #ffffff;
+  --us: #cccccc;
+  --yield: #aaaaaa;
+  --ber: #888888;
+  --trap: #666666;
+  --gold: #ffffff;
+  --red: #ff4444;
+  --green: #44ff44;
+  --cyan: #44ddff;
+
+  /* HUD Colors — desaturated, monochrome */
+  --hud-cyan: #44ddff;
+  --hud-green: #44ff44;
+  --hud-gold: #ffffff;
+  --hud-purple: #cc88ff;
+
+  /* Emergency */
+  --emergency: #ff2222;
+
+  /* Fonts — keep original HUD fonts */
+}
+
+/* ───────────────────────────────────────────────
+   THEME: NVIDIA Green
+   Inspired by NVIDIA — stark black background,
+   electric green accent, industrial precision
+   ─────────────────────────────────────────────── */
+html.theme-nvidia-green {
+  /* Background & Surface */
+  --bg: #000000;
+  --card: #050505;
+  --bar: #111111;
+
+  /* Text */
+  --text: #ffffff;
+  --mute: #a7a7a7;
+
+  /* Brand / Thematic Colors */
+  --tw: #76b900;
+  --us: #1eaedb;
+  --yield: #76b900;
+  --ber: #bff230;
+  --trap: #76b900;
+  --gold: #76b900;
+  --red: #e52020;
+  --green: #76b900;
+  --cyan: #1eaedb;
+
+  /* HUD Colors — NVIDIA green accent */
+  --hud-cyan: #1eaedb;
+  --hud-green: #76b900;
+  --hud-gold: #76b900;
+  --hud-purple: #a78bfa;
+
+  /* Emergency */
+  --emergency: #e52020;
+
+  /* Fonts */
+  --font-tech: 'Inter', sans-serif;
+  --font-num: 'Rajdhani', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Courier New', Courier, monospace;
+}
+
+/* ============================================================
+   THEME SWITCHER UI
+   Floating button + dropdown panel, bottom-right corner
+   Always visible regardless of theme
+   ============================================================ */
+#themeSwitcher {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  font-family: var(--font-body), sans-serif;
+}
+
+#themeSwitcherBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(10, 10, 12, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #ccc;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
+
+#themeSwitcherBtn:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  background: rgba(18, 18, 22, 0.9);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+#themeSwitcherBtn.ts-active {
+  border-color: var(--hud-cyan);
+  color: var(--hud-cyan);
+  box-shadow: 0 0 16px rgba(0, 234, 255, 0.15);
+}
+
+.ts-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.ts-label {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* ── Dropdown panel ── */
+.ts-panel {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
+  background: rgba(10, 10, 12, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+  padding: 6px;
+  display: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.ts-panel.ts-open {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ts-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #aaa;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ts-option:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.ts-option.ts-active {
+  background: rgba(0, 234, 255, 0.10);
+  color: var(--hud-cyan);
+  font-weight: 700;
+}
+
+/* ── Responsive: smaller on mobile ── */
+@media(max-width: 600px) {
+  #themeSwitcher {
+    bottom: 12px;
+    right: 12px;
+  }
+
+  #themeSwitcherBtn {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+
+  .ts-label {
+    display: none; /* icon only on mobile */
+  }
+
+  .ts-panel {
+    min-width: 160px;
+    right: 0;
+  }
+}

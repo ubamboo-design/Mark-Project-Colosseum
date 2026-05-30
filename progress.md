@@ -48,6 +48,43 @@
 - T3-1 ~ T3-3 尚未開始
 - T2-6 (screenshots) 需 HTTP server 環境
 
+### 2026-05-30 — Theme Switching System (T4)
+
+**Active Feature:** T4 — Theme System Infrastructure
+
+#### What's Done
+
+- [x] Backup: git tag `backup-v18.00-stable` + 完整目錄複製
+- [x] `css/themes.css` — 4 套主題 CSS 變數覆蓋表：
+  - **Linear Dark**（Linear.app 風格：深黑底、indigo-violet 主色、Inter 字型）
+  - **Sentry Purple**（深紫黑、溫紫階梯色、lime 綠強調）
+  - **OLED Noir**（純黑背景、極簡灰白、最小化光暈）
+  - **NVIDIA Green**（純黑背景、#76b900 綠強調、工業精度）
+- [x] `js/theme.js` — 主題切換引擎：
+  - 右下角浮動按鈕 + 下拉選單 UI
+  - localStorage 持久化儲存偏好
+  - FOUC 預防：inline script 在 render 前恢復主題
+  - 鍵盤快速鍵 Alt+T 循環切換
+  - `themechange` CustomEvent 供其他模組監聽
+  - `window.__theme` 暴露供 console debug
+- [x] `index.html` — 新增 all CSS/JS 引用 + 替代字型 preconnect
+
+#### Verification Evidence
+
+- DOM ID 雙向驗證：✅ 通過（零 missing）
+- Console error: **0 錯誤**（所有 5 主題循環測試通過）
+- FOUC 預防：✅ 重新整理後 theme class 正確套用於 `<html>`
+- 主題切換 UI：✅ 點擊切換 + 下拉選單運作正常
+- localStorage 持久化：✅ 重新整理後自動恢復
+- Git: commit `e1c456b` → pushed to origin/main
+
+#### Architecture Notes
+
+- 現有 `:root` 變數**完全未動**，主題透過 `html.theme-*` class 覆蓋 CSS 變數
+- 所有元件樣式（components.css）無需修改，自動適配主題
+- 新增主題只需在 `themes.css` 新增 `html.theme-{name} { --var: value; }` 區塊
+- 主題名稱註冊在 `theme.js` 的 `THEMES` 物件中
+
 ### 2026-05-30 — CLEC 資產配置長條圖（CLEC-1）
 
 **Active Feature:** CLEC-1

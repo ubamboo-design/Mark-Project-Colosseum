@@ -13,7 +13,7 @@ import { renderHeader, renderDashboard, renderCacheStatus, showDashboardError, s
 import { renderArena } from './arena.js';
 import { renderEvents } from './events.js';
 import { openStrategyModal, closeModal } from './modal.js';
-import { trackVisitor } from './visitor.js';
+import { trackVisitor, trackOnline } from './visitor.js';
 
 // =============================================================================
 // Global State
@@ -191,6 +191,9 @@ window.init = async function init() {
         loadData(),
         trackVisitor()
     ]);
+
+    // Start concurrent online tracking (heartbeat loop)
+    trackOnline();
 
     if (indicator) {
         if (text) text.textContent = 'SYNC COMPLETE';

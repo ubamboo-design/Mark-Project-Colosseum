@@ -48,6 +48,32 @@
 - T3-1 ~ T3-3 尚未開始
 - T2-6 (screenshots) 需 HTTP server 環境
 
+### 2026-05-30 — 累積訪問人數計數器
+
+**Active Feature:** Visitor Counter
+
+#### What's Done
+
+- [x] `js/visitor.js` — 訪問人數追蹤模組：
+  - 預設使用 **localStorage fallback**（免設定、馬上可用）
+  - 可切換為 **Google Apps Script** 真實累積計數（程式碼內附完整部署 instructions）
+  - 數字千分位格式（9,339）
+  - 自動 session 去重（同 session 不重複計數）
+- [x] `index.html` — HUD badge 新增 `TOTAL:` 欄位（`#totalVisits`）
+- [x] 原有 `#visitorCount` 維持 dashboard.js 的快取狀態顯示不受影響
+
+#### Architecture
+
+- `visitor.js`：ES module，被 `main.js import`，在 `init()` 時與匯率/資料平行載入
+- `config.js` 內可設定 `GOOGLE_SCRIPT_URL` 開關真實累積計數
+- 現階段 **無需任何額外設定**，打開頁面即可看到計數器顯示數字
+
+#### HUD Badge 目前狀態
+
+```
+[●] ACTIVITY: ONLINE  |  VISITS: [LIVE FEED]  |  TOTAL: 9,339
+  └── 即時狀態  └── 快取狀態     └── 累積訪問人數
+
 ### 2026-05-30 — Theme Switching System (T4)
 
 **Active Feature:** T4 — Theme System Infrastructure

@@ -237,8 +237,8 @@ export function buildDonutChart(data, currentRate) {
   }
 
   // ── SVG constants ──────────────────────────────────────────────────────
-  const R = 105;           // outer radius (was 130 — reduced to free center space)
-  const r = 65;            // inner radius (donut hole)
+  const R = 85;           // outer radius (was 105 — reduced to fit better)
+  const r = 52;            // inner radius (donut hole)
 
   // Distinct color palette for each strategy (not gradient — T2-5b)
   const PALETTE = [
@@ -350,18 +350,18 @@ export function buildDonutChart(data, currentRate) {
   return `
 <div class="donut-wrapper">
   <div class="donut-container">
-    <svg viewBox="-135 -135 270 270" width="100%" height="100%" style="overflow: visible;">
+    <svg viewBox="-110 -110 220 220" width="100%" height="100%" style="overflow: visible;">
       ${svgPaths}
       <!-- 內圈科技感裝飾線 -->
-      <circle cx="0" cy="0" r="73" fill="none" stroke="rgba(255,204,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
-      <circle cx="0" cy="0" r="82" fill="none" stroke="rgba(0,247,255,0.1)" stroke-width="1"/>
+      <circle cx="0" cy="0" r="58" fill="none" stroke="rgba(255,204,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
+      <circle cx="0" cy="0" r="65" fill="none" stroke="rgba(0,247,255,0.1)" stroke-width="1"/>
       <!-- Donut 中心數字 (T2-5) -->
-      <text x="0" y="-10" text-anchor="middle" dominant-baseline="central"
-        font-family="'Rajdhani', sans-serif" font-size="28" font-weight="700" fill="#fff">
+      <text x="0" y="-8" text-anchor="middle" dominant-baseline="central"
+        font-family="'Rajdhani', sans-serif" font-size="22" font-weight="700" fill="#fff">
         ${centerTotal}
       </text>
-      <text x="0" y="24" text-anchor="middle" dominant-baseline="central"
-        font-family="'Rajdhani', sans-serif" font-size="17" font-weight="700" fill="${profitColor}">
+      <text x="0" y="18" text-anchor="middle" dominant-baseline="central"
+        font-family="'Rajdhani', sans-serif" font-size="14" font-weight="700" fill="${profitColor}">
         ${centerProfit}
       </text>
     </svg>

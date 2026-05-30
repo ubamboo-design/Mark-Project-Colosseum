@@ -1310,3 +1310,55 @@ header h1 {
     font-size: 0.8rem;
   }
 }
+
+/* =========================================================
+   21. PULL-TO-REFRESH (mobile)
+   Touch indicator for pull-to-refresh on mobile devices
+   ========================================================= */
+#ptr-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9998;
+  height: 56px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 4px;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.1s ease;
+  font-family: var(--font-body);
+  background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 100%);
+}
+.ptr-arrow {
+  font-size: 22px;
+  line-height: 1;
+  color: #666;
+  transition: transform 0.12s ease, opacity 0.15s ease, color 0.2s ease;
+  will-change: transform;
+}
+.ptr-spinner {
+  display: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0,234,255,0.3);
+  border-radius: 50%;
+  border-top-color: var(--hud-cyan);
+  animation: ptr-spin 0.7s linear infinite;
+  margin-bottom: 2px;
+}
+@keyframes ptr-spin {
+  to { transform: rotate(360deg); }
+}
+.ptr-text {
+  font-size: 11px;
+  color: #999;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+@media(min-width: 901px) {
+  #ptr-indicator { display: none !important; }
+}

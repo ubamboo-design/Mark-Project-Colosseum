@@ -1,12 +1,13 @@
 // =============================================================================
 // PROJECT COLISEUM — comments.js
-// Visitor comments section with localStorage fallback
+// Visitor comments section with reply threading
 //
-// Primary: Google Apps Script (shared across all visitors)
-// Fallback: localStorage (per-browser, immediate)
+// Primary: localStorage (immediate, persistent)
+// Upgrade: Google Apps Script (shared across visitors, URL pending)
+// Notification: local webhook → Hermes cron → Telegram
 // =============================================================================
 
-const COMMENT_STORAGE_KEY = 'pc-comments-v1';
+const COMMENT_STORAGE_KEY = 'pc-comments-v2';
 
 // ── Format timestamp ──
 function formatTime(ts) {
@@ -46,13 +47,14 @@ function saveLocalComments(comments) {
   } catch (_) {}
 }
 
-function addLocalComment(name, message) {
+function addLocalComment(name, message, replyTo) {
   const comments = loadLocalComments();
   comments.push({
     id: 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     name: name.trim(),
     message: message.trim(),
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    replyTo: replyTo || null
   });
   // Keep last 100 comments
   const trimmed = comments.slice(-100);
@@ -65,8 +67,6 @@ function addLocalComment(name, message) {
 // ═══════════════════════════════════════════════════════════════
 
 function getScriptUrl() {
-  // Share the same GOOGLE_SCRIPT_URL from visitor.js if available
-  // We access it via the same constant which is in visitor.js scope
   return window.__GAS_URL || '';
 }
 
@@ -87,14 +87,15 @@ async function fetchCommentsFromServer() {
   }
 }
 
-async function postCommentToServer(name, message) {
+async function postCommentToServer(name, message, replyTo) {
   const url = getScriptUrl();
   if (!url) return false;
   try {
-    const res = await fetch(
-      `${url}?action=addcomment&name=${encodeURIComponent(name)}&message=${encodeURIComponent(message)}`,
-      { signal: AbortSignal.timeout(5000) }
-    );
+    let params = `action=addcomment&name=${encodeURIComponent(name)}&message=${encodeURIComponent(message)}`;
+    if (replyTo) params += `&replyTo=${encodeURIComponent(replyTo)}`;
+    const res = await fetch(`${url}?${params}`, {
+      signal: AbortSignal.timeout(5000)
+    });
     return res.ok;
   } catch (_) {
     return false;
@@ -102,26 +103,51 @@ async function postCommentToServer(name, message) {
 }
 
 // ── Notify local webhook (Hermes notification relay) ──
-// When a comment is submitted, also ping the local webhook server
-// so Hermes can forward it to the user via Telegram.
 const LOCAL_WEBHOOK_URL = 'http://127.0.0.1:18521';
 
-async function notifyLocalWebhook(name, message) {
+async function notifyLocalWebhook(name, message, replyTo) {
   try {
+    const payload = {
+      name: name,
+      message: message,
+      timestamp: Date.now(),
+      page: 'Project Colosseum'
+    };
+    if (replyTo) payload.replyTo = replyTo;
     await fetch(LOCAL_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: name,
-        message: message,
-        timestamp: Date.now(),
-        page: 'Project Colosseum'
-      }),
-      signal: AbortSignal.timeout(2000)  // 2s timeout — don't block the UI
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(2000)
     });
   } catch (_) {
     // Webhook not running — silent fail
   }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Grouping: top-level vs replies
+// ═══════════════════════════════════════════════════════════════
+
+function groupComments(comments) {
+  const topLevel = [];
+  const replyMap = {};
+
+  comments.forEach(c => {
+    if (c.replyTo) {
+      if (!replyMap[c.replyTo]) replyMap[c.replyTo] = [];
+      replyMap[c.replyTo].push(c);
+    } else {
+      topLevel.push(c);
+    }
+  });
+
+  // Sort each reply group by timestamp
+  Object.keys(replyMap).forEach(parentId => {
+    replyMap[parentId].sort((a, b) => a.timestamp - b.timestamp);
+  });
+
+  return { topLevel, replyMap };
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -137,27 +163,111 @@ function renderComments(comments) {
     return;
   }
 
-  // Show newest first
-  const sorted = [...comments].sort((a, b) => b.timestamp - a.timestamp);
+  const { topLevel, replyMap } = groupComments(comments);
 
-  container.innerHTML = sorted.map(c => {
-    const name = escapeHtml(c.name || '匿名');
-    const msg = escapeHtml(c.message);
-    const time = formatTime(c.timestamp);
-    return `
-      <div class="cmt-item">
-        <div class="cmt-head">
-          <span class="cmt-name">${name}</span>
-          <span class="cmt-time">${time}</span>
-        </div>
-        <div class="cmt-body">${msg}</div>
-      </div>
-    `;
+  // Sort top-level newest first
+  const sorted = [...topLevel].sort((a, b) => b.timestamp - a.timestamp);
+
+  container.innerHTML = sorted.map(parent => {
+    const parentHtml = renderCommentItem(parent);
+    const replies = replyMap[parent.id];
+    let repliesHtml = '';
+    if (replies && replies.length > 0) {
+      repliesHtml = '<div class="cmt-replies">' +
+        replies.map(r => renderCommentItem(r, true)).join('') +
+        '</div>';
+    }
+    return parentHtml + repliesHtml;
   }).join('');
 }
 
+function renderCommentItem(c, isReply) {
+  const name = escapeHtml(c.name || '匿名');
+  const msg = escapeHtml(c.message);
+  const time = formatTime(c.timestamp);
+  const replyAttr = isReply ? '' : ` data-cmt-id="${escapeHtml(c.id)}"`;
+
+  return `
+    <div class="cmt-item${isReply ? ' cmt-item--reply' : ''}"${replyAttr}>
+      <div class="cmt-head">
+        <div class="cmt-head-left">
+          <span class="cmt-name">${name}</span>
+          ${isReply ? '<span class="cmt-reply-badge">↩</span>' : ''}
+        </div>
+        <div class="cmt-head-right">
+          <span class="cmt-time">${time}</span>
+          ${isReply ? '' : `<button class="cmt-reply-btn" onclick="window.__openReply('${escapeHtml(c.id)}', '${escapeHtml(name)}')" title="回覆">↩</button>`}
+        </div>
+      </div>
+      <div class="cmt-body">${msg}</div>
+      ${isReply ? '' : `<div class="cmt-reply-form" id="cmtReplyForm-${escapeHtml(c.id)}" style="display:none"></div>`}
+    </div>
+  `;
+}
+
+// ── Global reply opener (called from inline onclick) ──
+window.__openReply = function(parentId, parentName) {
+  // Close any other open reply forms
+  document.querySelectorAll('.cmt-reply-form-inline').forEach(el => el.remove());
+
+  const container = document.getElementById(`cmtReplyForm-${parentId}`);
+  if (!container) return;
+
+  // Check if a reply form is already open for this parent
+  if (container.querySelector('.cmt-reply-form-inline')) {
+    container.style.display = container.style.display === 'none' ? 'block' : 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+  container.innerHTML = `
+    <div class="cmt-reply-form-inline">
+      <div class="cmt-reply-form-row">
+        <input type="text" class="cmt-input cmt-reply-name" placeholder="稱呼（選填）" maxlength="30">
+        <input type="text" class="cmt-input cmt-reply-msg" placeholder="回覆 ${escapeHtml(parentName)}…" maxlength="500">
+        <button class="cmt-reply-send" data-parent="${escapeHtml(parentId)}" data-parent-name="${escapeHtml(parentName)}">送出</button>
+        <button class="cmt-reply-cancel">✕</button>
+      </div>
+    </div>
+  `;
+
+  // Focus the message input
+  const msgInput = container.querySelector('.cmt-reply-msg');
+  if (msgInput) setTimeout(() => msgInput.focus(), 100);
+
+  // Wire up send
+  container.querySelector('.cmt-reply-send').addEventListener('click', function() {
+    const name = this.closest('.cmt-reply-form-inline').querySelector('.cmt-reply-name').value.trim() || '匿名';
+    const msg = this.closest('.cmt-reply-form-inline').querySelector('.cmt-reply-msg').value.trim();
+    if (!msg) return;
+    doReply(this.dataset.parent, name, msg);
+  });
+
+  // Wire up cancel
+  container.querySelector('.cmt-reply-cancel').addEventListener('click', function() {
+    container.style.display = 'none';
+    container.innerHTML = '';
+  });
+
+  // Enter to send
+  container.querySelector('.cmt-reply-msg').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const sendBtn = this.closest('.cmt-reply-form-inline').querySelector('.cmt-reply-send');
+      if (sendBtn) sendBtn.click();
+    }
+  });
+};
+
+// ── Submit a reply ──
+function doReply(parentId, name, message) {
+  const comments = addLocalComment(name, message, parentId);
+  renderComments(comments);
+  notifyLocalWebhook(name, `↩ 回覆: ${message}`);
+}
+
 // ═══════════════════════════════════════════════════════════════
-//  Submit handler
+//  Submit handler (top-level comment)
 // ═══════════════════════════════════════════════════════════════
 
 function setupSubmitHandler() {
@@ -178,11 +288,11 @@ function setupSubmitHandler() {
     // Try server first
     const serverOk = await postCommentToServer(name, msg);
 
-    // Always save locally (as primary storage or as fallback)
+    // Always save locally
     const comments = addLocalComment(name, msg);
     renderComments(comments);
 
-    // Notify Hermes via local webhook (non-blocking)
+    // Notify Hermes via local webhook
     notifyLocalWebhook(name, msg);
 
     input.value = '';
@@ -226,6 +336,6 @@ export function initComments() {
     renderComments(local);
   });
 
-  // 4. Wire up form
+  // 4. Wire up top-level form
   setupSubmitHandler();
 }

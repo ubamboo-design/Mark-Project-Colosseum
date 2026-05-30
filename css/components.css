@@ -1362,3 +1362,158 @@ header h1 {
 @media(min-width: 901px) {
   #ptr-indicator { display: none !important; }
 }
+
+/* =========================================================
+   22. COMMENT REPLIES (threaded)
+   Reply button, inline reply form, thread indentation
+   ========================================================= */
+
+/* ── Reply button on each comment ── */
+.cmt-reply-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 4px;
+  color: #666;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  line-height: 1.4;
+  font-family: var(--font-body);
+}
+.cmt-reply-btn:hover {
+  border-color: var(--hud-cyan);
+  color: var(--hud-cyan);
+  background: rgba(0,234,255,0.06);
+}
+
+/* ── Head left/right layout ── */
+.cmt-head-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cmt-head-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Reply badge ── */
+.cmt-reply-badge {
+  font-size: 0.7rem;
+  color: #555;
+  opacity: 0.6;
+}
+
+/* ── Reply thread container (indented under parent) ── */
+.cmt-replies {
+  margin-left: 20px;
+  padding-left: 14px;
+  border-left: 2px solid rgba(255,255,255,0.06);
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+/* ── Reply item ── */
+.cmt-item--reply {
+  background: rgba(255,255,255,0.01);
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-top: 6px;
+}
+.cmt-item--reply .cmt-name {
+  font-size: 0.68rem;
+}
+.cmt-item--reply .cmt-body {
+  font-size: 0.8rem;
+}
+.cmt-item--reply .cmt-time {
+  font-size: 0.6rem;
+}
+
+/* ── Inline reply form (opens below parent) ── */
+.cmt-reply-form-inline {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+.cmt-reply-form-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.cmt-reply-name {
+  width: 100px !important;
+  flex-shrink: 0;
+}
+.cmt-reply-msg {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.cmt-reply-msg:focus {
+  border-color: var(--hud-cyan);
+  box-shadow: 0 0 8px rgba(0,234,255,0.12);
+}
+.cmt-reply-msg::placeholder {
+  color: #555;
+}
+.cmt-reply-send {
+  padding: 6px 14px;
+  background: rgba(0, 234, 255, 0.10);
+  border: 1px solid var(--hud-cyan);
+  border-radius: 6px;
+  color: var(--hud-cyan);
+  font-family: var(--font-tech);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.cmt-reply-send:hover {
+  background: rgba(0, 234, 255, 0.20);
+  box-shadow: 0 0 10px rgba(0,234,255,0.12);
+}
+.cmt-reply-cancel {
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.cmt-reply-cancel:hover {
+  color: #fff;
+}
+
+/* ── Reply form mobile ── */
+@media(max-width: 600px) {
+  .cmt-reply-form-row {
+    flex-wrap: wrap;
+  }
+  .cmt-reply-name {
+    width: 80px !important;
+    font-size: 0.7rem;
+  }
+  .cmt-reply-msg {
+    font-size: 0.75rem;
+    min-width: 120px;
+  }
+  .cmt-replies {
+    margin-left: 10px;
+    padding-left: 8px;
+  }
+}

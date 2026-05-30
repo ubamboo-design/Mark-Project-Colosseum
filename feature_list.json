@@ -38,7 +38,7 @@
       "description": "在 SVG donut chart 中心疊加 text，顯示總資產+總損益。",
       "dependencies": ["T2-2"],
       "status": "completed",
-      "evidence": "arena.js: SVG center <text> 元素 / Rajdhani 26px+16px"
+      "evidence": "arena.js: SVG center <text> 元素 / Rajdhani 28px+17px"
     },
     {
       "id": "T2-6",

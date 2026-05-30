@@ -71,3 +71,22 @@
 
 - 獨立頁面，不影響主 index.html
 - 後續可考慮整合進 dashboard 作為一個 panel
+
+### 2026-05-30 — Donut 縮小 + 中心字體放大
+
+**T2-5 Refinement:** 使用者反饋圓餅圖太大壓迫到 portfolio 字體
+
+#### What's Done
+
+- [x] Donut outer radius R：130 → **105**（縮小 19%）
+- [x] viewBox：320×320 → **270×270**
+- [x] 中心總資產字體：24px → **28px**
+- [x] 中心總損益字體：14px → **17px**
+- [x] 內圈裝飾線同步微調
+
+#### Verification Evidence
+
+- DOM ID check: ✅ All IDs match
+- JS Syntax check: ✅ Valid (no runtime errors)
+- R=105, r=65, viewBox=-135 -135 270 270, font 28/17
+- Donut ring thickness 40px (from 65px)，中心空洞比例提升

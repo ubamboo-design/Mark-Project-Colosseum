@@ -1092,6 +1092,9 @@ header h1 {
 .clec-bar-segment.s00662 { background: linear-gradient(135deg, #f59e0b, #d97706); }
 .clec-bar-segment.sqld   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
 .clec-bar-segment.scash  { background: linear-gradient(135deg, #22c55e, #16a34a); }
+.clec-bar-segment.s0050  { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+.clec-bar-segment.s00878 { background: linear-gradient(135deg, #fb923c, #ea580c); }
+.clec-bar-segment.s00631L { background: linear-gradient(135deg, #a855f7, #7c3aed); }
 
 /* ── Legend ── */
 .clec-legend {
@@ -1113,6 +1116,9 @@ header h1 {
 .clec-legend-item .dot.d00662 { background: linear-gradient(135deg, #f59e0b, #d97706); }
 .clec-legend-item .dot.dqld   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
 .clec-legend-item .dot.dcash  { background: linear-gradient(135deg, #22c55e, #16a34a); }
+.clec-legend-item .dot.d0050  { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+.clec-legend-item .dot.d00878 { background: linear-gradient(135deg, #fb923c, #ea580c); }
+.clec-legend-item .dot.d00631L { background: linear-gradient(135deg, #a855f7, #7c3aed); }
 .clec-legend-item .name {
   color: #e0e0e0; font-size: clamp(12px, 1vw, 14px); font-weight: 600;
 }

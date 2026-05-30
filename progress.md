@@ -82,7 +82,7 @@
 - [x] components.css 新增 section 20 (.clec-*) 完整樣式，遵循網站深色 HUD 風格
 - [x] 使用網站 CSS 變數（--font-tech/--font-num/--card/--gold）維持一致性
 - [x] 響應式設計：900px/600px 斷點（legend 縱向堆疊、grid 2列）
-- [x] 原獨立 clec-allocation.html 保留
+- [x] 原獨立 clec-allocation.html 已移除（整合進主頁面）
 
 #### Files Modified
 

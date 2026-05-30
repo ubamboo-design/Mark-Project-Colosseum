@@ -80,10 +80,10 @@
     {
       "id": "CLEC-1",
       "name": "CLEC 資產配置長條圖",
-      "description": "整合至 index.html 主頁面 III. ASSET ALLOCATION 區段：100% 堆疊長條圖呈現 00662(51.5%) / QLD(22.4%) / 現金(26.1%) 的 CLEC James 資產配置。components.css 新增 section 20 完整樣式，追蹤網站深色 HUD 風格。原獨立 clec-allocation.html 保留。",
+      "description": "整合至 index.html 主頁面 I. PORTFOLIO PROFILE 區段：100% 堆疊長條圖呈現 00662(51.5%) / QLD(22.4%) / 現金(26.1%) 的 CLEC 523 資產配置。components.css 新增完整樣式，追蹤網站深色 HUD 風格。",
       "dependencies": [],
       "status": "completed",
-      "evidence": "clec-allocation.html — 三色漸層長條圖 + legend 卡 + CLEC 四格框架 + footer 驗算公式"
+      "evidence": "index.html I. PORTFOLIO PROFILE — 三色漸層長條圖 + legend 卡 + footer 驗算公式"
     }
   ]
 }

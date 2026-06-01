@@ -258,19 +258,13 @@ export function renderCacheStatus(meta, currentRate) {
   _cacheMode = meta && meta.cached ? 'cached' : 'live';
   const isCached = _cacheMode === 'cached';
 
-  // Update the simplified badge elements:
-  // "ACTIVITY:" label replaced with "SYSTEM" and value shows ONLINE / CACHED
+  // Update the simplified badge element:
+  // "ACTIVITY:" label shows ONLINE / CACHED
   const liveUsersEl = document.getElementById('liveUsers');
-  const visitorCountEl = document.getElementById('visitorCount');
 
   if (liveUsersEl) {
     liveUsersEl.textContent = isCached ? 'CACHED' : 'ONLINE';
     liveUsersEl.style.color = isCached ? 'var(--green)' : 'var(--yield)';
-  }
-  if (visitorCountEl) {
-    // Repurpose visit counter to show cache/live indicator
-    visitorCountEl.textContent = isCached ? '[FROM CACHE]' : '[LIVE FEED]';
-    visitorCountEl.style.color = isCached ? 'var(--trap)' : 'var(--hud-cyan)';
   }
 }
 

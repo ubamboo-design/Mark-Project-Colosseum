@@ -19,6 +19,7 @@ const SESSION_ID_KEY = LS_PREFIX + '-sid';
 const HEARTBEAT_KEY = LS_PREFIX + '-hb';
 const COUNTED_KEY = LS_PREFIX + '-cnt';
 const FALLBACK_VID_KEY = LS_PREFIX + '-vid';
+const FALLBACK_TOTAL_KEY = LS_PREFIX + '-total';  // Persistent running total counter
 
 const HEARTBEAT_INTERVAL_MS = 30000;  // 30s between heartbeats
 const SESSION_TIMEOUT_MS = 120000;    // 2min without heartbeat = offline
@@ -44,6 +45,9 @@ function formatCount(n) {
 function updateTotalDisplay(count) {
   const el = document.getElementById('totalVisits');
   if (el) el.textContent = formatCount(count);
+  // Also update visitorCount (no longer overwritten by renderCacheStatus)
+  const vcEl = document.getElementById('visitorCount');
+  if (vcEl) vcEl.textContent = formatCount(count);
 }
 
 // ── Update DOM: concurrent online count ──
@@ -138,17 +142,18 @@ function startHeartbeat() {
 // ═══════════════════════════════════════════════════════════════
 
 function fallbackTotalCounter() {
-  let vid = localStorage.getItem(FALLBACK_VID_KEY);
-  if (!vid) {
-    vid = 'v_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
-    localStorage.setItem(FALLBACK_VID_KEY, vid);
+  // Read current running total (default 1001)
+  let total = parseInt(localStorage.getItem(FALLBACK_TOTAL_KEY) || '1001', 10);
+
+  // Only increment once per session (sessionStorage flags)
+  const alreadyCounted = sessionStorage.getItem(COUNTED_KEY);
+  if (!alreadyCounted) {
+    total += 1;
+    localStorage.setItem(FALLBACK_TOTAL_KEY, String(total));
+    sessionStorage.setItem(COUNTED_KEY, '1');
   }
-  let hash = 0;
-  for (let i = 0; i < vid.length; i++) {
-    hash = ((hash << 5) - hash) + vid.charCodeAt(i);
-    hash |= 0;
-  }
-  return 1000 + Math.abs(hash) % 9000;
+
+  return total;
 }
 
 // ═══════════════════════════════════════════════════════════════

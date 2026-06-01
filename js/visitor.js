@@ -14,7 +14,7 @@
 // ── Configuration ──
 const GOOGLE_SCRIPT_URL = '';  // Replace after deployment
 
-const LS_PREFIX = 'pc-vis5';
+const LS_PREFIX = 'pc-vis6';  // v6: reset counter to 0 (was pc-vis5)
 const SESSION_ID_KEY = LS_PREFIX + '-sid';
 const HEARTBEAT_KEY = LS_PREFIX + '-hb';
 const COUNTED_KEY = LS_PREFIX + '-cnt';
@@ -142,8 +142,8 @@ function startHeartbeat() {
 // ═══════════════════════════════════════════════════════════════
 
 function fallbackTotalCounter() {
-  // Read current running total (default 1001)
-  let total = parseInt(localStorage.getItem(FALLBACK_TOTAL_KEY) || '1001', 10);
+  // Read current running total (default 0)
+  let total = parseInt(localStorage.getItem(FALLBACK_TOTAL_KEY) || '0', 10);
 
   // Only increment once per session (sessionStorage flags)
   const alreadyCounted = sessionStorage.getItem(COUNTED_KEY);

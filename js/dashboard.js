@@ -11,6 +11,7 @@ import {
   aggregatePortfolio,
   aggregateQQQIDividends,
   computeCLEC523,
+  computeTWDPortfolio,
   formatCompact,
   formatUSD,
   calc,
@@ -429,4 +430,62 @@ export function renderCLEC523(cards, currentRate) {
   setPctLg('clecPctLg00662', data.pct00662);
   setPctLg('clecPctLgQLD', data.pctQLD);
   setPctLg('clecPctLgCash', data.pctCash);
+}
+
+// =============================================================================
+// TWD Portfolio (台股配置) Rendering
+// =============================================================================
+
+/**
+ * Render the TWD portfolio bar chart dynamically from card data.
+ * Replaces the old hardcoded 0050/00878/00631L values with live computation.
+ *
+ * @param {Object<string, Object>} cards - Map of cardCode → CardData.
+ */
+export function renderTWDPortfolio(cards) {
+  const data = computeTWDPortfolio(cards);
+  if (data.total <= 0) return;
+
+  const fmtAmt = (v) => (v / 10_000).toFixed(1) + ' 萬';
+  const fmtPct = (v) => v.toFixed(1) + '%';
+
+  // Total value
+  const totalEl = document.getElementById('twdTotalValue');
+  if (totalEl) totalEl.innerHTML = fmtAmt(data.total) + ' <small>萬 TWD</small>';
+
+  // Bar widths
+  const setBar = (id, pct) => {
+    const el = document.getElementById(id);
+    if (el) el.style.width = fmtPct(pct);
+  };
+  setBar('twdBar0050', data.pct0050);
+  setBar('twdBar00878', data.pct00878);
+  setBar('twdBar00631L', data.pct00631L);
+
+  // Bar percentage labels
+  const setPct = (id, pct) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = fmtPct(pct);
+  };
+  setPct('twdPct0050', data.pct0050);
+  setPct('twdPct00878', data.pct00878);
+  setPct('twdPct00631L', data.pct00631L);
+
+  // Legend amounts
+  const setAmt = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = fmtAmt(val);
+  };
+  setAmt('twdAmt0050', data.val0050);
+  setAmt('twdAmt00878', data.val00878);
+  setAmt('twdAmt00631L', data.val00631L);
+
+  // Legend percentages
+  const setPctLg = (id, pct) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = fmtPct(pct);
+  };
+  setPctLg('twdPctLg0050', data.pct0050);
+  setPctLg('twdPctLg00878', data.pct00878);
+  setPctLg('twdPctLg00631L', data.pct00631L);
 }

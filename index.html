@@ -187,22 +187,22 @@
 
     <div class="clec-total">
       <span class="clec-total-label">台股總值</span>
-      <span class="clec-total-value">221.2 <small>萬 TWD</small></span>
+      <span class="clec-total-value" id="twdTotalValue">...</span>
     </div>
 
-    <div class="clec-bar-container">
-      <div class="clec-bar-segment s0050" style="width:47.9%">
-        <span class="pct">47.9%</span>
+    <div class="clec-bar-container" id="twdBarContainer">
+      <div class="clec-bar-segment s0050" id="twdBar0050" style="width:0%">
+        <span class="pct" id="twdPct0050">0%</span>
       </div>
-      <div class="clec-bar-segment s00878" style="width:15.4%">
-        <span class="pct">15.4%</span>
+      <div class="clec-bar-segment s00878" id="twdBar00878" style="width:0%">
+        <span class="pct" id="twdPct00878">0%</span>
       </div>
-      <div class="clec-bar-segment s00631L" style="width:36.7%">
-        <span class="pct">36.7%</span>
+      <div class="clec-bar-segment s00631L" id="twdBar00631L" style="width:0%">
+        <span class="pct" id="twdPct00631L">0%</span>
       </div>
     </div>
 
-    <div class="clec-legend">
+    <div class="clec-legend" id="twdLegend">
       <div class="clec-legend-item">
         <div class="dot-row">
           <div class="dot d0050"></div>
@@ -210,8 +210,8 @@
           <span class="tag">原型 · 台灣50 (DCA+單筆)</span>
         </div>
         <div class="value-row">
-          <span class="amount">105.9 萬</span>
-          <span class="pct-lg">47.9%</span>
+          <span class="amount" id="twdAmt0050">...</span>
+          <span class="pct-lg" id="twdPctLg0050">...</span>
         </div>
       </div>
       <div class="clec-legend-item">
@@ -221,8 +221,8 @@
           <span class="tag">高股息 · 現金流</span>
         </div>
         <div class="value-row">
-          <span class="amount">34.1 萬</span>
-          <span class="pct-lg">15.4%</span>
+          <span class="amount" id="twdAmt00878">...</span>
+          <span class="pct-lg" id="twdPctLg00878">...</span>
         </div>
       </div>
       <div class="clec-legend-item">
@@ -232,15 +232,10 @@
           <span class="tag">槓桿 · 2x 台灣50</span>
         </div>
         <div class="value-row">
-          <span class="amount">81.3 萬</span>
-          <span class="pct-lg">36.7%</span>
+          <span class="amount" id="twdAmt00631L">...</span>
+          <span class="pct-lg" id="twdPctLg00631L">...</span>
         </div>
       </div>
-    </div>
-
-    <div class="clec-foot">
-      <span>0050 含 C01 定期定額 + C03 單筆投入</span>
-      <span>總計 3 標的 · 投入 137.7 萬</span>
     </div>
   </div>
 

@@ -116,6 +116,17 @@ export const CLEC523_CONFIG = {
   defaultCashTWD: 4_000_000,
 };
 
+// -- TWD Portfolio (台股配置) -------------------------------------------------
+// Maps card codes to TWD portfolio buckets for the dynamic bar chart.
+// 0050:   C01 (DCA) + C03 (single lump sum)
+// 00878:  C02 (dividend DCA)
+// 00631L: C04 (2x leveraged Taiwan 50)
+export const TWD_PORTFOLIO_CONFIG = {
+  card0050:   ['C01', 'C03'],
+  card00878:  ['C02'],
+  card00631L: ['C04'],
+};
+
 // -- Deprecated / Removed Features (documentation only) -----------------------
 //
 // COUNTER_API  — previously used for visit tracking via counterapi.dev;

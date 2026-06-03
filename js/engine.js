@@ -13,7 +13,7 @@
 // ES module — pure computation, zero side effects, no DOM references.
 // =============================================================================
 
-import { COLUMN_MAP, FALLBACK_RATE, COLORS, CLEC523_CONFIG } from './config.js';
+import { COLUMN_MAP, FALLBACK_RATE, COLORS, CLEC523_CONFIG, TWD_PORTFOLIO_CONFIG } from './config.js';
 
 // =============================================================================
 // Utility: Safe Floor
@@ -534,6 +534,60 @@ export function computeCLEC523(cards, currentRate) {
     val00662, pct00662,
     valQLD,   pctQLD,
     cash,     pctCash,
+    total,
+  };
+}
+
+// =============================================================================
+// TWD Portfolio (台股配置) Computation
+// =============================================================================
+
+/**
+ * Compute the TWD portfolio breakdown (0050 / 00878 / 00631L) from card data.
+ *
+ * 0050   value is summed from cards listed in TWD_PORTFOLIO_CONFIG.card0050.
+ * 00878  value is summed from cards listed in TWD_PORTFOLIO_CONFIG.card00878.
+ * 00631L value is summed from cards listed in TWD_PORTFOLIO_CONFIG.card00631L.
+ *
+ * @param {Object<string, Object>} cards - Map of cardCode → CardData.
+ * @returns {{
+ *   val0050: number, pct0050: number,
+ *   val00878: number, pct00878: number,
+ *   val00631L: number, pct00631L: number,
+ *   total: number
+ * }}
+ */
+export function computeTWDPortfolio(cards) {
+  const { card0050, card00878, card00631L } = TWD_PORTFOLIO_CONFIG;
+
+  const sumCards = (codes) => {
+    let sum = 0;
+    for (const code of codes) {
+      const card = cards[code];
+      if (!card) continue;
+      sum += Number(card.current) || 0;
+    }
+    return sum;
+  };
+
+  const val0050   = sumCards(card0050);
+  const val00878  = sumCards(card00878);
+  const val00631L = sumCards(card00631L);
+  const total = val0050 + val00878 + val00631L;
+
+  if (total <= 0) {
+    return {
+      val0050: 0, pct0050: 0,
+      val00878: 0, pct00878: 0,
+      val00631L: 0, pct00631L: 0,
+      total: 0,
+    };
+  }
+
+  return {
+    val0050,   pct0050:   (val0050   / total) * 100,
+    val00878,  pct00878:  (val00878  / total) * 100,
+    val00631L, pct00631L: (val00631L / total) * 100,
     total,
   };
 }

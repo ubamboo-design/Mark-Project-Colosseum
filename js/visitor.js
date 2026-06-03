@@ -12,7 +12,7 @@
 // =============================================================================
 
 // ── Configuration ──
-const GOOGLE_SCRIPT_URL = '';  // Replace after deployment
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-Tswfcif0srqEZwAtRuPLFB4Gxx6SWstHe2LEKRbYlxXELGpHIDi8blxRPS442H2E/exec';
 
 const LS_PREFIX = 'pc-vis6';  // v6: reset counter to 0 (was pc-vis5)
 const SESSION_ID_KEY = LS_PREFIX + '-sid';
@@ -106,16 +106,60 @@ function refreshOnlineCount() {
   return count;
 }
 
+// Send heartbeat to Google Apps Script server
+async function sendServerHeartbeat() {
+  if (!GOOGLE_SCRIPT_URL) return;
+  try {
+    await fetch(
+      `${GOOGLE_SCRIPT_URL}?action=heartbeat&sid=${encodeURIComponent(sessionId)}`,
+      { signal: AbortSignal.timeout(5000) }
+    );
+  } catch (_) {}
+}
+
+// Fetch live online count from server
+async function fetchServerOnline() {
+  if (!GOOGLE_SCRIPT_URL) return null;
+  try {
+    const res = await fetch(
+      `${GOOGLE_SCRIPT_URL}?action=getactive`,
+      { signal: AbortSignal.timeout(5000) }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    return (data && typeof data.online === 'number') ? data.online : null;
+  } catch (_) { return null; }
+}
+
+// Send leave signal when page unloads
+async function sendServerLeave() {
+  if (!GOOGLE_SCRIPT_URL) return;
+  try {
+    await fetch(
+      `${GOOGLE_SCRIPT_URL}?action=leave&sid=${encodeURIComponent(sessionId)}`,
+      { signal: AbortSignal.timeout(3000) }
+    );
+  } catch (_) {}
+}
+
 // Start the heartbeat loop
 function startHeartbeat() {
   // Initial write + count
   writeHeartbeat();
-  refreshOnlineCount();
+  if (GOOGLE_SCRIPT_URL) {
+    sendServerHeartbeat().then(() => fetchServerOnline().then(c => { if (c !== null) updateOnlineDisplay(c); }));
+  } else {
+    refreshOnlineCount();
+  }
 
   // Periodic heartbeat
   const heartbeatTimer = setInterval(() => {
     writeHeartbeat();
-    refreshOnlineCount();
+    if (GOOGLE_SCRIPT_URL) {
+      sendServerHeartbeat().then(() => fetchServerOnline().then(c => { if (c !== null) updateOnlineDisplay(c); }));
+    } else {
+      refreshOnlineCount();
+    }
   }, HEARTBEAT_INTERVAL_MS);
 
   // Clean up on page unload
@@ -123,14 +167,18 @@ function startHeartbeat() {
     removeHeartbeat();
     clearInterval(heartbeatTimer);
   };
-  window.addEventListener('beforeunload', cleanup);
-  window.addEventListener('pagehide', cleanup);
+  window.addEventListener('beforeunload', () => { sendServerLeave(); cleanup(); });
+  window.addEventListener('pagehide', () => { sendServerLeave(); cleanup(); });
 
-  // Re-count when tab becomes visible again (user might have multiple tabs)
+  // Re-count when tab becomes visible again
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
       writeHeartbeat();
-      refreshOnlineCount();
+      if (GOOGLE_SCRIPT_URL) {
+        sendServerHeartbeat().then(() => fetchServerOnline().then(c => { if (c !== null) updateOnlineDisplay(c); }));
+      } else {
+        refreshOnlineCount();
+      }
     }
   });
 
@@ -177,18 +225,6 @@ async function totalViaGoogleScript() {
   throw new Error('invalid response');
 }
 
-async function onlineViaGoogleScript() {
-  if (!GOOGLE_SCRIPT_URL) return null;
-  const res = await fetch(
-    `${GOOGLE_SCRIPT_URL}?action=getactive`,
-    { signal: AbortSignal.timeout(5000) }
-  );
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  if (data && typeof data.online === 'number') return data.online;
-  throw new Error('invalid response');
-}
-
 // ═══════════════════════════════════════════════════════════════
 //  EXPORTED API
 // ═══════════════════════════════════════════════════════════════
@@ -221,14 +257,8 @@ export async function getVisitorCount() {
 
 // Get concurrent online count (starts heartbeat on first call)
 export function trackOnline() {
-  // Try Google Apps Script once
-  if (GOOGLE_SCRIPT_URL) {
-    onlineViaGoogleScript()
-      .then(c => { if (c !== null) updateOnlineDisplay(c); })
-      .catch(() => { /* fallback handles it */ });
-  }
-
-  // Start localStorage heartbeat (always, as baseline + fallback)
+  // Server heartbeat + online counting is handled inside startHeartbeat()
+  // when GOOGLE_SCRIPT_URL is set. Fallback: localStorage only.
   startHeartbeat();
 }
 

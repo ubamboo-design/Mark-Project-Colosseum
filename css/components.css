@@ -1068,6 +1068,25 @@ header h1 {
   margin-left: 3px;
 }
 
+/* ── Total + Bar in one row ── */
+.clec-total-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.clec-total-bar-row .clec-total {
+  flex-shrink: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  white-space: nowrap;
+}
+.clec-total-bar-row .clec-bar-container {
+  flex: 1;
+  margin-bottom: 0;
+}
+
 /* ── Stacked Bar ── */
 .clec-bar-container {
   position: relative; height: 48px;

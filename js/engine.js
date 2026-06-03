@@ -465,7 +465,8 @@ export function aggregateQQQIDividends(cards) {
  *
  * 00662 value is summed from cards listed in CLEC523_CONFIG.card00662.
  * QLD value     is summed from cards listed in CLEC523_CONFIG.cardQLD.
- * 現金          = totalPortfolioTWD - 00662 - QLD.
+ * 現金          = fixed at CLEC523_CONFIG.defaultCashTWD (4,000,000).
+ * Total         = 00662 + QLD + cash → percentages follow 523 rule dynamically.
  *
  * @param {Object<string, Object>} cards       - Map of cardCode → CardData.
  * @param {number}                  currentRate - USD/TWD exchange rate.
@@ -498,23 +499,9 @@ export function computeCLEC523(cards, currentRate) {
     valQLD += card.isUSD ? cur * currentRate : cur;
   }
 
-  // Get total portfolio value in TWD (all cards aggregated)
-  const pf = aggregatePortfolio(cards, currentRate);
-  const totalPortfolio = pf.totalAssetTWD;
-
-  // Cash = total portfolio - tracked investments
-  // If tracked investments exceed total (edge case), cash defaults to the
-  // configured anchor value and total is recalculated as 00662 + QLD + cash.
-  let cash, total;
-  const tracked = val00662 + valQLD;
-  if (totalPortfolio > tracked) {
-    cash = totalPortfolio - tracked;
-    total = totalPortfolio;
-  } else {
-    // Fallback: use configured cash anchor and compute total from tracked
-    cash = defaultCashTWD;
-    total = tracked + cash;
-  }
+  // Cash fixed at configured anchor (523 rule: cash reserve)
+  const cash = defaultCashTWD;
+  const total = val00662 + valQLD + cash;
 
   // Guard against division by zero
   if (total <= 0) {

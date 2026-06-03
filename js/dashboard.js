@@ -384,10 +384,13 @@ export function renderCLEC523(cards, currentRate) {
   const data = computeCLEC523(cards, currentRate);
   if (data.total <= 0) return;
 
-  // Helper: format a TWD amount for CLEC display (萬 scale)
-  const fmtWan = (v) => (v / 10_000).toFixed(1) + ' <small>萬 TWD</small>';
-  const fmtAmt = (v) => (v / 10_000).toFixed(1) + ' 萬';
-  const fmtPct = (v) => v.toFixed(1) + '%';
+  // Formatter with thousand separators (en-US style)
+  const wanFmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const pctFmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  const fmtWan = (v) => wanFmt.format(v / 10_000) + ' <small>萬 TWD</small>';
+  const fmtAmt = (v) => wanFmt.format(v / 10_000) + ' 萬';
+  const fmtPct = (v) => pctFmt.format(v) + '%';
 
   // -- Total value --
   const totalEl = document.getElementById('clecTotalValue');
@@ -446,12 +449,16 @@ export function renderTWDPortfolio(cards) {
   const data = computeTWDPortfolio(cards);
   if (data.total <= 0) return;
 
-  const fmtAmt = (v) => (v / 10_000).toFixed(1) + ' 萬';
-  const fmtPct = (v) => v.toFixed(1) + '%';
+  // Formatter with thousand separators (en-US style)
+  const wanFmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const pctFmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
-  // Total value
+  const fmtAmt = (v) => wanFmt.format(v / 10_000) + ' 萬';
+  const fmtPct = (v) => pctFmt.format(v) + '%';
+
+  // Total value (only one 萬)
   const totalEl = document.getElementById('twdTotalValue');
-  if (totalEl) totalEl.innerHTML = fmtAmt(data.total) + ' <small>萬 TWD</small>';
+  if (totalEl) totalEl.innerHTML = fmtAmt(data.total) + ' <small>TWD</small>';
 
   // Bar widths
   const setBar = (id, pct) => {

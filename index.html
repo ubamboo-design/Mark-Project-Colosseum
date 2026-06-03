@@ -123,22 +123,22 @@
 
     <div class="clec-total">
       <span class="clec-total-label">投資組合總值</span>
-      <span class="clec-total-value">1,532.6 <small>萬 TWD</small></span>
+      <span class="clec-total-value" id="clecTotalValue">...</span>
     </div>
 
-    <div class="clec-bar-container">
-      <div class="clec-bar-segment s00662" style="width:51.5%">
-        <span class="pct">51.5%</span>
+    <div class="clec-bar-container" id="clecBarContainer">
+      <div class="clec-bar-segment s00662" id="clecBar00662" style="width:0%">
+        <span class="pct" id="clecPct00662">0%</span>
       </div>
-      <div class="clec-bar-segment sqld" style="width:22.4%">
-        <span class="pct">22.4%</span>
+      <div class="clec-bar-segment sqld" id="clecBarQLD" style="width:0%">
+        <span class="pct" id="clecPctQLD">0%</span>
       </div>
-      <div class="clec-bar-segment scash" style="width:26.1%">
-        <span class="pct">26.1%</span>
+      <div class="clec-bar-segment scash" id="clecBarCash" style="width:0%">
+        <span class="pct" id="clecPctCash">0%</span>
       </div>
     </div>
 
-    <div class="clec-legend">
+    <div class="clec-legend" id="clecLegend">
       <div class="clec-legend-item">
         <div class="dot-row">
           <div class="dot d00662"></div>
@@ -146,8 +146,8 @@
           <span class="tag">原型 · 納斯達克100</span>
         </div>
         <div class="value-row">
-          <span class="amount">789.3 萬</span>
-          <span class="pct-lg">51.5%</span>
+          <span class="amount" id="clecAmt00662">...</span>
+          <span class="pct-lg" id="clecPctLg00662">...</span>
         </div>
       </div>
       <div class="clec-legend-item">
@@ -157,8 +157,8 @@
           <span class="tag">槓桿 · 2x 納斯達克</span>
         </div>
         <div class="value-row">
-          <span class="amount">343.3 萬</span>
-          <span class="pct-lg">22.4%</span>
+          <span class="amount" id="clecAmtQLD">...</span>
+          <span class="pct-lg" id="clecPctLgQLD">...</span>
         </div>
       </div>
       <div class="clec-legend-item">
@@ -168,15 +168,10 @@
           <span class="tag">盾 · 短債/活存</span>
         </div>
         <div class="value-row">
-          <span class="amount">400.0 萬</span>
-          <span class="pct-lg">26.1%</span>
+          <span class="amount" id="clecAmtCash">...</span>
+          <span class="pct-lg" id="clecPctLgCash">...</span>
         </div>
       </div>
-    </div>
-
-    <div class="clec-foot">
-      <span>公式：現金 400 萬 ÷ 26.1% = 總值 1,532.6 萬</span>
-      <span>00662:QLD ≈ <strong>7:3</strong> &nbsp;·&nbsp; BBD 打死不賣</span>
     </div>
   </div>
 

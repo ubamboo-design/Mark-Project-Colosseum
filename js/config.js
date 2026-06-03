@@ -102,6 +102,20 @@ export const CONFIG_DEFAULTS = {
 // Used by Intl.* formatters throughout the dashboard.
 export const DEFAULT_LOCALE = 'zh-TW';
 
+// -- CLEC 523 Portfolio Allocation ---------------------------------------------
+// Maps card codes to CLEC 523 buckets for the dynamic portfolio bar.
+// 00662: core Nasdaq 100 position (C06)
+// QLD:   2x leveraged Nasdaq position (C05)
+// 現金:  cash reserve (computed from total - 00662 - QLD)
+export const CLEC523_CONFIG = {
+  /** Card codes that belong to the 00662 bucket */
+  card00662: ['C06'],
+  /** Card codes that belong to the QLD bucket */
+  cardQLD: ['C05'],
+  /** Default cash reserve value in TWD (fallback) */
+  defaultCashTWD: 4_000_000,
+};
+
 // -- Deprecated / Removed Features (documentation only) -----------------------
 //
 // COUNTER_API  — previously used for visit tracking via counterapi.dev;

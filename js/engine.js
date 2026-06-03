@@ -13,7 +13,7 @@
 // ES module — pure computation, zero side effects, no DOM references.
 // =============================================================================
 
-import { COLUMN_MAP, FALLBACK_RATE, COLORS } from './config.js';
+import { COLUMN_MAP, FALLBACK_RATE, COLORS, CLEC523_CONFIG } from './config.js';
 
 // =============================================================================
 // Utility: Safe Floor
@@ -454,4 +454,86 @@ export function aggregateQQQIDividends(cards) {
   }
 
   return { divCum, taxRefund, divTotal };
+}
+
+// =============================================================================
+// CLEC 523 Portfolio Computation
+// =============================================================================
+
+/**
+ * Compute the CLEC 523 portfolio allocation (00662 / QLD / 現金) from card data.
+ *
+ * 00662 value is summed from cards listed in CLEC523_CONFIG.card00662.
+ * QLD value     is summed from cards listed in CLEC523_CONFIG.cardQLD.
+ * 現金          = totalPortfolioTWD - 00662 - QLD.
+ *
+ * @param {Object<string, Object>} cards       - Map of cardCode → CardData.
+ * @param {number}                  currentRate - USD/TWD exchange rate.
+ * @returns {{
+ *   val00662: number, pct00662: number,
+ *   valQLD:   number, pctQLD:   number,
+ *   cash:     number, pctCash:  number,
+ *   total:    number
+ * }}
+ */
+export function computeCLEC523(cards, currentRate) {
+  const { card00662, cardQLD, defaultCashTWD } = CLEC523_CONFIG;
+
+  // Sum current values for 00662 cards
+  let val00662 = 0;
+  for (const code of card00662) {
+    const card = cards[code];
+    if (!card) continue;
+    const cur = Number(card.current) || 0;
+    // Convert USD to TWD if needed
+    val00662 += card.isUSD ? cur * currentRate : cur;
+  }
+
+  // Sum current values for QLD cards
+  let valQLD = 0;
+  for (const code of cardQLD) {
+    const card = cards[code];
+    if (!card) continue;
+    const cur = Number(card.current) || 0;
+    valQLD += card.isUSD ? cur * currentRate : cur;
+  }
+
+  // Get total portfolio value in TWD (all cards aggregated)
+  const pf = aggregatePortfolio(cards, currentRate);
+  const totalPortfolio = pf.totalAssetTWD;
+
+  // Cash = total portfolio - tracked investments
+  // If tracked investments exceed total (edge case), cash defaults to the
+  // configured anchor value and total is recalculated as 00662 + QLD + cash.
+  let cash, total;
+  const tracked = val00662 + valQLD;
+  if (totalPortfolio > tracked) {
+    cash = totalPortfolio - tracked;
+    total = totalPortfolio;
+  } else {
+    // Fallback: use configured cash anchor and compute total from tracked
+    cash = defaultCashTWD;
+    total = tracked + cash;
+  }
+
+  // Guard against division by zero
+  if (total <= 0) {
+    return {
+      val00662: 0, pct00662: 0,
+      valQLD: 0,   pctQLD: 0,
+      cash: 0,     pctCash: 0,
+      total: 0,
+    };
+  }
+
+  const pct00662 = (val00662 / total) * 100;
+  const pctQLD   = (valQLD   / total) * 100;
+  const pctCash  = (cash     / total) * 100;
+
+  return {
+    val00662, pct00662,
+    valQLD,   pctQLD,
+    cash,     pctCash,
+    total,
+  };
 }

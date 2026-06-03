@@ -10,6 +10,7 @@ import {
   computeStrategyMetrics,
   aggregatePortfolio,
   aggregateQQQIDividends,
+  computeCLEC523,
   formatCompact,
   formatUSD,
   calc,
@@ -365,4 +366,67 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.appendChild(document.createTextNode(String(str)));
   return div.innerHTML;
+}
+
+// =============================================================================
+// CLEC 523 Portfolio Rendering
+// =============================================================================
+
+/**
+ * Render the CLEC 523 portfolio bar chart dynamically from card data.
+ * Replaces the old hardcoded 00662/QLD/現金 values with live computation.
+ *
+ * @param {Object<string, Object>} cards       - Map of cardCode → CardData.
+ * @param {number}                  currentRate - USD/TWD exchange rate.
+ */
+export function renderCLEC523(cards, currentRate) {
+  const data = computeCLEC523(cards, currentRate);
+  if (data.total <= 0) return;
+
+  // Helper: format a TWD amount for CLEC display (萬 scale)
+  const fmtWan = (v) => (v / 10_000).toFixed(1) + ' <small>萬 TWD</small>';
+  const fmtAmt = (v) => (v / 10_000).toFixed(1) + ' 萬';
+  const fmtPct = (v) => v.toFixed(1) + '%';
+
+  // -- Total value --
+  const totalEl = document.getElementById('clecTotalValue');
+  if (totalEl) {
+    totalEl.innerHTML = fmtWan(data.total);
+  }
+
+  // -- Bar chart segments --
+  const setBar = (id, pct) => {
+    const el = document.getElementById(id);
+    if (el) el.style.width = fmtPct(pct);
+  };
+  setBar('clecBar00662', data.pct00662);
+  setBar('clecBarQLD', data.pctQLD);
+  setBar('clecBarCash', data.pctCash);
+
+  // -- Bar percentage labels --
+  const setPct = (id, pct) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = fmtPct(pct);
+  };
+  setPct('clecPct00662', data.pct00662);
+  setPct('clecPctQLD', data.pctQLD);
+  setPct('clecPctCash', data.pctCash);
+
+  // -- Legend amounts --
+  const setAmt = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = fmtAmt(val);
+  };
+  setAmt('clecAmt00662', data.val00662);
+  setAmt('clecAmtQLD', data.valQLD);
+  setAmt('clecAmtCash', data.cash);
+
+  // -- Legend percentages --
+  const setPctLg = (id, pct) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = fmtPct(pct);
+  };
+  setPctLg('clecPctLg00662', data.pct00662);
+  setPctLg('clecPctLgQLD', data.pctQLD);
+  setPctLg('clecPctLgCash', data.pctCash);
 }

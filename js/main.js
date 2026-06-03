@@ -9,7 +9,7 @@ import { GOOGLE_SHEET_URL, FALLBACK_RATE, DEFAULT_YT, CONFIG_DEFAULTS } from './
 import { fetchSheet, parseSheetData } from './parser.js';
 import { saveToCache, loadFromCache, getCacheMeta, isCacheFresh, validateCacheStructure } from './cache.js';
 import { computeAllStrategyMetrics } from './engine.js';
-import { renderHeader, renderDashboard, renderCacheStatus, showDashboardError, showDashboardLoading } from './dashboard.js';
+import { renderHeader, renderDashboard, renderCacheStatus, showDashboardError, showDashboardLoading, renderCLEC523 } from './dashboard.js';
 import { renderArena } from './arena.js';
 import { renderEvents } from './events.js';
 import { openStrategyModal, closeModal } from './modal.js';
@@ -164,6 +164,7 @@ function applyParsedData(data) {
 function renderAll() {
     renderHeader(logoUrl, configData);
     renderDashboard(Object.values(cardsData), currentRate);
+    renderCLEC523(cardsData, currentRate);
     renderArena(portfolios, cardsData, configData, currentRate);
     renderEvents(eventsData);
 }

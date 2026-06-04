@@ -179,3 +179,29 @@
 - JS Syntax check: ✅ Valid (no runtime errors)
 - R=105, r=65, viewBox=-135 -135 270 270, font 28/17
 - Donut ring thickness 40px (from 65px)，中心空洞比例提升
+
+### 2026-06-01 — 訪客計數器修復
+
+**Active Feature:** Visitor Counter Fix
+
+#### Root Cause
+- `GOOGLE_SCRIPT_URL` 為空（Apps Script 未部署），fallback 使用 VID 雜湊（永不變動）
+- `dashboard.js` renderCacheStatus() 覆寫了 `#visitorCount` 為 `[LIVE FEED]`
+- 結果：總計數 1,590 永不改變，VISITS 欄位未顯示實際數字
+
+#### What's Done
+- [x] `js/visitor.js` `fallbackTotalCounter()` — 從雜湊改為 localStorage 累積計數器
+  - 初始值 1001，每次新 session +1
+  - sessionStorage 去重（同 session 不重複計數）
+- [x] `js/visitor.js` `updateTotalDisplay()` — 同時更新 `#totalVisits` + `#visitorCount`
+- [x] `js/dashboard.js` `renderCacheStatus()` — 移除對 `#visitorCount` 的覆寫
+- [x] Git push → `ea815a7`
+
+#### Files Modified
+- `js/visitor.js` — fallback 邏輯置換（hash → running counter）+ visitorCount 同步更新
+- `js/dashboard.js` — 移除 visitorCount 覆寫
+
+#### Verification
+- Node syntax check: ✅ visitor.js OK, dashboard.js OK
+- DOM ID: 無變更（未增減任何 ID）
+- GitHub Pages: 已上線 `ea815a7`

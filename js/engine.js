@@ -437,10 +437,11 @@ export function animateValue(el, endVal, duration = 800, formatter) {
  * Aggregate QQQI-specific dividend figures (cumulative, tax refund, total)
  * across all cards for the nested QQQI HUD panel.
  *
- * @param {Object<string, Object>} cards - Map of cardCode → CardData.
+ * @param {Object<string, Object>} cards       - Map of cardCode → CardData.
+ * @param {number}                  currentRate - USD/TWD exchange rate.
  * @returns {{ divCum: number, taxRefund: number, divTotal: number }}
  */
-export function aggregateQQQIDividends(cards) {
+export function aggregateQQQIDividends(cards, currentRate) {
   let divCum = 0;
   let taxRefund = 0;
   let divTotal = 0;
@@ -453,7 +454,13 @@ export function aggregateQQQIDividends(cards) {
     }
   }
 
-  return { divCum, taxRefund, divTotal };
+  // QQQI dividends are stored in USD; convert to TWD for display
+  const rate = currentRate || 1;
+  return {
+    divCum: divCum * rate,
+    taxRefund: taxRefund * rate,
+    divTotal: divTotal * rate,
+  };
 }
 
 // =============================================================================

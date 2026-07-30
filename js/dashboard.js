@@ -142,7 +142,7 @@ export function renderDashboard(cards, currentRate) {
   const pf = aggregatePortfolio(cards, currentRate);
 
   // Aggregate QQQI-specific dividend figures
-  const qqqi = aggregateQQQIDividends(cards);
+  const qqqi = aggregateQQQIDividends(cards, currentRate);
 
   // ── TW Panel (Cyan) ───────────────────────────────────────────────────
 

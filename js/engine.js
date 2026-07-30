@@ -454,12 +454,11 @@ export function aggregateQQQIDividends(cards, currentRate) {
     }
   }
 
-  // QQQI dividends are stored in USD; convert to TWD for display
-  const rate = currentRate || 1;
+  // QQQI dividends remain in USD (raw sheet values)
   return {
-    divCum: divCum * rate,
-    taxRefund: taxRefund * rate,
-    divTotal: divTotal * rate,
+    divCum,
+    taxRefund,
+    divTotal,
   };
 }
 

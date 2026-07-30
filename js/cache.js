@@ -72,14 +72,13 @@ export function getCacheMeta() {
       return { exists: false, age: 0, timestamp: null };
     }
 
+    const data = JSON.parse(raw);
+    const savedTs = data && data.timestamp ? Number(data.timestamp) : 0;
     const now = Date.now();
+    const age = savedTs > 0 ? now - savedTs : 0;
     const ts = new Date(now).toISOString();
 
-    // We store age as the elapsed time since this function was called — the
-    // actual write timestamp is not persisted alongside the data, so we use
-    // "now" as a best-effort baseline. Consumers should treat `age` as the
-    // delta between successive meta reads, not as an absolute write-time.
-    return { exists: true, age: 0, timestamp: ts };
+    return { exists: true, age, timestamp: ts };
   } catch {
     return { exists: false, age: 0, timestamp: null };
   }
@@ -130,8 +129,8 @@ export function validateCacheStructure(data) {
   }
 
   const checks = [
-    ['cards',       Array.isArray],
-    ['strategies',  Array.isArray],
+    ['cards',       (v) => v && typeof v === 'object' && !Array.isArray(v)],
+    ['strategies',  (v) => v && typeof v === 'object' && !Array.isArray(v)],
     ['events',      Array.isArray],
   ];
 

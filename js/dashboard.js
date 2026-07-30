@@ -199,17 +199,18 @@ export function renderDashboard(cards, currentRate) {
   // Exchange rate display under US title
   setText('usdExRate', 'Ex: ' + formatUSD(currentRate));
 
-  // QQQI exchange rate label
+  // QQQI exchange rate label — dividends are in USD, shown as-is
   setText(
     'qqqiExRate',
-    'TWD 計價 | Ex: ' + formatUSD(currentRate)
+    'USD 計價 | Ex: ' + formatUSD(currentRate)
   );
 
   // ── QQQI Dividend Panel (Purple, nested in US) ────────────────────────
+  // QQQI dividends are USD-denominated; show raw sheet values without FX conversion
 
-  setHtml('qqqiDivCum', qqqi.divCum > 0 ? valHtml('NT$', formatCompact(qqqi.divCum, 0)) : '...');
-  setHtml('qqqiTaxRef', qqqi.taxRefund > 0 ? valHtml('NT$', formatCompact(qqqi.taxRefund, 0)) : '...');
-  setHtml('qqqiDivTotal', qqqi.divTotal > 0 ? valHtml('NT$', formatCompact(qqqi.divTotal, 0)) : '...');
+  setHtml('qqqiDivCum', qqqi.divCum > 0 ? valHtml('USD$', formatCompact(qqqi.divCum, 0)) : '...');
+  setHtml('qqqiTaxRef', qqqi.taxRefund > 0 ? valHtml('USD$', formatCompact(qqqi.taxRefund, 0)) : '...');
+  setHtml('qqqiDivTotal', qqqi.divTotal > 0 ? valHtml('USD$', formatCompact(qqqi.divTotal, 0)) : '...');
 
   // ── Total Panel (Gold) ────────────────────────────────────────────────
 

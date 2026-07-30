@@ -9,7 +9,7 @@
 // -- Google Sheets ------------------------------------------------------------
 // Published TSV feed from the master investment tracking spreadsheet.
 export const GOOGLE_SHEET_URL =
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuNQc8E7BlYLR5E6WlYHVQ3l_ki95CqcEcpS8sNQESRKcg5yECE-e2bgMvLGU-Vx5HFuWo5OS1GUIT/pub?output=tsv';
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vSHOpI_ZlxDuP4iILBZEBVRSM42aaO2EZEoyh3Q0Nl2KX50fCDEdbLREYZMJj2MNE_j8lgE48LjGppl/pub?output=tsv';
 
 // -- YouTube / Media ----------------------------------------------------------
 // Fallback YouTube video URL (used when sheet does not supply one).

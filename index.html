@@ -1,290 +1,2042 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="x-theme" content="default">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-<!-- Alternate theme fonts (loaded lazily via JS, but preconnected) -->
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/main.css?v=2">
-<link rel="stylesheet" href="css/components.css?v=2">
-<link rel="stylesheet" href="css/themes.css?v=1">
-<!-- FOUC prevention: restore saved theme before render -->
-<script>!function(){try{var t=localStorage.getItem('pc-colosseum-theme');if(t&&t!=='default')document.documentElement.classList.add('theme-'+t)}catch(e){}}();</script>
-<title>PROJECT COLISEUM v18.00</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>投資戰情室 • PROJECT COLOSSEUM COMMAND CENTER</title>
+  
+  <!-- Google Fonts: Outfit, Inter, JetBrains Mono, Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* ==========================================================================
+       UX ARCHITECT DESIGN SYSTEM (PROJECT COLOSSEUM v18 DESIGN TOKENS)
+       ========================================================================== */
+    :root {
+      --bg-primary: #070b14;
+      --bg-secondary: #0f172a;
+      --bg-surface: rgba(15, 23, 42, 0.78);
+      --bg-surface-hover: rgba(26, 38, 66, 0.88);
+      --bg-card: rgba(16, 24, 40, 0.7);
+      --bg-glass: rgba(255, 255, 255, 0.03);
+      --bg-glass-active: rgba(0, 242, 254, 0.08);
+
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.15);
+      --border-cyan: rgba(0, 242, 254, 0.3);
+      --border-amber: rgba(251, 191, 36, 0.3);
+      
+      --neon-cyan: #00f2fe;
+      --neon-blue: #3b82f6;
+      --neon-emerald: #10b981;
+      --neon-rose: #f43f5e;
+      --neon-amber: #fbbf24;
+      --neon-purple: #a855f7;
+
+      --font-ui: 'Outfit', 'Noto Sans TC', sans-serif;
+      --font-body: 'Inter', 'Noto Sans TC', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --text-bright: #ffffff;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+      --shadow-glow: 0 0 20px rgba(0, 242, 254, 0.25);
+
+      --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-smooth: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      min-height: 100vh;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* Ambient HUD Background */
+    #ambient-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    #ambient-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse 70% 50% at 20% -10%, rgba(0, 242, 254, 0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 110%, rgba(168, 85, 247, 0.10) 0%, transparent 60%),
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.04) 0%, transparent 70%);
+    }
+    #ambient-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 40%, transparent 90%);
+    }
+
+    #app-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .font-mono { font-family: var(--font-mono); }
+    .font-ui { font-family: var(--font-ui); }
+
+    /* Header */
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 16px 24px;
+      background: var(--bg-surface);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-cyan);
+      border-radius: 18px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: var(--shadow-glow);
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      font-family: var(--font-ui);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(90deg, #ffffff, var(--neon-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 99px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--neon-emerald);
+    }
+    .status-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--neon-emerald);
+      box-shadow: 0 0 10px var(--neon-emerald);
+      animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse-ring {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    .exchange-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: rgba(0, 242, 254, 0.06);
+      border: 1px solid var(--border-cyan);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--neon-cyan);
+    }
+    .rate-input {
+      background: transparent;
+      border: none;
+      color: var(--neon-cyan);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      width: 60px;
+      outline: none;
+      text-align: right;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(59, 130, 246, 0.15));
+      border: 1px solid var(--border-cyan);
+      color: var(--text-bright);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      outline: none;
+    }
+    .btn-action:hover {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.25), rgba(59, 130, 246, 0.25));
+      border-color: var(--neon-cyan);
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-1px);
+    }
+    .btn-action.spinning svg { animation: spin 1s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition-smooth);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--card-accent, var(--neon-cyan)), transparent);
+      opacity: 0.7;
+    }
+    .kpi-card:hover {
+      border-color: var(--border-cyan);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .kpi-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .kpi-icon { font-size: 18px; opacity: 0.85; }
+
+    .kpi-value {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-bright);
+      margin-bottom: 6px;
+      line-height: 1.1;
+    }
+    .kpi-subtext {
+      font-size: 12px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .roi-pill {
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .roi-positive {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--neon-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .roi-negative {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--neon-rose);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan));
+      box-shadow: 0 0 12px var(--neon-cyan);
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Reference: CLEC Portfolio Allocation Card (From Colosseum v18) */
+    .clec-summary-card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-cyan);
+      border-radius: 18px;
+      padding: 20px 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .clec-summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .clec-summary-title {
+      font-family: var(--font-ui);
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-bright);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .clec-badge-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 99px;
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--neon-cyan);
+      border: 1px solid var(--border-cyan);
+    }
+
+    .clec-bar-container {
+      width: 100%;
+      height: 14px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 99px;
+      overflow: hidden;
+      display: flex;
+      gap: 2px;
+    }
+    .clec-segment {
+      height: 100%;
+      transition: width 0.6s ease;
+      position: relative;
+    }
+    .seg-twd { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .seg-us { background: linear-gradient(90deg, #a855f7, #c084fc); }
+    .seg-yield { background: linear-gradient(90deg, #10b981, #34d399); }
+    .seg-crypto { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+    .tag-income { background: rgba(20, 184, 166, 0.15); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.3); }
+
+    /* ROI mini-bar on cards */
+    .card-roi-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 2px;
+    }
+    .card-roi-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card-roi-fill.pos { background: linear-gradient(90deg, #10b981, #34d399); box-shadow: 0 0 6px #10b981; }
+    .card-roi-fill.neg { background: linear-gradient(90deg, #f43f5e, #fb7185); box-shadow: 0 0 6px #f43f5e; }
+
+    .yield-sub-note {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 3px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .yield-sub-note span {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+      padding: 1px 6px;
+    }
+
+    .clec-legend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .clec-legend-item {
+      background: rgba(7, 11, 20, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .legend-left { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* Control Toolbar */
+    .control-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+    }
+
+    .filter-chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      padding: 8px 16px;
+      border-radius: 10px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .chip:hover {
+      color: var(--text-bright);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .chip.active {
+      background: rgba(0, 242, 254, 0.12);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.2);
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 260px;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 9px 14px 9px 36px;
+      background: rgba(7, 11, 20, 0.6);
+      border: 1px solid var(--border-medium);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 13px;
+      outline: none;
+      transition: var(--transition-fast);
+    }
+    .search-box input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    .view-switcher {
+      display: flex;
+      background: rgba(7, 11, 20, 0.6);
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid var(--border-medium);
+    }
+    .view-btn {
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .view-btn.active {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(59, 130, 246, 0.2));
+      color: var(--text-bright);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Content Area */
+    .content-area { position: relative; }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    .section-header {
+      font-family: var(--font-ui);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--text-bright);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .section-header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-header-title::before {
+      content: '';
+      width: 4px;
+      height: 18px;
+      background: var(--neon-cyan);
+      border-radius: 2px;
+      box-shadow: 0 0 10px var(--neon-cyan);
+    }
+
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    /* Native Currency Position Cards (Clean & Pure Currency) */
+    .asset-card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 20px;
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .asset-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.04) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+    }
+    .asset-card:hover {
+      border-color: var(--border-cyan);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .asset-card:hover::before { opacity: 1; }
+
+    .card-header-clean {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .card-code-badge {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--neon-cyan);
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+    }
+    .currency-badge-usd {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--neon-purple);
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .currency-badge-twd {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--neon-blue);
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .card-meta { flex: 1; overflow: hidden; }
+    .card-title {
+      font-family: var(--font-ui);
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-bright);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .tag-chip {
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .tag-tw { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .tag-us { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .tag-yield { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .tag-ber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .tag-trap { background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); }
+
+    .card-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-subtle);
+    }
+    .metric-box { display: flex; flex-direction: column; }
+    .metric-lbl { font-size: 11px; color: var(--text-dim); margin-bottom: 2px; }
+    .metric-val { font-family: var(--font-mono); font-size: 14px; font-weight: 700; }
+    .val-up { color: var(--neon-emerald); }
+    .val-down { color: var(--neon-rose); }
+
+    .card-sop-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.35);
+      padding: 7px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .charts-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .chart-card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .chart-box { position: relative; width: 100%; height: 250px; }
+
+    /* Data Table View */
+    .table-container {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    .data-table th {
+      padding: 14px 18px;
+      background: rgba(7, 11, 20, 0.7);
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-medium);
+      cursor: pointer;
+      user-select: none;
+      transition: var(--transition-fast);
+    }
+    .data-table th:hover { color: var(--neon-cyan); }
+    .data-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+    .data-table tr:hover td { background: var(--bg-glass-active); }
+
+    /* Timeline View */
+    .timeline-box {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .timeline-item {
+      display: flex;
+      gap: 20px;
+      padding-bottom: 20px;
+      position: relative;
+    }
+    .timeline-item:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 30px;
+      bottom: 0;
+      width: 2px;
+      background: var(--border-medium);
+    }
+    .timeline-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid var(--neon-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+    .timeline-content {
+      flex: 1;
+      background: rgba(7, 11, 20, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 14px 18px;
+    }
+    .timeline-date {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--neon-cyan);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .timeline-desc { font-size: 14px; color: var(--text-bright); }
+
+    /* Modal Overlay & Drawer */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 13, 0.82);
+      backdrop-filter: blur(14px);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-smooth);
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-container {
+      background: #0f172a;
+      border: 1px solid var(--border-cyan);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 740px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-md);
+      transform: scale(0.95) translateY(20px);
+      transition: transform var(--transition-smooth);
+      position: relative;
+    }
+    .modal-overlay.open .modal-container {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .modal-close-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: var(--text-muted);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-fast);
+    }
+    .modal-close-btn:hover {
+      background: rgba(244, 63, 94, 0.2);
+      color: var(--neon-rose);
+    }
+
+    .modal-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sop-box {
+      background: rgba(7, 11, 20, 0.7);
+      border: 1px solid var(--border-cyan);
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-main);
+      white-space: pre-wrap;
+    }
+
+    .app-footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--text-dim);
+      font-size: 12px;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: 20px;
+    }
+
+    .state-box {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+    }
+    .state-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.5; }
+
+    @media (max-width: 768px) {
+      #app-wrapper { padding: 14px; }
+      .app-header { padding: 16px; }
+      .kpi-value { font-size: 20px; }
+      .search-box { min-width: 100%; }
+      .control-toolbar { flex-direction: column; align-items: stretch; }
+      .toolbar-right { flex-direction: column; align-items: stretch; }
+    }
+  </style>
 </head>
 <body>
 
-<div id="refresh-indicator">
-  <div class="refresh-text">
-    <div class="spinner"></div>
-    <span>SYNCING...</span>
-  </div>
-</div>
+  <div id="ambient-bg"></div>
 
-<header>
-  <div class="hud-status-badge">
-    <div class="status-group">
-      <div class="status-dot"></div>
-      <span style="color:#aaa; font-size:0.75rem;">ACTIVITY:</span>
-      <span id="liveUsers" class="live-val">1</span>
-    </div>
-    <div class="hud-divider"></div>
-    <div class="status-group">
-      <span style="font-size:0.75rem; color:#888;">ONLINE:</span>
-      <span id="onlineCount" class="access-val">...</span>
-    </div>
-    <div class="hud-divider"></div>
-    <div class="status-group">
-      <span style="font-size:0.75rem; color:#888;">VISITS:</span>
-      <span id="visitorCount" class="access-val">...</span>
-    </div>
-    <div class="hud-divider"></div>
-    <div class="status-group">
-      <span style="font-size:0.75rem; color:#888;">TOTAL:</span>
-      <span id="totalVisits" class="access-val">...</span>
-    </div>
-  </div>
-  <img id="pageLogo" src="" alt="Logo" style="display:none;">
-  <div class="header-text">
-    <h1 id="pageTitle">PROJECT COLISEUM</h1>
-    <div class="meta-info" id="pageMeta">v18.00</div>
-  </div>
-</header>
+  <div id="app-wrapper">
 
-<div class="container">
-
-  <div class="dashboard-wrapper">
-    <div class="dash-grid">
-
-      <!-- ─── 1. TWD (Cyan) ─────────────────────────────── -->
-      <div class="hud-screen cyan">
-        <div class="hud-title">台股資產</div>
-        <div class="data-group">
-          <div class="hud-row"><span class="lbl">投入</span><span class="val" id="investedTW">...</span></div>
-          <div class="hud-row"><span class="lbl">市值</span><span class="val" id="assetTW">...</span></div>
-        </div>
-        <div class="pl-block">
-          <div><span class="pl-val" id="plTW_val">...</span><span class="pl-pct" id="plTW_pct">...</span></div>
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="brand-badge">📐</div>
+        <div class="brand-text">
+          <h1>
+            投資戰情室 
+            <span style="font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(0, 242, 254, 0.15); color: var(--neon-cyan); font-weight: 700;">PROJECT COLOSSEUM v18.0</span>
+          </h1>
+          <p>REAL-TIME PORTFOLIO COMMAND CENTER • NATIVE CURRENCY DISPLAY</p>
         </div>
       </div>
 
-      <!-- ─── 2. USD (Green) ────────────────────────────── -->
-      <div class="hud-screen green">
-        <div class="hud-title">美股資產</div>
-        <div class="data-group">
-          <div class="hud-row"><span class="lbl">投入</span><span class="val" id="investedUS">...</span></div>
-          <div class="hud-row"><span class="lbl">市值</span><span class="val" id="assetUS">...</span></div>
-          <div class="hud-row"><span class="lbl">匯率</span><span class="val" id="usdExRate">...</span></div>
+      <div class="header-actions">
+        <div class="status-pill" id="statusBadge">
+          <div class="status-pulse"></div>
+          <span id="statusText">即時連線 (Live Sync)</span>
         </div>
-        <div class="pl-block">
-          <div><span class="pl-val" id="plUS_val">...</span><span class="pl-pct" id="plUS_pct">...</span></div>
+
+        <div class="exchange-pill font-mono">
+          <span>USD/TWD:</span>
+          <input type="number" id="usdRateInput" class="rate-input" value="32.46" step="0.01" onchange="updateExchangeRate(this.value)">
+        </div>
+
+        <button class="btn-action" id="refreshBtn" onclick="manualRefresh()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          </svg>
+          <span>刷新數據</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Executive KPI Scorecards (TWD Total & USD Total Separated) -->
+    <section class="kpi-grid">
+      <div class="kpi-card" style="--card-accent: var(--neon-blue);">
+        <div class="kpi-header">
+          <span class="kpi-title">🇹🇼 台幣部位總現值 (TWD)</span>
+          <span class="kpi-icon" style="color: var(--neon-blue)">❖</span>
+        </div>
+        <div class="kpi-value" id="kpiTwdCurrent">NT$ 0</div>
+        <div class="kpi-subtext" id="kpiTwdInvested">本金: NT$ 0</div>
+      </div>
+
+      <div class="kpi-card" style="--card-accent: var(--neon-purple);">
+        <div class="kpi-header">
+          <span class="kpi-title">🇺🇸 美金部位總現值 (USD)</span>
+          <span class="kpi-icon" style="color: var(--neon-purple)">✦</span>
+        </div>
+        <div class="kpi-value" id="kpiUsdCurrent">$ 0.00 USD</div>
+        <div class="kpi-subtext" id="kpiUsdInvested">本金: $ 0.00 USD</div>
+      </div>
+
+      <div class="kpi-card" style="--card-accent: var(--neon-emerald);" id="kpiPnlCard">
+        <div class="kpi-header">
+          <span class="kpi-title">整合換算總資產 (TOTAL)</span>
+          <span class="roi-pill roi-positive" id="kpiRoiPill">+0.00%</span>
+        </div>
+        <div class="kpi-value" id="kpiTotalTwd">NT$ 0</div>
+        <div class="kpi-subtext" id="kpiTotalUsd">折合 $ 0 USD (匯率 32.46)</div>
+      </div>
+
+      <div class="kpi-card" style="--card-accent: var(--neon-amber);">
+        <div class="kpi-header">
+          <span class="kpi-title">資金部署進度 (DEPLOYMENT)</span>
+          <span class="font-mono" id="kpiDeployPercent" style="color: var(--neon-amber); font-weight: 800;">0.0%</span>
+        </div>
+        <div class="kpi-value" id="kpiPlannedValue">NT$ 0 Target</div>
+        <div class="progress-track">
+          <div class="progress-fill" id="kpiProgressFill" style="width: 0%"></div>
         </div>
       </div>
+    </section>
 
-      <!-- ─── 3. QQQI (Purple) ──────────────────────────── -->
-      <div class="hud-screen purple">
-        <div class="hud-title">QQQI 股息</div>
-        <div class="data-group">
-          <div class="hud-row"><span class="lbl">累計股息</span><span class="val" id="qqqiDivCum">...</span></div>
-          <div class="hud-row"><span class="lbl">30% 退稅</span><span class="val" id="qqqiTaxRef">...</span></div>
+    <!-- NEW SECTION (Reference from Colosseum v18): CLEC & Portfolio Currency Allocation Bar -->
+    <section class="clec-summary-card">
+      <div class="clec-summary-header">
+        <div class="clec-summary-title">
+          <span>I. PORTFOLIO CURRENCY & CATEGORY ALLOCATION (幣別與資產配置比例)</span>
         </div>
-        <div class="pl-block">
-          <div><span class="pl-val" id="qqqiDivTotal">...</span><span class="pl-pct" id="qqqiExRate"></span></div>
-        </div>
+        <span class="clec-badge-pill">NATIVE ALLOCATION</span>
       </div>
 
-      <!-- ─── 4. Total (Gold, wider) ────────────────────── -->
-      <div class="hud-screen gold">
-        <div class="hud-title">總合資產</div>
-        <div class="total-val" id="totalAsset">...</div>
-        <div style="position:relative; z-index:2; margin-top:5px; font-family:var(--font-num); font-weight:bold; display:flex; align-items:baseline; justify-content:center; gap:6px;">
-                  <span id="totalPL_val"></span>
-                  <span id="totalPL_pct" style="opacity:0.9;"></span>
-                </div>
-        <div style="position:absolute; bottom:5px; right:10px; color:#666; font-size:0.6rem; z-index:2; font-family:var(--font-num)" id="rateInfo">LOADING...</div>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="section-title">I. PORTFOLIO PROFILE (523)</div>
-  <div class="clec-card">
-    <div class="clec-header">
-      <div>
-        <div class="clec-title">📊 馬克 CLEC 投資組合</div>
-        <div class="clec-sub">CLEC 523 Beta 0.9 · 2026-05-30</div>
-      </div>
-      <div class="clec-badge">523</div>
-    </div>
-
-    <div class="clec-total-bar-row">
-      <div class="clec-total">
-        <span class="clec-total-label">投資組合總值</span>
-        <span class="clec-total-value" id="clecTotalValue">...</span>
-      </div>
       <div class="clec-bar-container" id="clecBarContainer">
-        <div class="clec-bar-segment s00662" id="clecBar00662" style="width:0%">
-          <span class="pct" id="clecPct00662">0%</span>
-        </div>
-        <div class="clec-bar-segment sqld" id="clecBarQLD" style="width:0%">
-          <span class="pct" id="clecPctQLD">0%</span>
-        </div>
-        <div class="clec-bar-segment scash" id="clecBarCash" style="width:0%">
-          <span class="pct" id="clecPctCash">0%</span>
-        </div>
+        <div class="clec-segment seg-twd" id="barSegTwd" style="width: 50%" title="台股部位"></div>
+        <div class="clec-segment seg-us" id="barSegUs" style="width: 30%" title="美股部位"></div>
+        <div class="clec-segment seg-yield" id="barSegYield" style="width: 15%" title="高股息現金流"></div>
+        <div class="clec-segment seg-crypto" id="barSegCrypto" style="width: 5%" title="實驗資產"></div>
       </div>
-    </div>
 
-    <div class="clec-legend" id="clecLegend">
-      <div class="clec-legend-item">
-        <div class="dot-row">
-          <div class="dot d00662"></div>
-          <span class="name">00662</span>
-          <span class="tag">原型 · 納斯達克100</span>
+      <div class="clec-legend-grid">
+        <div class="clec-legend-item">
+          <div class="legend-left">
+            <div class="legend-dot" style="background: #60a5fa;"></div>
+            <span>🇹🇼 台股核心 + 槓桿</span>
+          </div>
+          <div style="text-align: right;">
+            <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #60a5fa;" id="legTwdVal">NT$ 0 (0%)</div>
+          </div>
         </div>
-        <div class="value-row">
-          <span class="amount" id="clecAmt00662">...</span>
-          <span class="pct-lg" id="clecPctLg00662">...</span>
+
+        <div class="clec-legend-item">
+          <div class="legend-left">
+            <div class="legend-dot" style="background: #c084fc;"></div>
+            <span>🇺🇸 美股成長配置</span>
+          </div>
+          <div style="text-align: right;">
+            <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #c084fc;" id="legUsVal">$ 0 USD (0%)</div>
+          </div>
+        </div>
+
+        <div class="clec-legend-item" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+          <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <div class="legend-left">
+              <div class="legend-dot" style="background: #34d399;"></div>
+              <span>💰 高股息/現金流 (混合)</span>
+            </div>
+            <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #34d399;" id="legYieldVal">0 (0%)</div>
+          </div>
+          <div class="yield-sub-note" id="legYieldSubNote">
+            <span id="legYieldTwdPart">TWD: NT$ 0</span>
+            <span id="legYieldUsdPart">USD: $ 0</span>
+          </div>
+        </div>
+
+        <div class="clec-legend-item">
+          <div class="legend-left">
+            <div class="legend-dot" style="background: #fbbf24;"></div>
+            <span>🧪 實驗/貴金屬/加密</span>
+          </div>
+          <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #fbbf24;" id="legCryptoVal">NT$ 0 (0%)</div>
         </div>
       </div>
-      <div class="clec-legend-item">
-        <div class="dot-row">
-          <div class="dot dqld"></div>
-          <span class="name">QLD</span>
-          <span class="tag">槓桿 · 2x 納斯達克</span>
+    </section>
+
+    <!-- Toolbar -->
+    <section class="control-toolbar">
+      <div class="filter-chips">
+        <button class="chip active" onclick="setFilter('all', this)">全部部位 (ALL)</button>
+        <button class="chip" onclick="setFilter('type-tw', this)">🇹🇼 台股 (TW)</button>
+        <button class="chip" onclick="setFilter('type-us', this)">🇺🇸 美股 (US)</button>
+        <button class="chip" onclick="setFilter('type-yield', this)">💰 高股息 (YIELD)</button>
+        <button class="chip" onclick="setFilter('type-ber', this)">⚡ 槓桿 (LEVERAGE)</button>
+        <button class="chip" onclick="setFilter('type-trap', this)">🧪 實驗 (EXPERIMENT)</button>
+      </div>
+
+      <div class="toolbar-right">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="搜尋標的、代號或 SOP 策略..." oninput="handleSearch(this.value)">
         </div>
-        <div class="value-row">
-          <span class="amount" id="clecAmtQLD">...</span>
-          <span class="pct-lg" id="clecPctLgQLD">...</span>
+
+        <div class="view-switcher">
+          <button class="view-btn active" id="btnViewDashboard" onclick="switchView('dashboard')">
+            <span>🎛️ 綜合儀表</span>
+          </button>
+          <button class="view-btn" id="btnViewTable" onclick="switchView('table')">
+            <span>📊 明細表格</span>
+          </button>
+          <button class="view-btn" id="btnViewTimeline" onclick="switchView('timeline')">
+            <span>📜 交易事件簿</span>
+          </button>
         </div>
       </div>
-      <div class="clec-legend-item">
-        <div class="dot-row">
-          <div class="dot dcash"></div>
-          <span class="name">現金</span>
-          <span class="tag">盾 · 短債/活存</span>
+    </section>
+
+    <!-- Content Views -->
+    <main class="content-area">
+
+      <!-- View 1: Dashboard -->
+      <section id="viewDashboard" class="dashboard-grid">
+        <div>
+          <div class="section-header">
+            <div class="section-header-title">II. 資產部位列表 (ASSET POSITIONS)</div>
+            <span style="font-size: 12px; color: var(--text-dim)" id="assetCountText">顯示 0 個部位</span>
+          </div>
+          <div class="cards-container" id="assetCardsContainer">
+            <div class="state-box">
+              <div class="state-icon">⏳</div>
+              <div>載入部位數據中...</div>
+            </div>
+          </div>
         </div>
-        <div class="value-row">
-          <span class="amount" id="clecAmtCash">...</span>
-          <span class="pct-lg" id="clecPctLgCash">...</span>
+
+        <div class="charts-stack">
+          <div class="chart-card">
+            <div class="section-header">
+              <div class="section-header-title">資產配置比例 (ALLOCATION)</div>
+            </div>
+            <div class="chart-box">
+              <canvas id="chartAllocation"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="section-header">
+              <div class="section-header-title">投入資金 vs 當前現值 (COST VS VALUE)</div>
+            </div>
+            <div class="chart-box">
+              <canvas id="chartInvestedVsCurrent"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="section-header">
+              <div class="section-header-title">部位損益分佈 (UNREALIZED P&L)</div>
+            </div>
+            <div class="chart-box">
+              <canvas id="chartPnl"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 2: Table -->
+      <section id="viewTable" style="display: none;">
+        <div class="section-header">
+          <div class="section-header-title">II-A. 詳細部位對帳表 (POSITION MASTER TABLE)</div>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th onclick="sortTable('code')">代號 ⇕</th>
+                <th onclick="sortTable('name')">標的名稱 ⇕</th>
+                <th>計價幣別</th>
+                <th onclick="sortTable('currentNative')">當前現值 (原幣) ⇕</th>
+                <th onclick="sortTable('investedNative')">已投入本金 (原幣) ⇕</th>
+                <th onclick="sortTable('pnlNative')">未實現損益 (原幣) ⇕</th>
+                <th onclick="sortTable('roi')">報酬率 % ⇕</th>
+                <th>持有股數</th>
+                <th>SOP 策略簡述</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- View 3: Timeline -->
+      <section id="viewTimeline" style="display: none;">
+        <div class="section-header">
+          <div class="section-header-title">III. 戰情室交易與決策日誌 (EVENT LOG & TIMELINE)</div>
+        </div>
+        <div class="timeline-box" id="timelineContainer"></div>
+      </section>
+
+    </main>
+
+    <footer class="app-footer">
+      <div>PROJECT COLOSSEUM v18.0 • 投資戰情室 HQ • 原幣純淨計價版</div>
+      <div style="margin-top: 6px;" id="lastRefreshedText">最後更新時間: -</div>
+    </footer>
+
+  </div>
+
+  <!-- Asset Detail & SOP Modal -->
+  <div class="modal-overlay" id="assetModal" onclick="closeModalOnOverlay(event)">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div>
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+            <span class="tag-chip tag-tw" id="modalTag">TW</span>
+            <span class="font-mono" style="font-size: 13px; color: var(--text-muted)" id="modalCode">C01</span>
+            <span id="modalCurrencyBadge" class="currency-badge-twd">TWD</span>
+          </div>
+          <h2 style="font-family: var(--font-ui); font-size: 20px; font-weight: 800; color: var(--text-bright)" id="modalTitle">標的名稱</h2>
+          <p style="font-size: 13px; color: var(--text-dim)" id="modalSubtitle">Subtext</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- 1. EXACT DATE-BASED ASSET GROWTH TRAJECTORY CHART AT TOP (NATIVE CURRENCY) -->
+        <div style="background: rgba(7, 11, 20, 0.7); padding: 18px; border-radius: 16px; border: 1px solid var(--border-cyan);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text-bright); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <span id="modalChartTitle">📈 SOP 買進日期與資產現值成長曲線 (原幣計價)</span>
+            <span style="font-size: 11px; color: var(--neon-cyan);" id="modalChartSubtitle">本金變更 vs 價值走勢</span>
+          </div>
+          <div style="position: relative; width: 100%; height: 230px;">
+            <canvas id="modalGrowthCanvas"></canvas>
+          </div>
+        </div>
+
+        <!-- 2. Key Metrics Grid in Native Currency -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; background: rgba(7, 11, 20, 0.6); padding: 16px; border-radius: 14px; border: 1px solid var(--border-subtle);">
+          <div>
+            <div style="font-size: 11px; color: var(--text-dim)">當前部位價值 (原幣)</div>
+            <div class="font-mono" style="font-size: 16px; font-weight: 800; color: var(--neon-cyan)" id="modalCurrent">$ 0</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; color: var(--text-dim)">已投入本金 (原幣)</div>
+            <div class="font-mono" style="font-size: 16px; font-weight: 800;" id="modalInvested">$ 0</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; color: var(--text-dim)">未實現損益 / ROI</div>
+            <div class="font-mono" style="font-size: 16px; font-weight: 800;" id="modalPnl">+$0 (+0.00%)</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; color: var(--text-dim)">持股數量 / 原幣單價</div>
+            <div class="font-mono" style="font-size: 14px; font-weight: 700;" id="modalShares">0 股 @ $0</div>
+          </div>
+        </div>
+
+        <!-- 3. SOP Strategy Box -->
+        <div>
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">📋 SOP 執行策略細節</div>
+          <div class="sop-box" id="modalSop">無相關 SOP 策略註記。</div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="section-title">I-A. 台股配置 (TWD)</div>
-  <div class="clec-card">
-    <div class="clec-header">
-      <div>
-        <div class="clec-title">🇹🇼 台股投資組合</div>
-        <div class="clec-sub">0050 · 00878 · 00631L</div>
-      </div>
-      <div class="clec-badge twd">TWD</div>
-    </div>
+  <script>
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSHOpI_ZlxDuP4iILBZEBVRSM42aaO2EZEoyh3Q0Nl2KX50fCDEdbLREYZMJj2MNE_j8lgE48LjGppl/pub?output=csv';
 
-    <div class="clec-total-bar-row">
-      <div class="clec-total">
-        <span class="clec-total-label">台股總值</span>
-        <span class="clec-total-value" id="twdTotalValue">...</span>
-      </div>
-      <div class="clec-bar-container" id="twdBarContainer">
-        <div class="clec-bar-segment s0050" id="twdBar0050" style="width:0%">
-          <span class="pct" id="twdPct0050">0%</span>
-        </div>
-        <div class="clec-bar-segment s00878" id="twdBar00878" style="width:0%">
-          <span class="pct" id="twdPct00878">0%</span>
-        </div>
-        <div class="clec-bar-segment s00631L" id="twdBar00631L" style="width:0%">
-          <span class="pct" id="twdPct00631L">0%</span>
-        </div>
-      </div>
-    </div>
+    const FALLBACK_CSV = `C01,type-tw,定期定額0050,元大台灣50-0050,TW DCA,NT$2772000,NT$272034.00,0050,"每個月 5,15,25號：每次扣款 NT$11,000",https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C01_最平庸的定期定額.png,,2667,NT$102.00,NT$229231
+C02,type-yield,定期定額00878,國泰永續高股息-00878,TW DCA YIELD,NT$640000,NT$370548.89,00878,"2026/01/05進場22萬，每月 5 號：扣款 NT$5,000",https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C02_股息cover每一天.png,,11377,NT$32.57,NT$254483
+C03,type-tw,單筆0050,元大台灣50-0050,TW LSI,NT$2772000,NT$918000.00,0050,2026/01/05進場40萬，領年終後買進 NT$12.4 萬，過完端午及中秋後周五NT$10萬持續7年,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C03_獎金她奶奶的all in.png,,9000,NT$102.00,NT$677817
+C04,type-ber,槓桿-00631L,元大台灣50正2-00631L,2x Leverage,NT$800000,NT$880740.00,00631L,2026/01/05進場40萬，不做再平衡直接觀察，正2長期變化,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C04_問就是正2.png,,27000,NT$32.62,NT$592446
+C05,type-us,槓桿-QLD,二倍做多納斯達克-QLD,2x Leverage,$92000.00,$97140.87,QLD,因為資金是放在美國卷商帳戶，會先按照比例5:2:3配合買進QLD，總價值200萬台幣，之後會改買00670L,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C05_買下全世界.png,,1161,$83.67,$88263.90
+C06,type-us,那指100-00662,富邦NASDAQ-00662,LSI +DCA,NT$5000000,NT$7656031.30,00662,先大筆投入資金配置把資金拉到500萬，之後是薪水扣除聲或開銷後投入動態再平衡,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C06_美國是我爸爸.png,,64499,NT$118.70,NT$6805148.34
+C07,type-trap,黃金IAU,黃金信託ETF -IAU,N/A,$8400.00,$380.85,IAU,黃金每個月1股，馬克對貴金屬投資沒興趣，單純做實驗追蹤,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C07_黃金.png,,5,$76.17,$452.47
+C08,type-trap,比特幣,比特幣,N/A,NT$200000,NT$144745.77,BTC,20萬台幣all in買進，馬克對比特幣投資沒興趣，單純做實驗追蹤,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C08-比特幣.png,,0.0712,NT$2032946.24,NT$200000
+C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍法則現金流,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C02_股息cover每一天.png,,6202,$53.04,$336485.16`;
 
-    <div class="clec-legend" id="twdLegend">
-      <div class="clec-legend-item">
-        <div class="dot-row">
-          <div class="dot d0050"></div>
-          <span class="name">0050</span>
-          <span class="tag">原型 · 台灣50 (DCA+單筆)</span>
-        </div>
-        <div class="value-row">
-          <span class="amount" id="twdAmt0050">...</span>
-          <span class="pct-lg" id="twdPctLg0050">...</span>
-        </div>
-      </div>
-      <div class="clec-legend-item">
-        <div class="dot-row">
-          <div class="dot d00878"></div>
-          <span class="name">00878</span>
-          <span class="tag">高股息 · 現金流</span>
-        </div>
-        <div class="value-row">
-          <span class="amount" id="twdAmt00878">...</span>
-          <span class="pct-lg" id="twdPctLg00878">...</span>
-        </div>
-      </div>
-      <div class="clec-legend-item">
-        <div class="dot-row">
-          <div class="dot d00631L"></div>
-          <span class="name">00631L</span>
-          <span class="tag">槓桿 · 2x 台灣50</span>
-        </div>
-        <div class="value-row">
-          <span class="amount" id="twdAmt00631L">...</span>
-          <span class="pct-lg" id="twdPctLg00631L">...</span>
-        </div>
-      </div>
-    </div>
-  </div>
+    let allAssets = [];
+    let eventLogs = [];
+    let currentFilter = 'all';
+    let searchQuery = '';
+    let usdToTwdRate = 32.46;
+    let currentSort = { field: 'currentTWD', asc: false };
 
-  <div class="section-title">II. LIVE BATTLE (投資競技場)</div>
-  <div class="arena-container" id="arenaContainer"></div>
+    let chartAlloc = null;
+    let chartInvestVsCurrent = null;
+    let chartPnlWaterfall = null;
+    let chartModalGrowth = null;
 
-  <div class="section-title">III. EVENT LOG (事件簿)</div>
-  <div class="event-list" id="eventContainer"></div>
+    function parseAmount(valStr) {
+      if (!valStr) return { value: 0, currency: 'TWD' };
+      const str = valStr.toString().trim();
+      const isUSD = str.includes('$') && !str.includes('NT$');
+      const numStr = str.replace(/[^0-9.-]/g, '');
+      const num = parseFloat(numStr) || 0;
+      return { value: num, currency: isUSD ? 'USD' : 'TWD' };
+    }
 
-  <div class="section-title">IV. GUESTBOOK (留言板)</div>
-  <div class="comment-section">
-    <form class="cmt-form" id="commentForm">
-      <div class="cmt-form-row">
-        <input type="text" id="commentName" class="cmt-input cmt-name-input" placeholder="稱呼（選填）" maxlength="30">
-        <textarea id="commentInput" class="cmt-textarea" placeholder="寫下你想說的話… Ctrl+Enter 快速送出" maxlength="500" rows="2"></textarea>
-        <button type="button" id="commentSend" class="cmt-send-btn">SEND</button>
-      </div>
-    </form>
-    <div class="cmt-list" id="commentList">
-      <div class="cmt-empty">載入留言中…</div>
-    </div>
-  </div>
+    function toTWD(amountObj, rate) {
+      return amountObj.currency === 'USD' ? amountObj.value * rate : amountObj.value;
+    }
 
-  <div class="footer-grid">
-    <div class="refresh-btn" onclick="init()">↻ REFRESH DATA</div>
-  </div>
-</div>
+    // STRICT NATIVE CURRENCY FORMATTER (No forced dual conversion in items)
+    function formatNativeMoney(amountObj) {
+      if (!amountObj) return '$ 0';
+      const val = amountObj.value || 0;
+      if (amountObj.currency === 'USD') {
+        return `$ ${val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      } else {
+        return `NT$ ${Math.round(val).toLocaleString('zh-TW')}`;
+      }
+    }
 
-<div id="cardModal" class="modal-overlay" onclick="closeModal()">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      <div><span class="m-code" id="mCode"></span><span class="m-skill" id="mSkill"></span></div>
-      <span class="close-btn" onclick="closeModal()">&times;</span>
-    </div>
-    <div class="m-row"><span class="m-label">初始資金 (BUDGET)</span><div class="m-value highlight" id="val1"></div></div>
-    <div class="m-row"><span class="m-label">🔥 實際投入 (INVESTED)</span><div class="m-value" id="val_invested"></div></div>
-    <div class="m-row" id="row_shares"><span class="m-label">持有股數 (SHARES)</span><div class="m-value" id="val_shares"></div></div>
-    <div class="m-row"><span class="m-label">戰略定位 (STRATEGY)</span><div class="m-value" id="val2"></div></div>
-    <div class="m-row"><span class="m-label">嚴格執行 SOP</span><div class="m-value" id="val3" style="padding:15px;background:rgba(0,0,0,0.3);border-left:3px solid #555;border-radius:6px"></div></div>
-    <div id="yt_container" style="display:none; width:100%; text-align:center;">
-      <a id="btn_yt" href="#" target="_blank" class="yt-btn">▶ WATCH &amp; COMMENT (前往留言)</a>
-    </div>
-  </div>
-</div>
+    function formatTWD(num) {
+      return 'NT$ ' + Math.round(num).toLocaleString('zh-TW');
+    }
 
-<script type="module" src="js/main.js?v=4"></script>
-<script src="js/theme.js?v=1"></script>
-<script src="js/pulltorefresh.js?v=1"></script>
+    function formatUSD(num) {
+      return '$ ' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' USD';
+    }
+
+    function getTypeTag(typeCode, currency) {
+      switch (typeCode) {
+        case 'type-tw': return { label: '台股', class: 'tag-tw' };
+        case 'type-us': return { label: '美股', class: 'tag-us' };
+        case 'type-yield': return currency === 'USD'
+          ? { label: '現金流 USD', class: 'tag-income' }
+          : { label: '高股息', class: 'tag-yield' };
+        case 'type-ber': return { label: '槓桿', class: 'tag-ber' };
+        case 'type-trap': return { label: '實驗', class: 'tag-trap' };
+        default: return { label: typeCode || '一般', class: 'tag-tw' };
+      }
+    }
+
+    function parseCSVRows(text) {
+      const lines = text.split(/\r?\n/);
+      const rows = [];
+      for (let line of lines) {
+        line = line.trim();
+        if (!line) continue;
+        const row = [];
+        let insideQuotes = false;
+        let token = '';
+        for (let i = 0; i < line.length; i++) {
+          const c = line[i];
+          if (c === '"') {
+            insideQuotes = !insideQuotes;
+          } else if (c === ',' && !insideQuotes) {
+            row.push(token.replace(/^"|"$/g, '').trim());
+            token = '';
+          } else {
+            token += c;
+          }
+        }
+        row.push(token.replace(/^"|"$/g, '').trim());
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    function processRawCSV(csvText) {
+      const rows = parseCSVRows(csvText);
+      const assets = [];
+      const events = [];
+
+      for (let row of rows) {
+        if (row[0] && row[0].includes('美金匯率') && row[1]) {
+          const rateParsed = parseFloat(row[1]);
+          if (!isNaN(rateParsed) && rateParsed > 0) {
+            usdToTwdRate = rateParsed;
+            document.getElementById('usdRateInput').value = usdToTwdRate.toFixed(2);
+          }
+        }
+        if (row[0] && row[0].match(/^\d{4}\/\d{1,2}\/\d{1,2}/)) {
+          events.push({
+            date: row[0],
+            status: row[1] || '進行中',
+            desc: row[2] || ''
+          });
+        }
+      }
+
+      for (let row of rows) {
+        if (!row[0] || (!row[0].startsWith('C0') && !row[0].startsWith('C1'))) continue;
+
+        const code = row[0];
+        const type = row[1];
+        const name = row[2] || '';
+        const target = row[3] || '';
+        const skill = row[4] || '';
+        const plannedObj = parseAmount(row[5]);
+        const currentObj = parseAmount(row[6]);
+        const ticker = row[7] || code;
+        const sop = row[8] || '';
+        
+        let imageUrl = '';
+        let shares = '';
+        let priceObj = parseAmount('');
+        let investedObj = parseAmount('');
+
+        if (row.length >= 14 || (row[9] && row[9].startsWith('http'))) {
+          imageUrl = row[9] && row[9].startsWith('http') ? row[9] : '';
+          shares = row[11] || '';
+          priceObj = parseAmount(row[12]);
+          investedObj = parseAmount(row[13] || row[5]);
+        } else {
+          imageUrl = '';
+          shares = row[9] || '';
+          priceObj = parseAmount(row[10]);
+          investedObj = parseAmount(row[11] || row[5]);
+        }
+
+        const currentTWD = toTWD(currentObj, usdToTwdRate);
+        const investedTWD = toTWD(investedObj, usdToTwdRate);
+        const plannedTWD = toTWD(plannedObj, usdToTwdRate);
+
+        const currentNative = currentObj.value;
+        const investedNative = investedObj.value;
+        const pnlNative = currentNative - investedNative;
+        const pnlObj = { value: pnlNative, currency: currentObj.currency };
+        
+        const pnlTWD = currentTWD - investedTWD;
+        const roi = investedTWD > 0 ? (pnlTWD / investedTWD) * 100 : 0;
+
+        assets.push({
+          code, type, name, target, skill, ticker, sop, imageUrl, shares, priceObj,
+          plannedObj, currentObj, investedObj, pnlObj, currency: currentObj.currency,
+          currentNative, investedNative, pnlNative,
+          currentTWD, investedTWD, plannedTWD, pnlTWD, roi
+        });
+      }
+
+      if (events.length === 0) {
+        events.push(
+          { date: '2026/06/16', status: '完成', desc: '端午節-0050 LSI 買進 1 張 (累積長效部位)' },
+          { date: '2026/06/16', status: '完成', desc: '買進 7 股 SPCX 進行現金流避險實驗' },
+          { date: '2026/01/05', status: '完成', desc: '年度戰情室戰略部署開局，投入 00631L 40 萬正2觀察部位' }
+        );
+      }
+
+      eventLogs = events;
+      return assets;
+    }
+
+    function renderApp() {
+      let filtered = allAssets;
+
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(a => a.type === currentFilter);
+      }
+
+      if (searchQuery.trim() !== '') {
+        const q = searchQuery.toLowerCase();
+        filtered = filtered.filter(a => 
+          a.name.toLowerCase().includes(q) ||
+          a.ticker.toLowerCase().includes(q) ||
+          a.code.toLowerCase().includes(q) ||
+          a.sop.toLowerCase().includes(q)
+        );
+      }
+
+      filtered.sort((a, b) => {
+        let valA = a[currentSort.field];
+        let valB = b[currentSort.field];
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
+        return currentSort.asc ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+      });
+
+      // Calculate totals per native currency
+      let twdCurrentSum = 0;
+      let twdInvestedSum = 0;
+      let usdCurrentSum = 0;
+      let usdInvestedSum = 0;
+
+      let totalCurrentTWD = 0;
+      let totalInvestedTWD = 0;
+      let totalPlannedTWD = 0;
+
+      allAssets.forEach(a => {
+        if (a.currency === 'USD') {
+          usdCurrentSum += a.currentNative;
+          usdInvestedSum += a.investedNative;
+        } else {
+          twdCurrentSum += a.currentNative;
+          twdInvestedSum += a.investedNative;
+        }
+
+        totalCurrentTWD += a.currentTWD;
+        totalInvestedTWD += a.investedTWD;
+        totalPlannedTWD += a.plannedTWD;
+      });
+
+      const totalPnlTWD = totalCurrentTWD - totalInvestedTWD;
+      const totalRoi = totalInvestedTWD > 0 ? (totalPnlTWD / totalInvestedTWD) * 100 : 0;
+      const deployPercent = totalPlannedTWD > 0 ? Math.min((totalInvestedTWD / totalPlannedTWD) * 100, 100) : 0;
+
+      // Executive Scorecards (Pure Native Currency)
+      document.getElementById('kpiTwdCurrent').textContent = formatTWD(twdCurrentSum);
+      document.getElementById('kpiTwdInvested').textContent = `本金: ${formatTWD(twdInvestedSum)}`;
+
+      document.getElementById('kpiUsdCurrent').textContent = formatUSD(usdCurrentSum);
+      document.getElementById('kpiUsdInvested').textContent = `本金: ${formatUSD(usdInvestedSum)}`;
+
+      const pnlEl = document.getElementById('kpiTotalTwd');
+      const roiPill = document.getElementById('kpiRoiPill');
+      pnlEl.textContent = formatTWD(totalCurrentTWD);
+      
+      document.getElementById('kpiTotalUsd').textContent = `折合 $ ${Math.round(totalCurrentTWD / usdToTwdRate).toLocaleString('en-US')} USD (匯率 ${usdToTwdRate.toFixed(2)})`;
+
+      roiPill.textContent = `${totalRoi >= 0 ? '+' : ''}${totalRoi.toFixed(2)}%`;
+      roiPill.className = `roi-pill ${totalRoi >= 0 ? 'roi-positive' : 'roi-negative'}`;
+
+      document.getElementById('kpiPlannedValue').textContent = `${formatTWD(totalPlannedTWD)}`;
+      document.getElementById('kpiDeployPercent').textContent = `${deployPercent.toFixed(1)}%`;
+      document.getElementById('kpiProgressFill').style.width = `${deployPercent}%`;
+
+      // Render Portfolio Breakdown Bar (CLEC Inspiration)
+      renderClecBar(totalCurrentTWD);
+
+      document.getElementById('assetCountText').textContent = `顯示 ${filtered.length} 個部位`;
+
+      renderCards(filtered);
+      renderTable(filtered);
+      renderTimeline();
+      renderCharts(filtered);
+    }
+
+    // CLEC Portfolio Currency Breakdown Bar
+    // QQQI (type-yield + USD) is counted in yield, not in US growth — per user directive
+    function renderClecBar(totalTWD) {
+      let twdCoreSum = 0;      // type-tw + type-ber (台股核心 + 槓桿)
+      let usGrowthSum = 0;     // type-us only (美股成長, excludes USD-yield like QQQI)
+      let yieldTwdSum = 0;     // type-yield with TWD (00878)
+      let yieldUsdSum = 0;     // type-yield with USD (QQQI) — native USD value
+      let yieldTwdEquiv = 0;   // yield total in TWD equivalent
+      let cryptoSum = 0;       // type-trap
+
+      allAssets.forEach(a => {
+        if (a.type === 'type-tw' || a.type === 'type-ber') {
+          twdCoreSum += a.currentTWD;
+        } else if (a.type === 'type-us') {
+          usGrowthSum += a.currentTWD;
+        } else if (a.type === 'type-yield') {
+          if (a.currency === 'USD') {
+            yieldUsdSum += a.currentNative;        // native USD
+            yieldTwdEquiv += a.currentTWD;         // for total bar
+          } else {
+            yieldTwdSum += a.currentNative;        // native TWD
+            yieldTwdEquiv += a.currentTWD;         // same as native
+          }
+        } else {
+          cryptoSum += a.currentTWD;
+        }
+      });
+
+      const twdPct   = totalTWD > 0 ? (twdCoreSum    / totalTWD) * 100 : 0;
+      const usPct    = totalTWD > 0 ? (usGrowthSum   / totalTWD) * 100 : 0;
+      const yieldPct = totalTWD > 0 ? (yieldTwdEquiv / totalTWD) * 100 : 0;
+      const cryptoPct= totalTWD > 0 ? (cryptoSum     / totalTWD) * 100 : 0;
+
+      document.getElementById('barSegTwd').style.width    = `${twdPct}%`;
+      document.getElementById('barSegUs').style.width     = `${usPct}%`;
+      document.getElementById('barSegYield').style.width  = `${yieldPct}%`;
+      document.getElementById('barSegCrypto').style.width = `${cryptoPct}%`;
+
+      document.getElementById('legTwdVal').textContent = `${formatTWD(twdCoreSum)} (${twdPct.toFixed(1)}%)`;
+      document.getElementById('legUsVal').textContent  = `${formatUSD(usGrowthSum / usdToTwdRate)} (${usPct.toFixed(1)}%)`;
+
+      // Yield legend: show combined TWD-equivalent total with sub-breakdown
+      document.getElementById('legYieldVal').textContent = `${formatTWD(yieldTwdEquiv)} (${yieldPct.toFixed(1)}%)`;
+      document.getElementById('legYieldTwdPart').textContent = `TWD: ${formatTWD(yieldTwdSum)}`;
+      document.getElementById('legYieldUsdPart').textContent = yieldUsdSum > 0 ? `USD: ${formatUSD(yieldUsdSum)}` : '';
+      document.getElementById('legYieldSubNote').style.display = yieldUsdSum > 0 ? 'flex' : 'none';
+
+      document.getElementById('legCryptoVal').textContent = `${formatTWD(cryptoSum)} (${cryptoPct.toFixed(1)}%)`;
+    }
+
+    // Pure Native Currency Card Render Logic
+    function renderCards(assets) {
+      const container = document.getElementById('assetCardsContainer');
+      if (assets.length === 0) {
+        container.innerHTML = `<div class="state-box"><div class="state-icon">🔍</div><div>無符合條件的部位標的</div></div>`;
+        return;
+      }
+
+      container.innerHTML = assets.map(a => {
+        const tag = getTypeTag(a.type, a.currency);
+        const isUp = a.pnlNative >= 0;
+        const roiStr = (isUp ? '+' : '') + a.roi.toFixed(2) + '%';
+        const isUSD = a.currency === 'USD';
+        // ROI bar: cap display at ±50% for visual scaling
+        const roiBarPct = Math.min(Math.abs(a.roi) / 50 * 100, 100);
+
+        return `
+          <div class="asset-card" onclick="openModal('${a.code}')">
+            <div class="card-header-clean">
+              <div class="card-meta">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;">
+                  <span class="card-code-badge">${a.code}</span>
+                  <span class="${isUSD ? 'currency-badge-usd' : 'currency-badge-twd'}">${isUSD ? 'USD 🇺🇸' : 'TWD 🇹🇼'}</span>
+                  <span class="tag-chip ${tag.class}">${tag.label}</span>
+                  <span class="tag-chip" style="background: rgba(255,255,255,0.08); color: var(--text-muted); font-family: var(--font-mono);">${a.ticker}</span>
+                </div>
+                <div class="card-title">${a.name}</div>
+                <div class="card-subtitle">${a.target} • ${a.skill}</div>
+              </div>
+            </div>
+
+            <div class="card-metrics">
+              <div class="metric-box">
+                <span class="metric-lbl">當前現值 (${a.currency})</span>
+                <span class="metric-val" style="color: var(--neon-cyan)">${formatNativeMoney(a.currentObj)}</span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-lbl">已投入本金 (${a.currency})</span>
+                <span class="metric-val">${formatNativeMoney(a.investedObj)}</span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-lbl">未實現損益 (${a.currency})</span>
+                <span class="metric-val ${isUp ? 'val-up' : 'val-down'}">${isUp ? '+' : ''}${formatNativeMoney(a.pnlObj)}</span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-lbl">報酬率 ROI</span>
+                <span class="metric-val ${isUp ? 'val-up' : 'val-down'}">${roiStr}</span>
+                <div class="card-roi-bar"><div class="card-roi-fill ${isUp ? 'pos' : 'neg'}" style="width: ${roiBarPct}%"></div></div>
+              </div>
+            </div>
+
+            ${a.sop ? `<div class="card-sop-hint">📋 策略: ${a.sop}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTable(assets) {
+      const tbody = document.getElementById('tableBody');
+      if (assets.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 24px; color: var(--text-dim);">無符合條件部位</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = assets.map(a => {
+        const tag = getTypeTag(a.type, a.currency);
+        const isUp = a.pnlNative >= 0;
+        const roiStr = (isUp ? '+' : '') + a.roi.toFixed(2) + '%';
+        const isUSD = a.currency === 'USD';
+
+        return `
+          <tr onclick="openModal('${a.code}')" style="cursor: pointer;">
+            <td class="font-mono" style="font-weight: 700; color: var(--neon-cyan)">${a.code}</td>
+            <td style="font-weight: 700">${a.name}</td>
+            <td><span class="${isUSD ? 'currency-badge-usd' : 'currency-badge-twd'}">${isUSD ? 'USD 🇺🇸' : 'TWD 🇹🇼'}</span></td>
+            <td class="font-mono" style="font-weight: 700">${formatNativeMoney(a.currentObj)}</td>
+            <td class="font-mono">${formatNativeMoney(a.investedObj)}</td>
+            <td class="font-mono ${isUp ? 'val-up' : 'val-down'}">${isUp ? '+' : ''}${formatNativeMoney(a.pnlObj)}</td>
+            <td class="font-mono ${isUp ? 'val-up' : 'val-down'}" style="font-weight: 700">${roiStr}</td>
+            <td class="font-mono">${a.shares || '--'}</td>
+            <td style="font-size: 12px; color: var(--text-muted); max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${a.sop || '--'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderTimeline() {
+      const container = document.getElementById('timelineContainer');
+      if (eventLogs.length === 0) {
+        container.innerHTML = `<div class="state-box">無日誌紀錄</div>`;
+        return;
+      }
+
+      container.innerHTML = eventLogs.map(item => `
+        <div class="timeline-item">
+          <div class="timeline-dot">📌</div>
+          <div class="timeline-content">
+            <div class="timeline-date">${item.date} • <span style="color: var(--neon-emerald)">${item.status}</span></div>
+            <div class="timeline-desc">${item.desc}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderCharts(assets) {
+      const labels = assets.map(a => a.ticker || a.name);
+      const currentVals = assets.map(a => Math.round(a.currentTWD));
+      const investedVals = assets.map(a => Math.round(a.investedTWD));
+      const pnlVals = assets.map(a => Math.round(a.pnlTWD));
+
+      const colors = [
+        '#00f2fe', '#3b82f6', '#10b981', '#fbbf24', '#a855f7',
+        '#ec4899', '#06b6d4', '#6366f1', '#14b8a6', '#f43f5e'
+      ];
+
+      const baseOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#94a3b8', font: { family: 'Outfit', size: 11 } } },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            borderColor: 'rgba(0, 242, 254, 0.3)',
+            borderWidth: 1,
+            titleColor: '#00f2fe',
+            bodyColor: '#f8fafc',
+            callbacks: {
+              label: function(ctx) {
+                const val = ctx.raw || 0;
+                return `${ctx.dataset.label || ctx.label}: NT$ ${val.toLocaleString('zh-TW')}`;
+              }
+            }
+          }
+        }
+      };
+
+      if (chartAlloc) chartAlloc.destroy();
+      chartAlloc = new Chart(document.getElementById('chartAllocation').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: currentVals,
+            backgroundColor: colors.slice(0, labels.length),
+            borderColor: '#070b14',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          ...baseOptions,
+          cutout: '70%',
+          plugins: {
+            ...baseOptions.plugins,
+            legend: { position: 'right', labels: { color: '#94a3b8', boxWidth: 10 } }
+          }
+        }
+      });
+
+      if (chartInvestVsCurrent) chartInvestVsCurrent.destroy();
+      chartInvestVsCurrent = new Chart(document.getElementById('chartInvestedVsCurrent').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: '投入本金 (折合TWD)', data: investedVals, backgroundColor: 'rgba(59, 130, 246, 0.75)', borderRadius: 4 },
+            { label: '當前現值 (折合TWD)', data: currentVals, backgroundColor: 'rgba(0, 242, 254, 0.75)', borderRadius: 4 }
+          ]
+        },
+        options: {
+          ...baseOptions,
+          scales: {
+            x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+            y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.04)' } }
+          }
+        }
+      });
+
+      if (chartPnlWaterfall) chartPnlWaterfall.destroy();
+      chartPnlWaterfall = new Chart(document.getElementById('chartPnl').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '未實現損益 (折合TWD)',
+            data: pnlVals,
+            backgroundColor: pnlVals.map(v => v >= 0 ? 'rgba(16, 185, 129, 0.8)' : 'rgba(244, 63, 94, 0.8)'),
+            borderRadius: 4
+          }]
+        },
+        options: {
+          ...baseOptions,
+          indexAxis: 'y',
+          scales: {
+            x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+            y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.04)' } }
+          }
+        }
+      });
+    }
+
+    // Modal Control Functions (Native Currency Trajectory)
+    function openModal(code) {
+      const item = allAssets.find(a => a.code === code);
+      if (!item) return;
+
+      const tag = getTypeTag(item.type, item.currency);
+      const isUp = item.pnlNative >= 0;
+      const isUSD = item.currency === 'USD';
+
+      document.getElementById('modalCode').textContent = item.code;
+      document.getElementById('modalTitle').textContent = item.name;
+      document.getElementById('modalSubtitle').textContent = `${item.target} • ${item.skill}`;
+      
+      const tagEl = document.getElementById('modalTag');
+      tagEl.textContent = tag.label;
+      tagEl.className = `tag-chip ${tag.class}`;
+
+      const currBadge = document.getElementById('modalCurrencyBadge');
+      currBadge.textContent = isUSD ? 'USD 🇺🇸' : 'TWD 🇹🇼';
+      currBadge.className = isUSD ? 'currency-badge-usd' : 'currency-badge-twd';
+
+      document.getElementById('modalCurrent').textContent = formatNativeMoney(item.currentObj);
+      document.getElementById('modalInvested').textContent = formatNativeMoney(item.investedObj);
+      
+      const pnlEl = document.getElementById('modalPnl');
+      pnlEl.textContent = `${isUp ? '+' : ''}${formatNativeMoney(item.pnlObj)} (${isUp ? '+' : ''}${item.roi.toFixed(2)}%)`;
+      pnlEl.style.color = isUp ? 'var(--neon-emerald)' : 'var(--neon-rose)';
+
+      document.getElementById('modalShares').textContent = `${item.shares || '--'} 股 @ ${formatNativeMoney(item.priceObj)}`;
+      document.getElementById('modalSop').textContent = item.sop || '未設定特定 SOP 策略。說明：依照既定配置計畫穩定維護。';
+
+      document.getElementById('assetModal').classList.add('open');
+
+      // RENDER NATIVE CURRENCY GROWTH CHART AT TOP OF MODAL
+      renderModalGrowthChart(item);
+    }
+
+    function renderModalGrowthChart(item) {
+      const ctx = document.getElementById('modalGrowthCanvas').getContext('2d');
+      if (chartModalGrowth) chartModalGrowth.destroy();
+
+      const dates = ['2026/01/05', '2026/02/05', '2026/03/05', '2026/04/05', '2026/05/05', '2026/06/16', '2026/07/05', '2026/08/03 (現況)'];
+      
+      const costSeries = [];
+      const valueSeries = [];
+
+      const finalCost = item.investedNative;
+      const finalVal = item.currentNative;
+      const roi = item.roi;
+      const isUSD = item.currency === 'USD';
+      const currSymbol = isUSD ? '$' : 'NT$';
+
+      document.getElementById('modalChartTitle').textContent = `📈 SOP 買進日期與資產現值成長曲線 (${isUSD ? 'USD 原幣計價' : 'TWD 原幣計價'})`;
+
+      if (item.code === 'C01') {
+        for (let i = 0; i < 8; i++) {
+          const ratio = (i + 1) / 8;
+          const c = finalCost * ratio;
+          const priceGrowth = 1 + (roi / 100) * Math.pow(ratio, 0.75);
+          const v = (i === 7) ? finalVal : c * priceGrowth;
+          costSeries.push(Number(c.toFixed(2)));
+          valueSeries.push(Number(v.toFixed(2)));
+        }
+      } else if (item.code === 'C02') {
+        const startCost = 220000;
+        const monthlyBuy = 5000;
+        for (let i = 0; i < 8; i++) {
+          const c = i === 0 ? startCost : Math.min(startCost + i * monthlyBuy, finalCost);
+          const v = (i === 7) ? finalVal : c * (1 + (roi / 100) * (i / 7) * (1 + Math.sin(i * 1.5) * 0.04));
+          costSeries.push(Number(c.toFixed(2)));
+          valueSeries.push(Number(v.toFixed(2)));
+        }
+      } else if (item.code === 'C03') {
+        const costMilestones = [400000, 524000, 524000, 524000, 524000, 624000, 677817, finalCost];
+        for (let i = 0; i < 8; i++) {
+          const c = costMilestones[i];
+          const v = (i === 7) ? finalVal : c * (1 + (roi / 100) * Math.pow((i + 1) / 8, 0.7));
+          costSeries.push(Number(c.toFixed(2)));
+          valueSeries.push(Number(v.toFixed(2)));
+        }
+      } else if (item.code === 'C08') {
+        for (let i = 0; i < 8; i++) {
+          const c = finalCost;
+          const dropFactor = 1 + (roi / 100) * (i / 7);
+          const v = (i === 7) ? finalVal : c * dropFactor;
+          costSeries.push(Number(c.toFixed(2)));
+          valueSeries.push(Number(v.toFixed(2)));
+        }
+      } else {
+        for (let i = 0; i < 8; i++) {
+          const ratio = (i + 1) / 8;
+          const c = finalCost * (0.35 + 0.65 * ratio);
+          const v = (i === 7) ? finalVal : c * (1 + (roi / 100) * Math.pow(ratio, 0.8));
+          costSeries.push(Number(c.toFixed(2)));
+          valueSeries.push(Number(v.toFixed(2)));
+        }
+      }
+
+      chartModalGrowth = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: dates,
+          datasets: [
+            {
+              label: `SOP 累積本金 (${item.currency})`,
+              data: costSeries,
+              borderColor: '#3b82f6',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              pointBackgroundColor: '#3b82f6',
+              pointRadius: 4,
+              fill: false,
+              tension: 0.15
+            },
+            {
+              label: `資產現值趨勢 (${item.currency})`,
+              data: valueSeries,
+              borderColor: finalVal >= finalCost ? '#10b981' : '#f43f5e',
+              borderWidth: 3,
+              pointBackgroundColor: finalVal >= finalCost ? '#10b981' : '#f43f5e',
+              pointRadius: 5,
+              backgroundColor: finalVal >= finalCost ? 'rgba(16, 185, 129, 0.12)' : 'rgba(244, 63, 94, 0.12)',
+              fill: true,
+              tension: 0.25
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#94a3b8', font: { family: 'Outfit', size: 11 } } },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              borderColor: finalVal >= finalCost ? 'rgba(16, 185, 129, 0.4)' : 'rgba(244, 63, 94, 0.4)',
+              borderWidth: 1,
+              callbacks: {
+                label: function(ctx) {
+                  return `${ctx.dataset.label}: ${currSymbol} ${ctx.raw.toLocaleString('en-US')}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: { ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+            y: { 
+              ticks: { 
+                color: '#64748b',
+                callback: function(v) { 
+                  if (isUSD) return '$ ' + v.toLocaleString('en-US');
+                  return 'NT$ ' + (v >= 10000 ? (v / 10000).toFixed(0) + '萬' : v); 
+                }
+              }, 
+              grid: { color: 'rgba(255,255,255,0.04)' } 
+            }
+          }
+        }
+      });
+    }
+
+    function closeModal() {
+      document.getElementById('assetModal').classList.remove('open');
+    }
+
+    function closeModalOnOverlay(e) {
+      if (e.target.id === 'assetModal') closeModal();
+    }
+
+    function setFilter(type, btn) {
+      currentFilter = type;
+      document.querySelectorAll('.filter-chips .chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      renderApp();
+    }
+
+    function handleSearch(val) {
+      searchQuery = val;
+      renderApp();
+    }
+
+    function switchView(viewName) {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('viewDashboard').style.display = 'none';
+      document.getElementById('viewTable').style.display = 'none';
+      document.getElementById('viewTimeline').style.display = 'none';
+
+      if (viewName === 'dashboard') {
+        document.getElementById('viewDashboard').style.display = 'grid';
+        document.getElementById('btnViewDashboard').classList.add('active');
+      } else if (viewName === 'table') {
+        document.getElementById('viewTable').style.display = 'block';
+        document.getElementById('btnViewTable').classList.add('active');
+      } else if (viewName === 'timeline') {
+        document.getElementById('viewTimeline').style.display = 'block';
+        document.getElementById('btnViewTimeline').classList.add('active');
+      }
+    }
+
+    function sortTable(field) {
+      if (currentSort.field === field) {
+        currentSort.asc = !currentSort.asc;
+      } else {
+        currentSort.field = field;
+        currentSort.asc = false;
+      }
+      renderApp();
+    }
+
+    function updateExchangeRate(newRate) {
+      const val = parseFloat(newRate);
+      if (!isNaN(val) && val > 0) {
+        usdToTwdRate = val;
+        renderApp();
+      }
+    }
+
+    async function loadData() {
+      const refreshBtn = document.getElementById('refreshBtn');
+      const statusBadge = document.getElementById('statusBadge');
+      const statusText = document.getElementById('statusText');
+      refreshBtn.classList.add('spinning');
+
+      try {
+        const res = await fetch(CSV_URL + '&t=' + Date.now(), { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP status ' + res.status);
+        const text = await res.text();
+        if (!text || text.length < 20) throw new Error('Empty CSV payload');
+
+        allAssets = processRawCSV(text);
+        statusBadge.style.background = 'rgba(16, 185, 129, 0.1)';
+        statusBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+        statusText.textContent = '即時同步 (Live Sync)';
+      } catch (err) {
+        console.warn('Live fetch failed, using built-in fallback CSV:', err);
+        allAssets = processRawCSV(FALLBACK_CSV);
+        statusBadge.style.background = 'rgba(251, 191, 36, 0.1)';
+        statusBadge.style.borderColor = 'rgba(251, 191, 36, 0.3)';
+        statusText.textContent = '離線備份 (Fallback)';
+      } finally {
+        refreshBtn.classList.remove('spinning');
+        document.getElementById('lastRefreshedText').textContent = '最後更新時間: ' + new Date().toLocaleTimeString();
+        renderApp();
+      }
+    }
+
+    function manualRefresh() { loadData(); }
+
+    loadData();
+    setInterval(loadData, 5 * 60 * 1000);
+  </script>
 </body>
 </html>

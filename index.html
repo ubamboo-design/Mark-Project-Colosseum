@@ -1003,6 +1003,7 @@
         </div>
         <div class="kpi-value" id="kpiTwdCurrent">NT$ 0</div>
         <div class="kpi-subtext" id="kpiTwdInvested">本金: NT$ 0</div>
+        <div class="kpi-subtext" id="kpiTwdProfit" style="margin-top:4px; font-size: 13px; color: var(--text-muted);">獲利: NT$ 0 <span class="roi-pill roi-positive" id="kpiTwdRoiPill" style="margin-left: 6px;">+0.00%</span></div>
       </div>
 
       <div class="kpi-card" style="--card-accent: var(--neon-purple);">
@@ -1012,6 +1013,7 @@
         </div>
         <div class="kpi-value" id="kpiUsdCurrent">$ 0.00 USD</div>
         <div class="kpi-subtext" id="kpiUsdInvested">本金: $ 0.00 USD</div>
+        <div class="kpi-subtext" id="kpiUsdProfit" style="margin-top:4px; font-size: 13px; color: var(--text-muted);">獲利: $ 0.00 USD <span class="roi-pill roi-positive" id="kpiUsdRoiPill" style="margin-left: 6px;">+0.00%</span></div>
       </div>
 
       <div class="kpi-card" style="--card-accent: var(--neon-emerald);" id="kpiPnlCard">
@@ -1023,16 +1025,7 @@
         <div class="kpi-subtext" id="kpiTotalUsd">折合 $ 0 USD (匯率 32.46)</div>
       </div>
 
-      <div class="kpi-card" style="--card-accent: var(--neon-amber);">
-        <div class="kpi-header">
-          <span class="kpi-title">資金部署進度 (DEPLOYMENT)</span>
-          <span class="font-mono" id="kpiDeployPercent" style="color: var(--neon-amber); font-weight: 800;">0.0%</span>
-        </div>
-        <div class="kpi-value" id="kpiPlannedValue">NT$ 0 Target</div>
-        <div class="progress-track">
-          <div class="progress-fill" id="kpiProgressFill" style="width: 0%"></div>
-        </div>
-      </div>
+
     </section>
 
     <!-- NEW SECTION (Reference from Colosseum v18): CLEC & Portfolio Currency Allocation Bar -->
@@ -1511,8 +1504,22 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       document.getElementById('kpiTwdCurrent').textContent = formatTWD(twdCurrentSum);
       document.getElementById('kpiTwdInvested').textContent = `本金: ${formatTWD(twdInvestedSum)}`;
 
+      const twdPnl = twdCurrentSum - twdInvestedSum;
+      const twdRoi = twdInvestedSum > 0 ? (twdPnl / twdInvestedSum) * 100 : 0;
+      document.getElementById('kpiTwdProfit').textContent = `獲利: ${formatTWD(twdPnl)}`;
+      const twdRoiPill = document.getElementById('kpiTwdRoiPill');
+      twdRoiPill.textContent = `${twdRoi >= 0 ? '+' : ''}${twdRoi.toFixed(2)}%`;
+      twdRoiPill.className = `roi-pill ${twdRoi >= 0 ? 'roi-positive' : 'roi-negative'}`;
+
       document.getElementById('kpiUsdCurrent').textContent = formatUSD(usdCurrentSum);
       document.getElementById('kpiUsdInvested').textContent = `本金: ${formatUSD(usdInvestedSum)}`;
+
+      const usdPnl = usdCurrentSum - usdInvestedSum;
+      const usdRoi = usdInvestedSum > 0 ? (usdPnl / usdInvestedSum) * 100 : 0;
+      document.getElementById('kpiUsdProfit').textContent = `獲利: ${formatUSD(usdPnl)}`;
+      const usdRoiPill = document.getElementById('kpiUsdRoiPill');
+      usdRoiPill.textContent = `${usdRoi >= 0 ? '+' : ''}${usdRoi.toFixed(2)}%`;
+      usdRoiPill.className = `roi-pill ${usdRoi >= 0 ? 'roi-positive' : 'roi-negative'}`;
 
       const pnlEl = document.getElementById('kpiTotalTwd');
       const roiPill = document.getElementById('kpiRoiPill');
@@ -1523,9 +1530,6 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       roiPill.textContent = `${totalRoi >= 0 ? '+' : ''}${totalRoi.toFixed(2)}%`;
       roiPill.className = `roi-pill ${totalRoi >= 0 ? 'roi-positive' : 'roi-negative'}`;
 
-      document.getElementById('kpiPlannedValue').textContent = `${formatTWD(totalPlannedTWD)}`;
-      document.getElementById('kpiDeployPercent').textContent = `${deployPercent.toFixed(1)}%`;
-      document.getElementById('kpiProgressFill').style.width = `${deployPercent}%`;
 
       // Render Portfolio Breakdown Bar (CLEC Inspiration)
       renderClecBar(totalCurrentTWD);

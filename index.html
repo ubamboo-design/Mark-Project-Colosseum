@@ -1506,20 +1506,16 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
 
       const twdPnl = twdCurrentSum - twdInvestedSum;
       const twdRoi = twdInvestedSum > 0 ? (twdPnl / twdInvestedSum) * 100 : 0;
-      document.getElementById('kpiTwdProfit').textContent = `獲利: ${formatTWD(twdPnl)}`;
-      const twdRoiPill = document.getElementById('kpiTwdRoiPill');
-      twdRoiPill.textContent = `${twdRoi >= 0 ? '+' : ''}${twdRoi.toFixed(2)}%`;
-      twdRoiPill.className = `roi-pill ${twdRoi >= 0 ? 'roi-positive' : 'roi-negative'}`;
+      const twdRoiClass = twdRoi >= 0 ? 'roi-positive' : 'roi-negative';
+      document.getElementById('kpiTwdProfit').innerHTML = `獲利: ${formatTWD(twdPnl)} <span class="roi-pill ${twdRoiClass}" id="kpiTwdRoiPill" style="margin-left: 6px;">${twdRoi >= 0 ? '+' : ''}${twdRoi.toFixed(2)}%</span>`;
 
       document.getElementById('kpiUsdCurrent').textContent = formatUSD(usdCurrentSum);
       document.getElementById('kpiUsdInvested').textContent = `本金: ${formatUSD(usdInvestedSum)}`;
 
       const usdPnl = usdCurrentSum - usdInvestedSum;
       const usdRoi = usdInvestedSum > 0 ? (usdPnl / usdInvestedSum) * 100 : 0;
-      document.getElementById('kpiUsdProfit').textContent = `獲利: ${formatUSD(usdPnl)}`;
-      const usdRoiPill = document.getElementById('kpiUsdRoiPill');
-      usdRoiPill.textContent = `${usdRoi >= 0 ? '+' : ''}${usdRoi.toFixed(2)}%`;
-      usdRoiPill.className = `roi-pill ${usdRoi >= 0 ? 'roi-positive' : 'roi-negative'}`;
+      const usdRoiClass = usdRoi >= 0 ? 'roi-positive' : 'roi-negative';
+      document.getElementById('kpiUsdProfit').innerHTML = `獲利: ${formatUSD(usdPnl)} <span class="roi-pill ${usdRoiClass}" id="kpiUsdRoiPill" style="margin-left: 6px;">${usdRoi >= 0 ? '+' : ''}${usdRoi.toFixed(2)}%</span>`;
 
       const pnlEl = document.getElementById('kpiTotalTwd');
       const roiPill = document.getElementById('kpiRoiPill');

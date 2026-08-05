@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>投資戰情室 • PROJECT COLOSSEUM COMMAND CENTER</title>
+  <title>PROJECT COLOSSEUM • 投資戰情室 COMMAND CENTER</title>
   
   <!-- Google Fonts: Outfit, Inter, JetBrains Mono, Noto Sans TC -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -255,14 +255,15 @@
     }
 
     .kpi-card {
-      background: var(--bg-surface);
+      background: rgba(15, 23, 42, 0.88);
       backdrop-filter: blur(16px);
-      border: 1px solid var(--border-subtle);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      border-left: 4px solid var(--card-accent, var(--neon-cyan));
       border-radius: 16px;
       padding: 22px;
       position: relative;
       overflow: hidden;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 30px color-mix(in srgb, var(--card-accent, var(--neon-cyan)) 20%, transparent);
       transition: var(--transition-smooth);
       display: flex;
       flex-direction: column;
@@ -274,14 +275,14 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--card-accent, var(--neon-cyan)), transparent);
-      opacity: 0.7;
+      height: 3px;
+      background: linear-gradient(90deg, var(--card-accent, var(--neon-cyan)), var(--card-accent, var(--neon-cyan)) 60%, transparent);
+      opacity: 1;
     }
     .kpi-card:hover {
-      border-color: var(--border-cyan);
+      border-color: rgba(255, 255, 255, 0.3);
       transform: translateY(-3px);
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 40px color-mix(in srgb, var(--card-accent, var(--neon-cyan)) 30%, transparent);
     }
 
     .kpi-header {
@@ -334,20 +335,59 @@
       border: 1px solid rgba(244, 63, 94, 0.3);
     }
 
-    .progress-track {
-      width: 100%;
-      height: 8px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 99px;
-      overflow: hidden;
-      margin-top: 10px;
+    /* KPI P&L inline row */
+    .kpi-pnl-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
     }
-    .progress-fill {
-      height: 100%;
+    .kpi-pnl-amount {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .kpi-pnl-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 9px;
       border-radius: 99px;
-      background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan));
-      box-shadow: 0 0 12px var(--neon-cyan);
-      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .kpi-pnl-badge.pos {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--neon-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .kpi-pnl-badge.neg {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--neon-rose);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    /* Visitor counter */
+    .visitor-counter {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .visitor-digits {
+      display: flex;
+      gap: 4px;
+    }
+    .digit-block {
+      background: rgba(0, 242, 254, 0.08);
+      border: 1px solid var(--border-cyan);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--neon-cyan);
+      min-width: 32px;
+      text-align: center;
+      box-shadow: 0 0 8px rgba(0, 242, 254, 0.15);
     }
 
     /* Reference: CLEC Portfolio Allocation Card (From Colosseum v18) */
@@ -994,29 +1034,53 @@
       </div>
     </header>
 
-    <!-- Executive KPI Scorecards (TWD Total & USD Total Separated) -->
+    <!-- Executive KPI Scorecards — Grouped by STRATEGY TYPE (not raw currency) -->
     <section class="kpi-grid">
+
+      <!-- CARD 1: 台股核心 (type-tw + type-ber: 0050 DCA, 0050 LSI, 00631L) -->
       <div class="kpi-card" style="--card-accent: var(--neon-blue);">
         <div class="kpi-header">
-          <span class="kpi-title">🇹🇼 台幣部位總現值 (TWD)</span>
+          <span class="kpi-title">🇹🇼 台股核心 + 槓桿</span>
           <span class="kpi-icon" style="color: var(--neon-blue)">❖</span>
         </div>
         <div class="kpi-value" id="kpiTwdCurrent">NT$ 0</div>
         <div class="kpi-subtext" id="kpiTwdInvested">本金: NT$ 0</div>
-        <div class="kpi-subtext" id="kpiTwdProfit" style="margin-top:4px; font-size: 13px; color: var(--text-muted);">獲利: NT$ 0 <span class="roi-pill roi-positive" id="kpiTwdRoiPill" style="margin-left: 6px;">+0.00%</span></div>
+        <div class="kpi-pnl-row">
+          <span class="kpi-pnl-amount" id="kpiTwdPnlAmount">+NT$ 0</span>
+          <span class="kpi-pnl-badge pos" id="kpiTwdRoiBadge">+0.00%</span>
+        </div>
       </div>
 
+      <!-- CARD 2: 美股成長 (type-us ONLY: QLD C05, 00662 C06 — QQQI excluded) -->
       <div class="kpi-card" style="--card-accent: var(--neon-purple);">
         <div class="kpi-header">
-          <span class="kpi-title">🇺🇸 美金部位總現值 (USD)</span>
+          <span class="kpi-title">🇺🇸 美股成長配置</span>
           <span class="kpi-icon" style="color: var(--neon-purple)">✦</span>
         </div>
         <div class="kpi-value" id="kpiUsdCurrent">$ 0.00 USD</div>
         <div class="kpi-subtext" id="kpiUsdInvested">本金: $ 0.00 USD</div>
-        <div class="kpi-subtext" id="kpiUsdProfit" style="margin-top:4px; font-size: 13px; color: var(--text-muted);">獲利: $ 0.00 USD <span class="roi-pill roi-positive" id="kpiUsdRoiPill" style="margin-left: 6px;">+0.00%</span></div>
+        <div class="kpi-pnl-row">
+          <span class="kpi-pnl-amount" id="kpiUsdPnlAmount">+$ 0.00</span>
+          <span class="kpi-pnl-badge pos" id="kpiUsdRoiBadge">+0.00%</span>
+        </div>
       </div>
 
-      <div class="kpi-card" style="--card-accent: var(--neon-emerald);" id="kpiPnlCard">
+      <!-- CARD 3: 高股息/現金流 (type-yield: 00878 TWD + QQQI USD combined) -->
+      <div class="kpi-card" style="--card-accent: var(--neon-emerald);">
+        <div class="kpi-header">
+          <span class="kpi-title">💰 高股息 + 現金流 (混合)</span>
+          <span class="kpi-icon" style="color: var(--neon-emerald)">◉</span>
+        </div>
+        <div class="kpi-value" id="kpiYieldCurrent">NT$ 0</div>
+        <div class="kpi-subtext" id="kpiYieldBreakdown">00878: NT$0 | QQQI: $0</div>
+        <div class="kpi-pnl-row">
+          <span class="kpi-pnl-amount" id="kpiYieldPnlAmount">+NT$ 0</span>
+          <span class="kpi-pnl-badge pos" id="kpiYieldRoiBadge">+0.00%</span>
+        </div>
+      </div>
+
+      <!-- CARD 4: 整合換算總資產 -->
+      <div class="kpi-card" style="--card-accent: var(--neon-cyan);" id="kpiPnlCard">
         <div class="kpi-header">
           <span class="kpi-title">整合換算總資產 (TOTAL)</span>
           <span class="roi-pill roi-positive" id="kpiRoiPill">+0.00%</span>
@@ -1025,6 +1089,17 @@
         <div class="kpi-subtext" id="kpiTotalUsd">折合 $ 0 USD (匯率 32.46)</div>
       </div>
 
+      <!-- CARD 5: 累積瀏覽人次 -->
+      <div class="kpi-card" style="--card-accent: var(--neon-amber);">
+        <div class="kpi-header">
+          <span class="kpi-title">👁 累積瀏覽人次 (VISITORS)</span>
+          <span class="kpi-icon" style="color: var(--neon-amber)">◈</span>
+        </div>
+        <div class="visitor-counter" style="margin-top: 4px;">
+          <div class="visitor-digits" id="visitorDigits">—</div>
+        </div>
+        <div class="kpi-subtext" style="margin-top: 10px;" id="visitorFirstSeen">首次記錄: -</div>
+      </div>
 
     </section>
 
@@ -1269,6 +1344,10 @@
 
   <script>
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSHOpI_ZlxDuP4iILBZEBVRSM42aaO2EZEoyh3Q0Nl2KX50fCDEdbLREYZMJj2MNE_j8lgE48LjGppl/pub?output=csv';
+    const PROXY_URLS = [
+      'https://corsproxy.io/?' + encodeURIComponent('https://docs.google.com/spreadsheets/d/e/2PACX-1vSHOpI_ZlxDuP4iILBZEBVRSM42aaO2EZEoyh3Q0Nl2KX50fCDEdbLREYZMJj2MNE_j8lgE48LjGppl/pub?output=csv'),
+      'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://docs.google.com/spreadsheets/d/e/2PACX-1vSHOpI_ZlxDuP4iILBZEBVRSM42aaO2EZEoyh3Q0Nl2KX50fCDEdbLREYZMJj2MNE_j8lgE48LjGppl/pub?output=csv')
+    ];
 
     const FALLBACK_CSV = `C01,type-tw,定期定額0050,元大台灣50-0050,TW DCA,NT$2772000,NT$272034.00,0050,"每個月 5,15,25號：每次扣款 NT$11,000",https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C01_最平庸的定期定額.png,,2667,NT$102.00,NT$229231
 C02,type-yield,定期定額00878,國泰永續高股息-00878,TW DCA YIELD,NT$640000,NT$370548.89,00878,"2026/01/05進場22萬，每月 5 號：扣款 NT$5,000",https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C02_股息cover每一天.png,,11377,NT$32.57,NT$254483
@@ -1294,8 +1373,10 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
 
     function parseAmount(valStr) {
       if (!valStr) return { value: 0, currency: 'TWD' };
-      const str = valStr.toString().trim();
+      // Strip surrounding double-quotes that CSV parsers may leave
+      let str = valStr.toString().trim().replace(/^"|"$/g, '').trim();
       const isUSD = str.includes('$') && !str.includes('NT$');
+      // Remove all non-numeric chars except dot and minus (handles thousand-separator commas)
       const numStr = str.replace(/[^0-9.-]/g, '');
       const num = parseFloat(numStr) || 0;
       return { value: num, currency: isUSD ? 'USD' : 'TWD' };
@@ -1368,67 +1449,63 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       const assets = [];
       const events = [];
 
+      // Pass 1: exchange rate and event log rows
       for (let row of rows) {
-        if (row[0] && row[0].includes('美金匯率') && row[1]) {
-          const rateParsed = parseFloat(row[1]);
-          if (!isNaN(rateParsed) && rateParsed > 0) {
-            usdToTwdRate = rateParsed;
-            document.getElementById('usdRateInput').value = usdToTwdRate.toFixed(2);
+        const col0 = (row[0] || '').trim();
+        if (col0 === '美金匯率' || col0.includes('美金匯率')) {
+          const rate = parseFloat((row[1] || '').replace(/,/g, ''));
+          if (!isNaN(rate) && rate > 10) {
+            usdToTwdRate = rate;
+            document.getElementById('usdRateInput').value = rate.toFixed(4);
           }
         }
-        if (row[0] && row[0].match(/^\d{4}\/\d{1,2}\/\d{1,2}/)) {
-          events.push({
-            date: row[0],
-            status: row[1] || '進行中',
-            desc: row[2] || ''
-          });
+        if (col0.match(/^\d{4}\/\d{1,2}\/\d{1,2}/)) {
+          events.push({ date: col0, status: row[1] || '進行中', desc: row[2] || '' });
         }
       }
 
+      // Pass 2: asset rows — strict C01–C99 pattern
       for (let row of rows) {
-        if (!row[0] || (!row[0].startsWith('C0') && !row[0].startsWith('C1'))) continue;
+        const col0 = (row[0] || '').trim();
+        if (!col0.match(/^C\d{2}$/)) continue;
 
-        const code = row[0];
-        const type = row[1];
-        const name = row[2] || '';
+        const code   = col0;
+        let   type   = (row[1] || '').trim();
+        const name   = row[2] || '';
         const target = row[3] || '';
-        const skill = row[4] || '';
+        const skill  = row[4] || '';
         const plannedObj = parseAmount(row[5]);
         const currentObj = parseAmount(row[6]);
-        const ticker = row[7] || code;
-        const sop = row[8] || '';
-        
-        let imageUrl = '';
-        let shares = '';
-        let priceObj = parseAmount('');
-        let investedObj = parseAmount('');
+        const ticker = (row[7] || code).trim();
+        const sop    = row[8] || '';
 
-        if (row.length >= 14 || (row[9] && row[9].startsWith('http'))) {
-          imageUrl = row[9] && row[9].startsWith('http') ? row[9] : '';
-          shares = row[11] || '';
-          priceObj = parseAmount(row[12]);
+        // ★ QQQI OVERRIDE: always force type-yield regardless of sheet value ★
+        if (ticker.toUpperCase() === 'QQQI') type = 'type-yield';
+
+        let shares = '', priceObj, investedObj;
+        if (row[9] && row[9].trim().startsWith('http')) {
+          // Layout with image URL: cols 0-8 + img(9) + cash(10) + shares(11) + price(12) + invested(13)
+          shares      = row[11] || '';
+          priceObj    = parseAmount(row[12]);
           investedObj = parseAmount(row[13] || row[5]);
         } else {
-          imageUrl = '';
-          shares = row[9] || '';
-          priceObj = parseAmount(row[10]);
+          shares      = row[9] || '';
+          priceObj    = parseAmount(row[10]);
           investedObj = parseAmount(row[11] || row[5]);
         }
 
-        const currentTWD = toTWD(currentObj, usdToTwdRate);
+        const currentTWD  = toTWD(currentObj,  usdToTwdRate);
         const investedTWD = toTWD(investedObj, usdToTwdRate);
-        const plannedTWD = toTWD(plannedObj, usdToTwdRate);
-
-        const currentNative = currentObj.value;
+        const plannedTWD  = toTWD(plannedObj,  usdToTwdRate);
+        const currentNative  = currentObj.value;
         const investedNative = investedObj.value;
-        const pnlNative = currentNative - investedNative;
-        const pnlObj = { value: pnlNative, currency: currentObj.currency };
-        
+        const pnlNative      = currentNative - investedNative;
+        const pnlObj         = { value: pnlNative, currency: currentObj.currency };
         const pnlTWD = currentTWD - investedTWD;
-        const roi = investedTWD > 0 ? (pnlTWD / investedTWD) * 100 : 0;
+        const roi    = investedTWD > 0 ? (pnlTWD / investedTWD) * 100 : 0;
 
         assets.push({
-          code, type, name, target, skill, ticker, sop, imageUrl, shares, priceObj,
+          code, type, name, target, skill, ticker, sop, shares, priceObj,
           plannedObj, currentObj, investedObj, pnlObj, currency: currentObj.currency,
           currentNative, investedNative, pnlNative,
           currentTWD, investedTWD, plannedTWD, pnlTWD, roi
@@ -1442,7 +1519,6 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
           { date: '2026/01/05', status: '完成', desc: '年度戰情室戰略部署開局，投入 00631L 40 萬正2觀察部位' }
         );
       }
-
       eventLogs = events;
       return assets;
     }
@@ -1472,62 +1548,122 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
         return currentSort.asc ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
       });
 
-      // Calculate totals per native currency
-      let twdCurrentSum = 0;
-      let twdInvestedSum = 0;
-      let usdCurrentSum = 0;
-      let usdInvestedSum = 0;
+      // ================================================================
+      // TYPE-BASED GROUPING — QQQI always in yield, never in US growth
+      // ================================================================
+      // type-tw + type-ber  → 台股核心 card  (all TWD native)
+      // type-us             → 美股成長 card  (USD & TWD, display biggest currency)
+      // type-yield          → 高股息合計 card (00878 TWD + QQQI USD, TWD-equivalent total)
+      // type-trap           → 實驗 card  (excluded from sub-cards, only in TOTAL)
+      // ================================================================
 
-      let totalCurrentTWD = 0;
-      let totalInvestedTWD = 0;
-      let totalPlannedTWD = 0;
+      let twdCoreCurrentTWD = 0, twdCoreInvestedTWD = 0;   // native TWD
+      let usGrowthCurrentTWD = 0, usGrowthInvestedTWD = 0; // TWD-equiv for ROI; display as USD if mainly USD
+      let usGrowthCurrentUSD = 0, usGrowthInvestedUSD = 0; // native USD (QLD, 00662 is TWD so 0)
+
+      // Yield: merged 00878 (TWD) + QQQI (USD)
+      let yieldCurrentTWDeq = 0, yieldInvestedTWDeq = 0;   // TWD-equivalent
+      let yieldNativeTWD = 0, yieldNativeTWDInv = 0;        // 00878 native
+      let yieldNativeUSD = 0, yieldNativeUSDInv = 0;        // QQQI native
+
+      // Total (all assets, for TOTAL card)
+      let totalCurrentTWD = 0, totalInvestedTWD = 0;
 
       allAssets.forEach(a => {
-        if (a.currency === 'USD') {
-          usdCurrentSum += a.currentNative;
-          usdInvestedSum += a.investedNative;
-        } else {
-          twdCurrentSum += a.currentNative;
-          twdInvestedSum += a.investedNative;
-        }
-
-        totalCurrentTWD += a.currentTWD;
+        totalCurrentTWD  += a.currentTWD;
         totalInvestedTWD += a.investedTWD;
-        totalPlannedTWD += a.plannedTWD;
+
+
+        if (a.type === 'type-tw' || a.type === 'type-ber') {
+          twdCoreCurrentTWD  += a.currentTWD;
+          twdCoreInvestedTWD += a.investedTWD;
+
+        } else if (a.type === 'type-us') {
+          usGrowthCurrentTWD  += a.currentTWD;
+          usGrowthInvestedTWD += a.investedTWD;
+          if (a.currency === 'USD') {
+            usGrowthCurrentUSD  += a.currentNative;
+            usGrowthInvestedUSD += a.investedNative;
+          }
+
+        } else if (a.type === 'type-yield') {
+          // QQQI ALWAYS merged here regardless of its USD currency
+          yieldCurrentTWDeq  += a.currentTWD;
+          yieldInvestedTWDeq += a.investedTWD;
+          if (a.currency === 'TWD') {
+            yieldNativeTWD    += a.currentNative;
+            yieldNativeTWDInv += a.investedNative;
+          } else {
+            yieldNativeUSD    += a.currentNative;
+            yieldNativeUSDInv += a.investedNative;
+          }
+        }
+        // type-trap: only counted in totalCurrentTWD above
       });
 
       const totalPnlTWD = totalCurrentTWD - totalInvestedTWD;
       const totalRoi = totalInvestedTWD > 0 ? (totalPnlTWD / totalInvestedTWD) * 100 : 0;
-      const deployPercent = totalPlannedTWD > 0 ? Math.min((totalInvestedTWD / totalPlannedTWD) * 100, 100) : 0;
 
-      // Executive Scorecards (Pure Native Currency)
-      document.getElementById('kpiTwdCurrent').textContent = formatTWD(twdCurrentSum);
-      document.getElementById('kpiTwdInvested').textContent = `本金: ${formatTWD(twdInvestedSum)}`;
+      // ── CARD 1: 台股核心 (type-tw + type-ber) — pure TWD ──
+      const twdPnl = twdCoreCurrentTWD - twdCoreInvestedTWD;
+      const twdRoi = twdCoreInvestedTWD > 0 ? (twdPnl / twdCoreInvestedTWD) * 100 : 0;
+      const twdUp = twdPnl >= 0;
+      document.getElementById('kpiTwdCurrent').textContent = formatTWD(twdCoreCurrentTWD);
+      document.getElementById('kpiTwdInvested').textContent = `本金: ${formatTWD(twdCoreInvestedTWD)}`;
+      const twdPnlEl = document.getElementById('kpiTwdPnlAmount');
+      twdPnlEl.textContent = `${twdUp ? '+' : ''}${formatTWD(twdPnl)}`;
+      twdPnlEl.style.color = twdUp ? 'var(--neon-emerald)' : 'var(--neon-rose)';
+      const twdBadge = document.getElementById('kpiTwdRoiBadge');
+      twdBadge.textContent = `${twdUp ? '+' : ''}${twdRoi.toFixed(2)}%`;
+      twdBadge.className = `kpi-pnl-badge ${twdUp ? 'pos' : 'neg'}`;
 
-      const twdPnl = twdCurrentSum - twdInvestedSum;
-      const twdRoi = twdInvestedSum > 0 ? (twdPnl / twdInvestedSum) * 100 : 0;
-      const twdRoiClass = twdRoi >= 0 ? 'roi-positive' : 'roi-negative';
-      document.getElementById('kpiTwdProfit').innerHTML = `獲利: ${formatTWD(twdPnl)} <span class="roi-pill ${twdRoiClass}" id="kpiTwdRoiPill" style="margin-left: 6px;">${twdRoi >= 0 ? '+' : ''}${twdRoi.toFixed(2)}%</span>`;
+      // ── CARD 2: 美股成長 (type-us only, QQQI excluded) ──
+      // Main: total TWD-equivalent. Sub-line: native breakdown per ticker.
+      const usPnlTWD = usGrowthCurrentTWD - usGrowthInvestedTWD;
+      const usRoi = usGrowthInvestedTWD > 0 ? (usPnlTWD / usGrowthInvestedTWD) * 100 : 0;
+      const usUp = usPnlTWD >= 0;
 
-      document.getElementById('kpiUsdCurrent').textContent = formatUSD(usdCurrentSum);
-      document.getElementById('kpiUsdInvested').textContent = `本金: ${formatUSD(usdInvestedSum)}`;
+      // Collect per-ticker native values for breakdown line
+      const usAssets = allAssets.filter(a => a.type === 'type-us');
+      const usBreakParts = usAssets.map(a => {
+        if (a.currency === 'USD') return `${a.ticker}: ${formatUSD(a.currentNative)}`;
+        return `${a.ticker}: ${formatTWD(a.currentNative)}`;
+      });
 
-      const usdPnl = usdCurrentSum - usdInvestedSum;
-      const usdRoi = usdInvestedSum > 0 ? (usdPnl / usdInvestedSum) * 100 : 0;
-      const usdRoiClass = usdRoi >= 0 ? 'roi-positive' : 'roi-negative';
-      document.getElementById('kpiUsdProfit').innerHTML = `獲利: ${formatUSD(usdPnl)} <span class="roi-pill ${usdRoiClass}" id="kpiUsdRoiPill" style="margin-left: 6px;">${usdRoi >= 0 ? '+' : ''}${usdRoi.toFixed(2)}%</span>`;
+      document.getElementById('kpiUsdCurrent').textContent  = formatTWD(usGrowthCurrentTWD) + ' （折合）';
+      document.getElementById('kpiUsdInvested').textContent = usBreakParts.join(' | ');
+      const usPnlEl = document.getElementById('kpiUsdPnlAmount');
+      usPnlEl.textContent = `${usUp ? '+' : ''}${formatTWD(usPnlTWD)}`;
+      usPnlEl.style.color = usUp ? 'var(--neon-emerald)' : 'var(--neon-rose)';
+      const usBadge = document.getElementById('kpiUsdRoiBadge');
+      usBadge.textContent = `${usUp ? '+' : ''}${usRoi.toFixed(2)}%`;
+      usBadge.className = `kpi-pnl-badge ${usUp ? 'pos' : 'neg'}`;
 
+      // ── CARD 3: 高股息/現金流 (type-yield: 00878 TWD + QQQI USD — MERGED) ──
+      const yieldPnlTWDeq = yieldCurrentTWDeq - yieldInvestedTWDeq;
+      const yieldRoi = yieldInvestedTWDeq > 0 ? (yieldPnlTWDeq / yieldInvestedTWDeq) * 100 : 0;
+      const yieldUp = yieldPnlTWDeq >= 0;
+      document.getElementById('kpiYieldCurrent').textContent = formatTWD(yieldCurrentTWDeq);
+      // breakdown sub-line: 00878 native TWD + QQQI native USD
+      const twdBreakStr  = yieldNativeTWD  > 0 ? `00878: ${formatTWD(yieldNativeTWD)}` : '';
+      const usdBreakStr  = yieldNativeUSD  > 0 ? `QQQI: ${formatUSD(yieldNativeUSD)}` : '';
+      document.getElementById('kpiYieldBreakdown').textContent = [twdBreakStr, usdBreakStr].filter(Boolean).join(' | ');
+      const yieldPnlEl = document.getElementById('kpiYieldPnlAmount');
+      yieldPnlEl.textContent = `${yieldUp ? '+' : ''}${formatTWD(yieldPnlTWDeq)} (折合TWD)`;
+      yieldPnlEl.style.color = yieldUp ? 'var(--neon-emerald)' : 'var(--neon-rose)';
+      const yieldBadge = document.getElementById('kpiYieldRoiBadge');
+      yieldBadge.textContent = `${yieldUp ? '+' : ''}${yieldRoi.toFixed(2)}%`;
+      yieldBadge.className = `kpi-pnl-badge ${yieldUp ? 'pos' : 'neg'}`;
+
+      // ── CARD 4: 整合總資產 ──
       const pnlEl = document.getElementById('kpiTotalTwd');
       const roiPill = document.getElementById('kpiRoiPill');
       pnlEl.textContent = formatTWD(totalCurrentTWD);
-      
       document.getElementById('kpiTotalUsd').textContent = `折合 $ ${Math.round(totalCurrentTWD / usdToTwdRate).toLocaleString('en-US')} USD (匯率 ${usdToTwdRate.toFixed(2)})`;
-
       roiPill.textContent = `${totalRoi >= 0 ? '+' : ''}${totalRoi.toFixed(2)}%`;
       roiPill.className = `roi-pill ${totalRoi >= 0 ? 'roi-positive' : 'roi-negative'}`;
 
-
-      // Render Portfolio Breakdown Bar (CLEC Inspiration)
+      // Render CLEC Bar (also type-based, QQQI in yield)
       renderClecBar(totalCurrentTWD);
 
       document.getElementById('assetCountText').textContent = `顯示 ${filtered.length} 個部位`;
@@ -2005,37 +2141,75 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
     }
 
     async function loadData() {
-      const refreshBtn = document.getElementById('refreshBtn');
+      const refreshBtn  = document.getElementById('refreshBtn');
       const statusBadge = document.getElementById('statusBadge');
-      const statusText = document.getElementById('statusText');
+      const statusText  = document.getElementById('statusText');
       refreshBtn.classList.add('spinning');
 
-      try {
-        const res = await fetch(CSV_URL + '&t=' + Date.now(), { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP status ' + res.status);
-        const text = await res.text();
-        if (!text || text.length < 20) throw new Error('Empty CSV payload');
+      // Try direct → CORS proxy 1 → CORS proxy 2 → built-in fallback
+      const urlsToTry = [CSV_URL, ...PROXY_URLS];
+      let loaded = false;
 
-        allAssets = processRawCSV(text);
-        statusBadge.style.background = 'rgba(16, 185, 129, 0.1)';
-        statusBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-        statusText.textContent = '即時同步 (Live Sync)';
-      } catch (err) {
-        console.warn('Live fetch failed, using built-in fallback CSV:', err);
+      for (const url of urlsToTry) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const text = await res.text();
+          if (!text || !text.includes('C0')) throw new Error('Invalid payload');
+          allAssets = processRawCSV(text);
+          const isProxy = url !== CSV_URL;
+          statusBadge.style.background  = 'rgba(16, 185, 129, 0.1)';
+          statusBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+          statusText.textContent = isProxy ? '透過 Proxy 同步' : '即時同步 (Live Sync)';
+          loaded = true;
+          break;
+        } catch (e) {
+          console.warn('Fetch failed:', url, e.message);
+        }
+      }
+
+      if (!loaded) {
         allAssets = processRawCSV(FALLBACK_CSV);
-        statusBadge.style.background = 'rgba(251, 191, 36, 0.1)';
+        statusBadge.style.background  = 'rgba(251, 191, 36, 0.1)';
         statusBadge.style.borderColor = 'rgba(251, 191, 36, 0.3)';
         statusText.textContent = '離線備份 (Fallback)';
-      } finally {
-        refreshBtn.classList.remove('spinning');
-        document.getElementById('lastRefreshedText').textContent = '最後更新時間: ' + new Date().toLocaleTimeString();
-        renderApp();
       }
+
+      refreshBtn.classList.remove('spinning');
+      document.getElementById('lastRefreshedText').textContent = '最後更新時間: ' + new Date().toLocaleTimeString('zh-TW');
+      renderApp();
     }
 
     function manualRefresh() { loadData(); }
 
+    // ── Visitor Counter (localStorage-persisted) ──
+    function initVisitorCounter() {
+      const KEY_COUNT = 'warroom_visitor_count';
+      const KEY_FIRST = 'warroom_first_visit';
+      const now = new Date();
+
+      let count = parseInt(localStorage.getItem(KEY_COUNT) || '0') + 1;
+      localStorage.setItem(KEY_COUNT, count);
+
+      let firstSeen = localStorage.getItem(KEY_FIRST);
+      if (!firstSeen) {
+        firstSeen = now.toLocaleDateString('zh-TW');
+        localStorage.setItem(KEY_FIRST, firstSeen);
+      }
+
+      // Render segmented digit blocks
+      const digitsContainer = document.getElementById('visitorDigits');
+      const digits = count.toLocaleString('en-US');            // e.g. "1,234"
+      digitsContainer.innerHTML = digits.split('').map(ch => {
+        if (ch === ',') return `<span style="color: var(--text-dim); font-size: 18px; align-self: flex-end; padding-bottom: 4px;">,</span>`;
+        return `<span class="digit-block">${ch}</span>`;
+      }).join('');
+
+      document.getElementById('visitorFirstSeen').textContent = `首次記錄: ${firstSeen}`;
+    }
+
     loadData();
+    initVisitorCounter();
     setInterval(loadData, 5 * 60 * 1000);
   </script>
 </body>

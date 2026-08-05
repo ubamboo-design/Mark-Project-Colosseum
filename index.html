@@ -1673,6 +1673,7 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       twdBadge.className = `kpi-pnl-badge ${twdUp ? 'pos' : 'neg'}`;
 
       // ── CARD 2: CLEC 523 配置 (00662 + QLD + 現金 390萬) ──
+      const usAssets = allAssets.filter(a => a.type === 'type-us');
       const clecCash = 3900000; // 現金固定 390 萬
       const clec662 = usAssets.find(a => a.ticker === '00662');
       const clecQld = usAssets.find(a => a.ticker === 'QLD');

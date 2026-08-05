@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -263,7 +263,7 @@
     /* KPI Grid */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(4, 1fr);
       gap: 18px;
     }
 
@@ -393,6 +393,7 @@
       font-family: var(--font-mono);
       font-size: 13px;
       font-weight: 700;
+      text-shadow: 0 0 6px currentColor;
     }
     .kpi-pnl-badge {
       font-family: var(--font-mono);
@@ -402,14 +403,16 @@
       border-radius: 99px;
     }
     .kpi-pnl-badge.pos {
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--neon-emerald);
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.25);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.5);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
     }
     .kpi-pnl-badge.neg {
-      background: rgba(244, 63, 94, 0.15);
-      color: var(--neon-rose);
-      border: 1px solid rgba(244, 63, 94, 0.3);
+      background: rgba(244, 63, 94, 0.25);
+      color: #fb7185;
+      border: 1px solid rgba(251, 113, 133, 0.5);
+      box-shadow: 0 0 8px rgba(244, 63, 94, 0.3);
     }
 
     /* Visitor counter */
@@ -1089,11 +1092,11 @@
     <!-- Executive KPI Scorecards — Grouped by STRATEGY TYPE (not raw currency) -->
     <section class="kpi-grid">
 
-      <!-- CARD 1: 台股核心 (type-tw + type-ber: 0050 DCA, 0050 LSI, 00631L) -->
+      <!-- CARD 1: 台幣部位 (all type-tw) -->
       <div class="kpi-card" style="--card-accent: var(--neon-blue);">
         <div class="kpi-header">
-          <span class="kpi-title">🇹🇼 台股核心 + 槓桿</span>
-          <span class="kpi-icon" style="color: var(--neon-blue)">❖</span>
+          <span class="kpi-title">🇹🇼 台幣部位</span>
+          <span class="kpi-icon" style="color: var(--neon-blue)">💰</span>
         </div>
         <div class="kpi-value" id="kpiTwdCurrent">NT$ 0</div>
         <div class="kpi-subtext" id="kpiTwdInvested">本金: NT$ 0</div>
@@ -1103,42 +1106,31 @@
         </div>
       </div>
 
-      <!-- CARD 2: CLEC 523 配置 (00662 + QLD + 現金) -->
-      <div class="kpi-card" style="--card-accent: var(--neon-purple); min-width: 340px;">
+      <!-- CARD 2: 美金部位 (all type-us) + 現金 390萬 -->
+      <div class="kpi-card" style="--card-accent: var(--neon-purple);">
         <div class="kpi-header">
-          <span class="kpi-title">🇺🇸 CLEC 523 配置</span>
+          <span class="kpi-title">🇺🇸 美金部位</span>
           <span class="kpi-icon" style="color: var(--neon-purple)">⚡</span>
         </div>
         <div class="kpi-value" id="kpiUsdCurrent">NT$ 0</div>
         <div class="kpi-subtext" id="kpiUsdInvested">00662: — | QLD: — | 現金: —</div>
-        <!-- CLEC 523 allocation bar -->
-        <div class="clec-alloc-bar" id="clecAllocBar">
-          <div class="clec-alloc-seg" id="clecSeg662" style="width:50%; background: linear-gradient(90deg, #a855f7, #c084fc);" title="00662"></div>
-          <div class="clec-alloc-seg" id="clecSegQld" style="width:30%; background: linear-gradient(90deg, #60a5fa, #93c5fd);" title="QLD"></div>
-          <div class="clec-alloc-seg" id="clecSegCash" style="width:20%; background: linear-gradient(90deg, #fbbf24, #fcd34d);" title="現金"></div>
-        </div>
-        <div class="clec-alloc-legend" id="clecAllocLegend">
-          <span><span class="clec-dot" style="background:#a855f7;"></span>00662 <b id="clecPct662">—</b></span>
-          <span><span class="clec-dot" style="background:#60a5fa;"></span>QLD <b id="clecPctQld">—</b></span>
-          <span><span class="clec-dot" style="background:#fbbf24;"></span>現金 <b id="clecPctCash">—</b></span>
-        </div>
         <div class="kpi-pnl-row">
           <span class="kpi-pnl-amount" id="kpiUsdPnlAmount">+$ 0.00</span>
           <span class="kpi-pnl-badge pos" id="kpiUsdRoiBadge">+0.00%</span>
         </div>
       </div>
 
-      <!-- CARD 3: QQQI 現金流 -->
+      <!-- CARD 3: QQQI 總配息 -->
       <div class="kpi-card" style="--card-accent: var(--neon-emerald);">
         <div class="kpi-header">
-          <span class="kpi-title">💰 QQQI 現金流</span>
-          <span class="kpi-icon" style="color: var(--neon-emerald)">◉</span>
+          <span class="kpi-title">💰 QQQI 總配息</span>
+          <span class="kpi-icon" style="color: var(--neon-emerald)">💵</span>
         </div>
-        <div class="kpi-value" id="kpiYieldCurrent">NT$ 0</div>
-        <div class="kpi-subtext" id="kpiYieldBreakdown">QQQI: $0</div>
+        <div class="kpi-value" id="kpiYieldCurrent">$ 0</div>
+        <div class="kpi-subtext" id="kpiYieldBreakdown">本月配息: $0 | 累計配息率: 0%</div>
         <div class="kpi-pnl-row">
-          <span class="kpi-pnl-amount" id="kpiYieldPnlAmount">+NT$ 0</span>
-          <span class="kpi-pnl-badge pos" id="kpiYieldRoiBadge">+0.00%</span>
+          <span class="kpi-pnl-amount" id="kpiYieldPnlAmount">含息 ROI --</span>
+          <span class="kpi-pnl-badge pos" id="kpiYieldRoiBadge">持股 -- 股</span>
         </div>
       </div>
 
@@ -1158,63 +1150,42 @@
 
     </section>
 
-    <!-- NEW SECTION (Reference from Colosseum v18): CLEC & Portfolio Currency Allocation Bar -->
+    <!-- CLEC 523 Allocation Bar (00662 + QLD + 現金 390萬) -->
     <section class="clec-summary-card">
       <div class="clec-summary-header">
         <div class="clec-summary-title">
-          <span>I. PORTFOLIO CURRENCY & CATEGORY ALLOCATION (幣別與資產配置比例)</span>
+          <span>II. CLEC 523 配置 (00662 · QLD · 現金)</span>
         </div>
-        <span class="clec-badge-pill">NATIVE ALLOCATION</span>
+        <span class="clec-badge-pill">ALLOCATION</span>
       </div>
 
       <div class="clec-bar-container" id="clecBarContainer">
-        <div class="clec-segment seg-twd" id="barSegTwd" style="width: 50%" title="台股部位"></div>
-        <div class="clec-segment seg-us" id="barSegUs" style="width: 30%" title="美股部位"></div>
-        <div class="clec-segment seg-yield" id="barSegYield" style="width: 15%" title="高股息現金流"></div>
-        <div class="clec-segment seg-crypto" id="barSegCrypto" style="width: 5%" title="實驗資產"></div>
+        <div class="clec-segment" id="barSeg662" style="width: 50%; background: linear-gradient(90deg, #a855f7, #c084fc);" title="00662"></div>
+        <div class="clec-segment" id="barSegQld" style="width: 30%; background: linear-gradient(90deg, #60a5fa, #93c5fd);" title="QLD"></div>
+        <div class="clec-segment" id="barSegCash" style="width: 20%; background: linear-gradient(90deg, #fbbf24, #fcd34d);" title="現金 390萬"></div>
       </div>
 
       <div class="clec-legend-grid">
         <div class="clec-legend-item">
           <div class="legend-left">
-            <div class="legend-dot" style="background: #60a5fa;"></div>
-            <span>🇹🇼 台股核心 + 槓桿</span>
+            <div class="legend-dot" style="background: #a855f7;"></div>
+            <span>00662 那指100</span>
           </div>
-          <div style="text-align: right;">
-            <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #60a5fa;" id="legTwdVal">NT$ 0 (0%)</div>
-          </div>
+          <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #a855f7;" id="barLeg662">NT$ 0 (0%)</div>
         </div>
-
         <div class="clec-legend-item">
           <div class="legend-left">
-            <div class="legend-dot" style="background: #c084fc;"></div>
-            <span>🇺🇸 CLEC 523 配置</span>
+            <div class="legend-dot" style="background: #60a5fa;"></div>
+            <span>QLD 槓桿</span>
           </div>
-          <div style="text-align: right;">
-            <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #c084fc;" id="legUsVal">$ 0 USD (0%)</div>
-          </div>
+          <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #60a5fa;" id="barLegQld">NT$ 0 (0%)</div>
         </div>
-
-        <div class="clec-legend-item" style="flex-direction: column; align-items: flex-start; gap: 6px;">
-          <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-            <div class="legend-left">
-              <div class="legend-dot" style="background: #34d399;"></div>
-              <span>💰 QQQI 現金流</span>
-            </div>
-            <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #34d399;" id="legYieldVal">0 (0%)</div>
-          </div>
-          <div class="yield-sub-note" id="legYieldSubNote">
-            <span id="legYieldTwdPart">TWD: NT$ 0</span>
-            <span id="legYieldUsdPart">USD: $ 0</span>
-          </div>
-        </div>
-
         <div class="clec-legend-item">
           <div class="legend-left">
             <div class="legend-dot" style="background: #fbbf24;"></div>
-            <span>🧪 實驗/貴金屬/加密</span>
+            <span>現金</span>
           </div>
-          <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #fbbf24;" id="legCryptoVal">NT$ 0 (0%)</div>
+          <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #fbbf24;" id="barLegCash">NT$ 3,900,000 (0%)</div>
         </div>
       </div>
     </section>
@@ -1225,9 +1196,6 @@
         <button class="chip active" onclick="setFilter('all', this)">全部部位 (ALL)</button>
         <button class="chip" onclick="setFilter('type-tw', this)">🇹🇼 台股 (TW)</button>
         <button class="chip" onclick="setFilter('type-us', this)">🇺🇸 美股 (US)</button>
-        <button class="chip" onclick="setFilter('type-yield', this)">💰 QQQI (YIELD)</button>
-        <button class="chip" onclick="setFilter('type-ber', this)">⚡ 槓桿 (LEVERAGE)</button>
-        <button class="chip" onclick="setFilter('type-trap', this)">🧪 實驗 (EXPERIMENT)</button>
       </div>
 
       <div class="toolbar-right">
@@ -1312,7 +1280,7 @@
                 <th>計價幣別</th>
                 <th onclick="sortTable('currentNative')">當前現值 (原幣) ⇕</th>
                 <th onclick="sortTable('investedNative')">已投入本金 (原幣) ⇕</th>
-                <th onclick="sortTable('pnlNative')">未實現損益 (原幣) ⇕</th>
+                <th onclick="sortTable('pnlNative')">損益（QQQI含股息）(原幣) ⇕</th>
                 <th onclick="sortTable('roi')">報酬率 % ⇕</th>
                 <th>持有股數</th>
                 <th>SOP 策略簡述</th>
@@ -1360,7 +1328,7 @@
         <!-- 1. EXACT DATE-BASED ASSET GROWTH TRAJECTORY CHART AT TOP (NATIVE CURRENCY) -->
         <div style="background: rgba(7, 11, 20, 0.7); padding: 18px; border-radius: 16px; border: 1px solid var(--border-cyan);">
           <div style="font-size: 13px; font-weight: 700; color: var(--text-bright); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-            <span id="modalChartTitle">📈 SOP 買進日期與資產現值成長曲線 (原幣計價)</span>
+            <span id="modalChartTitle">📈 SOP 買進進度與資產現值模擬曲線 (原幣計價)</span>
             <span style="font-size: 11px; color: var(--neon-cyan);" id="modalChartSubtitle">本金變更 vs 價值走勢</span>
           </div>
           <div style="position: relative; width: 100%; height: 230px;">
@@ -1379,7 +1347,7 @@
             <div class="font-mono" style="font-size: 16px; font-weight: 800;" id="modalInvested">$ 0</div>
           </div>
           <div>
-            <div style="font-size: 11px; color: var(--text-dim)">未實現損益 / ROI</div>
+            <div style="font-size: 11px; color: var(--text-dim)" id="modalPnlLabel">未實現損益 / ROI</div>
             <div class="font-mono" style="font-size: 16px; font-weight: 800;" id="modalPnl">+$0 (+0.00%)</div>
           </div>
           <div>
@@ -1399,23 +1367,30 @@
 
   <script>
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSHOpI_ZlxDuP4iILBZEBVRSM42aaO2EZEoyh3Q0Nl2KX50fCDEdbLREYZMJj2MNE_j8lgE48LjGppl/pub?output=csv';
+    const QQQI_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSHOpI_ZlxDuP4iILBZEBVRSM42aaO2EZEoyh3Q0Nl2KX50fCDEdbLREYZMJj2MNE_j8lgE48LjGppl/pub?output=csv&gid=315072470';
     const PROXY_URLS = [
       'https://corsproxy.io/?' + encodeURIComponent('https://docs.google.com/spreadsheets/d/e/2PACX-1vSHOpI_ZlxDuP4iILBZEBVRSM42aaO2EZEoyh3Q0Nl2KX50fCDEdbLREYZMJj2MNE_j8lgE48LjGppl/pub?output=csv'),
       'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://docs.google.com/spreadsheets/d/e/2PACX-1vSHOpI_ZlxDuP4iILBZEBVRSM42aaO2EZEoyh3Q0Nl2KX50fCDEdbLREYZMJj2MNE_j8lgE48LjGppl/pub?output=csv')
     ];
 
-    const FALLBACK_CSV = `C01,type-tw,定期定額0050,元大台灣50-0050,TW DCA,NT$2772000,NT$272034.00,0050,"每個月 5,15,25號：每次扣款 NT$11,000",https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C01_最平庸的定期定額.png,,2667,NT$102.00,NT$229231
-C02,type-yield,定期定額00878,國泰永續高股息-00878,TW DCA YIELD,NT$640000,NT$370548.89,00878,"2026/01/05進場22萬，每月 5 號：扣款 NT$5,000",https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C02_股息cover每一天.png,,11377,NT$32.57,NT$254483
-C03,type-tw,單筆0050,元大台灣50-0050,TW LSI,NT$2772000,NT$918000.00,0050,2026/01/05進場40萬，領年終後買進 NT$12.4 萬，過完端午及中秋後周五NT$10萬持續7年,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C03_獎金她奶奶的all in.png,,9000,NT$102.00,NT$677817
-C04,type-ber,槓桿-00631L,元大台灣50正2-00631L,2x Leverage,NT$800000,NT$880740.00,00631L,2026/01/05進場40萬，不做再平衡直接觀察，正2長期變化,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C04_問就是正2.png,,27000,NT$32.62,NT$592446
-C05,type-us,槓桿-QLD,二倍做多納斯達克-QLD,2x Leverage,$92000.00,$97140.87,QLD,因為資金是放在美國卷商帳戶，會先按照比例5:2:3配合買進QLD，總價值200萬台幣，之後會改買00670L,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C05_買下全世界.png,,1161,$83.67,$88263.90
-C06,type-us,那指100-00662,富邦NASDAQ-00662,LSI +DCA,NT$5000000,NT$7656031.30,00662,先大筆投入資金配置把資金拉到500萬，之後是薪水扣除聲或開銷後投入動態再平衡,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C06_美國是我爸爸.png,,64499,NT$118.70,NT$6805148.34
-C07,type-trap,黃金IAU,黃金信託ETF -IAU,N/A,$8400.00,$380.85,IAU,黃金每個月1股，馬克對貴金屬投資沒興趣，單純做實驗追蹤,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C07_黃金.png,,5,$76.17,$452.47
-C08,type-trap,比特幣,比特幣,N/A,NT$200000,NT$144745.77,BTC,20萬台幣all in買進，馬克對比特幣投資沒興趣，單純做實驗追蹤,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C08-比特幣.png,,0.0712,NT$2032946.24,NT$200000
-C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍法則現金流,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C02_股息cover每一天.png,,6202,$53.04,$336485.16`;
+    const QQQI_PROXY_URLS = [
+      'https://corsproxy.io/?' + encodeURIComponent(QQQI_CSV_URL),
+      'https://api.allorigins.win/raw?url=' + encodeURIComponent(QQQI_CSV_URL)
+    ];
+
+    const FALLBACK_CSV = `C01,type-tw,定期定額0050,元大台灣50-0050,type-tw,"NT$2,772,000","NT$276,834.60",0050,"每個月 5,15,25號：每次扣款 NT$11,000",https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C01_最平庸的定期定額.png,,2667,NT$103.80,"NT$229,231",,,
+C02,type-tw,定期定額00878,國泰永續高股息-00878,type-tw,"NT$640,000","NT$377,147.55",00878,"2026/01/05進場22萬，每月 5 號：扣款 NT$5,000",https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C02_股息cover每一天.png,,11377,NT$33.15,"NT$254,483",,,
+C03,type-tw,單筆0050,元大台灣50-0050,type-tw,"NT$2,772,000","NT$934,200.00",0050,2026/01/05進場40萬，領年終後買進 NT$12.4 萬，過完端午及中秋後周五NT$10萬持續7年,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C03_獎金她奶奶的all in.png,,9000,NT$103.80,"NT$677,817",,,
+C04,type-tw,槓桿-00631L,元大台灣50正2-00631L,type-tw,"NT$800,000","NT$922,050.00",00631L,2026/01/05進場40萬，不做再平衡直接觀察，正2長期變化,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C04_問就是正2.png,,27000,NT$34.15,"NT$592,446",,,
+C05,type-us,槓桿-QLD,二倍做多納斯達克-QLD,type-us,"$92,000.00","$107,346.06",QLD,因為資金是放在美國卷商帳戶，會先按照比例5:2:3配合買進QLD，總價值200萬台幣，之後會改買00670L,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C05_買下全世界.png,,1161,$92.46,"$88,263.90",,,
+C06,type-tw,那指100-00662,富邦NASDAQ-00662,type-tw,"NT$5,000,000","NT$7,972,076.40",00662,先大筆投入資金配置把資金拉到500萬，之後是薪水扣除聲或開銷後投入動態再平衡，狀況持續每個月 5號：,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C06_美國是我爸爸.png,,64499,NT$123.60,"NT$6,805,148.34",,,
+C07,type-us,黃金IAU,黃金信託ETF -IAU,type-us,"$8,400",$383.45,IAU,黃金每個月1股，馬克對貴金屬投資沒興趣，單純做實驗追蹤,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C07_黃金.png,,5,$76.69,$452.47,,,
+C08,type-tw,比特幣,比特幣,type-tw,"NT$200,000","NT$147,799.95",BTC,20萬台幣all in買進，馬克對比特幣投資沒興趣，單純做實驗追蹤,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C08-比特幣.png,,0.0712,"NT$2,075,842.02","NT$200,000",,,
+C09,type-us,QQQI 現金流,NEOS-QQQI,type-us,"$336,485.16","$342,102.32",QQQI,QQQI,https://ubamboo-design.github.io/Mark-Project-Colosseum/assets/C02_股息cover每一天.png,,6202,$55.16,"$336,485.16","$9,989.38",$0.00,"$9,989.38"`;
 
     let allAssets = [];
     let eventLogs = [];
+    let qqqiMonthlyDiv = 0; // 從 QQQI 分頁抓取的本月配息
     let currentFilter = 'all';
     let searchQuery = '';
     let usdToTwdRate = 32.46;
@@ -1460,7 +1435,11 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       return '$ ' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' USD';
     }
 
-    function getTypeTag(typeCode, currency) {
+    function getTypeTag(typeCode, currency, ticker = '') {
+      const symbol = ticker.toUpperCase();
+      if (symbol === '00631L' || symbol === 'QLD') return { label: '槓桿', class: 'tag-ber' };
+      if (symbol === 'IAU' || symbol === 'BTC') return { label: '實驗', class: 'tag-trap' };
+      if (symbol === '00878') return { label: '高股息', class: 'tag-yield' };
       switch (typeCode) {
         case 'type-tw': return { label: '台股', class: 'tag-tw' };
         case 'type-us': return { label: '美股', class: 'tag-us' };
@@ -1534,8 +1513,7 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
         const ticker = (row[7] || code).trim();
         const sop    = row[8] || '';
 
-        // ★ QQQI OVERRIDE: always force type-yield regardless of sheet value ★
-        if (ticker.toUpperCase() === 'QQQI') type = 'type-yield';
+        // QQQI stays as its sheet type (type-us)
 
         let shares = '', priceObj, investedObj;
         if (row[9] && row[9].trim().startsWith('http')) {
@@ -1549,6 +1527,13 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
           investedObj = parseAmount(row[11] || row[5]);
         }
 
+        // Dividend fields (col14: 累計股息, col16: 總股息)
+        const divCumObj = parseAmount(row[14] || '0');
+        const divTotalObj = parseAmount(row[16] || '0');
+        const divCum = divCumObj.value;
+        const divTotal = divTotalObj.value;
+        const divMonthly = divTotal > 0 ? divTotal : 0; // total dividend
+
         const currentTWD  = toTWD(currentObj,  usdToTwdRate);
         const investedTWD = toTWD(investedObj, usdToTwdRate);
         const plannedTWD  = toTWD(plannedObj,  usdToTwdRate);
@@ -1559,11 +1544,22 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
         const pnlTWD = currentTWD - investedTWD;
         const roi    = investedTWD > 0 ? (pnlTWD / investedTWD) * 100 : 0;
 
+        // QQQI 個別報酬採含股息口徑；總資產仍只採 Sheet 現值。
+        const isQQQI = ticker.toUpperCase() === 'QQQI';
+        const dividendTWD = isQQQI ? toTWD(divTotalObj, usdToTwdRate) : 0;
+        const reportPnlNative = pnlNative + (isQQQI ? divTotalObj.value : 0);
+        const reportPnlTWD = pnlTWD + dividendTWD;
+        const reportPnlObj = { value: reportPnlNative, currency: currentObj.currency };
+        const reportRoi = investedTWD > 0 ? (reportPnlTWD / investedTWD) * 100 : 0;
+        const divYield = investedNative > 0 ? (divTotal / investedNative * 100) : 0;
+
         assets.push({
           code, type, name, target, skill, ticker, sop, shares, priceObj,
           plannedObj, currentObj, investedObj, pnlObj, currency: currentObj.currency,
           currentNative, investedNative, pnlNative,
-          currentTWD, investedTWD, plannedTWD, pnlTWD, roi
+          currentTWD, investedTWD, plannedTWD, pnlTWD, roi,
+          reportPnlObj, reportPnlNative, reportPnlTWD, reportRoi,
+          divCum, divTotal, divMonthly, divYield
         });
       }
 
@@ -1578,11 +1574,29 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       return assets;
     }
 
+    function getReportMetrics(asset) {
+      return {
+        pnlObj: asset.reportPnlObj || asset.pnlObj,
+        pnlNative: asset.reportPnlNative ?? asset.pnlNative,
+        roi: asset.reportRoi ?? asset.roi,
+        includesDividend: asset.ticker.toUpperCase() === 'QQQI'
+      };
+    }
+
+    function matchesFilter(asset, filterType) {
+      const ticker = (asset.ticker || '').toUpperCase();
+      if (filterType === 'type-yield') return ticker === '00878';
+      if (filterType === 'type-ber') return ticker === '00631L' || ticker === 'QLD';
+      if (filterType === 'type-trap') return ticker === 'IAU' || ticker === 'BTC';
+      if (filterType === 'type-tw') return asset.type === 'type-tw' && ticker !== 'BTC';
+      return asset.type === filterType;
+    }
+
     function renderApp() {
       let filtered = allAssets;
 
       if (currentFilter !== 'all') {
-        filtered = filtered.filter(a => a.type === currentFilter);
+        filtered = filtered.filter(a => matchesFilter(a, currentFilter));
       }
 
       if (searchQuery.trim() !== '') {
@@ -1598,23 +1612,29 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       filtered.sort((a, b) => {
         let valA = a[currentSort.field];
         let valB = b[currentSort.field];
+        if (currentSort.field === 'roi') {
+          valA = getReportMetrics(a).roi;
+          valB = getReportMetrics(b).roi;
+        } else if (currentSort.field === 'pnlNative') {
+          valA = getReportMetrics(a).pnlNative;
+          valB = getReportMetrics(b).pnlNative;
+        }
         if (typeof valA === 'string') valA = valA.toLowerCase();
         if (typeof valB === 'string') valB = valB.toLowerCase();
         return currentSort.asc ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
       });
 
       // ================================================================
-      // TYPE-BASED GROUPING — QQQI always in yield, never in US growth
+      // ASSET GROUPING — 00662 is always a TWD asset
       // ================================================================
-      // type-tw + type-ber  → 台股核心 card  (all TWD native)
-      // type-us             → 美股成長 card  (USD & TWD, display biggest currency)
-      // type-yield          → 高股息合計 card (00878 TWD + QQQI USD, TWD-equivalent total)
-      // type-trap           → 實驗 card  (excluded from sub-cards, only in TOTAL)
+      // 台幣部位: all type-tw plus ticker 00662
+      // 美金部位: all type-us excluding 00662 × 匯率
+      // type-trap: excluded from sub-cards, only in TOTAL
       // ================================================================
 
       let twdCoreCurrentTWD = 0, twdCoreInvestedTWD = 0;   // native TWD
       let usGrowthCurrentTWD = 0, usGrowthInvestedTWD = 0; // TWD-equiv for ROI; display as USD if mainly USD
-      let usGrowthCurrentUSD = 0, usGrowthInvestedUSD = 0; // native USD (QLD, 00662 is TWD so 0)
+      let usGrowthCurrentUSD = 0, usGrowthInvestedUSD = 0; // native USD (QLD, IAU, QQQI)
 
       // Yield: merged 00878 (TWD) + QQQI (USD)
       let yieldCurrentTWDeq = 0, yieldInvestedTWDeq = 0;   // TWD-equivalent
@@ -1629,28 +1649,16 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
         totalInvestedTWD += a.investedTWD;
 
 
-        if (a.type === 'type-tw' || a.type === 'type-ber') {
+        const is00662 = (a.ticker || '').toUpperCase() === '00662';
+        if (a.type === 'type-tw' || is00662) {
           twdCoreCurrentTWD  += a.currentTWD;
           twdCoreInvestedTWD += a.investedTWD;
-
-        } else if (a.type === 'type-us') {
+        } else if (a.type === 'type-us' && !is00662) {
           usGrowthCurrentTWD  += a.currentTWD;
           usGrowthInvestedTWD += a.investedTWD;
           if (a.currency === 'USD') {
             usGrowthCurrentUSD  += a.currentNative;
             usGrowthInvestedUSD += a.investedNative;
-          }
-
-        } else if (a.type === 'type-yield') {
-          // QQQI ALWAYS merged here regardless of its USD currency
-          yieldCurrentTWDeq  += a.currentTWD;
-          yieldInvestedTWDeq += a.investedTWD;
-          if (a.currency === 'TWD') {
-            yieldNativeTWD    += a.currentNative;
-            yieldNativeTWDInv += a.investedNative;
-          } else {
-            yieldNativeUSD    += a.currentNative;
-            yieldNativeUSDInv += a.investedNative;
           }
         }
         // type-trap: only counted in totalCurrentTWD above
@@ -1659,7 +1667,7 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       const totalPnlTWD = totalCurrentTWD - totalInvestedTWD;
       const totalRoi = totalInvestedTWD > 0 ? (totalPnlTWD / totalInvestedTWD) * 100 : 0;
 
-      // ── CARD 1: 台股核心 (type-tw + type-ber) — pure TWD ──
+      // ── CARD 1: 台幣部位 (all type-tw) ──
       const twdPnl = twdCoreCurrentTWD - twdCoreInvestedTWD;
       const twdRoi = twdCoreInvestedTWD > 0 ? (twdPnl / twdCoreInvestedTWD) * 100 : 0;
       const twdUp = twdPnl >= 0;
@@ -1667,64 +1675,39 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       document.getElementById('kpiTwdInvested').textContent = `本金: ${formatTWD(twdCoreInvestedTWD)}`;
       const twdPnlEl = document.getElementById('kpiTwdPnlAmount');
       twdPnlEl.textContent = `${twdUp ? '+' : ''}${formatTWD(twdPnl)}`;
-      twdPnlEl.style.color = twdUp ? 'var(--neon-emerald)' : 'var(--neon-rose)';
+      twdPnlEl.style.color = twdUp ? '#34d399' : '#fb7185';
       const twdBadge = document.getElementById('kpiTwdRoiBadge');
       twdBadge.textContent = `${twdUp ? '+' : ''}${twdRoi.toFixed(2)}%`;
       twdBadge.className = `kpi-pnl-badge ${twdUp ? 'pos' : 'neg'}`;
 
-      // ── CARD 2: CLEC 523 配置 (00662 + QLD + 現金 390萬) ──
-      const usAssets = allAssets.filter(a => a.type === 'type-us');
-      const clecCash = 3900000; // 現金固定 390 萬
-      const clec662 = usAssets.find(a => a.ticker === '00662');
-      const clecQld = usAssets.find(a => a.ticker === 'QLD');
-      const clec662Twd = clec662 ? clec662.currentTWD : 0;
-      const clecQldTwd = clecQld ? clecQld.currentTWD : 0;
-      const clecTotal = clec662Twd + clecQldTwd + clecCash;
-      const clecPct662 = clecTotal > 0 ? (clec662Twd / clecTotal * 100) : 0;
-      const clecPctQld = clecTotal > 0 ? (clecQldTwd / clecTotal * 100) : 0;
-      const clecPctCash = clecTotal > 0 ? (clecCash / clecTotal * 100) : 0;
-      const clecPnl = clecTotal - (clec662 ? clec662.investedTWD : 0) - (clecQld ? clecQld.investedTWD : 0) - clecCash;
-      const clecInvTotal = (clec662 ? clec662.investedTWD : 0) + (clecQld ? clecQld.investedTWD : 0) + clecCash;
-      const clecRoi = clecInvTotal > 0 ? (clecPnl / clecInvTotal * 100) : 0;
-      const clecUp = clecPnl >= 0;
-
-      document.getElementById('kpiUsdCurrent').textContent = formatTWD(clecTotal);
-      const parts = [];
-      if (clec662) parts.push(`00662: ${formatTWD(clec662.currentNative)}`);
-      if (clecQld) parts.push(`QLD: ${formatUSD(clecQld.currentNative)}`);
-      parts.push(`現金: ${formatTWD(clecCash)}`);
-      document.getElementById('kpiUsdInvested').textContent = parts.join(' | ');
+      // ── CARD 2: 美金部位 (all type-us) ──
+      const usPnlTWD = usGrowthCurrentTWD - usGrowthInvestedTWD;
+      const usRoi = usGrowthInvestedTWD > 0 ? (usPnlTWD / usGrowthInvestedTWD) * 100 : 0;
+      const usUp = usPnlTWD >= 0;
+      document.getElementById('kpiUsdCurrent').textContent = formatTWD(usGrowthCurrentTWD);
+      document.getElementById('kpiUsdInvested').textContent = `本金: ${formatTWD(usGrowthInvestedTWD)}`;
       const usPnlEl = document.getElementById('kpiUsdPnlAmount');
-      usPnlEl.textContent = `${clecUp ? '+' : ''}${formatTWD(clecPnl)}`;
-      usPnlEl.style.color = clecUp ? 'var(--neon-emerald)' : 'var(--neon-rose)';
+      usPnlEl.textContent = `${usUp ? '+' : ''}${formatTWD(usPnlTWD)}`;
+      usPnlEl.style.color = usUp ? '#34d399' : '#fb7185';
       const usBadge = document.getElementById('kpiUsdRoiBadge');
-      usBadge.textContent = `${clecUp ? '+' : ''}${clecRoi.toFixed(2)}%`;
-      usBadge.className = `kpi-pnl-badge ${clecUp ? 'pos' : 'neg'}`;
+      usBadge.textContent = `${usUp ? '+' : ''}${usRoi.toFixed(2)}%`;
+      usBadge.className = `kpi-pnl-badge ${usUp ? 'pos' : 'neg'}`;
 
-      // CLEC 523 allocation bar
-      document.getElementById('clecSeg662').style.width = clecPct662 + '%';
-      document.getElementById('clecSegQld').style.width = clecPctQld + '%';
-      document.getElementById('clecSegCash').style.width = clecPctCash + '%';
-      document.getElementById('clecPct662').textContent = clecPct662.toFixed(1) + '%';
-      document.getElementById('clecPctQld').textContent = clecPctQld.toFixed(1) + '%';
-      document.getElementById('clecPctCash').textContent = clecPctCash.toFixed(1) + '%';
-      document.getElementById('clecSeg662').title = `00662: ${formatTWD(clec662Twd)} (${clecPct662.toFixed(1)}%)`;
-      document.getElementById('clecSegQld').title = `QLD: ${formatUSD(clecQld ? clecQld.currentNative : 0)} → ${formatTWD(clecQldTwd)} (${clecPctQld.toFixed(1)}%)`;
-      document.getElementById('clecSegCash').title = `現金: ${formatTWD(clecCash)} (${clecPctCash.toFixed(1)}%)`;
-
-      // ── CARD 3: 高股息/現金流 (type-yield: 00878 TWD + QQQI USD — MERGED) ──
-      const yieldPnlTWDeq = yieldCurrentTWDeq - yieldInvestedTWDeq;
-      const yieldRoi = yieldInvestedTWDeq > 0 ? (yieldPnlTWDeq / yieldInvestedTWDeq) * 100 : 0;
-      const yieldUp = yieldPnlTWDeq >= 0;
-      document.getElementById('kpiYieldCurrent').textContent = formatTWD(yieldCurrentTWDeq);
-      // breakdown sub-line: QQQI only (USD native)
-      document.getElementById('kpiYieldBreakdown').textContent = yieldNativeUSD > 0 ? `QQQI: ${formatUSD(yieldNativeUSD)}` : 'QQQI: $0';
+      // ── CARD 3: QQQI 總配息 ──
+      const qqqi = allAssets.find(a => a.ticker === 'QQQI');
+      const divTotal = qqqi ? qqqi.divTotal : 0;
+      const divYield = qqqi ? qqqi.divYield : 0;
+      // 本月配息: 從 QQQI 分頁抓取
+      const divMonthly = qqqiMonthlyDiv > 0 ? qqqiMonthlyDiv : 0;
+      document.getElementById('kpiYieldCurrent').textContent = formatUSD(divTotal);
+      document.getElementById('kpiYieldBreakdown').textContent = `本月配息: ${formatUSD(divMonthly)} | 累計配息率: ${divYield.toFixed(2)}%`;
+      const qqqiReport = qqqi ? getReportMetrics(qqqi) : null;
       const yieldPnlEl = document.getElementById('kpiYieldPnlAmount');
-      yieldPnlEl.textContent = `${yieldUp ? '+' : ''}${formatTWD(yieldPnlTWDeq)} (折合TWD)`;
-      yieldPnlEl.style.color = yieldUp ? 'var(--neon-emerald)' : 'var(--neon-rose)';
+      yieldPnlEl.textContent = qqqiReport ? `含息 ROI ${qqqiReport.roi >= 0 ? '+' : ''}${qqqiReport.roi.toFixed(2)}%` : '含息 ROI --';
+      yieldPnlEl.style.color = '#34d399';
       const yieldBadge = document.getElementById('kpiYieldRoiBadge');
-      yieldBadge.textContent = `${yieldUp ? '+' : ''}${yieldRoi.toFixed(2)}%`;
-      yieldBadge.className = `kpi-pnl-badge ${yieldUp ? 'pos' : 'neg'}`;
+      yieldBadge.textContent = `持股 ${qqqi ? qqqi.shares : '--'} 股`;
+      yieldBadge.className = `kpi-pnl-badge pos`;
 
       // ── CARD 4: 整合總資產 ──
       const pnlEl = document.getElementById('kpiTotalTwd');
@@ -1735,70 +1718,44 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       roiPill.className = `roi-pill ${totalRoi >= 0 ? 'roi-positive' : 'roi-negative'}`;
       const totalPnlEl = document.getElementById('kpiTotalPnlAmount');
       totalPnlEl.textContent = `${totalPnlTWD >= 0 ? '+' : ''}${formatTWD(totalPnlTWD)}`;
-      totalPnlEl.style.color = totalPnlTWD >= 0 ? 'var(--neon-emerald)' : 'var(--neon-rose)';
+      totalPnlEl.style.color = totalPnlTWD >= 0 ? '#34d399' : '#fb7185';
       const totalRoiBadge = document.getElementById('kpiTotalRoiBadge');
       totalRoiBadge.textContent = `${totalRoi >= 0 ? '+' : ''}${totalRoi.toFixed(2)}%`;
       totalRoiBadge.className = `kpi-pnl-badge ${totalRoi >= 0 ? 'pos' : 'neg'}`;
 
-      // Render CLEC Bar (also type-based, QQQI in yield)
-      renderClecBar(totalCurrentTWD);
-
       document.getElementById('assetCountText').textContent = `顯示 ${filtered.length} 個部位`;
 
+      renderClecBar(totalCurrentTWD);
       renderCards(filtered);
       renderTable(filtered);
       renderTimeline();
       renderCharts(filtered);
     }
 
-    // CLEC Portfolio Currency Breakdown Bar
-    // QQQI (type-yield + USD) is counted in yield, not in US growth — per user directive
+    // CLEC 523 Allocation Bar: 00662 + QLD + 現金 390萬
     function renderClecBar(totalTWD) {
-      let twdCoreSum = 0;      // type-tw + type-ber (台股核心 + 槓桿)
-      let usGrowthSum = 0;     // type-us only (美股成長, excludes USD-yield like QQQI)
-      let yieldTwdSum = 0;     // type-yield with TWD (00878)
-      let yieldUsdSum = 0;     // type-yield with USD (QQQI) — native USD value
-      let yieldTwdEquiv = 0;   // yield total in TWD equivalent
-      let cryptoSum = 0;       // type-trap
+      const clecCash = 3900000;
+      const clec662 = allAssets.find(a => a.ticker === '00662');
+      const clecQld = allAssets.find(a => a.ticker === 'QLD');
+      const v662 = clec662 ? clec662.currentTWD : 0;
+      const vQld = clecQld ? clecQld.currentTWD : 0;
+      const clecTotal = v662 + vQld + clecCash;
 
-      allAssets.forEach(a => {
-        if (a.type === 'type-tw' || a.type === 'type-ber') {
-          twdCoreSum += a.currentTWD;
-        } else if (a.type === 'type-us') {
-          usGrowthSum += a.currentTWD;
-        } else if (a.type === 'type-yield') {
-          if (a.currency === 'USD') {
-            yieldUsdSum += a.currentNative;        // native USD
-            yieldTwdEquiv += a.currentTWD;         // for total bar
-          } else {
-            yieldTwdSum += a.currentNative;        // native TWD
-            yieldTwdEquiv += a.currentTWD;         // same as native
-          }
-        } else {
-          cryptoSum += a.currentTWD;
-        }
-      });
+      const p662 = clecTotal > 0 ? (v662 / clecTotal * 100) : 0;
+      const pQld = clecTotal > 0 ? (vQld / clecTotal * 100) : 0;
+      const pCash = clecTotal > 0 ? (clecCash / clecTotal * 100) : 0;
 
-      const twdPct   = totalTWD > 0 ? (twdCoreSum    / totalTWD) * 100 : 0;
-      const usPct    = totalTWD > 0 ? (usGrowthSum   / totalTWD) * 100 : 0;
-      const yieldPct = totalTWD > 0 ? (yieldTwdEquiv / totalTWD) * 100 : 0;
-      const cryptoPct= totalTWD > 0 ? (cryptoSum     / totalTWD) * 100 : 0;
+      document.getElementById('barSeg662').style.width = p662 + '%';
+      document.getElementById('barSegQld').style.width = pQld + '%';
+      document.getElementById('barSegCash').style.width = pCash + '%';
 
-      document.getElementById('barSegTwd').style.width    = `${twdPct}%`;
-      document.getElementById('barSegUs').style.width     = `${usPct}%`;
-      document.getElementById('barSegYield').style.width  = `${yieldPct}%`;
-      document.getElementById('barSegCrypto').style.width = `${cryptoPct}%`;
+      document.getElementById('barSeg662').title = `00662: ${formatTWD(v662)} (${p662.toFixed(1)}%)`;
+      document.getElementById('barSegQld').title = `QLD: ${formatUSD(clecQld ? clecQld.currentNative : 0)} → ${formatTWD(vQld)} (${pQld.toFixed(1)}%)`;
+      document.getElementById('barSegCash').title = `現金: ${formatTWD(clecCash)} (${pCash.toFixed(1)}%)`;
 
-      document.getElementById('legTwdVal').textContent = `${formatTWD(twdCoreSum)} (${twdPct.toFixed(1)}%)`;
-      document.getElementById('legUsVal').textContent  = `${formatUSD(usGrowthSum / usdToTwdRate)} (${usPct.toFixed(1)}%)`;
-
-      // Yield legend: show combined TWD-equivalent total with sub-breakdown
-      document.getElementById('legYieldVal').textContent = `${formatTWD(yieldTwdEquiv)} (${yieldPct.toFixed(1)}%)`;
-      document.getElementById('legYieldTwdPart').textContent = `TWD: ${formatTWD(yieldTwdSum)}`;
-      document.getElementById('legYieldUsdPart').textContent = yieldUsdSum > 0 ? `USD: ${formatUSD(yieldUsdSum)}` : '';
-      document.getElementById('legYieldSubNote').style.display = yieldUsdSum > 0 ? 'flex' : 'none';
-
-      document.getElementById('legCryptoVal').textContent = `${formatTWD(cryptoSum)} (${cryptoPct.toFixed(1)}%)`;
+      document.getElementById('barLeg662').textContent = `${formatTWD(v662)} (${p662.toFixed(1)}%)`;
+      document.getElementById('barLegQld').textContent = `${formatTWD(vQld)} (${pQld.toFixed(1)}%)`;
+      document.getElementById('barLegCash').textContent = `${formatTWD(clecCash)} (${pCash.toFixed(1)}%)`;
     }
 
     // Pure Native Currency Card Render Logic
@@ -1810,12 +1767,13 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       }
 
       container.innerHTML = assets.map(a => {
-        const tag = getTypeTag(a.type, a.currency);
-        const isUp = a.pnlNative >= 0;
-        const roiStr = (isUp ? '+' : '') + a.roi.toFixed(2) + '%';
+        const tag = getTypeTag(a.type, a.currency, a.ticker);
+        const report = getReportMetrics(a);
+        const isUp = report.pnlNative >= 0;
+        const roiStr = (isUp ? '+' : '') + report.roi.toFixed(2) + '%';
         const isUSD = a.currency === 'USD';
         // ROI bar: cap display at ±50% for visual scaling
-        const roiBarPct = Math.min(Math.abs(a.roi) / 50 * 100, 100);
+        const roiBarPct = Math.min(Math.abs(report.roi) / 50 * 100, 100);
 
         return `
           <div class="asset-card" onclick="openModal('${a.code}')">
@@ -1842,8 +1800,8 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
                 <span class="metric-val">${formatNativeMoney(a.investedObj)}</span>
               </div>
               <div class="metric-box">
-                <span class="metric-lbl">未實現損益 (${a.currency})</span>
-                <span class="metric-val ${isUp ? 'val-up' : 'val-down'}">${isUp ? '+' : ''}${formatNativeMoney(a.pnlObj)}</span>
+                <span class="metric-lbl">${report.includesDividend ? '含股息損益' : '未實現損益'} (${a.currency})</span>
+                <span class="metric-val ${isUp ? 'val-up' : 'val-down'}">${isUp ? '+' : ''}${formatNativeMoney(report.pnlObj)}</span>
               </div>
               <div class="metric-box">
                 <span class="metric-lbl">報酬率 ROI</span>
@@ -1866,9 +1824,10 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       }
 
       tbody.innerHTML = assets.map(a => {
-        const tag = getTypeTag(a.type, a.currency);
-        const isUp = a.pnlNative >= 0;
-        const roiStr = (isUp ? '+' : '') + a.roi.toFixed(2) + '%';
+        const tag = getTypeTag(a.type, a.currency, a.ticker);
+        const report = getReportMetrics(a);
+        const isUp = report.pnlNative >= 0;
+        const roiStr = (isUp ? '+' : '') + report.roi.toFixed(2) + '%';
         const isUSD = a.currency === 'USD';
 
         return `
@@ -1878,7 +1837,7 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
             <td><span class="${isUSD ? 'currency-badge-usd' : 'currency-badge-twd'}">${isUSD ? 'USD 🇺🇸' : 'TWD 🇹🇼'}</span></td>
             <td class="font-mono" style="font-weight: 700">${formatNativeMoney(a.currentObj)}</td>
             <td class="font-mono">${formatNativeMoney(a.investedObj)}</td>
-            <td class="font-mono ${isUp ? 'val-up' : 'val-down'}">${isUp ? '+' : ''}${formatNativeMoney(a.pnlObj)}</td>
+            <td class="font-mono ${isUp ? 'val-up' : 'val-down'}">${isUp ? '+' : ''}${formatNativeMoney(report.pnlObj)}</td>
             <td class="font-mono ${isUp ? 'val-up' : 'val-down'}" style="font-weight: 700">${roiStr}</td>
             <td class="font-mono">${a.shares || '--'}</td>
             <td style="font-size: 12px; color: var(--text-muted); max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${a.sop || '--'}</td>
@@ -2006,8 +1965,9 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       const item = allAssets.find(a => a.code === code);
       if (!item) return;
 
-      const tag = getTypeTag(item.type, item.currency);
-      const isUp = item.pnlNative >= 0;
+      const tag = getTypeTag(item.type, item.currency, item.ticker);
+      const report = getReportMetrics(item);
+      const isUp = report.pnlNative >= 0;
       const isUSD = item.currency === 'USD';
 
       document.getElementById('modalCode').textContent = item.code;
@@ -2026,8 +1986,9 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       document.getElementById('modalInvested').textContent = formatNativeMoney(item.investedObj);
       
       const pnlEl = document.getElementById('modalPnl');
-      pnlEl.textContent = `${isUp ? '+' : ''}${formatNativeMoney(item.pnlObj)} (${isUp ? '+' : ''}${item.roi.toFixed(2)}%)`;
-      pnlEl.style.color = isUp ? 'var(--neon-emerald)' : 'var(--neon-rose)';
+      document.getElementById('modalPnlLabel').textContent = report.includesDividend ? '含股息損益 / ROI' : '未實現損益 / ROI';
+      pnlEl.textContent = `${isUp ? '+' : ''}${formatNativeMoney(report.pnlObj)} (${isUp ? '+' : ''}${report.roi.toFixed(2)}%)`;
+      pnlEl.style.color = isUp ? '#34d399' : '#fb7185';
 
       document.getElementById('modalShares').textContent = `${item.shares || '--'} 股 @ ${formatNativeMoney(item.priceObj)}`;
       document.getElementById('modalSop').textContent = item.sop || '未設定特定 SOP 策略。說明：依照既定配置計畫穩定維護。';
@@ -2053,7 +2014,7 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       const isUSD = item.currency === 'USD';
       const currSymbol = isUSD ? '$' : 'NT$';
 
-      document.getElementById('modalChartTitle').textContent = `📈 SOP 買進日期與資產現值成長曲線 (${isUSD ? 'USD 原幣計價' : 'TWD 原幣計價'})`;
+      document.getElementById('modalChartTitle').textContent = `📈 SOP 買進進度與資產現值模擬曲線 (${isUSD ? 'USD 原幣計價' : 'TWD 原幣計價'})`;
 
       if (item.code === 'C01') {
         for (let i = 0; i < 8; i++) {
@@ -2239,6 +2200,23 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
           statusBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
           statusText.textContent = isProxy ? '透過 Proxy 同步' : '即時同步 (Live Sync)';
           loaded = true;
+          // Fetch QQQI tab for monthly dividend (direct + CORS proxies)
+          qqqiMonthlyDiv = 0;
+          for (const qqqiUrl of [QQQI_CSV_URL, ...QQQI_PROXY_URLS]) {
+            try {
+              const qqqiRes = await fetch(qqqiUrl, { cache: 'no-store' });
+              if (!qqqiRes.ok) throw new Error('HTTP ' + qqqiRes.status);
+              const qqqiRows = parseCSVRows(await qqqiRes.text());
+              const markerIndex = qqqiRows.findIndex(row => row.some(cell => cell.includes('投入標的QQQI')));
+              const nextRow = markerIndex >= 0 ? qqqiRows[markerIndex + 1] : null;
+              const divStr = (nextRow?.[4] || '').replace(/[$,]/g, '');
+              const divVal = parseFloat(divStr);
+              if (!isNaN(divVal)) {
+                qqqiMonthlyDiv = divVal;
+                break;
+              }
+            } catch (e) { console.warn('QQQI tab fetch failed:', qqqiUrl, e.message); }
+          }
           break;
         } catch (e) {
           console.warn('Fetch failed:', url, e.message);
@@ -2285,3 +2263,10 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
   </script>
 </body>
 </html>
+
+
+
+
+
+
+

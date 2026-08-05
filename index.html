@@ -1007,10 +1007,10 @@
         <div class="brand-badge">📐</div>
         <div class="brand-text">
           <h1>
-            投資戰情室 
-            <span style="font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(0, 242, 254, 0.15); color: var(--neon-cyan); font-weight: 700;">PROJECT COLOSSEUM v18.0</span>
+            PROJECT COLOSSEUM
+            <span style="font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(0, 242, 254, 0.15); color: var(--neon-cyan); font-weight: 700;">v18.0</span>
           </h1>
-          <p>REAL-TIME PORTFOLIO COMMAND CENTER • NATIVE CURRENCY DISPLAY</p>
+          <p>馬克投資戰情室 • REAL-TIME PORTFOLIO COMMAND CENTER</p>
         </div>
       </div>
 
@@ -1036,6 +1036,18 @@
 
     <!-- Executive KPI Scorecards — Grouped by STRATEGY TYPE (not raw currency) -->
     <section class="kpi-grid">
+
+      <!-- CARD 0: 累積瀏覽人次 (moved to first) -->
+      <div class="kpi-card" style="--card-accent: var(--neon-amber);">
+        <div class="kpi-header">
+          <span class="kpi-title">👁 累積瀏覽人次 (VISITORS)</span>
+          <span class="kpi-icon" style="color: var(--neon-amber)">◈</span>
+        </div>
+        <div class="visitor-counter" style="margin-top: 4px;">
+          <div class="visitor-digits" id="visitorDigits">—</div>
+        </div>
+        <div class="kpi-subtext" style="margin-top: 10px;" id="visitorFirstSeen">首次記錄: -</div>
+      </div>
 
       <!-- CARD 1: 台股核心 (type-tw + type-ber: 0050 DCA, 0050 LSI, 00631L) -->
       <div class="kpi-card" style="--card-accent: var(--neon-blue);">
@@ -1087,18 +1099,6 @@
         </div>
         <div class="kpi-value" id="kpiTotalTwd">NT$ 0</div>
         <div class="kpi-subtext" id="kpiTotalUsd">折合 $ 0 USD (匯率 32.46)</div>
-      </div>
-
-      <!-- CARD 5: 累積瀏覽人次 -->
-      <div class="kpi-card" style="--card-accent: var(--neon-amber);">
-        <div class="kpi-header">
-          <span class="kpi-title">👁 累積瀏覽人次 (VISITORS)</span>
-          <span class="kpi-icon" style="color: var(--neon-amber)">◈</span>
-        </div>
-        <div class="visitor-counter" style="margin-top: 4px;">
-          <div class="visitor-digits" id="visitorDigits">—</div>
-        </div>
-        <div class="kpi-subtext" style="margin-top: 10px;" id="visitorFirstSeen">首次記錄: -</div>
       </div>
 
     </section>
@@ -1279,7 +1279,7 @@
     </main>
 
     <footer class="app-footer">
-      <div>PROJECT COLOSSEUM v18.0 • 投資戰情室 HQ • 原幣純淨計價版</div>
+      <div>PROJECT COLOSSEUM v18.0 • 馬克投資戰情室 • 原幣純淨計價版</div>
       <div style="margin-top: 6px;" id="lastRefreshedText">最後更新時間: -</div>
     </footer>
 

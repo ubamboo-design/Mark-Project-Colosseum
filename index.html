@@ -185,6 +185,19 @@
       font-weight: 600;
       color: var(--neon-emerald);
     }
+    .visitor-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 99px;
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--neon-amber);
+      letter-spacing: 0.5px;
+    }
     .status-pulse {
       width: 8px;
       height: 8px;
@@ -1015,6 +1028,12 @@
       </div>
 
       <div class="header-actions">
+        <div class="visitor-pill font-mono" id="visitorPill">
+          <span>👁</span>
+          <span id="visitorDigitsHeader">—</span>
+          <span style="font-size: 10px; color: var(--text-dim); font-weight: 400;">人次</span>
+        </div>
+
         <div class="status-pill" id="statusBadge">
           <div class="status-pulse"></div>
           <span id="statusText">即時連線 (Live Sync)</span>
@@ -1036,18 +1055,6 @@
 
     <!-- Executive KPI Scorecards — Grouped by STRATEGY TYPE (not raw currency) -->
     <section class="kpi-grid">
-
-      <!-- CARD 0: 累積瀏覽人次 (moved to first) -->
-      <div class="kpi-card" style="--card-accent: var(--neon-amber);">
-        <div class="kpi-header">
-          <span class="kpi-title">👁 累積瀏覽人次 (VISITORS)</span>
-          <span class="kpi-icon" style="color: var(--neon-amber)">◈</span>
-        </div>
-        <div class="visitor-counter" style="margin-top: 4px;">
-          <div class="visitor-digits" id="visitorDigits">—</div>
-        </div>
-        <div class="kpi-subtext" style="margin-top: 10px;" id="visitorFirstSeen">首次記錄: -</div>
-      </div>
 
       <!-- CARD 1: 台股核心 (type-tw + type-ber: 0050 DCA, 0050 LSI, 00631L) -->
       <div class="kpi-card" style="--card-accent: var(--neon-blue);">
@@ -2197,15 +2204,9 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
         localStorage.setItem(KEY_FIRST, firstSeen);
       }
 
-      // Render segmented digit blocks
-      const digitsContainer = document.getElementById('visitorDigits');
-      const digits = count.toLocaleString('en-US');            // e.g. "1,234"
-      digitsContainer.innerHTML = digits.split('').map(ch => {
-        if (ch === ',') return `<span style="color: var(--text-dim); font-size: 18px; align-self: flex-end; padding-bottom: 4px;">,</span>`;
-        return `<span class="digit-block">${ch}</span>`;
-      }).join('');
-
-      document.getElementById('visitorFirstSeen').textContent = `首次記錄: ${firstSeen}`;
+      // Render in header pill
+      const digitsEl = document.getElementById('visitorDigitsHeader');
+      if (digitsEl) digitsEl.textContent = count.toLocaleString('en-US');
     }
 
     loadData();

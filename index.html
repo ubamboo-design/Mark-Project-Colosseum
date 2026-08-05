@@ -1084,14 +1084,14 @@
         </div>
       </div>
 
-      <!-- CARD 3: 高股息/現金流 (type-yield: 00878 TWD + QQQI USD combined) -->
+      <!-- CARD 3: QQQI 現金流 -->
       <div class="kpi-card" style="--card-accent: var(--neon-emerald);">
         <div class="kpi-header">
-          <span class="kpi-title">💰 高股息 + 現金流 (混合)</span>
+          <span class="kpi-title">💰 QQQI 現金流</span>
           <span class="kpi-icon" style="color: var(--neon-emerald)">◉</span>
         </div>
         <div class="kpi-value" id="kpiYieldCurrent">NT$ 0</div>
-        <div class="kpi-subtext" id="kpiYieldBreakdown">00878: NT$0 | QQQI: $0</div>
+        <div class="kpi-subtext" id="kpiYieldBreakdown">QQQI: $0</div>
         <div class="kpi-pnl-row">
           <span class="kpi-pnl-amount" id="kpiYieldPnlAmount">+NT$ 0</span>
           <span class="kpi-pnl-badge pos" id="kpiYieldRoiBadge">+0.00%</span>
@@ -1106,6 +1106,10 @@
         </div>
         <div class="kpi-value" id="kpiTotalTwd">NT$ 0</div>
         <div class="kpi-subtext" id="kpiTotalUsd">折合 $ 0 USD (匯率 32.46)</div>
+        <div class="kpi-pnl-row">
+          <span class="kpi-pnl-amount" id="kpiTotalPnlAmount">+NT$ 0</span>
+          <span class="kpi-pnl-badge pos" id="kpiTotalRoiBadge">+0.00%</span>
+        </div>
       </div>
 
     </section>
@@ -1151,7 +1155,7 @@
           <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
             <div class="legend-left">
               <div class="legend-dot" style="background: #34d399;"></div>
-              <span>💰 高股息/現金流 (混合)</span>
+              <span>💰 QQQI 現金流</span>
             </div>
             <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #34d399;" id="legYieldVal">0 (0%)</div>
           </div>
@@ -1177,7 +1181,7 @@
         <button class="chip active" onclick="setFilter('all', this)">全部部位 (ALL)</button>
         <button class="chip" onclick="setFilter('type-tw', this)">🇹🇼 台股 (TW)</button>
         <button class="chip" onclick="setFilter('type-us', this)">🇺🇸 美股 (US)</button>
-        <button class="chip" onclick="setFilter('type-yield', this)">💰 高股息 (YIELD)</button>
+        <button class="chip" onclick="setFilter('type-yield', this)">💰 QQQI (YIELD)</button>
         <button class="chip" onclick="setFilter('type-ber', this)">⚡ 槓桿 (LEVERAGE)</button>
         <button class="chip" onclick="setFilter('type-trap', this)">🧪 實驗 (EXPERIMENT)</button>
       </div>
@@ -1651,10 +1655,8 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       const yieldRoi = yieldInvestedTWDeq > 0 ? (yieldPnlTWDeq / yieldInvestedTWDeq) * 100 : 0;
       const yieldUp = yieldPnlTWDeq >= 0;
       document.getElementById('kpiYieldCurrent').textContent = formatTWD(yieldCurrentTWDeq);
-      // breakdown sub-line: 00878 native TWD + QQQI native USD
-      const twdBreakStr  = yieldNativeTWD  > 0 ? `00878: ${formatTWD(yieldNativeTWD)}` : '';
-      const usdBreakStr  = yieldNativeUSD  > 0 ? `QQQI: ${formatUSD(yieldNativeUSD)}` : '';
-      document.getElementById('kpiYieldBreakdown').textContent = [twdBreakStr, usdBreakStr].filter(Boolean).join(' | ');
+      // breakdown sub-line: QQQI only (USD native)
+      document.getElementById('kpiYieldBreakdown').textContent = yieldNativeUSD > 0 ? `QQQI: ${formatUSD(yieldNativeUSD)}` : 'QQQI: $0';
       const yieldPnlEl = document.getElementById('kpiYieldPnlAmount');
       yieldPnlEl.textContent = `${yieldUp ? '+' : ''}${formatTWD(yieldPnlTWDeq)} (折合TWD)`;
       yieldPnlEl.style.color = yieldUp ? 'var(--neon-emerald)' : 'var(--neon-rose)';
@@ -1669,6 +1671,12 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       document.getElementById('kpiTotalUsd').textContent = `折合 $ ${Math.round(totalCurrentTWD / usdToTwdRate).toLocaleString('en-US')} USD (匯率 ${usdToTwdRate.toFixed(2)})`;
       roiPill.textContent = `${totalRoi >= 0 ? '+' : ''}${totalRoi.toFixed(2)}%`;
       roiPill.className = `roi-pill ${totalRoi >= 0 ? 'roi-positive' : 'roi-negative'}`;
+      const totalPnlEl = document.getElementById('kpiTotalPnlAmount');
+      totalPnlEl.textContent = `${totalPnlTWD >= 0 ? '+' : ''}${formatTWD(totalPnlTWD)}`;
+      totalPnlEl.style.color = totalPnlTWD >= 0 ? 'var(--neon-emerald)' : 'var(--neon-rose)';
+      const totalRoiBadge = document.getElementById('kpiTotalRoiBadge');
+      totalRoiBadge.textContent = `${totalRoi >= 0 ? '+' : ''}${totalRoi.toFixed(2)}%`;
+      totalRoiBadge.className = `kpi-pnl-badge ${totalRoi >= 0 ? 'pos' : 'neg'}`;
 
       // Render CLEC Bar (also type-based, QQQI in yield)
       renderClecBar(totalCurrentTWD);

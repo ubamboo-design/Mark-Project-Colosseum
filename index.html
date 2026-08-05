@@ -348,6 +348,39 @@
       border: 1px solid rgba(244, 63, 94, 0.3);
     }
 
+    /* CLEC 523 allocation bar inside card */
+    .clec-alloc-bar {
+      display: flex;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 10px 0 6px;
+      background: rgba(255,255,255,0.05);
+    }
+    .clec-alloc-seg {
+      height: 100%;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .clec-alloc-legend {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .clec-alloc-legend b {
+      color: var(--text-main);
+      font-family: var(--font-mono);
+    }
+    .clec-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 3px;
+      vertical-align: middle;
+    }
+
     /* KPI P&L inline row */
     .kpi-pnl-row {
       display: flex;
@@ -1070,14 +1103,25 @@
         </div>
       </div>
 
-      <!-- CARD 2: 美股成長 (type-us ONLY: QLD C05, 00662 C06 — QQQI excluded) -->
-      <div class="kpi-card" style="--card-accent: var(--neon-purple);">
+      <!-- CARD 2: CLEC 523 配置 (00662 + QLD + 現金) -->
+      <div class="kpi-card" style="--card-accent: var(--neon-purple); min-width: 340px;">
         <div class="kpi-header">
-          <span class="kpi-title">🇺🇸 美股成長配置</span>
-          <span class="kpi-icon" style="color: var(--neon-purple)">✦</span>
+          <span class="kpi-title">🇺🇸 CLEC 523 配置</span>
+          <span class="kpi-icon" style="color: var(--neon-purple)">⚡</span>
         </div>
-        <div class="kpi-value" id="kpiUsdCurrent">$ 0.00 USD</div>
-        <div class="kpi-subtext" id="kpiUsdInvested">本金: $ 0.00 USD</div>
+        <div class="kpi-value" id="kpiUsdCurrent">NT$ 0</div>
+        <div class="kpi-subtext" id="kpiUsdInvested">00662: — | QLD: — | 現金: —</div>
+        <!-- CLEC 523 allocation bar -->
+        <div class="clec-alloc-bar" id="clecAllocBar">
+          <div class="clec-alloc-seg" id="clecSeg662" style="width:50%; background: linear-gradient(90deg, #a855f7, #c084fc);" title="00662"></div>
+          <div class="clec-alloc-seg" id="clecSegQld" style="width:30%; background: linear-gradient(90deg, #60a5fa, #93c5fd);" title="QLD"></div>
+          <div class="clec-alloc-seg" id="clecSegCash" style="width:20%; background: linear-gradient(90deg, #fbbf24, #fcd34d);" title="現金"></div>
+        </div>
+        <div class="clec-alloc-legend" id="clecAllocLegend">
+          <span><span class="clec-dot" style="background:#a855f7;"></span>00662 <b id="clecPct662">—</b></span>
+          <span><span class="clec-dot" style="background:#60a5fa;"></span>QLD <b id="clecPctQld">—</b></span>
+          <span><span class="clec-dot" style="background:#fbbf24;"></span>現金 <b id="clecPctCash">—</b></span>
+        </div>
         <div class="kpi-pnl-row">
           <span class="kpi-pnl-amount" id="kpiUsdPnlAmount">+$ 0.00</span>
           <span class="kpi-pnl-badge pos" id="kpiUsdRoiBadge">+0.00%</span>
@@ -1144,7 +1188,7 @@
         <div class="clec-legend-item">
           <div class="legend-left">
             <div class="legend-dot" style="background: #c084fc;"></div>
-            <span>🇺🇸 美股成長配置</span>
+            <span>🇺🇸 CLEC 523 配置</span>
           </div>
           <div style="text-align: right;">
             <div class="font-mono" style="font-size: 13px; font-weight: 700; color: #c084fc;" id="legUsVal">$ 0 USD (0%)</div>
@@ -1628,27 +1672,44 @@ C09,type-yield,現金流-QQQI,NEOS-QQQI,Income,$336485.16,$328954.08,QQQI,15倍�
       twdBadge.textContent = `${twdUp ? '+' : ''}${twdRoi.toFixed(2)}%`;
       twdBadge.className = `kpi-pnl-badge ${twdUp ? 'pos' : 'neg'}`;
 
-      // ── CARD 2: 美股成長 (type-us only, QQQI excluded) ──
-      // Main: total TWD-equivalent. Sub-line: native breakdown per ticker.
-      const usPnlTWD = usGrowthCurrentTWD - usGrowthInvestedTWD;
-      const usRoi = usGrowthInvestedTWD > 0 ? (usPnlTWD / usGrowthInvestedTWD) * 100 : 0;
-      const usUp = usPnlTWD >= 0;
+      // ── CARD 2: CLEC 523 配置 (00662 + QLD + 現金 390萬) ──
+      const clecCash = 3900000; // 現金固定 390 萬
+      const clec662 = usAssets.find(a => a.ticker === '00662');
+      const clecQld = usAssets.find(a => a.ticker === 'QLD');
+      const clec662Twd = clec662 ? clec662.currentTWD : 0;
+      const clecQldTwd = clecQld ? clecQld.currentTWD : 0;
+      const clecTotal = clec662Twd + clecQldTwd + clecCash;
+      const clecPct662 = clecTotal > 0 ? (clec662Twd / clecTotal * 100) : 0;
+      const clecPctQld = clecTotal > 0 ? (clecQldTwd / clecTotal * 100) : 0;
+      const clecPctCash = clecTotal > 0 ? (clecCash / clecTotal * 100) : 0;
+      const clecPnl = clecTotal - (clec662 ? clec662.investedTWD : 0) - (clecQld ? clecQld.investedTWD : 0) - clecCash;
+      const clecInvTotal = (clec662 ? clec662.investedTWD : 0) + (clecQld ? clecQld.investedTWD : 0) + clecCash;
+      const clecRoi = clecInvTotal > 0 ? (clecPnl / clecInvTotal * 100) : 0;
+      const clecUp = clecPnl >= 0;
 
-      // Collect per-ticker native values for breakdown line
-      const usAssets = allAssets.filter(a => a.type === 'type-us');
-      const usBreakParts = usAssets.map(a => {
-        if (a.currency === 'USD') return `${a.ticker}: ${formatUSD(a.currentNative)}`;
-        return `${a.ticker}: ${formatTWD(a.currentNative)}`;
-      });
-
-      document.getElementById('kpiUsdCurrent').textContent  = formatTWD(usGrowthCurrentTWD) + ' （折合）';
-      document.getElementById('kpiUsdInvested').textContent = usBreakParts.join(' | ');
+      document.getElementById('kpiUsdCurrent').textContent = formatTWD(clecTotal);
+      const parts = [];
+      if (clec662) parts.push(`00662: ${formatTWD(clec662.currentNative)}`);
+      if (clecQld) parts.push(`QLD: ${formatUSD(clecQld.currentNative)}`);
+      parts.push(`現金: ${formatTWD(clecCash)}`);
+      document.getElementById('kpiUsdInvested').textContent = parts.join(' | ');
       const usPnlEl = document.getElementById('kpiUsdPnlAmount');
-      usPnlEl.textContent = `${usUp ? '+' : ''}${formatTWD(usPnlTWD)}`;
-      usPnlEl.style.color = usUp ? 'var(--neon-emerald)' : 'var(--neon-rose)';
+      usPnlEl.textContent = `${clecUp ? '+' : ''}${formatTWD(clecPnl)}`;
+      usPnlEl.style.color = clecUp ? 'var(--neon-emerald)' : 'var(--neon-rose)';
       const usBadge = document.getElementById('kpiUsdRoiBadge');
-      usBadge.textContent = `${usUp ? '+' : ''}${usRoi.toFixed(2)}%`;
-      usBadge.className = `kpi-pnl-badge ${usUp ? 'pos' : 'neg'}`;
+      usBadge.textContent = `${clecUp ? '+' : ''}${clecRoi.toFixed(2)}%`;
+      usBadge.className = `kpi-pnl-badge ${clecUp ? 'pos' : 'neg'}`;
+
+      // CLEC 523 allocation bar
+      document.getElementById('clecSeg662').style.width = clecPct662 + '%';
+      document.getElementById('clecSegQld').style.width = clecPctQld + '%';
+      document.getElementById('clecSegCash').style.width = clecPctCash + '%';
+      document.getElementById('clecPct662').textContent = clecPct662.toFixed(1) + '%';
+      document.getElementById('clecPctQld').textContent = clecPctQld.toFixed(1) + '%';
+      document.getElementById('clecPctCash').textContent = clecPctCash.toFixed(1) + '%';
+      document.getElementById('clecSeg662').title = `00662: ${formatTWD(clec662Twd)} (${clecPct662.toFixed(1)}%)`;
+      document.getElementById('clecSegQld').title = `QLD: ${formatUSD(clecQld ? clecQld.currentNative : 0)} → ${formatTWD(clecQldTwd)} (${clecPctQld.toFixed(1)}%)`;
+      document.getElementById('clecSegCash').title = `現金: ${formatTWD(clecCash)} (${clecPctCash.toFixed(1)}%)`;
 
       // ── CARD 3: 高股息/現金流 (type-yield: 00878 TWD + QQQI USD — MERGED) ──
       const yieldPnlTWDeq = yieldCurrentTWDeq - yieldInvestedTWDeq;

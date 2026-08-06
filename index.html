@@ -1035,12 +1035,80 @@
     .state-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.5; }
 
     @media (max-width: 768px) {
-      #app-wrapper { padding: 14px; }
-      .app-header { padding: 16px; }
-      .kpi-value { font-size: 20px; }
+      #app-wrapper { padding: 14px; gap: 16px; }
+      .app-header { padding: 12px 16px; }
+
+      /* ── KPI Grid: 手機 2欄 ── */
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .kpi-card {
+        padding: 16px 14px;
+      }
+      .kpi-header {
+        margin-bottom: 8px;
+      }
+      .kpi-title {
+        font-size: 11px;
+        letter-spacing: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .kpi-value {
+        font-size: 18px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .kpi-subtext {
+        font-size: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
+      .kpi-pnl-row {
+        gap: 5px;
+        margin-top: 4px;
+      }
+      .kpi-pnl-amount {
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .kpi-pnl-badge {
+        font-size: 10px;
+        padding: 2px 6px;
+      }
+
       .search-box { min-width: 100%; }
       .control-toolbar { flex-direction: column; align-items: stretch; }
       .toolbar-right { flex-direction: column; align-items: stretch; }
+    }
+
+    /* ── 極小螢幕（≤ 480px）：KPI 更緊湊 ── */
+    @media (max-width: 480px) {
+      .kpi-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .kpi-card {
+        padding: 14px 12px;
+      }
+      .kpi-value {
+        font-size: 16px;
+      }
+      .kpi-title {
+        font-size: 10px;
+      }
+    }
+
+    /* ── 超小螢幕（≤ 360px）：KPI 單欄 ── */
+    @media (max-width: 360px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
